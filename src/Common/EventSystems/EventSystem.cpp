@@ -3,13 +3,13 @@
 
 void EventSystem::AddHandler(EventBase e, EventHandler handler)
 {
-    EventSystem::_handlers[e].push_back(handler);
+    this->_handlers[e].push_back(handler);
 }
 
 void EventSystem::RemoveHandler(EventBase e, EventHandler handler)
 {
-    auto it = EventSystem::_handlers.find(e);
-    if (it != EventSystem::_handlers.end())
+    auto it = this->_handlers.find(e);
+    if (it != this->_handlers.end())
     {
         for (auto ite = it->second.begin(); ite != it->second.end();)
         {
@@ -27,8 +27,8 @@ void EventSystem::RemoveHandler(EventBase e, EventHandler handler)
 
 void EventSystem::Broadcast(EventBase e, void* args)
 {
-    auto it = EventSystem::_handlers.find(e);
-    if (it != EventSystem::_handlers.end())
+    auto it = this->_handlers.find(e);
+    if (it != this->_handlers.end())
     {
         for (auto ite = it->second.begin(); ite != it->second.end(); ++ite)
         {
