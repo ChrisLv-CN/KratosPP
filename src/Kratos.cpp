@@ -12,8 +12,6 @@
 #include <exception>
 #include <Common/EventSystems/EventSystem.cpp>
 
-using namespace Extension::EventSystems;
-
 HANDLE Kratos::hInstance = 0;
 
 const wchar_t *Kratos::VersionDescription = L"KratosPP Ver." str(BUILD_NUMBER);
@@ -48,7 +46,6 @@ DEFINE_HOOK(0x7CD810, ExeRun, 0x9)
 
 DEFINE_HOOK(0x55AFB3, LogicClass_Update, 0x6)
 {
-	
 	return 0;
 }
 

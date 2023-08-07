@@ -1,63 +1,38 @@
 #include <Common/EventSystems/EventSystem.h>
 
-#include <map>
-#include <list>
 
-using namespace std;
+void EventSystem::AddHandler(EventBase e, EventHandler handler)
+{
+    EventSystem::_handlers[e].push_back(handler);
+}
 
-namespace Extension {
-    namespace EventSystems
+void EventSystem::RemoveHandler(EventBase e, EventHandler handler)
+{
+    auto it = EventSystem::_handlers.find(e);
+    if (it != EventSystem::_handlers.end())
     {
-
-        typedef void (*HandleEvent)(void*, void*);
-
-        class EventBase
+        for (auto ite = it->second.begin(); ite != it->second.end();)
         {
-        public:
-            const char* Name = "";
-            const char* Dest = "";
-        };
-
-        struct EventHandler
-        {
-            void* _this;
-            HandleEvent func;
-        };
-
-        void EventSystem::AddHandler(EventBase e, EventHandler handler)
-        {
-            EventSystem::_handlers[e].push_back(handler);
-        }
-
-        void EventSystem::RemoveHandler(EventBase e, EventHandler handler)
-        {
-            auto it = EventSystem::_handlers.find(e);
-            if (it != EventSystem::_handlers.end())
+            if (ite->_this == handler._this && ite->func == handler.func)
             {
-                for (auto ite = it->second.begin(); ite != it->second.end();)
-                {
-                    if (ite->_this == handler._this && ite->func == handler.func)
-                    {
-                        ite = it->second.erase(ite);
-                    }
-                    else
-                    {
-                        ++ite;
-                    }
-                }
+                ite = it->second.erase(ite);
+            }
+            else
+            {
+                ++ite;
             }
         }
+    }
+}
 
-        void EventSystem::Broadcast(EventBase e, void* args)
+void EventSystem::Broadcast(EventBase e, void* args)
+{
+    auto it = EventSystem::_handlers.find(e);
+    if (it != EventSystem::_handlers.end())
+    {
+        for (auto ite = it->second.begin(); ite != it->second.end(); ++ite)
         {
-            auto it = EventSystem::_handlers.find(e);
-            if (it != EventSystem::_handlers.end())
-            {
-                for (auto ite = it->second.begin(); ite != it->second.end(); ++ite)
-                {
-                    ite->func(ite->_this, args);
-                }
-            }
+            ite->func(ite->_this, args);
         }
-    };
-};
+    }
+}

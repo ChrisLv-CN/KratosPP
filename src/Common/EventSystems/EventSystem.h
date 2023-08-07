@@ -3,24 +3,27 @@
 #include <map>
 #include <list>
 
-using namespace std;
+typedef void (*HandleEvent)(void*, void*);
 
-namespace Extension {
-    namespace EventSystems
-    {
-        class EventBase;
+class EventBase
+{
+    const char* Name;
+    const char* Dest;
+};
 
-        struct EventHandler;
+struct EventHandler
+{
+    void* _this;
+    HandleEvent func;
+};
 
-        class EventSystem
-        {
-        public:
-            void AddHandler(EventBase e, EventHandler handler);
-            void RemoveHandler(EventBase e, EventHandler handler);
-            void Broadcast(EventBase e, void* args);
+class EventSystem
+{
+public:
+    void AddHandler(EventBase e, EventHandler handler);
+    void RemoveHandler(EventBase e, EventHandler handler);
+    void Broadcast(EventBase e, void* args);
 
-        private:
-            map<EventBase, list<EventHandler>> _handlers;
-        };
-    };
+private:
+    std::map<EventBase, std::list<EventHandler>> _handlers;
 };
