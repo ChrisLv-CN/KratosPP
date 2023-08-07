@@ -18,7 +18,8 @@
 		},
 		"files.associations": {
 			"*.lua.txt": "lua",
-			"bit": "cpp"
+			"bit": "cpp",
+			"list": "cpp"
 		}
 	}
 }

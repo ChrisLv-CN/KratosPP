@@ -148,10 +148,11 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Common\EventSystems\EventSystem.h" />
     <ClInclude Include="src\Kratos.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Common\EventSystems\EventSystems.cpp" />
+    <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
     <ClCompile Include="src\Kratos.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
