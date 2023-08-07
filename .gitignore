@@ -1,0 +1,13 @@
+Release
+Debug
+*.vcxproj.user
+*.vcxproj.filters
+*.sdf
+*.suo
+.vs
+.cproject
+.project
+
+/.vscode/c_cpp_properties.json
+/.vscode/cspell.json
+/.vscode/settings.json
