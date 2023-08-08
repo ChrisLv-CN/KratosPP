@@ -40,4 +40,7 @@
 #define INTERNAL_NAME "KratosPP.dll"
 #define ORIGINAL_FILENAME "KratosPP.dll"
 
+#define VERSION_SHORT_STR str(VERSION_MAJOR) "." str(VERSION_MINOR)
+#define VERSION_SHORT_WSTR wstr(VERSION_MAJOR) L"." wstr(VERSION_MINOR)
+
 #endif // VERSION_H

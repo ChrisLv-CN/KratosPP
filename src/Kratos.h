@@ -14,12 +14,12 @@ constexpr auto SIDEBAR_SECTION = "Sidebar";
 class Kratos
 {
 public:
-	static void CmdLineParse(char**, int);
+	static void CmdLineParse(char **, int);
 
-	static CCINIClass* OpenConfig(const char*);
-	static void CloseConfig(CCINIClass*&);
+	static CCINIClass *OpenConfig(const char *);
+	static void CloseConfig(CCINIClass *&);
 
-	//variables
+	// variables
 	static HANDLE hInstance;
 
 	static const size_t readLength = 2048;
@@ -27,17 +27,20 @@ public:
 	static wchar_t wideBuffer[readLength];
 	static const char readDelims[4];
 
-	static const char* AppIconPath;
-	static const wchar_t* MessageLabel;
-	static const wchar_t* VersionDescription;
+	static const char *AppIconPath;
+
+	static const wchar_t *messageLabel;
+
+	static const wchar_t *versionShot;
+	static const wchar_t *versionDescription;
 
 	static void Clear();
-	static void PointerGotInvalid(AbstractClass* const pInvalid, bool const removed);
-	static HRESULT SaveGameData(IStream* pStm);
-	static void LoadGameData(IStream* pStm);
+	static void PointerGotInvalid(AbstractClass *const pInvalid, bool const removed);
+	static HRESULT SaveGameData(IStream *pStm);
+	static void LoadGameData(IStream *pStm);
 
-	static void SendActiveMessage(EventSystem* sender, Event e, void* args);
-	static void DrawVersionText(EventSystem* sender, Event e, void* args);
+	static void SendActiveMessage(EventSystem *sender, Event e, void *args);
+	static void DrawVersionText(EventSystem *sender, Event e, void *args);
 
 	class UI
 	{
@@ -50,10 +53,10 @@ public:
 		static double HarvesterCounter_ConditionRed;
 		static bool ShowProducingProgress;
 
-		static const wchar_t* CostLabel;
-		static const wchar_t* PowerLabel;
-		static const wchar_t* TimeLabel;
-		static const wchar_t* HarvesterLabel;
+		static const wchar_t *CostLabel;
+		static const wchar_t *PowerLabel;
+		static const wchar_t *TimeLabel;
+		static const wchar_t *HarvesterLabel;
 	};
 
 	class Config
