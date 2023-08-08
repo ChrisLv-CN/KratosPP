@@ -1,36 +1,66 @@
 #pragma once
-#ifndef EventSystem_H
-#define EventSystem_H
 
 #include <map>
 #include <list>
 
-typedef void (*HandleEvent)(void*, void*);
+class Event;
+class EventSystem;
 
-class EventBase
-{
-    const char* Name;
-    const char* Dest;
+typedef void (*HandleEvent)(EventSystem*, Event, void*);
 
-public:
-    auto operator <=>(const EventBase&) const = default;
-};
-
+// 订阅者
 struct EventHandler
 {
     void* _this;
     HandleEvent func;
 };
 
+// 事件类型
+class Event
+{
+public:
+    Event(const char* Name, const char* Dest);
+    auto operator <=>(const Event&) const = default;
+
+private:
+    const char* Name;
+    const char* Dest;
+};
+
+// 事件管理器
 class EventSystem
 {
 public:
-    void AddHandler(EventBase e, EventHandler handler);
-    void RemoveHandler(EventBase e, EventHandler handler);
-    void Broadcast(EventBase e, void* args);
+    void AddHandler(Event e, HandleEvent func);
+    void AddHandler(Event e, EventHandler handler);
+    void RemoveHandler(Event e, HandleEvent func);
+    void RemoveHandler(Event e, EventHandler handler);
+
+    void Broadcast(Event e, void* args);
 
 private:
-    std::map<EventBase, std::list<EventHandler>> _handlers;
+    std::map<Event, std::list<EventHandler>> _handlers;
 };
 
-#endif // !EventSystem_H
+
+class EventSystems
+{
+public:
+    // 事件管理器
+    static EventSystem General;
+    static EventSystem Render;
+    static EventSystem Logic;
+};
+
+class Events
+{
+public:
+    // 游戏进程事件
+    static Event ScenarioClearClassesEvent;
+    static Event ScenarioStartEvent;
+    // 渲染事件
+    static Event GScreenRenderEvent;
+    static Event SidebarRenderEvent;
+    // 单位逻辑事件
+    static Event LogicUpdateEvent;
+};

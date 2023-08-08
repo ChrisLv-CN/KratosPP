@@ -62,7 +62,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <SDLCheck />
       <ConformanceMode>true</ConformanceMode>
@@ -106,7 +106,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <SDLCheck />
       <ConformanceMode>true</ConformanceMode>
@@ -153,6 +153,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
+    <ClCompile Include="src\Hooks\GeneralHook.cpp" />
+    <ClCompile Include="src\Hooks\GScreenHook.cpp" />
     <ClCompile Include="src\Kratos.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

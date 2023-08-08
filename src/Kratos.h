@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
 
+#include <Common/EventSystems/EventSystem.h>
+
 class CCINIClass;
 class AbstractClass;
 
@@ -26,12 +28,16 @@ public:
 	static const char readDelims[4];
 
 	static const char* AppIconPath;
+	static const wchar_t* MessageLabel;
 	static const wchar_t* VersionDescription;
 
 	static void Clear();
 	static void PointerGotInvalid(AbstractClass* const pInvalid, bool const removed);
 	static HRESULT SaveGameData(IStream* pStm);
 	static void LoadGameData(IStream* pStm);
+
+	static void SendActiveMessage(EventSystem* sender, Event e, void* args);
+	static void DrawVersionText(EventSystem* sender, Event e, void* args);
 
 	class UI
 	{
