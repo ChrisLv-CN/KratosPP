@@ -4,6 +4,7 @@ rem Finds and starts Visual Studio Developer Command Prompt using VS Locator.
 rem https://github.com/microsoft/vswhere/wiki/Start-Developer-Command-Prompt
 
 rem Ensure we're in correct directory.
+chcp 65001
 cd /D "%~dp0"
 
 for /f "usebackq delims=" %%i in (`vswhere.exe -products * -prerelease -latest -property installationPath`) do (

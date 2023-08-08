@@ -1,4 +1,4 @@
-#include <Common/EventSystems/EventSystem.h>
+ï»¿#include <Common/EventSystems/EventSystem.h>
 
 Event::Event(const char* Name, const char* Dest)
 {
@@ -55,16 +55,16 @@ void EventSystem::Broadcast(Event e, void* args)
     }
 }
 
-// ÊÂ¼ş¹ÜÀíÆ÷
+// äº‹ä»¶ç®¡ç†å™¨
 EventSystem EventSystems::General;
 EventSystem EventSystems::Render;
 EventSystem EventSystems::Logic;
 
-// ½ø³ÌÊÂ¼ş
+// è¿›ç¨‹äº‹ä»¶
 Event Events::ScenarioClearClassesEvent = Event("ScenarioClearClasses", "Raised when scenario is cleaning classes");
 Event Events::ScenarioStartEvent = Event("ScenarioStart", "Raised when scenario start");
-// äÖÈ¾ÊÂ¼ş
+// æ¸²æŸ“äº‹ä»¶
 Event Events::GScreenRenderEvent = Event("GScreenClass_Render", "Raised when GScreen is Render");
 Event Events::SidebarRenderEvent = Event("SidebarClass_Draw_It", "Raised when Sidebar is Render");
-// Âß¼­ÊÂ¼ş
+// é€»è¾‘äº‹ä»¶
 Event Events::LogicUpdateEvent = Event("LogicClassUpdate", "Raised when LogicClass update");

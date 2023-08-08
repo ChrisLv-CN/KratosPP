@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <map>
 #include <list>
@@ -8,14 +8,14 @@ class EventSystem;
 
 typedef void (*HandleEvent)(EventSystem*, Event, void*);
 
-// ¶©ÔÄÕß
+// è®¢é˜…è€…
 struct EventHandler
 {
     void* _this;
     HandleEvent func;
 };
 
-// ÊÂ¼şÀàĞÍ
+// äº‹ä»¶ç±»å‹
 class Event
 {
 public:
@@ -27,7 +27,7 @@ private:
     const char* Dest;
 };
 
-// ÊÂ¼ş¹ÜÀíÆ÷
+// äº‹ä»¶ç®¡ç†å™¨
 class EventSystem
 {
 public:
@@ -46,7 +46,7 @@ private:
 class EventSystems
 {
 public:
-    // ÊÂ¼ş¹ÜÀíÆ÷
+    // äº‹ä»¶ç®¡ç†å™¨
     static EventSystem General;
     static EventSystem Render;
     static EventSystem Logic;
@@ -55,12 +55,12 @@ public:
 class Events
 {
 public:
-    // ÓÎÏ·½ø³ÌÊÂ¼ş
+    // æ¸¸æˆè¿›ç¨‹äº‹ä»¶
     static Event ScenarioClearClassesEvent;
     static Event ScenarioStartEvent;
-    // äÖÈ¾ÊÂ¼ş
+    // æ¸²æŸ“äº‹ä»¶
     static Event GScreenRenderEvent;
     static Event SidebarRenderEvent;
-    // µ¥Î»Âß¼­ÊÂ¼ş
+    // å•ä½é€»è¾‘äº‹ä»¶
     static Event LogicUpdateEvent;
 };

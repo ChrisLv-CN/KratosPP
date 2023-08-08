@@ -14,7 +14,7 @@
 HANDLE Kratos::hInstance = 0;
 
 const wchar_t* Kratos::MessageLabel = L"Kratos";
-const wchar_t* Kratos::VersionDescription = L"KratosPP Ver." str(FILE_VERSION_STR);
+const wchar_t* Kratos::VersionDescription = L"KratosPP Ver." FILE_VERSION_STR;
 
 
 void Kratos::SendActiveMessage(EventSystem* sender, Event e, void* args)
