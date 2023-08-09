@@ -143,6 +143,7 @@
     <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
     <ClCompile Include="src\Hooks\GeneralHook.cpp" />
     <ClCompile Include="src\Hooks\GScreenHook.cpp" />
+    <ClCompile Include="src\Hooks\SaveGameHook.cpp" />
     <ClCompile Include="src\Kratos.cpp" />
   </ItemGroup>
   <ItemGroup>

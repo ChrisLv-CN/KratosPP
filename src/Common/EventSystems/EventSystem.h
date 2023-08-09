@@ -50,6 +50,7 @@ public:
     static EventSystem General;
     static EventSystem Render;
     static EventSystem Logic;
+    static EventSystem SaveLoad;
 };
 
 class Events
@@ -63,4 +64,8 @@ public:
     static Event SidebarRenderEvent;
     // 单位逻辑事件
     static Event LogicUpdateEvent;
+    // 游戏保存事件
+    static Event SaveGameEvent;
+    // 游戏读取事件
+    static Event LoadGameEvent;
 };

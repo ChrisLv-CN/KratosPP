@@ -59,6 +59,7 @@ void EventSystem::Broadcast(Event e, void* args)
 EventSystem EventSystems::General;
 EventSystem EventSystems::Render;
 EventSystem EventSystems::Logic;
+EventSystem EventSystems::SaveLoad;
 
 // 进程事件
 Event Events::ScenarioClearClassesEvent = Event("ScenarioClearClasses", "Raised when scenario is cleaning classes");
@@ -68,3 +69,6 @@ Event Events::GScreenRenderEvent = Event("GScreenClass_Render", "Raised when GSc
 Event Events::SidebarRenderEvent = Event("SidebarClass_Draw_It", "Raised when Sidebar is Render");
 // 逻辑事件
 Event Events::LogicUpdateEvent = Event("LogicClassUpdate", "Raised when LogicClass update");
+// 存档事件
+Event Events::SaveGameEvent = Event("SaveGame", "Raised when saving game");
+Event Events::LoadGameEvent = Event("LoadGame", "Raised when loading game");
