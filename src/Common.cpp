@@ -13,6 +13,8 @@
 bool HideWarning = false;
 #endif
 
+bool InChinese = GetSystemDefaultLangID() == 0x0804;
+
 HANDLE Common::hInstance = 0;
 
 char Common::readBuffer[Common::readLength];
@@ -20,17 +22,6 @@ wchar_t Common::wideBuffer[Common::readLength];
 const char Common::readDelims[4] = ",";
 
 const char* Common::AppIconPath = nullptr;
-
-bool Common::DisplayDamageNumbers = false;
-
-#ifdef STR_GIT_COMMIT
-const wchar_t* Common::VersionDescription = L"Phobos nightly build (" STR_GIT_COMMIT L" @ " STR_GIT_BRANCH L"). DO NOT SHIP IN MODS!";
-#elif !defined(IS_RELEASE_VER)
-const wchar_t* Common::VersionDescription = L"Phobos development build #" _STR(BUILD_NUMBER) L". Please test the build before shipping.";
-#else
-//const wchar_t* Common::VersionDescription = L"Phobos release build v" FILE_VERSION_STR L".";
-#endif
-
 
 //void Common::CmdLineParse(char** ppArgs, int nNumArgs)
 void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
@@ -52,7 +43,7 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 			Common::AppIconPath = ppArgs[++i];
 		}
 #ifndef IS_RELEASE_VER
-		if (_stricmp(pArg, "-b=" _STR(BUILD_NUMBER)) == 0)
+		if (_stricmp(pArg, "-b=" str(BUILD_NUMBER)) == 0)
 		{
 			HideWarning = true;
 		}
@@ -101,7 +92,14 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 		);
 	}
 
-	Debug::Log("Initialized version: " PRODUCT_VERSION "\n");
+	if (InChinese)
+	{
+		Debug::Log("初始化完成 版本: " PRODUCT_VERSION "\n");
+	}
+	else
+	{
+		Debug::Log("Initialized version: " PRODUCT_VERSION "\n");
+	}
 }
 
 void Common::ExeRun(EventSystem* sender, Event e, void* args)
@@ -109,34 +107,69 @@ void Common::ExeRun(EventSystem* sender, Event e, void* args)
 	Patch::ApplyStatic();
 
 #ifdef DEBUG
-
-	if (Common::DetachFromDebugger())
+	if (InChinese)
 	{
-		MessageBoxW(NULL,
-			L"You can now attach a debugger.\n\n"
+		if (Common::DetachFromDebugger())
+		{
+			MessageBoxW(NULL,
+				L"你可以去附加调试器了。\n\n"
 
-			L"Press OK to continue YR execution.",
-			L"Debugger Notice", MB_OK);
+				L"按下OK继续运行尤里的复仇。",
+				L"调试信息", MB_OK);
+		}
+		else
+		{
+			MessageBoxW(NULL,
+				L"你可以去附加调试器了。\n\n"
+
+				L"To attach a debugger find the YR process in Process Hacker "
+				L"/ Visual Studio processes window and detach debuggers from it, "
+				L"then you can attach your own debugger. After this you should "
+				L"terminate Syringe.exe because it won't automatically exit when YR is closed.\n\n"
+
+				L"按下OK继续运行尤里的复仇。",
+				L"调试信息", MB_OK);
+		}
 	}
 	else
 	{
-		MessageBoxW(NULL,
-			L"You can now attach a debugger.\n\n"
+		if (Common::DetachFromDebugger())
+		{
+			MessageBoxW(NULL,
+				L"You can now attach a debugger.\n\n"
 
-			L"To attach a debugger find the YR process in Process Hacker "
-			L"/ Visual Studio processes window and detach debuggers from it, "
-			L"then you can attach your own debugger. After this you should "
-			L"terminate Syringe.exe because it won't automatically exit when YR is closed.\n\n"
+				L"Press OK to continue YR execution.",
+				L"Debugger Notice", MB_OK);
+		}
+		else
+		{
+			MessageBoxW(NULL,
+				L"You can now attach a debugger.\n\n"
 
-			L"Press OK to continue YR execution.",
-			L"Debugger Notice", MB_OK);
+				L"To attach a debugger find the YR process in Process Hacker "
+				L"/ Visual Studio processes window and detach debuggers from it, "
+				L"then you can attach your own debugger. After this you should "
+				L"terminate Syringe.exe because it won't automatically exit when YR is closed.\n\n"
+
+				L"Press OK to continue YR execution.",
+				L"Debugger Notice", MB_OK);
+		}
 	}
 
 	if (!Console::Create())
 	{
-		MessageBoxW(NULL,
-			L"Failed to allocate the debug console!",
-			L"Debug Console Notice", MB_OK);
+		if (InChinese)
+		{
+			MessageBoxW(NULL,
+				L"控制台无法打开！",
+				L"调试信息", MB_OK);
+		}
+		else
+		{
+			MessageBoxW(NULL,
+				L"Failed to allocate the debug console!",
+				L"Debug Console Notice", MB_OK);
+		}
 	}
 
 #endif

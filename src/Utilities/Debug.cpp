@@ -4,6 +4,7 @@
 #include <YRPPCore.h>
 #include <MessageListClass.h>
 #include <CRT.h>
+#include <Version.h>
 
 char Debug::StringBuffer[0x1000];
 char Debug::FinalStringBuffer[0x1000];
@@ -15,7 +16,7 @@ void Debug::Log(const char* pFormat, ...)
 	va_list args;
 	va_start(args, pFormat);
 	vsprintf_s(FinalStringBuffer, pFormat, args);
-	LogGame("%s %s", "[Phobos]", FinalStringBuffer);
+	LogGame("%s %s", "[" PRODUCT_NAME "]", FinalStringBuffer);
 	va_end(args);
 }
 
@@ -126,7 +127,7 @@ bool Console::Create()
 	if (NULL == ConsoleHandle)
 		return false;
 
-	SetConsoleTitle("Phobos Debug Console");
+	SetConsoleTitle(PRODUCT_NAME " Debug Console");
 
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);

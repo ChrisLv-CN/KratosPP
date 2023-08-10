@@ -13,6 +13,8 @@ constexpr auto NONE_STR2 = "none";
 constexpr auto TOOLTIPS_SECTION = "ToolTips";
 constexpr auto SIDEBAR_SECTION = "Sidebar";
 
+extern bool InChinese;
+
 class Common
 {
 public:
@@ -30,8 +32,6 @@ public:
 	static const char readDelims[4];
 
 	static const char* AppIconPath;
-	static const wchar_t* VersionDescription;
-	static bool DisplayDamageNumbers;
 
 #ifdef DEBUG
 	static bool DetachFromDebugger();

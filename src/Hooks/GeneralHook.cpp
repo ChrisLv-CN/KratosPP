@@ -39,6 +39,7 @@ DEFINE_HOOK(0x52F639, YR_CmdLineParse, 0x5)
 DEFINE_HOOK(0x7CD810, ExeRun, 0x9)
 {
     EventSystems::General.Broadcast(Events::ExeRun);
+
     return 0;
 }
 

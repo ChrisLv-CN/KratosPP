@@ -3,7 +3,10 @@
 #include <exception>
 
 #include <Common/EventSystems/EventSystem.h>
-#include <Kratos.h>
+#include <Common.h>
+
+/*
+* 直接使用Phobos的保存读取，废弃该事件
 
 DEFINE_HOOK(0x67CEF0, SaveGame_Start, 0x6)
 {
@@ -57,4 +60,4 @@ DEFINE_HOOK(0x67F7C8, LoadGameInStream_End, 0x5)
 	return 0;
 }
 
-
+*/
