@@ -11,7 +11,9 @@ public:
 	GScreenHook()
 	{
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, Kratos::SendActiveMessage);
-		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, Kratos::DrawVersionText);
+		EventSystems::Render.AddHandler(Events::SidebarRenderEvent, Kratos::DrawVersionText);
+		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, Kratos::DrawNotAllowed);
+		EventSystems::Logic.AddHandler(Events::LogicUpdateEvent, Kratos::HappyMode);
 	}
 };
 
@@ -29,18 +31,8 @@ DEFINE_HOOK(0x4F4583, GScreenClass_Render_Late, 0x6)
 	return 0;
 }
 
-/*
-DEFINE_HOOK(0x6A70AE, SidebarClass_Draw_It, 0x5)
+DEFINE_HOOK(0x6A6EB1, SidebarClass_DrawIt, 0x6)
 {
-// Draw Version Text
-RectangleStruct textRect = Drawing::GetTextDimensions(Common::VersionDescription, { 0, 0 }, 0, 2, 0);
-RectangleStruct sidebarRect = DSurface::Sidebar->GetRect();
-int x = sidebarRect.Width / 2 - textRect.Width / 2;
-int y = sidebarRect.Height - textRect.Height;
-Point2D pos = { x, y };
-
-DSurface::Sidebar->DrawText(Common::VersionDescription, &pos, COLOR_RED);
-
-return 0;
+	EventSystems::Render.Broadcast(Events::SidebarRenderEvent);
+	return 0;
 }
-*/
