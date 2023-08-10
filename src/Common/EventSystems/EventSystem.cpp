@@ -55,13 +55,23 @@ void EventSystem::Broadcast(Event e, void* args)
     }
 }
 
-// 事件管理器
-EventSystem EventSystems::General;
-EventSystem EventSystems::Render;
-EventSystem EventSystems::Logic;
-EventSystem EventSystems::SaveLoad;
+void* EventArgsLate = (void*)true;
+void* EventArgsEmpty = nullptr;
 
-// 进程事件
+// 事件管理器
+EventSystem EventSystems::General; // 全局事件
+EventSystem EventSystems::Render; // 单位渲染事件
+EventSystem EventSystems::Logic; // 单位逻辑事件
+EventSystem EventSystems::SaveLoad; // 存档事件
+
+// 程序启动事件
+Event Events::ExeRun = Event("ExeRun", "Raised when YR run");
+// 程序终止事件
+Event Events::ExeTerminate = Event("ExeTerminate", "Raised when YR terminate");
+// 读取命令参数
+Event Events::CmdLineParse = Event("CmdLineParse", "Raised when YR load cmd");
+// 游戏事件
+Event Events::PointerExpireEvent = Event("AnnounceExpiredPointer", "Raised when an AbstractClass pointer expired");
 Event Events::ScenarioClearClassesEvent = Event("ScenarioClearClasses", "Raised when scenario is cleaning classes");
 Event Events::ScenarioStartEvent = Event("ScenarioStart", "Raised when scenario start");
 // 渲染事件
@@ -72,3 +82,4 @@ Event Events::LogicUpdateEvent = Event("LogicClassUpdate", "Raised when LogicCla
 // 存档事件
 Event Events::SaveGameEvent = Event("SaveGame", "Raised when saving game");
 Event Events::LoadGameEvent = Event("LoadGame", "Raised when loading game");
+

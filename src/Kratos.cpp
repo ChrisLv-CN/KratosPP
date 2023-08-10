@@ -10,14 +10,11 @@
 #include <string>
 
 #include <Kratos.h>
-#include <Kratos.version.h>
 
-HANDLE Kratos::hInstance = 0;
+const wchar_t* Kratos::messageLabel = L"Kratos";
+const wchar_t* Kratos::versionDescription = L"KratosPP Ver." VERSION_SHORT_WSTR;
 
-const wchar_t *Kratos::messageLabel = L"Kratos";
-const wchar_t *Kratos::versionDescription = L"KratosPP Ver." VERSION_SHORT_WSTR;
-
-void Kratos::SendActiveMessage(EventSystem *sender, Event e, void *args)
+void Kratos::SendActiveMessage(EventSystem* sender, Event e, void* args)
 {
 	if (args)
 	{
@@ -29,23 +26,14 @@ void Kratos::SendActiveMessage(EventSystem *sender, Event e, void *args)
 	}
 }
 
-void Kratos::DrawVersionText(EventSystem *sender, Event e, void *args)
+void Kratos::DrawVersionText(EventSystem* sender, Event e, void* args)
 {
 	// Draw Version Text
-	RectangleStruct textRect = Drawing::GetTextDimensions(Kratos::versionDescription, {0, 0}, 0, 2, 0);
+	RectangleStruct textRect = Drawing::GetTextDimensions(Kratos::versionDescription, { 0, 0 }, 0, 2, 0);
 	RectangleStruct sidebarRect = DSurface::Sidebar->GetRect();
 	int x = sidebarRect.Width / 2 - textRect.Width / 2;
 	int y = sidebarRect.Height - textRect.Height;
-	Point2D pos = {x, y};
+	Point2D pos = { x, y };
 
 	DSurface::Sidebar->DrawText(Kratos::versionDescription, &pos, Drawing::RGB_To_Int(Drawing::TooltipColor));
-}
-
-bool __stdcall DllMain(HANDLE hInstance, DWORD dwReason, LPVOID v)
-{
-	if (dwReason == DLL_PROCESS_ATTACH)
-	{
-		Kratos::hInstance = hInstance;
-	}
-	return true;
 }

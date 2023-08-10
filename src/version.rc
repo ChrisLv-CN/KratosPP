@@ -1,6 +1,6 @@
 ﻿#include <windows.h>
 
-#include "Kratos.version.h"
+#include "Version.h"
 
 #define IDI_APP    100
 #define ID_VERSION   1

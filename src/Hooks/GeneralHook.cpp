@@ -1,15 +1,19 @@
-﻿#include <Helpers/Macro.h>
-
-#include <exception>
-
-#include <Common/EventSystems/EventSystem.h>
+﻿#include <exception>
 #include <Windows.h>
+
+#include <Extension.h>
+#include <Utilities/Macro.h>
+#include <Common/EventSystems/EventSystem.h>
 
 class GeneraHook
 {
 public:
 	GeneraHook()
 	{
+		EventSystems::General.AddHandler(Events::CmdLineParse, Common::CmdLineParse);
+		EventSystems::General.AddHandler(Events::ExeRun, Common::ExeRun);
+		EventSystems::General.AddHandler(Events::ExeTerminate, Common::ExeTerminate);
+        EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, ExtTypeRegistryClear);
 	}
 };
 
@@ -20,51 +24,63 @@ DEFINE_HOOK(0x52BA60, YR_Boot, 0x5)
     return 0;
 }
 
+DEFINE_HOOK(0x52F639, YR_CmdLineParse, 0x5)
+{
+	GET(char**, ppArgs, ESI);
+	GET(int, nNumArgs, EDI);
+
+	void* args[]{ ppArgs, (void*)nNumArgs };
+	EventSystems::General.Broadcast(Events::CmdLineParse, args);
+
+	Debug::LogDeferredFinalize();
+	return 0;
+}
+
 DEFINE_HOOK(0x7CD810, ExeRun, 0x9)
 {
-#ifdef DEBUG
-    MessageBoxW(NULL,
-        L"You can now attach a debugger.\n\n"
-
-        L"To attach a debugger find the YR process in Process Hacker "
-        L"/ Visual Studio processes window and detach debuggers from it, "
-        L"then you can attach your own debugger. After this you should "
-        L"terminate Syringe.exe because it won't automatically exit when YR is closed.\n\n"
-
-        L"Press OK to continue YR execution.",
-        L"Debugger Notice", MB_OK);
-#endif
+    EventSystems::General.Broadcast(Events::ExeRun);
     return 0;
 }
 
-DEFINE_HOOK(0x7CD8EF, ExeTerminate, 0x9)
+void NAKED _ExeTerminate()
 {
-    return 0;
+	// Call WinMain
+	SET_REG32(EAX, 0x6BB9A0);
+	CALL(EAX);
+	PUSH_REG(EAX);
+
+	EventSystems::General.Broadcast(Events::ExeTerminate);
+
+	// Jump back
+	POP_REG(EAX);
+	SET_REG32(EBX, 0x7CD8EF);
+	__asm {jmp ebx};
 }
+DEFINE_JUMP(LJMP, 0x7CD8EA, GET_OFFSET(_ExeTerminate));
 
 DEFINE_HOOK(0x685659, Scenario_ClearClasses, 0xA)
 {
-    EventSystems::General.Broadcast(Events::ScenarioClearClassesEvent, nullptr);
+    EventSystems::General.Broadcast(Events::ScenarioClearClassesEvent);
     return 0;
 }
 
 // in progress: Initializing Tactical display
 DEFINE_HOOK(0x6875F3, Scenario_Start1, 0x6)
 {
-    EventSystems::General.Broadcast(Events::ScenarioStartEvent, nullptr);
+    EventSystems::General.Broadcast(Events::ScenarioStartEvent);
     return 0;
 }
 
 
 DEFINE_HOOK(0x55AFB3, LogicClass_Update, 0x6)
 {
-	EventSystems::Logic.Broadcast(Events::LogicUpdateEvent, nullptr);
+	EventSystems::Logic.Broadcast(Events::LogicUpdateEvent);
 	return 0;
 }
 
 DEFINE_HOOK(0x55B719, LogicClass_Update_Late, 0x5)
 {
-	bool late = true;
-	EventSystems::Logic.Broadcast(Events::LogicUpdateEvent, &late);
+	EventSystems::Logic.Broadcast(Events::LogicUpdateEvent, EventArgsLate);
 	return 0;
 }
+

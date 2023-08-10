@@ -3,8 +3,13 @@
 #include <map>
 #include <list>
 
-class Event;
+#include <Utilities/Container.h>
+
 class EventSystem;
+class Event;
+
+extern void* EventArgsLate;
+extern void* EventArgsEmpty;
 
 typedef void (*HandleEvent)(EventSystem*, Event, void*);
 
@@ -36,7 +41,7 @@ public:
     void RemoveHandler(Event e, HandleEvent func);
     void RemoveHandler(Event e, EventHandler handler);
 
-    void Broadcast(Event e, void* args);
+    void Broadcast(Event e, void* args = EventArgsEmpty);
 
 private:
     std::map<Event, std::list<EventHandler>> _handlers;
@@ -56,7 +61,12 @@ public:
 class Events
 {
 public:
+    // 程序生命周期事件
+    static Event ExeRun;
+    static Event ExeTerminate;
+    static Event CmdLineParse;
     // 游戏进程事件
+    static Event PointerExpireEvent;
     static Event ScenarioClearClassesEvent;
     static Event ScenarioStartEvent;
     // 渲染事件
@@ -69,3 +79,4 @@ public:
     // 游戏读取事件
     static Event LoadGameEvent;
 };
+

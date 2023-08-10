@@ -33,9 +33,11 @@
 #define FILE_VERSION_STR str(VERSION_MAJOR) "." str(VERSION_MINOR) "." str(VERSION_REVISION) "." str(VERSION_PATCH)
 #define FILE_VERSION VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION, VERSION_PATCH
 #ifdef IS_RELEASE_VER // Release build metadata
-	#define PRODUCT_VERSION "Release Build " BUILD_NUMBER
+	#define SAVEGAME_ID ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (VERSION_REVISION << 8) | VERSION_PATCH)
+	#define PRODUCT_VERSION "Release Build " str(BUILD_NUMBER)
 #else // Regular debug metadata
-	#define PRODUCT_VERSION "Debug Build " BUILD_NUMBER
+	#define SAVEGAME_ID ((BUILD_NUMBER << 24) | (BUILD_NUMBER << 12) | (BUILD_NUMBER))
+	#define PRODUCT_VERSION "Debug Build " str(BUILD_NUMBER)
 #endif
 #define INTERNAL_NAME "KratosPP.dll"
 #define ORIGINAL_FILENAME "KratosPP.dll"
