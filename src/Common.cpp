@@ -1,4 +1,4 @@
-#include <Common.h>
+ï»¿#include <Common.h>
 
 #include <Drawing.h>
 
@@ -94,7 +94,7 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 
 	if (InChinese)
 	{
-		Debug::Log("³õÊ¼»¯Íê³É °æ±¾: " PRODUCT_VERSION "\n");
+		Debug::Log("åˆå§‹åŒ–å®Œæˆ ç‰ˆæœ¬: " PRODUCT_VERSION "\n");
 	}
 	else
 	{
@@ -112,23 +112,23 @@ void Common::ExeRun(EventSystem* sender, Event e, void* args)
 		if (Common::DetachFromDebugger())
 		{
 			MessageBoxW(NULL,
-				L"Äã¿ÉÒÔÈ¥¸½¼Óµ÷ÊÔÆ÷ÁË¡£\n\n"
+				L"ä½ å¯ä»¥å»é™„åŠ è°ƒè¯•å™¨äº†ã€‚\n\n"
 
-				L"°´ÏÂOK¼ÌĞøÔËĞĞÓÈÀïµÄ¸´³ğ¡£",
-				L"µ÷ÊÔĞÅÏ¢", MB_OK);
+				L"æŒ‰ä¸‹OKç»§ç»­è¿è¡Œå°¤é‡Œçš„å¤ä»‡ã€‚",
+				L"è°ƒè¯•ä¿¡æ¯", MB_OK);
 		}
 		else
 		{
 			MessageBoxW(NULL,
-				L"Äã¿ÉÒÔÈ¥¸½¼Óµ÷ÊÔÆ÷ÁË¡£\n\n"
+				L"ä½ å¯ä»¥å»é™„åŠ è°ƒè¯•å™¨äº†ã€‚\n\n"
 
 				L"To attach a debugger find the YR process in Process Hacker "
 				L"/ Visual Studio processes window and detach debuggers from it, "
 				L"then you can attach your own debugger. After this you should "
 				L"terminate Syringe.exe because it won't automatically exit when YR is closed.\n\n"
 
-				L"°´ÏÂOK¼ÌĞøÔËĞĞÓÈÀïµÄ¸´³ğ¡£",
-				L"µ÷ÊÔĞÅÏ¢", MB_OK);
+				L"æŒ‰ä¸‹OKç»§ç»­è¿è¡Œå°¤é‡Œçš„å¤ä»‡ã€‚",
+				L"è°ƒè¯•ä¿¡æ¯", MB_OK);
 		}
 	}
 	else
@@ -161,8 +161,8 @@ void Common::ExeRun(EventSystem* sender, Event e, void* args)
 		if (InChinese)
 		{
 			MessageBoxW(NULL,
-				L"¿ØÖÆÌ¨ÎŞ·¨´ò¿ª£¡",
-				L"µ÷ÊÔĞÅÏ¢", MB_OK);
+				L"æ§åˆ¶å°æ— æ³•æ‰“å¼€ï¼",
+				L"è°ƒè¯•ä¿¡æ¯", MB_OK);
 		}
 		else
 		{

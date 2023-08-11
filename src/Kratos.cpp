@@ -12,6 +12,7 @@
 #include <Kratos.h>
 
 Kratos::VersionText Kratos::_versionText{};
+bool Kratos::_disableHappyMode = false;
 CDTimerClass Kratos::_happyModeDelay{};
 int Kratos::_happyModeMessageIndex = 7;
 
@@ -118,4 +119,9 @@ void Kratos::HappyMode(EventSystem* sender, Event e, void* args)
 
 		}
 	}
+}
+
+bool Kratos::EnableHappyMode()
+{
+	return !_disableHappyMode && HappyMode::Check();
 }

@@ -1,4 +1,4 @@
-#include <exception>
+﻿#include <exception>
 #include <Windows.h>
 
 #include <Extension.h>

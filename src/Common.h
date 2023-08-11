@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <Windows.h>
 #include <Version.h>
 #include <Common/EventSystems/EventSystem.h>

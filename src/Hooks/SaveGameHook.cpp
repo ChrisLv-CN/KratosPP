@@ -1,4 +1,4 @@
-#include <Helpers/Macro.h>
+﻿#include <Helpers/Macro.h>
 
 #include <exception>
 
@@ -6,7 +6,7 @@
 #include <Common.h>
 
 /*
-* ֱ��ʹ��Phobos�ı����ȡ���������¼�
+* 直接使用Phobos的保存读取，废弃该事件
 
 DEFINE_HOOK(0x67CEF0, SaveGame_Start, 0x6)
 {
