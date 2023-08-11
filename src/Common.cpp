@@ -7,7 +7,6 @@
 #include <Utilities/Macro.h>
 
 #include <Utilities/AresHelper.h>
-#include <Version.h>
 
 #ifndef IS_RELEASE_VER
 bool HideWarning = false;
@@ -43,7 +42,7 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 			Common::AppIconPath = ppArgs[++i];
 		}
 #ifndef IS_RELEASE_VER
-		if (_stricmp(pArg, "-b=" str(BUILD_NUMBER)) == 0)
+		if (_stricmp(pArg, "-b=" STR(BUILD_NUMBER)) == 0)
 		{
 			HideWarning = true;
 		}
@@ -94,11 +93,11 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 
 	if (InChinese)
 	{
-		Debug::Log("初始化完成 版本: " PRODUCT_VERSION "\n");
+		//Debug::Log("初始化完成 版本: " PRODUCT_VERSION "\n");
 	}
 	else
 	{
-		Debug::Log("Initialized version: " PRODUCT_VERSION "\n");
+		//Debug::Log("Initialized version: " PRODUCT_VERSION "\n");
 	}
 }
 

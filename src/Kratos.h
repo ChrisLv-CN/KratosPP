@@ -6,7 +6,6 @@
 #include <Timer.h>
 #include <VoxClass.h>
 #include <VocClass.h>
-
 #include <Common.h>
 #include <Common/EventSystems/EventSystem.h>
 #include <Misc/HappyMode.h>

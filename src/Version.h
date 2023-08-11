@@ -1,10 +1,11 @@
-﻿#ifndef VERSION_H
+﻿#pragma once
+#ifndef VERSION_H
 #define VERSION_H
 
-#define wstr(x) wstr_(x)
-#define wstr_(x) L ## #x
-#define str(x) str_(x)
-#define str_(x) #x
+#define WSTR(x) WSTR_(x)
+#define WSTR_(x) L ## #x
+#define STR(x) STR_(x)
+#define STR_(x) #x
 
 #pragma region Release build version numbering
 
@@ -30,19 +31,19 @@
 #define COMPANY_NAME "ChrisLv_CN"
 #define LEGAL_COPYRIGHT "© The ChrisLv_CN 🐼 Contributors 2023"
 #define FILE_DESCRIPTION "Kratos, Ares-like YR engine extension"
-#define FILE_VERSION_STR str(VERSION_MAJOR) "." str(VERSION_MINOR) "." str(VERSION_REVISION) "." str(VERSION_PATCH)
+#define FILE_VERSION_STR STR(VERSION_MAJOR) "." STR(VERSION_MINOR) "." STR(VERSION_REVISION) "." STR(VERSION_PATCH)
 #define FILE_VERSION VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION, VERSION_PATCH
 #ifdef IS_RELEASE_VER // Release build metadata
 	#define SAVEGAME_ID ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (VERSION_REVISION << 8) | VERSION_PATCH)
 	#define PRODUCT_VERSION "Release Build " str(BUILD_NUMBER)
 #else // Regular debug metadata
 	#define SAVEGAME_ID ((BUILD_NUMBER << 24) | (BUILD_NUMBER << 12) | (BUILD_NUMBER))
-	#define PRODUCT_VERSION "Debug Build " str(BUILD_NUMBER)
+	#define PRODUCT_VERSION "Debug Build " STR(BUILD_NUMBER)
 #endif
 #define INTERNAL_NAME "KratosPP.dll"
 #define ORIGINAL_FILENAME "KratosPP.dll"
 
-#define VERSION_SHORT_STR str(VERSION_MAJOR) "." str(VERSION_MINOR)
-#define VERSION_SHORT_WSTR wstr(VERSION_MAJOR) L"." wstr(VERSION_MINOR)
+#define VERSION_SHORT_STR STR(VERSION_MAJOR) "." STR(VERSION_MINOR)
+#define VERSION_SHORT_WSTR WSTR(VERSION_MAJOR) L"." WSTR(VERSION_MINOR)
 
 #endif // VERSION_H

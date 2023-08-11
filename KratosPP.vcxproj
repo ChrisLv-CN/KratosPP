@@ -13,9 +13,69 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Common.cpp" />
+    <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
+    <ClCompile Include="src\CRTExt.cpp" />
+    <ClCompile Include="src\Extension.cpp" />
+    <ClCompile Include="src\Hooks\GeneralHook.cpp" />
+    <ClCompile Include="src\Hooks\GScreenHook.cpp" />
+    <ClCompile Include="src\Hooks\PointerExpireHook.cpp" />
+    <ClCompile Include="src\Hooks\SaveGameHook.cpp" />
+    <ClCompile Include="src\Kratos.cpp" />
+    <ClCompile Include="src\Misc\HappyMode.cpp" />
+    <ClCompile Include="src\Utilities\Anchor.cpp" />
+    <ClCompile Include="src\Utilities\AresAddressTable.cpp" />
+    <ClCompile Include="src\Utilities\AresHelper.cpp" />
+    <ClCompile Include="src\Utilities\Constructs.cpp" />
+    <ClCompile Include="src\Utilities\Debug.cpp" />
+    <ClCompile Include="src\Utilities\EnumFunctions.cpp" />
+    <ClCompile Include="src\Utilities\GeneralUtils.cpp" />
+    <ClCompile Include="src\Utilities\Patch.cpp" />
+    <ClCompile Include="src\Utilities\ShapeTextPrinter.cpp" />
+    <ClCompile Include="src\Utilities\Stream.cpp" />
+    <ClCompile Include="src\Utilities\Swizzle.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Common.h" />
+    <ClInclude Include="src\Common\EventSystems\EventSystem.h" />
+    <ClInclude Include="src\CRTExt.h" />
+    <ClInclude Include="src\Extension.h" />
+    <ClInclude Include="src\Kratos.h" />
+    <ClInclude Include="src\Misc\HappyMode.h" />
+    <ClInclude Include="src\Utilities\Anchor.h" />
+    <ClInclude Include="src\Utilities\AresFunctions.h" />
+    <ClInclude Include="src\Utilities\AresHelper.h" />
+    <ClInclude Include="src\Utilities\Concepts.h" />
+    <ClInclude Include="src\Utilities\Constructs.h" />
+    <ClInclude Include="src\Utilities\Container.h" />
+    <ClInclude Include="src\Utilities\Coroutine.h" />
+    <ClInclude Include="src\Utilities\Debug.h" />
+    <ClInclude Include="src\Utilities\Enum.h" />
+    <ClInclude Include="src\Utilities\Enumerable.h" />
+    <ClInclude Include="src\Utilities\EnumFunctions.h" />
+    <ClInclude Include="src\Utilities\GeneralUtils.h" />
+    <ClInclude Include="src\Utilities\Helpers.Alex.h" />
+    <ClInclude Include="src\Utilities\INIParser.h" />
+    <ClInclude Include="src\Utilities\Iterator.h" />
+    <ClInclude Include="src\Utilities\Macro.h" />
+    <ClInclude Include="src\Utilities\Parser.h" />
+    <ClInclude Include="src\Utilities\Patch.h" />
+    <ClInclude Include="src\Utilities\Savegame.h" />
+    <ClInclude Include="src\Utilities\SavegameDef.h" />
+    <ClInclude Include="src\Utilities\ShapeTextPrinter.h" />
+    <ClInclude Include="src\Utilities\Stream.h" />
+    <ClInclude Include="src\Utilities\Swizzle.h" />
+    <ClInclude Include="src\Utilities\Template.h" />
+    <ClInclude Include="src\Utilities\TemplateDef.h" />
+    <ClInclude Include="src\Version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\version.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{9D4304C5-853A-4261-910E-B63730F09222}</ProjectGuid>
+    <ProjectGuid>{5413a93f-29de-4c87-9dba-fc307f19a87e}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>KratosPP</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -53,7 +113,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\IntDir\</IntDir>
-    <IncludePath>$(SolutionDir)src\;$(SolutionDir)YRpp;$(SolutionDir)CryptoPP;$(SolutionDir)lib;$(VC_IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)src;$(SolutionDir)YRpp;$(SolutionDir)CryptoPP;$(SolutionDir)lib;$(VC_IncludePath);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>
@@ -72,7 +132,7 @@
       <ConformanceMode>true</ConformanceMode>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>DEBUG;SYR_VER=2;HAS_EXCEPTIONS=0;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0601;NTDDI_VERSION=0x06010000;%(PreprocessorDefinitions);%(AdditionalDefinitions);PHOBOS_DLL="$(ProjectName).dll"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DEBUG;SYR_VER=2;HAS_EXCEPTIONS=0;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0601;NTDDI_VERSION=0x06010000;%(PreprocessorDefinitions);%(AdditionalDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -115,7 +175,7 @@
       <ConformanceMode>true</ConformanceMode>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>IS_RELEASE_VER;SYR_VER=2;HAS_EXCEPTIONS=0;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0601;NTDDI_VERSION=0x06010000;%(PreprocessorDefinitions);%(AdditionalDefinitions);PHOBOS_DLL="$(ProjectName).dll"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IS_RELEASE_VER;SYR_VER=2;HAS_EXCEPTIONS=0;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0601;NTDDI_VERSION=0x06010000;%(PreprocessorDefinitions);%(AdditionalDefinitions)"</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -150,66 +210,6 @@
       <PreprocessorDefinitions>IS_RELEASE_VER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Common.h" />
-    <ClInclude Include="src\Common\EventSystems\EventSystem.h" />
-    <ClInclude Include="src\Extension.h" />
-    <ClInclude Include="src\Kratos.h" />
-    <ClInclude Include="src\Misc\HappyMode.h" />
-    <ClInclude Include="src\Version.h" />
-    <ClInclude Include="src\CRTExt.h" />
-    <ClInclude Include="src\Utilities\Anchor.h" />
-    <ClInclude Include="src\Utilities\AresFunctions.h" />
-    <ClInclude Include="src\Utilities\AresHelper.h" />
-    <ClInclude Include="src\Utilities\Concepts.h" />
-    <ClInclude Include="src\Utilities\Constructs.h" />
-    <ClInclude Include="src\Utilities\Container.h" />
-    <ClInclude Include="src\Utilities\Coroutine.h" />
-    <ClInclude Include="src\Utilities\Debug.h" />
-    <ClInclude Include="src\Utilities\Enum.h" />
-    <ClInclude Include="src\Utilities\Enumerable.h" />
-    <ClInclude Include="src\Utilities\EnumFunctions.h" />
-    <ClInclude Include="src\Utilities\GeneralUtils.h" />
-    <ClInclude Include="src\Utilities\Helpers.Alex.h" />
-    <ClInclude Include="src\Utilities\INIParser.h" />
-    <ClInclude Include="src\Utilities\Iterator.h" />
-    <ClInclude Include="src\Utilities\Macro.h" />
-    <ClInclude Include="src\Utilities\Parser.h" />
-    <ClInclude Include="src\Utilities\Patch.h" />
-    <ClInclude Include="src\Utilities\Savegame.h" />
-    <ClInclude Include="src\Utilities\SavegameDef.h" />
-    <ClInclude Include="src\Utilities\ShapeTextPrinter.h" />
-    <ClInclude Include="src\Utilities\Stream.h" />
-    <ClInclude Include="src\Utilities\Swizzle.h" />
-    <ClInclude Include="src\Utilities\Template.h" />
-    <ClInclude Include="src\Utilities\TemplateDef.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Common.cpp" />
-    <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
-    <ClCompile Include="src\Hooks\GeneralHook.cpp" />
-    <ClCompile Include="src\Hooks\GScreenHook.cpp" />
-    <ClCompile Include="src\Hooks\PointerExpireHook.cpp" />
-    <ClCompile Include="src\Hooks\SaveGameHook.cpp" />
-    <ClCompile Include="src\Kratos.cpp" />
-    <ClCompile Include="src\CRTExt.cpp" />
-    <ClCompile Include="src\Extension.cpp" />
-    <ClCompile Include="src\Misc\HappyMode.cpp" />
-    <ClCompile Include="src\Utilities\Anchor.cpp" />
-    <ClCompile Include="src\Utilities\AresAddressTable.cpp" />
-    <ClCompile Include="src\Utilities\AresHelper.cpp" />
-    <ClCompile Include="src\Utilities\Constructs.cpp" />
-    <ClCompile Include="src\Utilities\Debug.cpp" />
-    <ClCompile Include="src\Utilities\EnumFunctions.cpp" />
-    <ClCompile Include="src\Utilities\GeneralUtils.cpp" />
-    <ClCompile Include="src\Utilities\Patch.cpp" />
-    <ClCompile Include="src\Utilities\ShapeTextPrinter.cpp" />
-    <ClCompile Include="src\Utilities\Stream.cpp" />
-    <ClCompile Include="src\Utilities\Swizzle.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="src\version.rc" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>
