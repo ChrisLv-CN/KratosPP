@@ -1,5 +1,6 @@
 Release
 Debug
+output
 *.vcxproj.user
 *.vcxproj.filters
 *.sdf

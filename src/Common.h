@@ -3,6 +3,8 @@
 #include <Version.h>
 #include <Common/EventSystems/EventSystem.h>
 
+#include <sstream>
+
 #define CAN_USE_ARES 1
 
 class CCINIClass;
