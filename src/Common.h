@@ -3,13 +3,11 @@
 
 #include <Version.h>
 #include <Common/EventSystems/EventSystem.h>
+#include <Misc/HappyMode.h>
 
 #include <sstream>
 
 #define CAN_USE_ARES 1
-
-class CCINIClass;
-class AbstractClass;
 
 constexpr auto NONE_STR = "<none>";
 constexpr auto NONE_STR2 = "none";

@@ -12,11 +12,6 @@ public:
 	{
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, Kratos::SendActiveMessage);
 		EventSystems::Render.AddHandler(Events::SidebarRenderEvent, Kratos::DrawVersionText);
-		if (Kratos::EnableHappyMode())
-		{
-			EventSystems::Render.AddHandler(Events::GScreenRenderEvent, Kratos::DrawNotAllowed);
-			EventSystems::Logic.AddHandler(Events::LogicUpdateEvent, Kratos::HappyMode);
-		}
 	}
 };
 

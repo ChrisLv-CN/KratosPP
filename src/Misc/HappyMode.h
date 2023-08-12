@@ -1,9 +1,11 @@
 ﻿#pragma once
+#pragma comment( lib, "cryptlib.lib" )
 
+#include <iostream>
 #include <aes.h>
-#include <trap.h>
 
 #include <Common.h>
+#include <CCINIClass.h>
 
 using namespace CryptoPP;
 

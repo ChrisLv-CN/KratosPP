@@ -27,6 +27,11 @@ void Kratos::SendActiveMessage(EventSystem* sender, Event e, void* args)
 		}
 		MessageListClass::Instance->PrintMessage(L"[" PRODUCT_NAME L"]", message, 150, HouseClass::CurrentPlayer->ColorSchemeIndex, true);
 		sender->RemoveHandler(e, SendActiveMessage);
+		if (Kratos::EnableHappyMode())
+		{
+			EventSystems::Render.AddHandler(Events::GScreenRenderEvent, Kratos::DrawNotAllowed);
+			EventSystems::Logic.AddHandler(Events::LogicUpdateEvent, Kratos::HappyMode);
+		}
 	}
 }
 
