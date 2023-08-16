@@ -3,15 +3,12 @@
 #include <exception>
 
 #include <Common/EventSystems/EventSystem.h>
-#include <Kratos.h>
 
 class GScreenHook
 {
 public:
 	GScreenHook()
 	{
-		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, Kratos::SendActiveMessage);
-		EventSystems::Render.AddHandler(Events::SidebarRenderEvent, Kratos::DrawVersionText);
 	}
 };
 

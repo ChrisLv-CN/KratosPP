@@ -3,9 +3,6 @@
 
 #include <Version.h>
 #include <Common/EventSystems/EventSystem.h>
-#include <Misc/HappyMode.h>
-
-#include <sstream>
 
 #define CAN_USE_ARES 1
 
@@ -19,11 +16,6 @@ extern bool InChinese;
 class Common
 {
 public:
-	static void CmdLineParse(EventSystem* sender, Event e, void* args);
-
-	static void ExeRun(EventSystem* sender, Event e, void* args);
-	static void ExeTerminate(EventSystem* sender, Event e, void* args);
-
 	//variables
 	static HANDLE hInstance;
 
@@ -32,7 +24,10 @@ public:
 	static wchar_t wideBuffer[readLength];
 	static const char readDelims[4];
 
-	static const char* AppIconPath;
+	static void CmdLineParse(EventSystem* sender, Event e, void* args);
+
+	static void ExeRun(EventSystem* sender, Event e, void* args);
+	static void ExeTerminate(EventSystem* sender, Event e, void* args);
 
 #ifdef DEBUG
 	static bool DetachFromDebugger();

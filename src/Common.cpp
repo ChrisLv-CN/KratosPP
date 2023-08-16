@@ -20,14 +20,9 @@ char Common::readBuffer[Common::readLength];
 wchar_t Common::wideBuffer[Common::readLength];
 const char Common::readDelims[4] = ",";
 
-const char* Common::AppIconPath = nullptr;
-
 //void Common::CmdLineParse(char** ppArgs, int nNumArgs)
 void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 {
-	bool foundInheritance = false;
-	bool foundInclude = false;
-
 	auto const& argsArray = reinterpret_cast<void**>(args);
 	char** ppArgs = (char**)argsArray[0];
 	int nNumArgs = (int)argsArray[1];
@@ -37,58 +32,12 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 	{
 		const char* pArg = ppArgs[i];
 
-		if (_stricmp(pArg, "-Icon") == 0)
-		{
-			Common::AppIconPath = ppArgs[++i];
-		}
 #ifndef IS_RELEASE_VER
 		if (_stricmp(pArg, "-b=" STR(BUILD_NUMBER)) == 0)
 		{
-			HideWarning = true;
+			//HideWarning = true;
 		}
 #endif
-		if (_stricmp(pArg, "-Inheritance") == 0)
-		{
-			foundInheritance = true;
-		}
-		if (_stricmp(pArg, "-Include") == 0)
-		{
-			foundInclude = true;
-		}
-	}
-
-	if (foundInclude)
-	{
-		Patch::Apply_RAW(0x474200, // Apply CCINIClass_ReadCCFile1_DisableAres
-			{ 0x8B, 0xF1, 0x8D, 0x54, 0x24, 0x0C }
-		);
-
-		Patch::Apply_RAW(0x474314, // Apply CCINIClass_ReadCCFile2_DisableAres
-			{ 0x81, 0xC4, 0xA8, 0x00, 0x00, 0x00 }
-		);
-	}
-	else
-	{
-		Patch::Apply_RAW(0x474230, // Revert CCINIClass_Load_Inheritance
-			{ 0x8B, 0xE8, 0x88, 0x5E, 0x40 }
-		);
-	}
-
-	if (foundInheritance)
-	{
-		Patch::Apply_RAW(0x528A10, // Apply INIClass_GetString_DisableAres
-			{ 0x83, 0xEC, 0x0C, 0x33, 0xC0 }
-		);
-
-		Patch::Apply_RAW(0x526CC0, // Apply INIClass_GetKeyName_DisableAres
-			{ 0x8B, 0x54, 0x24, 0x04, 0x83, 0xEC, 0x0C }
-		);
-	}
-	else
-	{
-		Patch::Apply_RAW(0x528BAC, // Revert INIClass_GetString_Inheritance_NoEntry
-			{ 0x8B, 0x7C, 0x24, 0x2C, 0x33, 0xC0, 0x8B, 0x4C, 0x24, 0x28 }
-		);
 	}
 
 	if (InChinese)
@@ -113,7 +62,7 @@ void Common::ExeRun(EventSystem* sender, Event e, void* args)
 			MessageBoxW(NULL,
 				L"你可以去附加调试器了。\n\n"
 
-				L"按下OK继续运行尤里的复仇。",
+				L"按下 确定 继续运行尤里的复仇。",
 				L"调试信息", MB_OK);
 		}
 		else
@@ -126,7 +75,7 @@ void Common::ExeRun(EventSystem* sender, Event e, void* args)
 				L"then you can attach your own debugger. After this you should "
 				L"terminate Syringe.exe because it won't automatically exit when YR is closed.\n\n"
 
-				L"按下OK继续运行尤里的复仇。",
+				L"按下 确定 继续运行尤里的复仇。",
 				L"调试信息", MB_OK);
 		}
 	}
@@ -172,7 +121,6 @@ void Common::ExeRun(EventSystem* sender, Event e, void* args)
 	}
 
 #endif
-	AresHelper::Init();
 }
 
 void Common::ExeTerminate(EventSystem* sender, Event e, void* args)
@@ -180,8 +128,83 @@ void Common::ExeTerminate(EventSystem* sender, Event e, void* args)
 	Console::Release();
 }
 
-// =============================
-// hooks
+#ifdef DEBUG
+
+#pragma warning (disable : 4091)
+#pragma warning (disable : 4245)
+
+#include <Dbghelp.h>
+#include <tlhelp32.h>
+
+bool Common::DetachFromDebugger()
+{
+	auto GetDebuggerProcessId = [](DWORD dwSelfProcessId) -> DWORD
+	{
+		DWORD dwParentProcessId = -1;
+		HANDLE hSnapshot = CreateToolhelp32Snapshot(2, 0);
+		PROCESSENTRY32 pe32;
+		pe32.dwSize = sizeof(PROCESSENTRY32);
+		Process32First(hSnapshot, &pe32);
+		do
+		{
+			if (pe32.th32ProcessID == dwSelfProcessId)
+			{
+				dwParentProcessId = pe32.th32ParentProcessID;
+				break;
+			}
+		} while (Process32Next(hSnapshot, &pe32));
+		CloseHandle(hSnapshot);
+		return dwParentProcessId;
+	};
+
+	HMODULE hModule = LoadLibrary("ntdll.dll");
+	if (hModule != NULL)
+	{
+		auto const NtRemoveProcessDebug =
+			(NTSTATUS(__stdcall*)(HANDLE, HANDLE))GetProcAddress(hModule, "NtRemoveProcessDebug");
+		auto const NtSetInformationDebugObject =
+			(NTSTATUS(__stdcall*)(HANDLE, ULONG, PVOID, ULONG, PULONG))GetProcAddress(hModule, "NtSetInformationDebugObject");
+		auto const NtQueryInformationProcess =
+			(NTSTATUS(__stdcall*)(HANDLE, ULONG, PVOID, ULONG, PULONG))GetProcAddress(hModule, "NtQueryInformationProcess");
+		auto const NtClose =
+			(NTSTATUS(__stdcall*)(HANDLE))GetProcAddress(hModule, "NtClose");
+
+		HANDLE hDebug;
+		HANDLE hCurrentProcess = GetCurrentProcess();
+		NTSTATUS status = NtQueryInformationProcess(hCurrentProcess, 30, &hDebug, sizeof(HANDLE), 0);
+		if (0 <= status)
+		{
+			ULONG killProcessOnExit = FALSE;
+			status = NtSetInformationDebugObject(
+				hDebug,
+				1,
+				&killProcessOnExit,
+				sizeof(ULONG),
+				NULL
+			);
+			if (0 <= status)
+			{
+				const auto pid = GetDebuggerProcessId(GetProcessId(hCurrentProcess));
+				status = NtRemoveProcessDebug(hCurrentProcess, hDebug);
+				if (0 <= status)
+				{
+					HANDLE hDbgProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+					if (INVALID_HANDLE_VALUE != hDbgProcess)
+					{
+						BOOL ret = TerminateProcess(hDbgProcess, EXIT_SUCCESS);
+						CloseHandle(hDbgProcess);
+						return ret;
+					}
+				}
+			}
+			NtClose(hDebug);
+		}
+		FreeLibrary(hModule);
+	}
+
+	return false;
+}
+#endif
 
 bool __stdcall DllMain(HANDLE hInstance, DWORD dwReason, LPVOID v)
 {

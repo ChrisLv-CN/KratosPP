@@ -3,8 +3,6 @@
 #include <map>
 #include <list>
 
-#include <Utilities/Container.h>
-
 class EventSystem;
 class Event;
 
