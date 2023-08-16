@@ -23,6 +23,7 @@ const char Common::readDelims[4] = ",";
 //void Common::CmdLineParse(char** ppArgs, int nNumArgs)
 void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 {
+	/*
 	auto const& argsArray = reinterpret_cast<void**>(args);
 	char** ppArgs = (char**)argsArray[0];
 	int nNumArgs = (int)argsArray[1];
@@ -39,7 +40,7 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 		}
 #endif
 	}
-
+	*/
 	if (InChinese)
 	{
 		Debug::Log("初始化完成 版本: " PRODUCT_VERSION "\n");

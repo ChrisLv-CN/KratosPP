@@ -48,7 +48,7 @@ void Kratos::DrawVersionText(EventSystem* sender, Event e, void* args)
 		RectangleStruct textRect = Drawing::GetTextDimensions(_versionText.text, { 0, 0 }, 0, 2, 0);
 		RectangleStruct sidebarRect = DSurface::Sidebar->GetRect();
 		int x = sidebarRect.Width / 2 - textRect.Width / 2;
-		int y = sidebarRect.Height - textRect.Height - textRect.Height / 2;
+		int y = sidebarRect.Height - textRect.Height - textRect.Height / 4;
 		_versionText.pos = { x, y };
 		_versionText.color = Drawing::RGB_To_Int(Drawing::TooltipColor);
 	}
