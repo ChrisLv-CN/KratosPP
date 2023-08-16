@@ -112,14 +112,14 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>output\$(Configuration)\</OutDir>
     <IntDir>output\$(Configuration)\IntDir\</IntDir>
-    <IncludePath>$(SolutionDir)src;$(SolutionDir)YRpp;$(SolutionDir)CryptoPP;$(SolutionDir)lib;$(VC_IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)src;$(SolutionDir)YRpp;$(SolutionDir)include;$(SolutionDir)lib;$(VC_IncludePath);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>
     <LinkIncremental>false</LinkIncremental>
     <OutDir>output\$(Configuration)\</OutDir>
     <IntDir>output\$(Configuration)\IntDir\</IntDir>
-    <IncludePath>$(SolutionDir)src;$(SolutionDir)YRpp;$(SolutionDir)CryptoPP;$(SolutionDir)lib;$(VC_IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)src;$(SolutionDir)YRpp;$(SolutionDir)include;$(SolutionDir)lib;$(VC_IncludePath);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
