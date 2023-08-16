@@ -10,8 +10,6 @@
 #include <Common.h>
 #include <Common/EventSystems/EventSystem.h>
 
-#include <KratosLib.h>
-
 class Kratos
 {
 public:

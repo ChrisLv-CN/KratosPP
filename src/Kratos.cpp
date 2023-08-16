@@ -10,6 +10,7 @@
 #include <string>
 
 #include <Kratos.h>
+#include <KratosLib.h>
 
 void Kratos::ExeRun(EventSystem* sender, Event e, void* args)
 {
