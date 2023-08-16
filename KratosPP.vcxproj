@@ -162,8 +162,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /i /D /y "$(SolutionDir)output\$(Configuration)\*.lib" "$(SolutionDir)output\*.lib"
+xcopy /i /D /y "$(SolutionDir)output\$(Configuration)\*.pdb" "$(SolutionDir)output\*.pdb"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -206,7 +206,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command />
+      <Command>xcopy /i /D /y "$(SolutionDir)output\$(Configuration)\*.lib" "$(SolutionDir)output\*.lib"
+xcopy /i /D /y "$(SolutionDir)output\$(Configuration)\*.pdb" "$(SolutionDir)output\*.pdb"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

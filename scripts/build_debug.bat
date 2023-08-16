@@ -9,4 +9,4 @@ call run_msbuild /maxCpuCount /consoleloggerparameters:NoSummary /property:Confi
 
 cd %~dp0
 
-call copy_debug
+call run_yr
