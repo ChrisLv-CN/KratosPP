@@ -7,6 +7,3 @@ cd /D "%~dp0"
 
 call run_msbuild /maxCpuCount /consoleloggerparameters:NoSummary /property:Configuration=Release
 
-cd %~dp0
-
-call copy_release

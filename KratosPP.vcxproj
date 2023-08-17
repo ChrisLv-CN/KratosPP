@@ -162,7 +162,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>call $(SolutionDir)\scripts\copy_debug
+      <Command>call $(SolutionDir)scripts\copy_debug
+call $(SolutionDir)scripts\run_yr
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -206,7 +207,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>call $(SolutionDir)\scripts\copy_release
+      <Command>call $(SolutionDir)scripts\copy_release
+call $(SolutionDir)scripts\run_yr
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
