@@ -1,10 +1,14 @@
 #include "GameObject.h"
 
-
-class X :Component
+GameObject::GameObject() : Component() { }
+GameObject::GameObject(std::string name) : Component()
 {
-public :
-	void OOXX() {
-		GameObject* x = _GameObject->GetComponent<GameObject>();
-	};
-};
+	this->Name = name;
+}
+
+GameObject* GameObject::GetAwaked()
+{
+	EnsureAwaked();
+	return this;
+}
+

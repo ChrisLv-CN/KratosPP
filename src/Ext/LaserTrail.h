@@ -4,10 +4,10 @@
 #include <TechnoClass.h>
 #include <LaserDrawClass.h>
 
-#include <Common/Components/Component.h>
+#include <Common/Components/ScriptComponent.h>
 #include <Extension/GOExtension.h>
 
-class LaserTrail : public Component
+class LaserTrail : public ScriptComponent
 {
 private:
 	TechnoClass* pOwner = nullptr;

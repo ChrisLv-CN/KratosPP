@@ -17,6 +17,7 @@
     <ClCompile Include="src\Common\Components\GameObject.cpp" />
     <ClCompile Include="src\Common.cpp" />
     <ClCompile Include="src\Common\Components\Component.cpp" />
+    <ClCompile Include="src\Common\Components\ScriptComponent.cpp" />
     <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
     <ClCompile Include="src\CRTExt.cpp" />
     <ClCompile Include="src\Extension.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="src\Common\Components\GameObject.h" />
     <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\Common\Components\Component.h" />
+    <ClInclude Include="src\Common\Components\ScriptComponent.h" />
     <ClInclude Include="src\Common\EventSystems\EventSystem.h" />
     <ClInclude Include="src\CRTExt.h" />
     <ClInclude Include="src\Extension.h" />

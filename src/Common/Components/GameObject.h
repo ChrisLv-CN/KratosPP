@@ -3,19 +3,15 @@
 #include <list>
 #include <vector>
 
-#include <Common/Components/Component.h>
+#include "Component.h"
 
 class GameObject : public Component
 {
 public:
-	GameObject() : Component()
-	{
+	GameObject();
+	GameObject(std::string name);
 
-	}
-	GameObject(std::string name) : Component()
-	{
-		this->Name = name;
-	}
+	GameObject* GetAwaked();
 private:
 	//std::vector<Component*> _unstartedComponents;
 };

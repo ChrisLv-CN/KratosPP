@@ -61,7 +61,7 @@ DEFINE_HOOK(0x6F9E50, TechnoClass_AI, 0x5)
 
 	// Do not search this up again in any functions called here because it is costly for performance - Starkku
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject.Foreach([](Component* c) { if(c)c->OnUpdate(); });
+	pExt->_GameObject->Foreach([](Component* c) { if(c)c->OnUpdate(); });
 
 	return 0;
 }

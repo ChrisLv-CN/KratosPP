@@ -22,6 +22,7 @@ public:
 	/// OnStart called on the frame
 	/// </summary>
 	virtual void Start() { };
+
 	virtual void OnUpdate() { };
 	virtual void OnLateUpdate() { };
 	virtual void OnWarpUpdate() { };
@@ -62,11 +63,24 @@ public:
 
 	std::vector<Component*> GetComponentsInChildren();
 
+	/// <summary>
+	/// execute action for each components in root (include itself)
+	/// </summary>
+	/// <param name="action"></param>
 	void Foreach(ComponentAction action);
 	void ForeachChild(ComponentAction action);
 	
 	static void ForeachComponents(std::vector<Component*> components, ComponentAction action);
+	/// <summary>
+	/// execute action for each components in root (include root)
+	/// </summary>
+	/// <param name="root">the root component</param>
+	/// <param name="action">the action to executed</param>
 	static void ForeachComponents(Component* root, ComponentAction action);
+
+	void EnsureAwaked();
+	void EnsureStarted();
+	void Destroy();
 //protected:
 	void AddComponent(Component* component);
 	void RemoveComponent(Component* component);
