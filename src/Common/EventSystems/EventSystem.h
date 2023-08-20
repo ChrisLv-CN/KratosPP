@@ -42,7 +42,7 @@ public:
     void RemoveHandler(Event e, HandleEvent func);
 
     template<typename T, typename F>
-    void RemoveHandler(Event e, T* _obj, F* func)
+    void RemoveHandler(Event e, T* _obj, F func)
     {
         _handlers[e] -= newDelegate(_obj, func);
     }

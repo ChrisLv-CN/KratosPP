@@ -14,11 +14,6 @@ Component* Component::GetRoot()
 	return _parent->GetRoot();
 }
 
-GameObject* Component::GetGameObject()
-{
-	return (GameObject*)Root;
-}
-
 void Component::AttachToComponent(Component component)
 {
 	if (_parent == &component)
@@ -142,6 +137,7 @@ void Component::EnsureStarted()
 
 void Component::Destroy()
 {
+	OnDestroy();
 	for (Component* c : _children)
 	{
 		c->Destroy();

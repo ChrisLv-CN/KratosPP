@@ -21,25 +21,10 @@ void EventSystem::AddHandler(Event e, HandleEvent func)
     Debug::Log(log, this->Name, e.Name, typeid(&func).name());
 }
 
-/*
-template<typename T, typename F>
-void EventSystem::AddHandler(Event e, T* _obj, F func)
-{
-    this->_handlers[e] += newDelegate(_obj, *func);
-}
-*/
 void EventSystem::RemoveHandler(Event e, HandleEvent func)
 {
     this->_handlers[e] -= newDelegate(func);
 }
-
-/*
-template<typename T, typename F>
-inline void EventSystem::RemoveHandler(Event e, T* _obj, F func)
-{
-    this->_handlers[e] -= newDelegate(_obj, *func);
-}
-*/
 
 void EventSystem::Broadcast(Event e, void* args)
 {

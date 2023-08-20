@@ -3,42 +3,10 @@
 #include <Utilities/AresFunctions.h>
 #include <Utilities/EnumFunctions.h>
 
-void TechnoExt::AddGlobalScripts(std::list<ScriptComponent*>* globalScripts, TechnoClass* OwnerObject)
+void TechnoExt::AddGlobalScripts(std::list<Component*>* globalScripts, ExtData* ext)
 {
-	LaserTrail* _LaserTrail = new LaserTrail(OwnerObject);
-	globalScripts->push_back(_LaserTrail);
+	LaserTrail* pLaserTrail = GameCreate<LaserTrail>(ext);
+	globalScripts->push_back(pLaserTrail);
 }
-
-/*
-template<> TechnoExt::ExtData::ExtData(TechnoClass* OwnerObject) : Extension(OwnerObject)
-{
-
-}
-template<> TechnoExt::ExtData::~ExtData()
-{
-	// auto const pTypeExt = this->TypeExtData;
-	
-}
-
-template<> void TechnoExt::ExtData::InvalidatePointer(void* ptr, bool bRemoved)
-{
-
-}
-
-template<> void TechnoExt::ExtData::LoadFromStream(PhobosStreamReader& Stm)
-{
-
-}
-
-template<> void TechnoExt::ExtData::SaveToStream(PhobosStreamWriter& Stm)
-{
-
-}
-*/
-// =============================
-// container
-
-//template<> TechnoExt::ExtContainer::ExtContainer() : Container("TechnoClass") { }
-//template<> TechnoExt::ExtContainer::~ExtContainer() = default;
 
 TechnoExt::ExtContainer TechnoExt::ExtMap;

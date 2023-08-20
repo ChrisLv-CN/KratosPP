@@ -6,18 +6,21 @@
 #include <vector>
 
 class Component;
-class GameObject;
 
 typedef void (*ComponentAction)(Component*);
 
-class ComponentBase
+class IComponent
 {
 public:
+	IComponent() { };
+	virtual ~IComponent() { };
+
 	/// <summary>
 	/// Awake is called when an enabled instance is being created.
 	/// TechnoExt::ExtData() call
 	/// </summary>
 	virtual void Awake() { };
+
 	/// <summary>
 	/// OnStart called on the frame
 	/// </summary>
@@ -26,8 +29,10 @@ public:
 	virtual void OnUpdate() { };
 	virtual void OnLateUpdate() { };
 	virtual void OnWarpUpdate() { };
-	virtual void OnRender() { };
-	virtual void OnRenderEnd() { };
+
+	/// <summary>
+	/// OnDestroy is called when enabled instance is delete.
+	/// </summary>
 	virtual void OnDestroy() { };
 
 	template<typename T>
@@ -40,7 +45,7 @@ public:
 	void LoadFromStream(T& stream) { };
 };
 
-class Component : public ComponentBase
+class Component : public IComponent
 {
 public:
 	std::string Name;
@@ -48,11 +53,9 @@ public:
 
 	__declspec(property(get = GetParent)) Component* Parent;
 	__declspec(property(get = GetRoot)) Component* Root;
-	__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
 	Component* GetParent();
 	Component* GetRoot();
-	GameObject* GetGameObject();
 
 	void AttachToComponent(Component component);
 	void DetachFromParent();
