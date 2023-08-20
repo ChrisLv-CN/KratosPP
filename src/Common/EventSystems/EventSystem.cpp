@@ -16,55 +16,34 @@ EventSystem::EventSystem(const char* name)
 
 void EventSystem::AddHandler(Event e, HandleEvent func)
 {
-    EventHandler h{func, func};
-    this->AddHandler(e, h);
-}
-
-void EventSystem::AddHandler(Event e, EventHandler handler)
-{
-    this->_handlers[e].push_back(handler);
+    this->_handlers[e] += newDelegate(func);
     const char* log = "Event [%s]%s add handler: %s\n";
-    Debug::Log(log, this->Name, e.Name, typeid(&handler.func).name());
+    Debug::Log(log, this->Name, e.Name, typeid(&func).name());
 }
 
+/*
+template<typename T, typename F>
+void EventSystem::AddHandler(Event e, T* _obj, F func)
+{
+    this->_handlers[e] += newDelegate(_obj, *func);
+}
+*/
 void EventSystem::RemoveHandler(Event e, HandleEvent func)
 {
-    EventHandler h{ func, func };
-    this->RemoveHandler(e, h);
+    this->_handlers[e] -= newDelegate(func);
 }
 
-void EventSystem::RemoveHandler(Event e, EventHandler handler)
+/*
+template<typename T, typename F>
+inline void EventSystem::RemoveHandler(Event e, T* _obj, F func)
 {
-    auto it = this->_handlers.find(e);
-    if (it != this->_handlers.end())
-    {
-        for (auto ite = it->second.begin(); ite != it->second.end();)
-        {
-            if (ite->_this == handler._this && ite->func == handler.func)
-            {
-                ite = it->second.erase(ite);
-                const char* log = "Event [%s]%s remove handler: %s";
-                Debug::Log(log, this->Name, e.Name, typeid(&handler.func).name());
-            }
-            else
-            {
-                ++ite;
-            }
-        }
-    }
+    this->_handlers[e] -= newDelegate(_obj, *func);
 }
-
+*/
 
 void EventSystem::Broadcast(Event e, void* args)
 {
-    auto it = this->_handlers.find(e);
-    if (it != this->_handlers.end())
-    {
-        for (auto ite = it->second.begin(); ite != it->second.end(); ++ite)
-        {
-            ite->func(this, e, args);
-        }
-    }
+    this->_handlers[e](this, e, args);
 }
 
 void* EventArgsLate = (void*)true;

@@ -1,7 +1,10 @@
 ﻿#pragma once
+#include "MyDelegate.h"
 
 #include <map>
 #include <list>
+
+using namespace Delegate;
 
 class EventSystem;
 class Event;
@@ -10,13 +13,6 @@ extern void* EventArgsLate;
 extern void* EventArgsEmpty;
 
 typedef void (*HandleEvent)(EventSystem*, Event, void*);
-
-// 订阅者
-struct EventHandler
-{
-    void* _this;
-    HandleEvent func;
-};
 
 // 事件类型
 class Event
@@ -35,17 +31,27 @@ class EventSystem
 public:
     EventSystem(const char* name);
 
-
     void AddHandler(Event e, HandleEvent func);
-    void AddHandler(Event e, EventHandler handler);
+
+    template<typename T, typename F>
+    void AddHandler(Event e, T* _obj, F func)
+    {
+        _handlers[e] += newDelegate(_obj, func);
+    }
+
     void RemoveHandler(Event e, HandleEvent func);
-    void RemoveHandler(Event e, EventHandler handler);
+
+    template<typename T, typename F>
+    void RemoveHandler(Event e, T* _obj, F* func)
+    {
+        _handlers[e] -= newDelegate(_obj, func);
+    }
 
     void Broadcast(Event e, void* args = EventArgsEmpty);
 
     const char* Name;
 private:
-    std::map<Event, std::list<EventHandler>> _handlers;
+    std::map<Event, CMultiDelegate<void, EventSystem*, Event, void*>> _handlers;
 };
 
 
