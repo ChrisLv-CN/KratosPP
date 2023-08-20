@@ -3,6 +3,7 @@
 #include <Extension.h>
 #include <TechnoClass.h>
 #include <LaserDrawClass.h>
+#include <Utilities/Debug.h>
 
 #include <Common/Components/ScriptComponent.h>
 #include <Extension/GOExtension.h>
@@ -23,7 +24,6 @@ public:
 
 	virtual void OnUpdate() override
 	{
-
 		CoordStruct sourcePos = pOwner->GetCoords();
 		CoordStruct targetPos = sourcePos + CoordStruct(1024, 0, 0);
 		LaserDrawClass* pLaser = GameCreate<LaserDrawClass>(
@@ -34,7 +34,6 @@ public:
 		pLaser->Thickness = 5;
 		pLaser->IsHouseColor = true;
 		pLaser->IsSupported = true;
-
 	}
 };
 

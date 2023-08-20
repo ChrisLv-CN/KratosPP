@@ -2,13 +2,13 @@
 
 // 不可以在cpp里定义，要在h里声明带定义，否则会报找不到符号
 
+
 /*
 template<typename TBase, typename TExt>
-GOExtension<TBase, TExt>::ExtData::ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
+inline GOExtension<TBase, TExt>::ExtData::ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
 {
 
 }
-
 // =============================
 // load / save
 

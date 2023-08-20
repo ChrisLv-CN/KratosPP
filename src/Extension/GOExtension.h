@@ -23,12 +23,13 @@ public:
 	{
 	public:
 		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
-			, _LaserTrail(OwnerObject)
 		{
 			m_GameObject = (goName);
+			// Search and instantiate global script objects
+			LaserTrail* _LaserTrail = new LaserTrail(OwnerObject);
+			m_GlobalScripts.push_back(_LaserTrail);
 
-			std::list<ScriptComponent*> ss{ &_LaserTrail };
-			CreateScriptable(ss);
+			CreateScriptable(nullptr);
 		}
 
 		~ExtData() override
@@ -54,7 +55,7 @@ public:
 			return m_GameObject.GetAwaked();
 		}
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
-		LaserTrail _LaserTrail;
+
 	private:
 
 		template <typename T>
@@ -70,15 +71,19 @@ public:
 
 		//----------------------
 		// Scripts
-		void CreateScriptable(std::list<ScriptComponent*> scripts)
+		void CreateScriptable(std::list<ScriptComponent*>* scripts)
 		{
 			if (m_ScriptsCreated)
 			{
 				return;
 			}
 			auto buffer = TakeBuffer();
-			// scripts == null ? _globalScripts : _globalScripts.Concat(scripts);
-			for (ScriptComponent* s : scripts)
+			if (scripts)
+			{
+				m_GlobalScripts.merge(*scripts);
+			}
+			scripts = &m_GlobalScripts;
+			for (ScriptComponent* s : *scripts)
 			{
 				buffer.push_back(s);
 			}
@@ -102,17 +107,17 @@ public:
 			{
 				m_ScriptBuffer.push(std::list<ScriptComponent*>());
 			}
-			auto res = m_ScriptBuffer.top();
+			std::list<ScriptComponent*> res = m_ScriptBuffer.top();
 			m_ScriptBuffer.pop();
 			return res;
 		}
 
-		static void GiveBackBuffer(std::list<ScriptComponent*> buffer)
+		static void GiveBackBuffer(std::list<ScriptComponent*>& buffer)
 		{
 			buffer.clear();
 			m_ScriptBuffer.push(buffer);
 		}
-
+		inline static std::list<ScriptComponent*> m_GlobalScripts{};
 		inline static std::stack<std::list<ScriptComponent*>> m_ScriptBuffer{};
 	};
 
