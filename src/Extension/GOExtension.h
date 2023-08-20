@@ -25,9 +25,8 @@ public:
 		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
 		{
 			m_GameObject = (goName);
-			// Search and instantiate global script objects
-			LaserTrail* _LaserTrail = new LaserTrail(OwnerObject);
-			m_GlobalScripts.push_back(_LaserTrail);
+			// Search and instantiate global script objects in TechnoExt
+			TExt::AddGlobalScripts(&m_GlobalScripts, OwnerObject);
 
 			CreateScriptable(nullptr);
 		}
@@ -50,6 +49,8 @@ public:
 			this->Serialize(Stm);
 		};
 
+		//----------------------
+		// GameObject
 		GameObject* GetGameObject()
 		{
 			return m_GameObject.GetAwaked();
@@ -89,7 +90,7 @@ public:
 			}
 			for (ScriptComponent* s : buffer)
 			{
-				m_GameObject.AddComponent(s);
+				TExt::ExtData::_GameObject->AddComponent(s);
 			}
 			for (ScriptComponent* s : buffer)
 			{
@@ -100,25 +101,7 @@ public:
 		}
 
 		bool m_ScriptsCreated;
-
-		static std::list<ScriptComponent*> TakeBuffer()
-		{
-			if (m_ScriptBuffer.empty())
-			{
-				m_ScriptBuffer.push(std::list<ScriptComponent*>());
-			}
-			std::list<ScriptComponent*> res = m_ScriptBuffer.top();
-			m_ScriptBuffer.pop();
-			return res;
-		}
-
-		static void GiveBackBuffer(std::list<ScriptComponent*>& buffer)
-		{
-			buffer.clear();
-			m_ScriptBuffer.push(buffer);
-		}
-		inline static std::list<ScriptComponent*> m_GlobalScripts{};
-		inline static std::stack<std::list<ScriptComponent*>> m_ScriptBuffer{};
+		std::list<ScriptComponent*> m_GlobalScripts{};
 	};
 
 	class ExtContainer : public Container<TExt>
@@ -128,4 +111,25 @@ public:
 		{ }
 		~ExtContainer() = default;
 	};
+
+
+	//----------------------
+	// Scripts Helper
+	static std::list<ScriptComponent*> TakeBuffer()
+	{
+		if (m_ScriptBuffer.empty())
+		{
+			m_ScriptBuffer.push(std::list<ScriptComponent*>());
+		}
+		std::list<ScriptComponent*> res = m_ScriptBuffer.top();
+		m_ScriptBuffer.pop();
+		return res;
+	}
+
+	static void GiveBackBuffer(std::list<ScriptComponent*>& buffer)
+	{
+		buffer.clear();
+		m_ScriptBuffer.push(buffer);
+	}
+	inline static std::stack<std::list<ScriptComponent*>> m_ScriptBuffer{};
 };

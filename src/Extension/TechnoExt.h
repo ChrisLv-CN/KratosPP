@@ -11,5 +11,7 @@ public:
 	static constexpr DWORD Canary = 0x55555555;
 	static constexpr size_t ExtPointerOffset = 0x34C;
 
+	static void AddGlobalScripts(std::list<ScriptComponent*>* globalScripts, TechnoClass* OwnerObject);
+
 	static ExtContainer ExtMap;
 };

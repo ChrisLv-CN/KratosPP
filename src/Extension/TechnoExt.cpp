@@ -3,6 +3,12 @@
 #include <Utilities/AresFunctions.h>
 #include <Utilities/EnumFunctions.h>
 
+void TechnoExt::AddGlobalScripts(std::list<ScriptComponent*>* globalScripts, TechnoClass* OwnerObject)
+{
+	LaserTrail* _LaserTrail = new LaserTrail(OwnerObject);
+	globalScripts->push_back(_LaserTrail);
+}
+
 /*
 template<> TechnoExt::ExtData::ExtData(TechnoClass* OwnerObject) : Extension(OwnerObject)
 {

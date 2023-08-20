@@ -22,13 +22,21 @@ public:
 		pOwner = OwnerObject;
 	}
 
+	ColorStruct laserColor{ 0,255,0 };
+	int i = 0;
+
 	virtual void OnUpdate() override
 	{
+		if (pOwner->IsSelected)
+		{
+			laserColor = { 0, 0, 255 };
+			i++;
+		}
 		CoordStruct sourcePos = pOwner->GetCoords();
 		CoordStruct targetPos = sourcePos + CoordStruct(1024, 0, 0);
 		LaserDrawClass* pLaser = GameCreate<LaserDrawClass>(
 			sourcePos, targetPos,
-			ColorStruct{ 255, 0,0 }, ColorStruct{ 0, 0, 0 }, ColorStruct{ 0, 0, 0 },
+			laserColor, ColorStruct{ 0, 0, 0 }, ColorStruct{ 0, 0, 0 },
 			15);
 
 		pLaser->Thickness = 5;
