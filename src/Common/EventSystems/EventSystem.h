@@ -25,7 +25,6 @@ public:
     Event(const char* Name, const char* Dest);
     auto operator <=>(const Event&) const = default;
 
-private:
     const char* Name;
     const char* Dest;
 };
@@ -34,6 +33,9 @@ private:
 class EventSystem
 {
 public:
+    EventSystem(const char* name);
+
+
     void AddHandler(Event e, HandleEvent func);
     void AddHandler(Event e, EventHandler handler);
     void RemoveHandler(Event e, HandleEvent func);
@@ -41,6 +43,7 @@ public:
 
     void Broadcast(Event e, void* args = EventArgsEmpty);
 
+    const char* Name;
 private:
     std::map<Event, std::list<EventHandler>> _handlers;
 };

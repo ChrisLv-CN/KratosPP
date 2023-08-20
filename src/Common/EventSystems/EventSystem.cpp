@@ -1,9 +1,17 @@
-﻿#include <Common/EventSystems/EventSystem.h>
+﻿#include <typeinfo>
+
+#include <Common/EventSystems/EventSystem.h>
+#include <Utilities/Debug.h>
 
 Event::Event(const char* Name, const char* Dest)
 {
     this->Name = Name;
     this->Dest = Dest;
+}
+
+EventSystem::EventSystem(const char* name)
+{
+    this->Name = name;
 }
 
 void EventSystem::AddHandler(Event e, HandleEvent func)
@@ -15,6 +23,8 @@ void EventSystem::AddHandler(Event e, HandleEvent func)
 void EventSystem::AddHandler(Event e, EventHandler handler)
 {
     this->_handlers[e].push_back(handler);
+    const char* log = "Event [%s]%s add handler: %s\n";
+    Debug::Log(log, this->Name, e.Name, typeid(&handler.func).name());
 }
 
 void EventSystem::RemoveHandler(Event e, HandleEvent func)
@@ -33,6 +43,8 @@ void EventSystem::RemoveHandler(Event e, EventHandler handler)
             if (ite->_this == handler._this && ite->func == handler.func)
             {
                 ite = it->second.erase(ite);
+                const char* log = "Event [%s]%s remove handler: %s";
+                Debug::Log(log, this->Name, e.Name, typeid(&handler.func).name());
             }
             else
             {
@@ -59,10 +71,10 @@ void* EventArgsLate = (void*)true;
 void* EventArgsEmpty = nullptr;
 
 // 事件管理器
-EventSystem EventSystems::General; // 全局事件
-EventSystem EventSystems::Render; // 单位渲染事件
-EventSystem EventSystems::Logic; // 单位逻辑事件
-EventSystem EventSystems::SaveLoad; // 存档事件
+EventSystem EventSystems::General("General"); // 全局事件
+EventSystem EventSystems::Render("Render"); // 单位渲染事件
+EventSystem EventSystems::Logic("Logic"); // 单位逻辑事件
+EventSystem EventSystems::SaveLoad("SaveLoad"); // 存档事件
 
 // 程序启动事件
 Event Events::ExeRun = Event("ExeRun", "Raised when YR run");

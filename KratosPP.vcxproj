@@ -14,15 +14,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Common\Components\GameObject.cpp" />
     <ClCompile Include="src\Common.cpp" />
+    <ClCompile Include="src\Common\Components\Component.cpp" />
     <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
     <ClCompile Include="src\CRTExt.cpp" />
     <ClCompile Include="src\Extension.cpp" />
+    <ClCompile Include="src\Extension\GOExtension.cpp" />
+    <ClCompile Include="src\Extension\TechnoExt.cpp" />
+    <ClCompile Include="src\Extension\TechnoTypeExt.cpp" />
+    <ClCompile Include="src\Ext\LaserTrail.cpp" />
     <ClCompile Include="src\Hooks\GeneralHook.cpp" />
     <ClCompile Include="src\Hooks\GScreenHook.cpp" />
     <ClCompile Include="src\Hooks\KratosHook.cpp" />
     <ClCompile Include="src\Hooks\PointerExpireHook.cpp" />
     <ClCompile Include="src\Hooks\SaveGameHook.cpp" />
+    <ClCompile Include="src\Hooks\TechnoExtHook.cpp" />
+    <ClCompile Include="src\Hooks\TechnoTypeExtHook.cpp" />
     <ClCompile Include="src\Kratos.cpp" />
     <ClCompile Include="src\Utilities\Anchor.cpp" />
     <ClCompile Include="src\Utilities\AresAddressTable.cpp" />
@@ -37,10 +45,16 @@
     <ClCompile Include="src\Utilities\Swizzle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Common\Components\GameObject.h" />
     <ClInclude Include="src\Common.h" />
+    <ClInclude Include="src\Common\Components\Component.h" />
     <ClInclude Include="src\Common\EventSystems\EventSystem.h" />
     <ClInclude Include="src\CRTExt.h" />
     <ClInclude Include="src\Extension.h" />
+    <ClInclude Include="src\Extension\GOExtension.h" />
+    <ClInclude Include="src\Extension\TechnoExt.h" />
+    <ClInclude Include="src\Extension\TechnoTypeExt.h" />
+    <ClInclude Include="src\Ext\LaserTrail.h" />
     <ClInclude Include="src\Kratos.h" />
     <ClInclude Include="src\Utilities\Anchor.h" />
     <ClInclude Include="src\Utilities\AresFunctions.h" />
