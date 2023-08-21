@@ -1,8 +1,9 @@
 ﻿#pragma once
-#include "MyDelegate.h"
 
 #include <map>
 #include <list>
+
+#include <Common/MyDelegate.h>
 
 using namespace Delegate;
 

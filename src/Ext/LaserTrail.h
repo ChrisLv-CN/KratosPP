@@ -23,7 +23,6 @@ public:
 	{
 		id++;
 		i = id;
-		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &LaserTrail::DrawINFO);
 	}
 
 	virtual void OnDestroy() override
@@ -44,6 +43,11 @@ public:
 	}
 
 	ColorStruct laserColor{ 0,255,0 };
+
+	virtual void Awake() override
+	{
+		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &LaserTrail::DrawINFO);
+	}
 
 	virtual void OnUpdate() override
 	{

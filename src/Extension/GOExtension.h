@@ -23,16 +23,14 @@ public:
 	public:
 		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
 		{
-			m_GameObject = (goName);
-			// Search and instantiate global script objects in TechnoExt
-			TExt::AddGlobalScripts(&m_GlobalScripts, this);
-
-			CreateScriptable(nullptr);
+			m_GameObject = new GameObject(goName);
+			m_GameObject->_OnAwake += newDelegate(this, &ExtData::OnAwake);
 		}
 
 		~ExtData() override
 		{
-			m_GameObject.Destroy();
+			m_GameObject->Destroy();
+			delete m_GameObject;
 		};
 
 		virtual void InvalidatePointer(void* ptr, bool bRemoved) override { };
@@ -52,7 +50,7 @@ public:
 		// GameObject
 		GameObject* GetGameObject()
 		{
-			return m_GameObject.GetAwaked();
+			return m_GameObject->GetAwaked();
 		}
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
@@ -67,10 +65,22 @@ public:
 		//----------------------
 		// GameObject
 		std::string goName = typeid(TExt).name();
-		GameObject m_GameObject;
+		GameObject* m_GameObject;
 
 		//----------------------
 		// Scripts
+		
+		/// <summary>
+		///  call by GameObject _OnAwake Event
+		/// </summary>
+		void OnAwake()
+		{
+			// Search and instantiate global script objects in TechnoExt
+			TExt::AddGlobalScripts(&m_GlobalScripts, this);
+			// initialize values
+			CreateScriptable(nullptr);
+		}
+
 		void CreateScriptable(std::list<Component*>* scripts)
 		{
 			if (m_ScriptsCreated)
@@ -99,7 +109,7 @@ public:
 			m_ScriptsCreated = true;
 		}
 
-		bool m_ScriptsCreated;
+		bool m_ScriptsCreated = false;
 		std::list<Component*> m_GlobalScripts{};
 	};
 
