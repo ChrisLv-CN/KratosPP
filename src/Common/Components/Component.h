@@ -89,8 +89,8 @@ public:
 	void RemoveComponent(Component* component);
 private:
 	Component* _parent;
-	std::vector<Component*> _children;
-	bool _awaked;
-	bool _started;
+	std::vector<Component*> _children{};
+	bool _awaked = false;
+	bool _started = false;
 };
 
