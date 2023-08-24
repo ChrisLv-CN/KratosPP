@@ -5,9 +5,9 @@
 #include <algorithm>
 #include <vector>
 
-class Component;
+#include <Utilities/Stream.h>
 
-typedef void (*ComponentAction)(Component*);
+class Component;
 
 class IComponent
 {
@@ -38,11 +38,15 @@ public:
 	template<typename T>
 	void Serialize(T& stream) { };
 
-	template<typename T>
-	void SaveToStream(T& stream) { };
+	virtual void LoadFromStream(ExStreamReader& stream)
+	{
+		this->Serialize(stream);
+	};
 
-	template<typename T>
-	void LoadFromStream(T& stream) { };
+	virtual void SaveToStream(ExStreamWriter& stream)
+	{
+		this->Serialize(stream);
+	};
 };
 
 class Component : public IComponent
@@ -70,21 +74,43 @@ public:
 	/// execute action for each components in root (include itself)
 	/// </summary>
 	/// <param name="action"></param>
-	void Foreach(ComponentAction action);
-	void ForeachChild(ComponentAction action);
+	template<typename T>
+	void Foreach(T action)
+	{
+		ForeachComponents(this, action);
+	}
+
+	template<typename T>
+	void ForeachChild(T action)
+	{
+		ForeachComponents(GetComponentsInChildren(), action);
+	}
 	
-	static void ForeachComponents(std::vector<Component*> components, ComponentAction action);
+	template<typename T>
+	static void ForeachComponents(std::vector<Component*> components, T action)
+	{
+		for (Component* compoent : components)
+		{
+			action(compoent);
+		}
+	}
+
 	/// <summary>
 	/// execute action for each components in root (include root)
 	/// </summary>
 	/// <param name="root">the root component</param>
 	/// <param name="action">the action to executed</param>
-	static void ForeachComponents(Component* root, ComponentAction action);
+	template<typename T>
+	static void ForeachComponents(Component* root, T action)
+	{
+		action(root);
+		root->ForeachChild(action);
+	}
 
 	void EnsureAwaked();
 	void EnsureStarted();
 	void Destroy();
-//protected:
+
 	void AddComponent(Component* component);
 	void RemoveComponent(Component* component);
 private:

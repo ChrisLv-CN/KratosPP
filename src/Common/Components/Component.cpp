@@ -91,30 +91,6 @@ std::vector<Component*> Component::GetComponentsInChildren()
 	return _children;
 }
 
-void Component::Foreach(ComponentAction action)
-{
-	ForeachComponents(this, action);
-}
-
-void Component::ForeachChild(ComponentAction action)
-{
-	ForeachComponents(GetComponentsInChildren(), action);
-}
-
-void Component::ForeachComponents(std::vector<Component*> components, ComponentAction action)
-{
-	for (Component* compoent : components)
-	{
-		action(compoent);
-	}
-}
-
-void Component::ForeachComponents(Component* root, ComponentAction action)
-{
-		action(root);
-		root->ForeachChild(action);
-}
-
 void Component::EnsureAwaked()
 {
 	if (!_awaked)
