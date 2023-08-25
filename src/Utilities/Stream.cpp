@@ -5,14 +5,14 @@
 
 #include <Objidl.h>
 
-PhobosByteStream::PhobosByteStream(size_t Reserve) : Data(), CurrentOffset(0)
+ExByteStream::ExByteStream(size_t Reserve) : Data(), CurrentOffset(0)
 {
 	this->Data.reserve(Reserve);
 }
 
-PhobosByteStream::~PhobosByteStream() = default;
+ExByteStream::~ExByteStream() = default;
 
-bool PhobosByteStream::ReadFromStream(IStream* pStm, const size_t Length)
+bool ExByteStream::ReadFromStream(IStream* pStm, const size_t Length)
 {
 	auto size = this->Data.size();
 	this->Data.resize(size + Length);
@@ -28,7 +28,7 @@ bool PhobosByteStream::ReadFromStream(IStream* pStm, const size_t Length)
 	return result;
 }
 
-bool PhobosByteStream::WriteToStream(IStream* pStm) const
+bool ExByteStream::WriteToStream(IStream* pStm) const
 {
 	const size_t Length(this->Data.size());
 	auto pcv = reinterpret_cast<const void*>(this->Data.data());
@@ -39,7 +39,7 @@ bool PhobosByteStream::WriteToStream(IStream* pStm) const
 	return SUCCEEDED(success) && out == Length;
 }
 
-bool PhobosByteStream::Read(data_t* Value, size_t Size)
+bool ExByteStream::Read(data_t* Value, size_t Size)
 {
 	bool ret = false;
 
@@ -54,12 +54,12 @@ bool PhobosByteStream::Read(data_t* Value, size_t Size)
 	return ret;
 }
 
-void PhobosByteStream::Write(const data_t* Value, size_t Size)
+void ExByteStream::Write(const data_t* Value, size_t Size)
 {
 	this->Data.insert(this->Data.end(), Value, Value + Size);
 }
 
-size_t PhobosByteStream::ReadBlockFromStream(IStream* pStm)
+size_t ExByteStream::ReadBlockFromStream(IStream* pStm)
 {
 	ULONG out = 0;
 	size_t Length = 0;
@@ -73,7 +73,7 @@ size_t PhobosByteStream::ReadBlockFromStream(IStream* pStm)
 	return 0;
 }
 
-bool PhobosByteStream::WriteBlockToStream(IStream* pStm) const
+bool ExByteStream::WriteBlockToStream(IStream* pStm) const
 {
 	ULONG out = 0;
 	const size_t Length = this->Data.size();
@@ -84,7 +84,7 @@ bool PhobosByteStream::WriteBlockToStream(IStream* pStm) const
 	return false;
 }
 
-bool PhobosStreamReader::RegisterChange(void* newPtr)
+bool ExStreamReader::RegisterChange(void* newPtr)
 {
 	static_assert(sizeof(long) == sizeof(void*), "long and void* need to be of same size.");
 
@@ -99,24 +99,24 @@ bool PhobosStreamReader::RegisterChange(void* newPtr)
 	return false;
 }
 
-void PhobosStreamReader::EmitExpectEndOfBlockWarning(std::true_type) const
+void ExStreamReader::EmitExpectEndOfBlockWarning(std::true_type) const
 {
 	Debug::Log("PhobosStreamReader - Read %X bytes instead of %X!\n",
 		this->stream->Offset(), this->stream->Size());
 }
 
-void PhobosStreamReader::EmitLoadWarning(size_t size, std::true_type) const
+void ExStreamReader::EmitLoadWarning(size_t size, std::true_type) const
 {
 	Debug::Log("PhobosStreamReader - Could not read data of length %u at %X of %X.\n",
 		size, this->stream->Offset() - size, this->stream->Size());
 }
 
-void PhobosStreamReader::EmitExpectWarning(unsigned int found, unsigned int expect, std::true_type) const
+void ExStreamReader::EmitExpectWarning(unsigned int found, unsigned int expect, std::true_type) const
 {
 	Debug::Log("PhobosStreamReader - Found %X, expected %X\n", found, expect);
 }
 
-void PhobosStreamReader::EmitSwizzleWarning(long id, void* pointer, std::true_type) const
+void ExStreamReader::EmitSwizzleWarning(long id, void* pointer, std::true_type) const
 {
 	Debug::Log("PhobosStreamReader - Could not register change from %X to %p\n", id, pointer);
 }

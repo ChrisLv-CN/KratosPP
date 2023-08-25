@@ -117,8 +117,8 @@ public:
 		CCINIClass* pINI, const char* pSection, const char* pKey,
 		const char* pDefault = "");
 
-	bool Load(PhobosStreamReader& Stm, bool RegisterForChange);
-	bool Save(PhobosStreamWriter& Stm) const;
+	bool Load(ExStreamReader& Stm, bool RegisterForChange);
+	bool Save(ExStreamWriter& Stm) const;
 
 private:
 	void Clear();
@@ -257,7 +257,7 @@ public:
 		this->values.clear();
 	}
 
-	bool load(PhobosStreamReader& Stm, bool RegisterForChange) {
+	bool load(ExStreamReader& Stm, bool RegisterForChange) {
 		this->clear();
 
 		size_t size = 0;
@@ -266,8 +266,8 @@ public:
 		if (ret && size) {
 			this->values.resize(size);
 			for (size_t i = 0; i < size; ++i) {
-				if (!Savegame::ReadPhobosStream(Stm, this->values[i].first, RegisterForChange)
-					|| !Savegame::ReadPhobosStream(Stm, this->values[i].second, RegisterForChange))
+				if (!Savegame::ReadExStream(Stm, this->values[i].first, RegisterForChange)
+					|| !Savegame::ReadExStream(Stm, this->values[i].second, RegisterForChange))
 				{
 					return false;
 				}
@@ -277,12 +277,12 @@ public:
 		return ret;
 	}
 
-	bool save(PhobosStreamWriter& Stm) const {
+	bool save(ExStreamWriter& Stm) const {
 		Stm.Save(this->values.size());
 
 		for (const auto& item : this->values) {
-			Savegame::WritePhobosStream(Stm, item.first);
-			Savegame::WritePhobosStream(Stm, item.second);
+			Savegame::WriteExStream(Stm, item.first);
+			Savegame::WriteExStream(Stm, item.second);
 		}
 
 		return true;
@@ -362,7 +362,7 @@ public:
 		return buffer[0] != 0;
 	}
 
-	bool Load(PhobosStreamReader& Stm, bool RegisterForChange) {
+	bool Load(ExStreamReader& Stm, bool RegisterForChange) {
 		this->filename = nullptr;
 		if (Stm.Load(*this)) {
 			if (this->checked && this->exists) {
@@ -376,7 +376,7 @@ public:
 		return false;
 	}
 
-	bool Save(PhobosStreamWriter& Stm) const {
+	bool Save(ExStreamWriter& Stm) const {
 		Stm.Save(*this);
 		return true;
 	}
@@ -421,7 +421,7 @@ public:
 		return !this->Text || !*this->Text;
 	}
 
-	bool load(PhobosStreamReader& Stm, bool RegisterForChange) {
+	bool load(ExStreamReader& Stm, bool RegisterForChange) {
 		this->Text = nullptr;
 		if (Stm.Load(this->Label.data())) {
 			if (this->Label) {
@@ -432,7 +432,7 @@ public:
 		return false;
 	}
 
-	bool save(PhobosStreamWriter& Stm) const {
+	bool save(ExStreamWriter& Stm) const {
 		Stm.Save(this->Label.data());
 		return true;
 	}
@@ -498,39 +498,39 @@ struct OptionalStruct {
 		return this->Value;
 	}
 
-	bool load(PhobosStreamReader& Stm, bool RegisterForChange) {
+	bool load(ExStreamReader& Stm, bool RegisterForChange) {
 		this->clear();
 
 		return load(Stm, RegisterForChange, std::bool_constant<Persistable>());
 	}
 
-	bool save(PhobosStreamWriter& Stm) const {
+	bool save(ExStreamWriter& Stm) const {
 		return save(Stm, std::bool_constant<Persistable>());
 	}
 
 private:
-	bool load(PhobosStreamReader& Stm, bool RegisterForChange, std::true_type) {
+	bool load(ExStreamReader& Stm, bool RegisterForChange, std::true_type) {
 		if (Stm.Load(this->HasValue)) {
-			if (!this->HasValue || Savegame::ReadPhobosStream(Stm, this->Value, RegisterForChange)) {
+			if (!this->HasValue || Savegame::ReadExStream(Stm, this->Value, RegisterForChange)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	bool load(PhobosStreamReader& Stm, bool RegisterForChangestd, std::false_type) {
+	bool load(ExStreamReader& Stm, bool RegisterForChangestd, std::false_type) {
 		return true;
 	}
 
-	bool save(PhobosStreamWriter& Stm, std::true_type) const {
+	bool save(ExStreamWriter& Stm, std::true_type) const {
 		Stm.Save(this->HasValue);
 		if (this->HasValue) {
-			Savegame::WritePhobosStream(Stm, this->Value);
+			Savegame::WriteExStream(Stm, this->Value);
 		}
 		return true;
 	}
 
-	bool save(PhobosStreamWriter& Stm, std::false_type) const {
+	bool save(ExStreamWriter& Stm, std::false_type) const {
 		return true;
 	}
 
@@ -591,12 +591,12 @@ struct Handle {
 		Handle(std::move(*this));
 	}
 
-	bool load(PhobosStreamReader& Stm, bool RegisterForChange) {
-		return Savegame::ReadPhobosStream(Stm, this->Value, RegisterForChange);
+	bool load(ExStreamReader& Stm, bool RegisterForChange) {
+		return Savegame::ReadExStream(Stm, this->Value, RegisterForChange);
 	}
 
-	bool save(PhobosStreamWriter& Stm) const {
-		return Savegame::WritePhobosStream(Stm, this->Value);
+	bool save(ExStreamWriter& Stm) const {
+		return Savegame::WriteExStream(Stm, this->Value);
 	}
 
 private:
@@ -657,13 +657,13 @@ public:
 		return false;
 	}
 
-	bool Load(PhobosStreamReader& Stm, bool RegisterForChange)
+	bool Load(ExStreamReader& Stm, bool RegisterForChange)
 	{
 		Stm.Load(this->value);
 		return true;
 	}
 
-	bool Save(PhobosStreamWriter& Stm) const
+	bool Save(ExStreamWriter& Stm) const
 	{
 		Stm.Save(this->value);
 		return true;
@@ -722,14 +722,14 @@ public:
 		return false;
 	}
 
-	bool Load(PhobosStreamReader& Stm, bool RegisterForChange)
+	bool Load(ExStreamReader& Stm, bool RegisterForChange)
 	{
-		return Savegame::ReadPhobosStream(Stm, this->value, RegisterForChange);
+		return Savegame::ReadExStream(Stm, this->value, RegisterForChange);
 	}
 
-	bool Save(PhobosStreamWriter& Stm) const
+	bool Save(ExStreamWriter& Stm) const
 	{
-		return Savegame::WritePhobosStream(Stm, this->value);
+		return Savegame::WriteExStream(Stm, this->value);
 	}
 
 private:

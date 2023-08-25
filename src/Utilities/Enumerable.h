@@ -67,7 +67,7 @@ public:
 			item->LoadFromINI(pINI);
 	}
 
-	static bool LoadGlobals(PhobosStreamReader& Stm)
+	static bool LoadGlobals(ExStreamReader& Stm)
 	{
 		Clear();
 
@@ -92,7 +92,7 @@ public:
 		return true;
 	}
 
-	static bool SaveGlobals(PhobosStreamWriter& Stm)
+	static bool SaveGlobals(ExStreamWriter& Stm)
 	{
 		Stm.Save(Array.size());
 
@@ -118,9 +118,9 @@ public:
 
 	virtual void LoadFromINI(CCINIClass* pINI) { }
 
-	virtual void LoadFromStream(PhobosStreamReader& Stm) = 0;
+	virtual void LoadFromStream(ExStreamReader& Stm) = 0;
 
-	virtual void SaveToStream(PhobosStreamWriter& Stm) = 0;
+	virtual void SaveToStream(ExStreamWriter& Stm) = 0;
 
 	PhobosFixedString<32> Name;
 };

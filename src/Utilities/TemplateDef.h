@@ -1265,15 +1265,15 @@ void __declspec(noinline) Valueable<T>::Read(INI_EX& parser, const char* pSectio
 }
 
 template <typename T>
-bool Valueable<T>::Load(PhobosStreamReader& Stm, bool RegisterForChange)
+bool Valueable<T>::Load(ExStreamReader& Stm, bool RegisterForChange)
 {
-	return Savegame::ReadPhobosStream(Stm, this->Value, RegisterForChange);
+	return Savegame::ReadExStream(Stm, this->Value, RegisterForChange);
 }
 
 template <typename T>
-bool Valueable<T>::Save(PhobosStreamWriter& Stm) const
+bool Valueable<T>::Save(ExStreamWriter& Stm) const
 {
-	return Savegame::WritePhobosStream(Stm, this->Value);
+	return Savegame::WriteExStream(Stm, this->Value);
 }
 
 
@@ -1305,24 +1305,24 @@ void __declspec(noinline) Nullable<T>::Read(INI_EX& parser, const char* pSection
 }
 
 template <typename T>
-bool Nullable<T>::Load(PhobosStreamReader& Stm, bool RegisterForChange)
+bool Nullable<T>::Load(ExStreamReader& Stm, bool RegisterForChange)
 {
 	this->Reset();
-	auto ret = Savegame::ReadPhobosStream(Stm, this->HasValue);
+	auto ret = Savegame::ReadExStream(Stm, this->HasValue);
 
 	if (ret && this->HasValue)
-		ret = Savegame::ReadPhobosStream(Stm, this->Value, RegisterForChange);
+		ret = Savegame::ReadExStream(Stm, this->Value, RegisterForChange);
 
 	return ret;
 }
 
 template <typename T>
-bool Nullable<T>::Save(PhobosStreamWriter& Stm) const
+bool Nullable<T>::Save(ExStreamWriter& Stm) const
 {
-	auto ret = Savegame::WritePhobosStream(Stm, this->HasValue);
+	auto ret = Savegame::WriteExStream(Stm, this->HasValue);
 
 	if (this->HasValue)
-		ret = Savegame::WritePhobosStream(Stm, this->Value);
+		ret = Savegame::WriteExStream(Stm, this->Value);
 
 	return ret;
 }
@@ -1382,19 +1382,19 @@ void __declspec(noinline) Promotable<T>::Read(INI_EX& parser, const char* const 
 };
 
 template <typename T>
-bool Promotable<T>::Load(PhobosStreamReader& Stm, bool RegisterForChange)
+bool Promotable<T>::Load(ExStreamReader& Stm, bool RegisterForChange)
 {
-	return Savegame::ReadPhobosStream(Stm, this->Rookie, RegisterForChange)
-		&& Savegame::ReadPhobosStream(Stm, this->Veteran, RegisterForChange)
-		&& Savegame::ReadPhobosStream(Stm, this->Elite, RegisterForChange);
+	return Savegame::ReadExStream(Stm, this->Rookie, RegisterForChange)
+		&& Savegame::ReadExStream(Stm, this->Veteran, RegisterForChange)
+		&& Savegame::ReadExStream(Stm, this->Elite, RegisterForChange);
 }
 
 template <typename T>
-bool Promotable<T>::Save(PhobosStreamWriter& Stm) const
+bool Promotable<T>::Save(ExStreamWriter& Stm) const
 {
-	return Savegame::WritePhobosStream(Stm, this->Rookie)
-		&& Savegame::WritePhobosStream(Stm, this->Veteran)
-		&& Savegame::WritePhobosStream(Stm, this->Elite);
+	return Savegame::WriteExStream(Stm, this->Rookie)
+		&& Savegame::WriteExStream(Stm, this->Veteran)
+		&& Savegame::WriteExStream(Stm, this->Elite);
 }
 
 
@@ -1411,10 +1411,10 @@ void __declspec(noinline) ValueableVector<T>::Read(INI_EX& parser, const char* p
 }
 
 template <typename T>
-bool ValueableVector<T>::Load(PhobosStreamReader& Stm, bool RegisterForChange)
+bool ValueableVector<T>::Load(ExStreamReader& Stm, bool RegisterForChange)
 {
 	size_t size = 0;
-	if (Savegame::ReadPhobosStream(Stm, size, RegisterForChange))
+	if (Savegame::ReadExStream(Stm, size, RegisterForChange))
 	{
 		this->clear();
 		this->reserve(size);
@@ -1422,7 +1422,7 @@ bool ValueableVector<T>::Load(PhobosStreamReader& Stm, bool RegisterForChange)
 		for (size_t i = 0; i < size; ++i)
 		{
 			value_type buffer = value_type();
-			Savegame::ReadPhobosStream(Stm, buffer, false);
+			Savegame::ReadExStream(Stm, buffer, false);
 			this->push_back(std::move(buffer));
 
 			if (RegisterForChange)
@@ -1436,10 +1436,10 @@ bool ValueableVector<T>::Load(PhobosStreamReader& Stm, bool RegisterForChange)
 }
 
 template <>
-inline bool ValueableVector<bool>::Load(PhobosStreamReader& stm, bool registerForChange)
+inline bool ValueableVector<bool>::Load(ExStreamReader& stm, bool registerForChange)
 {
 	size_t size = 0;
-	if (Savegame::ReadPhobosStream(stm, size, registerForChange))
+	if (Savegame::ReadExStream(stm, size, registerForChange))
 	{
 		this->clear();
 
@@ -1447,7 +1447,7 @@ inline bool ValueableVector<bool>::Load(PhobosStreamReader& stm, bool registerFo
 		{
 			bool value;
 
-			if (!Savegame::ReadPhobosStream(stm, value, false))
+			if (!Savegame::ReadExStream(stm, value, false))
 				return false;
 
 			this->emplace_back(value);
@@ -1460,14 +1460,14 @@ inline bool ValueableVector<bool>::Load(PhobosStreamReader& stm, bool registerFo
 }
 
 template <typename T>
-bool ValueableVector<T>::Save(PhobosStreamWriter& Stm) const
+bool ValueableVector<T>::Save(ExStreamWriter& Stm) const
 {
 	auto size = this->size();
-	if (Savegame::WritePhobosStream(Stm, size))
+	if (Savegame::WriteExStream(Stm, size))
 	{
 		for (auto const& item : *this)
 		{
-			if (!Savegame::WritePhobosStream(Stm, item))
+			if (!Savegame::WriteExStream(Stm, item))
 				return false;
 		}
 
@@ -1478,14 +1478,14 @@ bool ValueableVector<T>::Save(PhobosStreamWriter& Stm) const
 }
 
 template <>
-inline bool ValueableVector<bool>::Save(PhobosStreamWriter& stm) const
+inline bool ValueableVector<bool>::Save(ExStreamWriter& stm) const
 {
 	auto size = this->size();
-	if (Savegame::WritePhobosStream(stm, size))
+	if (Savegame::WriteExStream(stm, size))
 	{
 		for (bool item : *this)
 		{
-			if (!Savegame::WritePhobosStream(stm, item))
+			if (!Savegame::WriteExStream(stm, item))
 				return false;
 		}
 
@@ -1513,20 +1513,20 @@ void __declspec(noinline) NullableVector<T>::Read(INI_EX& parser, const char* pS
 }
 
 template <typename T>
-bool NullableVector<T>::Load(PhobosStreamReader& Stm, bool RegisterForChange)
+bool NullableVector<T>::Load(ExStreamReader& Stm, bool RegisterForChange)
 {
 	this->clear();
 
-	if (Savegame::ReadPhobosStream(Stm, this->hasValue, RegisterForChange))
+	if (Savegame::ReadExStream(Stm, this->hasValue, RegisterForChange))
 		return !this->hasValue || ValueableVector<T>::Load(Stm, RegisterForChange);
 
 	return false;
 }
 
 template <typename T>
-bool NullableVector<T>::Save(PhobosStreamWriter& Stm) const
+bool NullableVector<T>::Save(ExStreamWriter& Stm) const
 {
-	if (Savegame::WritePhobosStream(Stm, this->hasValue))
+	if (Savegame::WriteExStream(Stm, this->hasValue))
 		return !this->hasValue || ValueableVector<T>::Save(Stm);
 
 	return false;
@@ -1588,17 +1588,17 @@ void __declspec(noinline) Damageable<T>::Read(INI_EX& parser, const char* const 
 };
 
 template <typename T>
-bool Damageable<T>::Load(PhobosStreamReader& Stm, bool RegisterForChange)
+bool Damageable<T>::Load(ExStreamReader& Stm, bool RegisterForChange)
 {
-	return Savegame::ReadPhobosStream(Stm, this->BaseValue, RegisterForChange)
-		&& Savegame::ReadPhobosStream(Stm, this->ConditionYellow, RegisterForChange)
-		&& Savegame::ReadPhobosStream(Stm, this->ConditionRed, RegisterForChange);
+	return Savegame::ReadExStream(Stm, this->BaseValue, RegisterForChange)
+		&& Savegame::ReadExStream(Stm, this->ConditionYellow, RegisterForChange)
+		&& Savegame::ReadExStream(Stm, this->ConditionRed, RegisterForChange);
 }
 
 template <typename T>
-bool Damageable<T>::Save(PhobosStreamWriter& Stm) const
+bool Damageable<T>::Save(ExStreamWriter& Stm) const
 {
-	return Savegame::WritePhobosStream(Stm, this->BaseValue)
-		&& Savegame::WritePhobosStream(Stm, this->ConditionYellow)
-		&& Savegame::WritePhobosStream(Stm, this->ConditionRed);
+	return Savegame::WriteExStream(Stm, this->BaseValue)
+		&& Savegame::WriteExStream(Stm, this->ConditionYellow)
+		&& Savegame::WriteExStream(Stm, this->ConditionRed);
 }

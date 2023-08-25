@@ -57,8 +57,8 @@ concept PointerInvalidationSubscribable =
 template <typename T>
 concept GlobalSaveLoadable = requires
 {
-	T::LoadGlobals(std::declval<PhobosStreamReader&>());
-	T::SaveGlobals(std::declval<PhobosStreamWriter&>());
+	T::LoadGlobals(std::declval<ExStreamReader&>());
+	T::SaveGlobals(std::declval<ExStreamWriter&>());
 };
 
 template <typename TAction, typename TProcessed, typename... ArgTypes>
@@ -110,9 +110,9 @@ struct LoadGlobalsAction
 	{
 		if constexpr (GlobalSaveLoadable<T>)
 		{
-			PhobosByteStream stm(0);
+			ExByteStream stm(0);
 			stm.ReadBlockFromStream(pStm);
-			PhobosStreamReader reader(stm);
+			ExStreamReader reader(stm);
 
 			return T::LoadGlobals(reader) && reader.ExpectEndOfBlock();
 		}
@@ -132,8 +132,8 @@ struct SaveGlobalsAction
 	{
 		if constexpr (GlobalSaveLoadable<T>)
 		{
-			PhobosByteStream stm;
-			PhobosStreamWriter writer(stm);
+			ExByteStream stm;
+			ExStreamWriter writer(stm);
 
 			return T::SaveGlobals(writer) && stm.WriteBlockToStream(pStm);
 		}

@@ -109,13 +109,13 @@ public:
 
 	virtual void InvalidatePointer(void* ptr, bool bRemoved) = 0;
 
-	virtual inline void SaveToStream(PhobosStreamWriter& Stm)
+	virtual inline void SaveToStream(ExStreamWriter& Stm)
 	{
 		//Stm.Save(this->AttachedToObject);
 		Stm.Save(this->Initialized);
 	}
 
-	virtual inline void LoadFromStream(PhobosStreamReader& Stm)
+	virtual inline void LoadFromStream(ExStreamReader& Stm)
 	{
 		//Stm.Load(this->AttachedToObject);
 		Stm.Load(this->Initialized);
@@ -518,8 +518,8 @@ protected:
 		}
 
 		// write the current pointer, the size of the block, and the canary
-		PhobosByteStream saver(sizeof(*buffer));
-		PhobosStreamWriter writer(saver);
+		ExByteStream saver(sizeof(*buffer));
+		ExStreamWriter writer(saver);
 
 		writer.Save(T::Canary);
 		writer.Save(buffer);
@@ -556,14 +556,14 @@ protected:
 			return nullptr;
 		}
 
-		PhobosByteStream loader(0);
+		ExByteStream loader(0);
 		if (!loader.ReadBlockFromStream(pStm))
 		{
 			Debug::Log("LoadKey - Failed to read data from save stream?!\n");
 			return nullptr;
 		}
 
-		PhobosStreamReader reader(loader);
+		ExStreamReader reader(loader);
 		if (reader.Expect(T::Canary) && reader.RegisterChange(buffer))
 		{
 			buffer->LoadFromStream(reader);

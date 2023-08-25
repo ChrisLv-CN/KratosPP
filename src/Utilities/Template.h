@@ -113,9 +113,9 @@ public:
 
 	inline void Read(INI_EX& parser, const char* pSection, const char* pKey, bool Allocate = false);
 
-	inline bool Load(PhobosStreamReader& Stm, bool RegisterForChange);
+	inline bool Load(ExStreamReader& Stm, bool RegisterForChange);
 
-	inline bool Save(PhobosStreamWriter& Stm) const;
+	inline bool Save(ExStreamWriter& Stm) const;
 };
 
 template <typename T, typename = std::enable_if_t<std::is_enum<T>::value>>
@@ -219,9 +219,9 @@ public:
 
 	inline void Read(INI_EX& parser, const char* pSection, const char* pKey, bool Allocate = false);
 
-	inline bool Load(PhobosStreamReader& Stm, bool RegisterForChange);
+	inline bool Load(ExStreamReader& Stm, bool RegisterForChange);
 
-	inline bool Save(PhobosStreamWriter& Stm) const;
+	inline bool Save(ExStreamWriter& Stm) const;
 };
 
 template<typename Lookuper>
@@ -295,9 +295,9 @@ public:
 		return this->Rookie;
 	}
 
-	inline bool Load(PhobosStreamReader& Stm, bool RegisterForChange);
+	inline bool Load(ExStreamReader& Stm, bool RegisterForChange);
 
-	inline bool Save(PhobosStreamWriter& Stm) const;
+	inline bool Save(ExStreamWriter& Stm) const;
 };
 
 
@@ -338,9 +338,9 @@ public:
 		return Iterator<T>(*this);
 	}
 
-	inline bool Load(PhobosStreamReader& Stm, bool RegisterForChange);
+	inline bool Load(ExStreamReader& Stm, bool RegisterForChange);
 
-	inline bool Save(PhobosStreamWriter& Stm) const;
+	inline bool Save(ExStreamWriter& Stm) const;
 };
 
 template<class T>
@@ -370,9 +370,9 @@ public:
 		return this->GetElements();
 	}
 
-	inline bool Load(PhobosStreamReader& Stm, bool RegisterForChange);
+	inline bool Load(ExStreamReader& Stm, bool RegisterForChange);
 
-	inline bool Save(PhobosStreamWriter& Stm) const;
+	inline bool Save(ExStreamWriter& Stm) const;
 };
 
 template<typename Lookuper>
@@ -455,9 +455,9 @@ public:
 		return this->BaseValue;
 	}
 
-	inline bool Load(PhobosStreamReader& Stm, bool RegisterForChange);
+	inline bool Load(ExStreamReader& Stm, bool RegisterForChange);
 
-	inline bool Save(PhobosStreamWriter& Stm) const;
+	inline bool Save(ExStreamWriter& Stm) const;
 };
 
 template<typename T>

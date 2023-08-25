@@ -55,7 +55,7 @@ bool CustomPalette::LoadFromINI(
 	return false;
 }
 
-bool CustomPalette::Load(PhobosStreamReader& Stm, bool RegisterForChange)
+bool CustomPalette::Load(ExStreamReader& Stm, bool RegisterForChange)
 {
 	this->Clear();
 
@@ -74,7 +74,7 @@ bool CustomPalette::Load(PhobosStreamReader& Stm, bool RegisterForChange)
 	return ret;
 }
 
-bool CustomPalette::Save(PhobosStreamWriter& Stm) const
+bool CustomPalette::Save(ExStreamWriter& Stm) const
 {
 	Stm.Save(this->Mode);
 	Stm.Save(this->Palette != nullptr);

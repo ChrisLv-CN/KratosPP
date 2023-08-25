@@ -35,8 +35,7 @@ public:
 	/// </summary>
 	virtual void OnDestroy() { };
 
-	template<typename T>
-	void Serialize(T& stream) { };
+	virtual void Serialize(StreamWorkerBase& stream) { };
 
 	virtual void LoadFromStream(ExStreamReader& stream)
 	{

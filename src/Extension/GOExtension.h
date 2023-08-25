@@ -10,8 +10,6 @@
 #include <Utilities/Container.h>
 #include <Utilities/TemplateDef.h>
 
-class LaserTrail;
-
 template <typename TBase, typename TExt>
 class GOExtension
 {
@@ -35,15 +33,17 @@ public:
 
 		virtual void InvalidatePointer(void* ptr, bool bRemoved) override { };
 
-		virtual void LoadFromStream(PhobosStreamReader& Stm) override
+		virtual void LoadFromStream(ExStreamReader& Stm) override
 		{
 			Extension<TBase>::LoadFromStream(Stm);
 			this->Serialize(Stm);
+			_GameObject->Foreach([&Stm](Component* c) {c->LoadFromStream(Stm); });
 		};
-		virtual void SaveToStream(PhobosStreamWriter& Stm) override
+		virtual void SaveToStream(ExStreamWriter& Stm) override
 		{
 			Extension<TBase>::SaveToStream(Stm);
 			this->Serialize(Stm);
+			_GameObject->Foreach([&Stm](Component* c) {c->SaveToStream(Stm); });
 		};
 
 		//----------------------
@@ -55,11 +55,10 @@ public:
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
 	private:
-
-		template <typename T>
-		void Serialize(T& Stm)
+		void Serialize(StreamWorkerBase& Stm)
 		{
-			//_GameObject.Foreach([](Component* c) {c->Serialize<T>(Stm); });
+			//Stm.Process(this->m_ScriptsCreated);
+			//_GameObject->Foreach([&](Component* c) {c->Serialize(Stm); });
 		};
 
 		//----------------------
@@ -116,11 +115,9 @@ public:
 	class ExtContainer : public Container<TExt>
 	{
 	public:
-		ExtContainer() : Container<TExt>(typeid(TExt).name())
-		{ }
+		ExtContainer() : Container<TExt>(typeid(TExt).name()) { }
 		~ExtContainer() = default;
 	};
-
 
 	//----------------------
 	// Scripts Helper
