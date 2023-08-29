@@ -53,7 +53,17 @@
 			"xmemory": "cpp",
 			"xstddef": "cpp",
 			"xtr1common": "cpp",
-			"xtree": "cpp"
+			"xtree": "cpp",
+			"array": "cpp",
+			"bitset": "cpp",
+			"coroutine": "cpp",
+			"functional": "cpp",
+			"iterator": "cpp",
+			"optional": "cpp",
+			"set": "cpp",
+			"stack": "cpp",
+			"unordered_map": "cpp",
+			"xhash": "cpp"
 		}
 	}
 }

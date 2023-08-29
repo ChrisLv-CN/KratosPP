@@ -20,7 +20,7 @@ public:
 	{
 		return ExtData->OwnerObject();
 	}
-	__declspec(property(get = GetOwner)) TBase* _Owner;
+	__declspec(property(get = GetOwner)) TBase* _owner;
 
 };
 

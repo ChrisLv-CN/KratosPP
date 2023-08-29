@@ -26,6 +26,8 @@ public:
 	/// </summary>
 	virtual void Start() { };
 
+	virtual void OnInit() { };
+
 	virtual void OnUpdate() { };
 	virtual void OnLateUpdate() { };
 	virtual void OnWarpUpdate() { };

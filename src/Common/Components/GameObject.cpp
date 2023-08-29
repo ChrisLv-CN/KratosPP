@@ -12,9 +12,25 @@ void GameObject::Awake()
 	_OnAwake();
 }
 
+void GameObject::OnUpdate()
+{
+	this->Component::OnUpdate();
+	for (Component* c : _unstartedComponents)
+	{
+		c->EnsureStarted();
+	}
+	_unstartedComponents.clear();
+}
+
 GameObject* GameObject::GetAwaked()
 {
 	EnsureAwaked();
 	return this;
+}
+
+void GameObject::AddComponentNotAwake(Component* component)
+{
+	this->Component::AddComponent(component);
+	_unstartedComponents.push_back(component);
 }
 

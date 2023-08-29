@@ -9,6 +9,10 @@
 
 #include <LaserDrawClass.h>
 
+// ----------------
+// Extension
+// ----------------
+
 DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 {
 	GET(TechnoClass*, pItem, ESI);
@@ -52,8 +56,18 @@ DEFINE_HOOK(0x70C264, TechnoClass_Save_Suffix, 0x5)
 	return 0;
 }
 
+// ----------------
+// Component
+// ----------------
 
-// ½ö²âÊÔ
+DEFINE_HOOK(0x6F42ED, TechnoClass_Init, 0xA)
+{
+	GET(TechnoClass*, pThis, ESI);
+	auto pExt = TechnoExt::ExtMap.Find(pThis);
+	pExt->_GameObject->Foreach([](Component* c) { if (c)c->OnInit(); });
+
+	return 0;
+}
 
 DEFINE_HOOK(0x6F9E50, TechnoClass_AI, 0x5)
 {

@@ -18,10 +18,14 @@ public:
 
 	virtual void Awake() override;
 
+	virtual void OnUpdate() override;
+
 	GameObject* GetAwaked();
+
+	void AddComponentNotAwake(Component* component);
 
 	CMultiDelegate<void> _OnAwake;
 private:
-	//std::vector<Component*> _unstartedComponents;
+	std::vector<Component*> _unstartedComponents{};
 };
 

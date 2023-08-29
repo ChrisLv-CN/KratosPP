@@ -22,7 +22,7 @@ public:
 		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
 		{
 			m_GameObject = new GameObject(goName);
-			m_GameObject->_OnAwake += newDelegate(this, &ExtData::OnAwake);
+			m_GameObject->_OnAwake += newDelegate(this, &ExtData::Awake);
 		};
 
 		~ExtData() override
@@ -37,14 +37,14 @@ public:
 		{
 			Extension<TBase>::LoadFromStream(Stm);
 			this->Serialize(Stm);
-			_GameObject->Foreach([&Stm](Component* c) {c->LoadFromStream(Stm); });
+			m_GameObject->Foreach([&Stm](Component* c) {c->LoadFromStream(Stm); });
 		};
 
 		virtual void SaveToStream(ExStreamWriter& Stm) override
 		{
 			Extension<TBase>::SaveToStream(Stm);
 			this->Serialize(Stm);
-			_GameObject->Foreach([&Stm](Component* c) {c->SaveToStream(Stm); });
+			m_GameObject->Foreach([&Stm](Component* c) {c->SaveToStream(Stm); });
 		};
 
 		//----------------------
@@ -73,7 +73,7 @@ public:
 		/// <summary>
 		///  call by GameObject _OnAwake Event
 		/// </summary>
-		void OnAwake()
+		void Awake()
 		{
 			// Search and instantiate global script objects in TechnoExt
 			TExt::AddGlobalScripts(&m_GlobalScripts, this);
@@ -99,7 +99,7 @@ public:
 			}
 			for (Component* s : buffer)
 			{
-				TExt::ExtData::m_GameObject->AddComponent(s);
+				TExt::ExtData::m_GameObject->AddComponentNotAwake(s);
 			}
 			for (Component* s : buffer)
 			{
