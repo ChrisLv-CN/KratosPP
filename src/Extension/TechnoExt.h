@@ -1,7 +1,9 @@
 #pragma once
 
-#include <Extension/GOExtension.h>
-#include <Extension/TechnoTypeExt.h>
+#include "GOExtension.h"
+
+#include <TechnoClass.h>
+#include <TechnoTypeClass.h>
 
 class TechnoExt;
 

@@ -23,7 +23,7 @@ public:
 		{
 			m_GameObject = new GameObject(goName);
 			m_GameObject->_OnAwake += newDelegate(this, &ExtData::OnAwake);
-		}
+		};
 
 		~ExtData() override
 		{
@@ -39,6 +39,7 @@ public:
 			this->Serialize(Stm);
 			_GameObject->Foreach([&Stm](Component* c) {c->LoadFromStream(Stm); });
 		};
+
 		virtual void SaveToStream(ExStreamWriter& Stm) override
 		{
 			Extension<TBase>::SaveToStream(Stm);
@@ -51,7 +52,7 @@ public:
 		GameObject* GetGameObject()
 		{
 			return m_GameObject->GetAwaked();
-		}
+		};
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
 	private:
@@ -78,7 +79,7 @@ public:
 			TExt::AddGlobalScripts(&m_GlobalScripts, this);
 			// initialize values
 			CreateScriptable(nullptr);
-		}
+		};
 
 		void CreateScriptable(std::list<Component*>* scripts)
 		{
@@ -98,7 +99,7 @@ public:
 			}
 			for (Component* s : buffer)
 			{
-				TExt::ExtData::_GameObject->AddComponent(s);
+				TExt::ExtData::m_GameObject->AddComponent(s);
 			}
 			for (Component* s : buffer)
 			{
@@ -130,12 +131,13 @@ public:
 		std::list<Component*> res = m_ScriptBuffer.top();
 		m_ScriptBuffer.pop();
 		return res;
-	}
-
+	};
+	
 	static void GiveBackBuffer(std::list<Component*>& buffer)
 	{
 		buffer.clear();
 		m_ScriptBuffer.push(buffer);
-	}
+	};
+
 	inline static std::stack<std::list<Component*>> m_ScriptBuffer{};
 };
