@@ -12,7 +12,7 @@ public:
 	}
 };
 
-static GScreenHook _GScreenHook;
+static GScreenHook _gScreenHook;
 
 DEFINE_HOOK(0x4F4497, GScreenClass_Render, 0x6)
 {

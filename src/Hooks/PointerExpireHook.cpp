@@ -14,7 +14,7 @@ public:
 	}
 };
 
-static PointerExpireHook _PointerExpireHook;
+static PointerExpireHook _pointerExpireHook;
 
 DEFINE_HOOK(0x7258D0, AnnounceInvalidPointer, 0x6)
 {

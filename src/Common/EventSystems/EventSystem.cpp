@@ -59,3 +59,44 @@ Event Events::LogicUpdateEvent = Event("LogicClassUpdate", "Raised when LogicCla
 Event Events::SaveGameEvent = Event("SaveGame", "Raised when saving game");
 Event Events::LoadGameEvent = Event("LoadGame", "Raised when loading game");
 
+// 事件参数
+SaveLoadEventArgs::SaveLoadEventArgs(const char* fileName, bool isStart)
+{
+    this->FileName = fileName;
+    this->Stream = nullptr;
+    this->isStart = isStart;
+    this->isStartInStream = false;
+}
+
+SaveLoadEventArgs::SaveLoadEventArgs(IStream* stream, bool isStart)
+{
+    this->FileName = nullptr;
+    this->Stream = stream;
+    this->isStart = false;
+    this->isStartInStream = isStart;
+}
+
+bool SaveLoadEventArgs::InStream()
+{
+    return Stream != nullptr;
+}
+
+bool SaveLoadEventArgs::IsStart()
+{
+    return isStart;
+}
+
+bool SaveLoadEventArgs::IsEnd()
+{
+    return !IsStart() && !InStream();
+}
+
+bool SaveLoadEventArgs::IsStartInStream()
+{
+    return isStartInStream;
+}
+
+bool SaveLoadEventArgs::IsEndInStream()
+{
+    return !IsStartInStream() && InStream();
+}

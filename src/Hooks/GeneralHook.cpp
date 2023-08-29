@@ -4,6 +4,8 @@
 #include <Extension.h>
 #include <Utilities/Macro.h>
 #include <Common/EventSystems/EventSystem.h>
+#include <Common/INI/INI.h>
+#include <Common/INI/INIConstant.h>
 
 class GeneraHook
 {
@@ -13,6 +15,8 @@ public:
 		EventSystems::General.AddHandler(Events::CmdLineParse, Common::CmdLineParse);
 		EventSystems::General.AddHandler(Events::ExeRun, Common::ExeRun);
 		EventSystems::General.AddHandler(Events::ExeTerminate, Common::ExeTerminate);
+		EventSystems::General.AddHandler(Events::ScenarioStartEvent, INIConstant::SetGameModeName);
+		EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, INIReaderManager::ClearBuffer);
         EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, ExtTypeRegistryClear);
 	}
 };

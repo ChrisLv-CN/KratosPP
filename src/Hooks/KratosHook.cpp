@@ -13,5 +13,5 @@ public:
 	}
 };
 
-static KratosHook _KratosHook;
+static KratosHook _kratosHook;
 

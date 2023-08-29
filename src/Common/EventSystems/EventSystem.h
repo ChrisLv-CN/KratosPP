@@ -2,10 +2,14 @@
 
 #include <map>
 #include <list>
+#include <string>
 
+#include <Common.h>
 #include <Common/MyDelegate.h>
 
 using namespace Delegate;
+
+struct IStream;
 
 class EventSystem;
 class Event;
@@ -88,3 +92,34 @@ public:
     static Event LoadGameEvent;
 };
 
+// 事件参数
+class SaveLoadEventArgs
+{
+public:
+    SaveLoadEventArgs(const char* fileName, bool isStart);
+    SaveLoadEventArgs(IStream* stream, bool isStart);
+
+    bool InStream();
+    bool IsStart();
+    bool IsEnd();
+    bool IsStartInStream();
+    bool IsEndInStream();
+
+    const char* FileName;
+    IStream* Stream;
+private:
+    bool isStart;
+    bool isStartInStream;
+};
+
+class SaveGameEventArgs : public SaveLoadEventArgs
+{
+public:
+    using SaveLoadEventArgs::SaveLoadEventArgs;
+};
+
+class LoadGameEventArgs :public SaveLoadEventArgs
+{
+public:
+    using SaveLoadEventArgs::SaveLoadEventArgs;
+};

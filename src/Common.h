@@ -13,6 +13,9 @@ constexpr auto SIDEBAR_SECTION = "Sidebar";
 
 extern bool InChinese;
 
+class EventSystem;
+class Event;
+
 class Common
 {
 public:
