@@ -14,4 +14,3 @@ public:
 };
 
 static KratosHook _kratosHook;
-

@@ -63,7 +63,29 @@
 			"set": "cpp",
 			"stack": "cpp",
 			"unordered_map": "cpp",
-			"xhash": "cpp"
+			"xhash": "cpp",
+			"any": "cpp",
+			"charconv": "cpp",
+			"clocale": "cpp",
+			"codecvt": "cpp",
+			"format": "cpp",
+			"locale": "cpp",
+			"mutex": "cpp",
+			"ratio": "cpp",
+			"stdexcept": "cpp",
+			"stop_token": "cpp",
+			"streambuf": "cpp",
+			"system_error": "cpp",
+			"thread": "cpp",
+			"xfacet": "cpp",
+			"xiosbase": "cpp",
+			"xlocale": "cpp",
+			"xlocbuf": "cpp",
+			"xlocinfo": "cpp",
+			"xlocmes": "cpp",
+			"xlocmon": "cpp",
+			"xlocnum": "cpp",
+			"xloctime": "cpp"
 		}
 	}
 }

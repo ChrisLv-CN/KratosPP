@@ -14,12 +14,15 @@
 // Extension
 // ----------------
 
+extern bool IsLoadGame;
+
 DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 {
 	GET(TechnoClass *, pItem, ESI);
-
-	TechnoExt::ExtMap.TryAllocate(pItem);
-
+	if (!IsLoadGame)
+	{
+		TechnoExt::ExtMap.TryAllocate(pItem);
+	}
 	return 0;
 }
 

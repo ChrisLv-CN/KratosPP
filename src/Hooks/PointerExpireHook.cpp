@@ -18,11 +18,10 @@ static PointerExpireHook _pointerExpireHook;
 
 DEFINE_HOOK(0x7258D0, AnnounceInvalidPointer, 0x6)
 {
-    GET(AbstractClass* const, pInvalid, ECX);
-    GET(bool const, removed, EDX);
-	void* args[] = { pInvalid, (void*)removed };
-    EventSystems::General.Broadcast(Events::PointerExpireEvent, &args);
+	GET(AbstractClass *const, pInvalid, ECX);
+	GET(bool const, removed, EDX);
+	void *args[] = {pInvalid, (void *)removed};
+	EventSystems::General.Broadcast(Events::PointerExpireEvent, &args);
 
-    return 0;
+	return 0;
 }
-

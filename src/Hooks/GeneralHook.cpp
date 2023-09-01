@@ -7,6 +7,9 @@
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConstant.h>
 
+// Loading a save game skip the Hook like TechnoClass_CTOR to Allocate a new TechnoExt
+bool IsLoadGame = true;
+
 class GeneraHook
 {
 public:
@@ -17,7 +20,7 @@ public:
 		EventSystems::General.AddHandler(Events::ExeTerminate, Common::ExeTerminate);
 		EventSystems::General.AddHandler(Events::ScenarioStartEvent, INIConstant::SetGameModeName);
 		EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, INIReaderManager::ClearBuffer);
-        EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, ExtTypeRegistryClear);
+		EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, ExtTypeRegistryClear);
 	}
 };
 
@@ -25,15 +28,15 @@ static GeneraHook _GeneraHook;
 
 DEFINE_HOOK(0x52BA60, YR_Boot, 0x5)
 {
-    return 0;
+	return 0;
 }
 
 DEFINE_HOOK(0x52F639, YR_CmdLineParse, 0x5)
 {
-	GET(char**, ppArgs, ESI);
+	GET(char **, ppArgs, ESI);
 	GET(int, nNumArgs, EDI);
 
-	void* args[]{ ppArgs, (void*)nNumArgs };
+	void *args[]{ppArgs, (void *)nNumArgs};
 	EventSystems::General.Broadcast(Events::CmdLineParse, args);
 
 	Debug::LogDeferredFinalize();
@@ -42,9 +45,9 @@ DEFINE_HOOK(0x52F639, YR_CmdLineParse, 0x5)
 
 DEFINE_HOOK(0x7CD810, ExeRun, 0x9)
 {
-    EventSystems::General.Broadcast(Events::ExeRun);
+	EventSystems::General.Broadcast(Events::ExeRun);
 
-    return 0;
+	return 0;
 }
 
 void NAKED _ExeTerminate()
@@ -59,23 +62,25 @@ void NAKED _ExeTerminate()
 	// Jump back
 	POP_REG(EAX);
 	SET_REG32(EBX, 0x7CD8EF);
-	__asm {jmp ebx};
+	__asm {jmp ebx}
+	;
 }
 DEFINE_JUMP(LJMP, 0x7CD8EA, GET_OFFSET(_ExeTerminate));
 
 DEFINE_HOOK(0x685659, Scenario_ClearClasses, 0xA)
 {
-    EventSystems::General.Broadcast(Events::ScenarioClearClassesEvent);
-    return 0;
+	IsLoadGame = true;
+	EventSystems::General.Broadcast(Events::ScenarioClearClassesEvent);
+	return 0;
 }
 
 // in progress: Initializing Tactical display
 DEFINE_HOOK(0x6875F3, Scenario_Start1, 0x6)
 {
-    EventSystems::General.Broadcast(Events::ScenarioStartEvent);
-    return 0;
+	IsLoadGame = false;
+	EventSystems::General.Broadcast(Events::ScenarioStartEvent);
+	return 0;
 }
-
 
 DEFINE_HOOK(0x55AFB3, LogicClass_Update, 0x6)
 {
@@ -88,4 +93,3 @@ DEFINE_HOOK(0x55B719, LogicClass_Update_Late, 0x5)
 	EventSystems::Logic.Broadcast(Events::LogicUpdateEvent, EventArgsLate);
 	return 0;
 }
-
