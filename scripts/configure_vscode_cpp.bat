@@ -3,6 +3,7 @@
 rem Copies and opens example config files for VSCode.
 
 rem Ensure we're in correct directory.
+chcp 65001
 cd /D "%~dp0"
 cd ..\.vscode\
 

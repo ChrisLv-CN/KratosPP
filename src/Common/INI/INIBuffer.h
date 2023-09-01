@@ -1,17 +1,28 @@
-#pragma once
+ï»¿#pragma once
 
 #include <string>
 #include <map>
 #include <vector>
+#include <any>
+#include <typeinfo>
+#include <type_traits>
 
-#include <TacticalClass.h>
-#include <CCINIClass.h>
+#include <GeneralStructures.h>
+#include <BulletClass.h>
 
 #include <Utilities/INIParser.h>
 #include <Utilities/TemplateDef.h>
 
+template<>
+inline bool Parser<std::string>::TryParse(const char* pValue, std::string* outValue)
+{
+	outValue->assign(pValue);
+	return true;
+}
+
+
 /// <summary>
-/// ´¢´æÒ»¸öSectionÔÚÒ»¸öiniÎÄ¼şÖĞµÄÈ«²¿KV¶Ô
+/// å‚¨å­˜ä¸€ä¸ªSectionåœ¨ä¸€ä¸ªiniæ–‡ä»¶ä¸­çš„å…¨éƒ¨KVå¯¹
 /// </summary>
 class INIBuffer
 {
@@ -21,23 +32,113 @@ public:
 
 	void ClearBuffer();
 
-	template<typename T>
-	bool GetParsed(const char* key, T* val)
+	bool GetUnparsed(std::string key, std::string& outValue)
+	{
+		auto it = Unparsed.find(key);
+		if (it != Unparsed.end())
+		{
+			outValue = it->second;
+			return true;
+		}
+		return false;
+	}
+
+	template<typename OutType>
+	bool GetParsed(std::string key, OutType& outValue)
 	{
 		auto it = Parsed.find(key);
 		if (it != Parsed.end())
 		{
-			val = &it->second;
+			outValue = std::any_cast<OutType>(it->second);
 			return true;
 		}
-		T buffer;
 		auto ite = Unparsed.find(key);
-		if (ite!= Unparsed.end())
+		if (ite != Unparsed.end())
 		{
-			const char* v = ite->second;
-			if (Parser<T, 1>::Parse(v, val) == 1)
+			std::string value = ite->second;
+			OutType buffer = {};
+			if (Parse<OutType>(value.c_str(), &buffer))
 			{
-				Parsed[key] = val;
+				std::any v = buffer;
+				Parsed[key] = v;
+				outValue = buffer;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// ----------------
+	// ç±»å‹è½¬æ¢æ¨¡æ¿
+	// ----------------
+
+	template<typename OutType>
+	inline size_t Parse(const char* value, OutType* outValue)
+	{
+		return Parser<OutType>::Parse(value, outValue);
+	}
+
+	template<>
+	inline size_t Parse<CoordStruct>(const char* value, CoordStruct* outValue)
+	{
+		return Parser<int, 3>::Parse(value, (int*)outValue);
+	}
+
+	template<>
+	inline size_t Parse<ColorStruct>(const char* value, ColorStruct* outValue)
+	{
+		return Parser<BYTE, 3>::Parse(value, (BYTE*)outValue);
+	}
+	template<>
+	inline size_t Parse<BulletVelocity>(const char* value, BulletVelocity* outValue)
+	{
+		return Parser<double, 3>::Parse(value, (double*)outValue);
+	}
+
+	template<>
+	inline size_t Parse<Point2D>(const char* value, Point2D* outValue)
+	{
+		return Parser<int, 2>::Parse(value, (int*)outValue);
+	}
+
+	/*
+	template<>
+	inline size_t Parse<CellStruct>(const char* value, CellStruct* outValue)
+	{
+		return Parser<short, 2>::Parse(value, (short*)outValue);
+	}
+	*/
+	template<typename OutType>
+	bool GetParsedList(std::string key, std::vector<OutType>& outValues)
+	{
+		auto it = Parsed.find(key);
+		if (it != Parsed.end())
+		{
+			outValues = std::any_cast<std::vector<OutType>>(it->second);
+			return true;
+		}
+		auto ite = Unparsed.find(key);
+		if (ite != Unparsed.end())
+		{
+			std::string v = ite->second;
+			char str[Common::readLength];
+			size_t length = v.copy(str, std::string::npos);
+			str[length] = '\0';
+			char* context = nullptr;
+			std::vector<OutType> values = {};
+			for (auto pCur = strtok_s(str, Common::readDelims, &context); pCur; pCur = strtok_s(nullptr, Common::readDelims, &context))
+			{
+				OutType buffer = {};
+				if (Parser<OutType>::Parse(pCur, &buffer))
+				{
+					values.push_back(buffer);
+				}
+			}
+			if (!values.empty())
+			{
+				std::any any = values;
+				Parsed[key] = any;
+				outValues = values;
 				return true;
 			}
 		}
@@ -46,16 +147,16 @@ public:
 
 	std::string FileName{};
 	std::string Section{};
-	// Ã»ÓĞ×ª»»ÀàĞÍµÄkv¶Ô
+	// æ²¡æœ‰è½¬æ¢ç±»å‹çš„kvå¯¹
 	std::map<std::string, std::string> Unparsed{};
-	// ÒÑ¾­×°»»ÁËÀàĞÍµÄkv¶Ô
-	std::map<std::string, void*> Parsed{};
+	// å·²ç»è£…æ¢äº†ç±»å‹çš„kvå¯¹
+	std::map<std::string, std::any> Parsed{};
 private:
 };
 
 /// <summary>
-/// Ò»¸öSectionÔÚ¶à¸öiniÎÄ¼şÖĞµÄKV¶Ô£¬°´ÎÄ¼ş¶ÁÈ¡Ë³ĞòÁ¬½Ó¡£
-/// °´Ë³Ğò¼ìË÷key£¬²¢·µ»ØÊ×¸ö·ûºÏµÄÄ¿±ê¡£
+/// ä¸€ä¸ªSectionåœ¨å¤šä¸ªiniæ–‡ä»¶ä¸­çš„KVå¯¹ï¼ŒæŒ‰æ–‡ä»¶è¯»å–é¡ºåºè¿æ¥ã€‚
+/// æŒ‰é¡ºåºæ£€ç´¢keyï¼Œå¹¶è¿”å›é¦–ä¸ªç¬¦åˆçš„ç›®æ ‡ã€‚
 /// </summary>
 class INILinkedBuffer
 {
@@ -71,33 +172,43 @@ public:
 	bool IsExpired();
 	
 	/// <summary>
-	/// ·µ»ØÊ×¸ö³ÖÓĞkeyµÄbuffer
+	/// è¿”å›é¦–ä¸ªæŒæœ‰keyçš„buffer
 	/// </summary>
 	/// <param name="key"></param>
 	/// <returns></returns>
 	INIBuffer* GetFirstOccurrence(const char* key);
-	// ¶ÁÈ¡Î´¾­×ª»»µÄvalue
+
+	// è¯»å–æœªç»è½¬æ¢çš„value
 	bool GetUnparsed(const char* key, std::string& val);
 
-	// ½«Value×ª»»³ÉÖ¸¶¨µÄtype
+	// å°†Valueè½¬æ¢æˆæŒ‡å®šçš„type
 	template<typename T>
-	bool GetParsed(const char* key, T* val)
+	bool GetParsed(const char* key, T& outValue)
 	{
-		std::string buffer;
-		if (m_Buffer->GetParsed<T>(key, val))
+		if (m_Buffer->GetParsed<T>(key, outValue))
 		{
 			return true;
 		}
 		if (m_LinkedBuffer)
 		{
-			return m_LinkedBuffer->GetParsed<T>(key, val);
+			return m_LinkedBuffer->GetParsed<T>(key, outValue);
 		}
 		return false;
 	}
-	template<typename T>
-	bool GetParsedList(const char* key, std::vector<T>* vals)
-	{
 
+	// è¯»å–å¤šæ¬¡value
+	template<typename T>
+	bool GetParsedList(const char* key, std::vector<T>& outValue)
+	{
+		if (m_Buffer->GetParsedList<T>(key, outValue))
+		{
+			return true;
+		}
+		if (m_LinkedBuffer)
+		{
+			return m_LinkedBuffer->GetParsedList<T>(key, outValue);
+		}
+		return false;
 	}
 private:
 	bool _expired = false;

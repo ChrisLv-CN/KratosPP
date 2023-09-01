@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include <typeinfo>
+#include <string>
+#include <format>
 #include <stack>
 
 #include <Common/Components/GameObject.h>
@@ -8,6 +10,7 @@
 
 #include <Helpers/Macro.h>
 #include <Utilities/Container.h>
+#include <Utilities/Debug.h>
 #include <Utilities/TemplateDef.h>
 
 template <typename TBase, typename TExt>
@@ -21,8 +24,19 @@ public:
 	public:
 		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
 		{
+			char t[1024];
+			sprintf_s(t, "%p", this);
+			std::string tt = { t };
+			char o[1024];
+			sprintf_s(o, "%p", OwnerObject);
+			std::string oo = { o };
+			goName = std::format("{}_GameObject[{}] {}", goName, tt, oo);
 			m_GameObject = new GameObject(goName);
 			m_GameObject->_OnAwake += newDelegate(this, &ExtData::Awake);
+			// 读取全局脚本附加给GameObject，但不激活，等待GameObject首次访问触发Awake
+			// Search and instantiate global script objects in TechnoExt
+			TExt::AddGlobalScripts(&m_GlobalScripts, this);
+			CreateGlobalScriptable();
 		};
 
 		~ExtData() override
@@ -75,11 +89,24 @@ public:
 		/// </summary>
 		void Awake()
 		{
-			// Search and instantiate global script objects in TechnoExt
-			TExt::AddGlobalScripts(&m_GlobalScripts, this);
-			// initialize values
-			CreateScriptable(nullptr);
+			
 		};
+
+		void CreateGlobalScriptable()
+		{
+			if (m_GlobalScriptsCreated)
+			{
+				return;
+			}
+			auto buffer = TakeBuffer();
+			buffer.merge(m_GlobalScripts);
+			for (Component* s : buffer)
+			{
+				TExt::ExtData::m_GameObject->AddComponentNotAwake(s);
+			}
+			GiveBackBuffer(buffer);
+			m_GlobalScriptsCreated = true;
+		}
 
 		void CreateScriptable(std::list<Component*>* scripts)
 		{
@@ -88,15 +115,7 @@ public:
 				return;
 			}
 			auto buffer = TakeBuffer();
-			if (scripts)
-			{
-				m_GlobalScripts.merge(*scripts);
-			}
-			scripts = &m_GlobalScripts;
-			for (Component* s : *scripts)
-			{
-				buffer.push_back(s);
-			}
+			buffer.merge(*scripts);
 			for (Component* s : buffer)
 			{
 				TExt::ExtData::m_GameObject->AddComponentNotAwake(s);
@@ -109,7 +128,11 @@ public:
 			m_ScriptsCreated = true;
 		}
 
+		// 动态脚本
 		bool m_ScriptsCreated = false;
+
+		// 全局脚本
+		bool m_GlobalScriptsCreated = false;
 		std::list<Component*> m_GlobalScripts{};
 	};
 

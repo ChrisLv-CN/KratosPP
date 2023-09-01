@@ -1,4 +1,4 @@
-#include "Component.h"
+﻿#include "Component.h"
 
 Component* Component::GetParent()
 {
@@ -32,59 +32,6 @@ void Component::DetachFromParent()
 		_parent->RemoveComponent(this);
 	}
 }
-
-template <typename TComponent> TComponent* Component::GetComponent()
-{
-	return GetComponentInChildren<TComponent>();
-}
-
-
-template <typename TComponent> TComponent* Component::GetComponentInParent()
-{
-	Component* c = nullptr;
-	// find first level
-	for (Component* children : _children)
-	{
-		if (typeid(children) == TComponent)
-		{
-			c = children;
-			break;
-		}
-	}
-	if (!c && _parent)
-	{
-		c = _parent->GetComponentInParent<TComponent>();
-	}
-	return c;
-}
-
-template <typename TComponent> TComponent* Component::GetComponentInChildren()
-{
-	TComponent* c = nullptr;
-	// find first level
-	for (Component* children : _children)
-	{
-		if (typeid(children) == TComponent)
-		{
-			c = (TComponent*)children;
-			break;
-		}
-	}
-	if (!c)
-	{
-		for (Component* children : _children)
-		{
-			TComponent* r = children->GetComponentInChildren<TComponent>();
-			if (r)
-			{
-				c = r;
-				break;
-			}
-		}
-	}
-	return c;
-}
-
 
 std::vector<Component*> Component::GetComponentsInChildren()
 {

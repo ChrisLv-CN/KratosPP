@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <memory>
 #include <type_traits>
@@ -119,9 +119,9 @@ public:
 	}
 
 	template<typename T>
-	StreamWorkerBase* Process(T& value, bool RegisterForChange = true)
+	StreamWorkerBase& Process(T& value, bool RegisterForChange = true)
 	{
-		return this;
+		return *this;
 	}
 
 protected:

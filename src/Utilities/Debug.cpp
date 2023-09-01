@@ -1,4 +1,4 @@
-#include "Debug.h"
+﻿#include "Debug.h"
 #include "Macro.h"
 
 #include <YRPPCore.h>
@@ -16,7 +16,7 @@ void Debug::Log(const char* pFormat, ...)
 	va_list args;
 	va_start(args, pFormat);
 	vsprintf_s(FinalStringBuffer, pFormat, args);
-	LogGame("%s %s", "[" PRODUCT_NAME "]", FinalStringBuffer);
+	LogGame("%s(%d) %s", "[" PRODUCT_NAME "]", Unsorted::CurrentFrame.get(), FinalStringBuffer);
 	va_end(args);
 }
 

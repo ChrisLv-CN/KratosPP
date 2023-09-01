@@ -1,26 +1,26 @@
-#include "INIReaderManager.h"
+ï»¿#include "INIReaderManager.h"
 
 void INIReaderManager::ClearBuffer(EventSystem* sender, Event e, void* args)
 {
-	// ÊÍ·ÅINIFileBuffer
+	// é‡Šæ”¾INIFileBuffer
 	for (auto fileBuffer : s_File)
 	{
 		fileBuffer->ClearBuffer();
 	}
 	s_File.clear();
-	// ÊÍ·ÅLinkedBuffer
+	// é‡Šæ”¾LinkedBuffer
 	for (auto linkedBuffer : s_LinkedBuffer)
 	{
 		//linkedBuffer.second->Expired();
 		GameDelete(linkedBuffer.second);
 	}
 	s_LinkedBuffer.clear();
-	// ÊÍ·ÅConfig
+	// é‡Šæ”¾Config
 	for (auto configMap : s_Configs)
 	{
 		for (auto config : configMap.second)
 		{
-			// ÊÍ·Åconfig¶ÔÏó
+			// é‡Šæ”¾configå¯¹è±¡
 			GameDelete(config.second);
 		}
 		configMap.second.clear();
@@ -37,8 +37,8 @@ INIFileBuffer* INIReaderManager::FindFile(std::string fileName)
 			return buffer;
 		}
 	}
-	// ÎªÃ¿¸öiniFile´´½¨Ò»¸ö´æ´¢¶ÔÏó
-	// INIFileBufferÔÚ¹¹½¨Ê±»á¶ÁÈ¡KV¶Ô£¬ÒÔ×Ö·û´®ĞÎÊ½»º´æ
+	// ä¸ºæ¯ä¸ªiniFileåˆ›å»ºä¸€ä¸ªå­˜å‚¨å¯¹è±¡
+	// INIFileBufferåœ¨æ„å»ºæ—¶ä¼šè¯»å–KVå¯¹ï¼Œä»¥å­—ç¬¦ä¸²å½¢å¼ç¼“å­˜
 	std::string f = fileName.data();
 	INIFileBuffer* buffer = GameCreate<INIFileBuffer>(f);
 	s_File.push_back(buffer);
@@ -47,7 +47,7 @@ INIFileBuffer* INIReaderManager::FindFile(std::string fileName)
 
 INIBuffer* INIReaderManager::FindBuffer(std::string fileName, std::string section)
 {
-	// iniÎÄ¼ş°´Ë³Ğò´¢´æ£¬ÔÚ²éÕÒÊ±ÏÈ¶ÁÈ¡Map.ini£¬GameMode.ini£¬×îºó¶ÁÈ¡Rules.ini
+	// iniæ–‡ä»¶æŒ‰é¡ºåºå‚¨å­˜ï¼Œåœ¨æŸ¥æ‰¾æ—¶å…ˆè¯»å–Map.iniï¼ŒGameMode.iniï¼Œæœ€åè¯»å–Rules.ini
 	return FindFile(fileName)->GetSection(section);
 }
 
@@ -60,8 +60,11 @@ INILinkedBuffer* INIReaderManager::FindLinkedBuffer(std::vector<std::string> dep
 		return it->second;
 	}
 	INILinkedBuffer* linkedBuffer{};
-	for (auto iniFileName : dependency)
+	// ç¼“å­˜çš„æ˜¯æœ€åä¸€ä¸ªå¯¹è±¡ï¼Œæ‰€ä»¥æ˜¯å’ŒDependencyçš„é¡ºåºç›¸åï¼Œè¦å€’ç€æ„å»º
+	std::vector<std::string>::reverse_iterator rit;
+	for(rit = dependency.rbegin(); rit != dependency.rend(); rit++)
 	{
+		std::string iniFileName = *rit;
 		INIBuffer* buffer = FindBuffer(iniFileName, section);
 		linkedBuffer = GameCreate<INILinkedBuffer>( buffer, linkedBuffer);
 	}

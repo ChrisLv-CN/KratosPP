@@ -6,10 +6,5 @@ output
 *.sdf
 *.suo
 .vs
-.vscode
 .cproject
 .project
-
-/.vscode/c_cpp_properties.json
-/.vscode/cspell.json
-/.vscode/settings.json

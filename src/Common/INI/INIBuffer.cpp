@@ -1,4 +1,4 @@
-#include "INIBuffer.h"
+﻿#include "INIBuffer.h"
 
 INIBuffer::INIBuffer() {}
 
@@ -34,11 +34,11 @@ std::vector<std::string> INILinkedBuffer::GetDependency()
 
 void INILinkedBuffer::GetDependency(std::vector<std::string> &dependency)
 {
+	dependency.push_back(m_Buffer->FileName);
 	if (m_LinkedBuffer)
 	{
 		m_LinkedBuffer->GetDependency(dependency);
 	}
-	dependency.push_back(m_Buffer->FileName);
 }
 
 std::string INILinkedBuffer::GetSection()
@@ -79,10 +79,8 @@ INIBuffer* INILinkedBuffer::GetFirstOccurrence(const char* key)
 
 bool INILinkedBuffer::GetUnparsed(const char* key, std::string& val)
 {
-	auto it = m_Buffer->Unparsed.find(key);
-	if (it != m_Buffer->Unparsed.end())
+	if (m_Buffer->GetUnparsed(key, val))
 	{
-		val = it->second;
 		return true;
 	}
 	if (m_LinkedBuffer)
