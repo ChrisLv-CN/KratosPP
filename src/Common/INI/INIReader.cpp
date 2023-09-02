@@ -1,32 +1,31 @@
 #include "INIReader.h"
 
-INIBufferReader::INIBufferReader(std::vector<std::string> dependency, const char* section)
+INIReader::INIReader(std::vector<std::string> dependency, const char *section)
 {
-	this->m_LinkedBuffer = INIReaderManager::FindLinkedBuffer(dependency, section);
+	this->m_Dependency = dependency;
+	this->m_Section = section;
 }
 
-bool INIBufferReader::HasSection(const char* section)
+INILinkedBuffer *INIReader::GetLinkedBuffer()
 {
-	if (GetBuffer())
+	if (!m_LinkedBuffer || m_LinkedBuffer->IsExpired())
 	{
-		for (std::string fileName : GetBuffer()->GetDependency())
+		m_LinkedBuffer = INIBufferManager::FindLinkedBuffer(m_Dependency, m_Section);
+	}
+	return m_LinkedBuffer;
+}
+
+bool INIReader::HasSection(const char *section)
+{
+	if (GetLinkedBuffer())
+	{
+		for (std::string fileName : GetLinkedBuffer()->GetDependency())
 		{
-			if (INIReaderManager::FindFile(fileName)->HasSection(section))
+			if (INIBufferManager::FindFile(fileName)->HasSection(section))
 			{
 				return true;
 			}
 		}
 	}
 	return false;
-}
-
-INILinkedBuffer* INIBufferReader::GetBuffer()
-{
-	if (m_LinkedBuffer->IsExpired())
-	{
-		std::vector<std::string> dependency = m_LinkedBuffer->GetDependency();
-		std::string section = m_LinkedBuffer->GetSection();
-		m_LinkedBuffer = INIReaderManager::FindLinkedBuffer(dependency, section);
-	}
-	return m_LinkedBuffer;
 }

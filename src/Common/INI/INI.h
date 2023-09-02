@@ -8,7 +8,7 @@
 #include <Common/EventSystems/EventSystem.h>
 
 using Dependency = std::vector<std::string>;
-using GetDependency = Dependency(*)();
+using GetDependency = Dependency (*)();
 
 /// <summary>
 /// INI操作类，读取配置信息
@@ -17,33 +17,46 @@ using GetDependency = Dependency(*)();
 class INI
 {
 public:
-	static void ClearBuffer(EventSystem* sender, Event e, void* args);
+	static void ClearBuffer(EventSystem *sender, Event e, void *args)
+	{
+		INIReaderManager::ClearBuffer(sender, e, args);
+		s_Rules.clear();
+		s_Art.clear();
+		s_AI.clear();
+	}
 
-	static bool HasSection(Dependency dependency, const char* section)
+	static bool HasSection(Dependency dependency, const char *section)
 	{
 		return (new INIBufferReader(dependency, section))->HasSection(section);
 	}
 
-	static INIBufferReader* GetSection(GetDependency dependency, const char* section)
+	static INIBufferReader *GetSection(GetDependency dependency, const char *section)
 	{
-		// 序列化并储存
-		INIBufferReader* reader = new INIBufferReader(dependency(), section);
-		return reader;
+		return INIReaderManager::FindBufferReader(dependency(), section);
 	}
 
-	template<typename T>
-	static T* GetConfig(GetDependency dependency, const char* section)
+	template <typename TConfig>
+	static INIConfigReader<TConfig> *GetConfig(GetDependency dependency, const char *section)
 	{
-		Dependency d = dependency();
-		return nullptr;
+		return INIReaderManager::FindConfigReader<TConfig>(dependency(), section);
 	}
 
 	static GetDependency Rules;
 	static GetDependency Art;
 	static GetDependency AI;
+
 private:
-	static bool ICaseCompare(std::string_view a, std::string_view b);
-	
+	static bool ICaseCompare(std::string_view a, std::string_view b)
+	{
+		if (a.length() == b.length())
+		{
+			return std::equal(a.begin(), a.end(), b.begin(),
+							  [](char a, char b)
+							  { return tolower(a) == tolower(b); });
+		}
+		return false;
+	}
+
 	/// <summary>
 	/// 获取ini文件名列表，如：
 	/// rules = [Map.ini, GameMode.ini, Rulesmd.ini]
@@ -52,14 +65,80 @@ private:
 	/// </summary>
 	/// <param name="iniName"></param>
 	/// <returns></returns>
-	static Dependency GetDependency(std::string_view iniFileName);
+	static Dependency GetDependency(std::string_view iniFileName)
+	{
+
+		std::string fileName = iniFileName.data();
+		auto it = s_Dependency.find(fileName);
+		if (it != s_Dependency.end())
+		{
+			return it->second;
+		}
+		std::string rulesName = INIConstant::GetRulesName().data();
+		if (ICaseCompare(fileName, rulesName))
+		{
+			if (SessionClass::Instance->GameMode == GameMode::Campaign)
+			{
+				// Map.ini, rulesmd.ini
+				const std::vector<std::string> d{INIConstant::GetMapName().data(), rulesName};
+				s_Dependency[rulesName] = d;
+				return d;
+			}
+			// Map.ini, GameMode.ini, rulesmd.ini
+			const std::vector<std::string> d{INIConstant::GetMapName().data(), INIConstant::GetGameModeName().data(), rulesName};
+			s_Dependency[rulesName] = d;
+			return d;
+		}
+		std::string artName = INIConstant::GetArtName().data();
+		if (ICaseCompare(fileName, artName))
+		{
+			// artmd.ini
+			const std::vector<std::string> d{artName};
+			s_Dependency[artName] = d;
+			return d;
+		}
+		std::string aiName = INIConstant::GetAIName().data();
+		if (ICaseCompare(fileName, aiName))
+		{
+			// Map.ini, aimd.ini
+			const std::vector<std::string> d{INIConstant::GetMapName().data(), aiName};
+			s_Dependency[aiName] = d;
+			return d;
+		}
+		const std::vector<std::string> d{fileName};
+		return d;
+	}
 
 	// ini文件名，文件名列表
 	static std::map<std::string, Dependency> s_Dependency;
 
-	static Dependency GetRules();
-	static Dependency GetArt();
-	static Dependency GetAI();
+	static Dependency GetRules()
+	{
+
+		if (s_Rules.empty())
+		{
+			s_Rules = GetDependency(INIConstant::GetRulesName());
+		}
+		return s_Rules;
+	}
+
+	static Dependency GetArt()
+	{
+		if (s_Art.empty())
+		{
+			s_Art = GetDependency(INIConstant::GetArtName());
+		}
+		return s_Art;
+	}
+
+	static Dependency GetAI()
+	{
+		if (s_AI.empty())
+		{
+			s_AI = GetDependency(INIConstant::GetAIName());
+		}
+		return s_AI;
+	}
 
 	static Dependency s_Rules;
 	static Dependency s_Art;

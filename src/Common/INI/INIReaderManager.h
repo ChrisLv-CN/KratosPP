@@ -1,53 +1,44 @@
-#pragma once
-
-#include "INIConstant.h"
-#include "INIBuffer.h"
-#include "INIFileBuffer.h"
-#include "INIConfig.h"
-#include "INIReader.h"
+ï»¿#pragma once
 
 #include <map>
 #include <vector>
+#include <string>
 
-#include <SessionClass.h>
+#include "INIReader.h"
+#include "INIConfigReader.h"
 
 class INIReaderManager
 {
 public:
-	struct LinkedBufferKey
+	struct INIReaderKey
 	{
 		std::vector<std::string> dependency;
 		std::string section;
 
-		auto operator <=>(const LinkedBufferKey&) const = default;
+		auto operator<=>(const INIReaderKey &) const = default;
 	};
-	static void ClearBuffer(EventSystem* sender, Event e, void* args);
 
-	/// <summary>
-	/// ´ÓINIÎÄ¼şÖĞ¶ÁÈ¡KV¶Ô£¬KV¶ÔÒÔ×Ö·û´®ĞÎÊ½»º´æ
-	/// </summary>
-	/// <param name="fileName"></param>
-	/// <returns></returns>
-	static INIFileBuffer* FindFile(std::string fileName);
-	
-	static INIBuffer* FindBuffer(std::string fileName, std::string section);
+	static void ClearBuffer(EventSystem *sender, Event e, void *args);
 
-	/// <summary>
-	/// °´Ë³Ğò´ÓiniÎÄ¼ş×éÖĞ£¬¶ÁÈ¡sectionµÄKV£¬Á¬½Ó³ÉÒ»¸öbuffer¡£
-	/// ´ÓbufferÖĞ¼ìË÷Ö¸¶¨µÄkeyÊ±£¬°´Ë³Ğò¼ìË÷¡£
-	/// </summary>
-	/// <param name="dependency"></param>
-	/// <param name="section"></param>
-	/// <returns></returns>
-	static INILinkedBuffer* FindLinkedBuffer(std::vector<std::string> dependency, std::string section);
+	static INIBufferReader *FindBufferReader(std::vector<std::string> dependency, const char *section);
+
+	template <typename TConfig>
+	static INIConfigReader<TConfig> *FindConfigReader(std::vector<std::string> dependency, const char *section)
+	{
+		const INIReaderKey key{dependency, section};
+		auto it = s_ConfigReader.find(key);
+		if (it != s_ConfigReader.end())
+		{
+			return (INIConfigReader<TConfig> *)it->second;
+		}
+		INIBufferReader *bufferReader = FindBufferReader(dependency, section);
+		INIConfigReader<TConfig> *reader = GameCreate<INIConfigReader<TConfig>>(dependency, section, bufferReader);
+		s_ConfigReader[key] = reader;
+
+		return reader;
+	}
+
 private:
-
-
-	// Ã¿Ò»¸öiniÎÄ¼ş¶ÔÓ¦Ò»¸öINIFileBuffer£¬ÎªÁË±£³ÖË³Ğò£¬ÓÃÏòÁ¿´æ´¢
-	static std::vector<INIFileBuffer*> s_File;
-
-	static std::map<LinkedBufferKey, INILinkedBuffer*> s_LinkedBuffer;
-	// INILinkedBufferÀïµÄÎ´×ª»»µÄkv¶Ô×ª»»³É¶ÔÏóºó£¬ÓÃÀàÃû´æ´¢
-	static std::map<INILinkedBuffer, std::map<std::string, INIConfigBase*>> s_Configs;
+	static std::map<INIReaderKey, INIBufferReader *> s_BufferReader;
+	static std::map<INIReaderKey, void *> s_ConfigReader;
 };
-

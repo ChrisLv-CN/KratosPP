@@ -13,13 +13,12 @@
 #include <Utilities/INIParser.h>
 #include <Utilities/TemplateDef.h>
 
-template<>
-inline bool Parser<std::string>::TryParse(const char* pValue, std::string* outValue)
+template <>
+inline bool Parser<std::string>::TryParse(const char *pValue, std::string *outValue)
 {
 	outValue->assign(pValue);
 	return true;
 }
-
 
 /// <summary>
 /// 储存一个Section在一个ini文件中的全部KV对
@@ -32,7 +31,7 @@ public:
 
 	void ClearBuffer();
 
-	bool GetUnparsed(std::string key, std::string& outValue)
+	bool GetUnparsed(std::string key, std::string &outValue)
 	{
 		auto it = Unparsed.find(key);
 		if (it != Unparsed.end())
@@ -43,8 +42,8 @@ public:
 		return false;
 	}
 
-	template<typename OutType>
-	bool GetParsed(std::string key, OutType& outValue)
+	template <typename OutType>
+	bool GetParsed(std::string key, OutType &outValue)
 	{
 		auto it = Parsed.find(key);
 		if (it != Parsed.end())
@@ -72,33 +71,33 @@ public:
 	// 类型转换模板
 	// ----------------
 
-	template<typename OutType>
-	inline size_t Parse(const char* value, OutType* outValue)
+	template <typename OutType>
+	inline size_t Parse(const char *value, OutType *outValue)
 	{
 		return Parser<OutType>::Parse(value, outValue);
 	}
 
-	template<>
-	inline size_t Parse<CoordStruct>(const char* value, CoordStruct* outValue)
+	template <>
+	inline size_t Parse<CoordStruct>(const char *value, CoordStruct *outValue)
 	{
-		return Parser<int, 3>::Parse(value, (int*)outValue);
+		return Parser<int, 3>::Parse(value, (int *)outValue);
 	}
 
-	template<>
-	inline size_t Parse<ColorStruct>(const char* value, ColorStruct* outValue)
+	template <>
+	inline size_t Parse<ColorStruct>(const char *value, ColorStruct *outValue)
 	{
-		return Parser<BYTE, 3>::Parse(value, (BYTE*)outValue);
+		return Parser<BYTE, 3>::Parse(value, (BYTE *)outValue);
 	}
-	template<>
-	inline size_t Parse<BulletVelocity>(const char* value, BulletVelocity* outValue)
+	template <>
+	inline size_t Parse<BulletVelocity>(const char *value, BulletVelocity *outValue)
 	{
-		return Parser<double, 3>::Parse(value, (double*)outValue);
+		return Parser<double, 3>::Parse(value, (double *)outValue);
 	}
 
-	template<>
-	inline size_t Parse<Point2D>(const char* value, Point2D* outValue)
+	template <>
+	inline size_t Parse<Point2D>(const char *value, Point2D *outValue)
 	{
-		return Parser<int, 2>::Parse(value, (int*)outValue);
+		return Parser<int, 2>::Parse(value, (int *)outValue);
 	}
 
 	/*
@@ -108,8 +107,8 @@ public:
 		return Parser<short, 2>::Parse(value, (short*)outValue);
 	}
 	*/
-	template<typename OutType>
-	bool GetParsedList(std::string key, std::vector<OutType>& outValues)
+	template <typename OutType>
+	bool GetParsedList(std::string key, std::vector<OutType> &outValues)
 	{
 		auto it = Parsed.find(key);
 		if (it != Parsed.end())
@@ -124,7 +123,7 @@ public:
 			char str[Common::readLength];
 			size_t length = v.copy(str, std::string::npos);
 			str[length] = '\0';
-			char* context = nullptr;
+			char *context = nullptr;
 			std::vector<OutType> values = {};
 			for (auto pCur = strtok_s(str, Common::readDelims, &context); pCur; pCur = strtok_s(nullptr, Common::readDelims, &context))
 			{
@@ -151,6 +150,7 @@ public:
 	std::map<std::string, std::string> Unparsed{};
 	// 已经装换了类型的kv对
 	std::map<std::string, std::any> Parsed{};
+
 private:
 };
 
@@ -162,28 +162,30 @@ class INILinkedBuffer
 {
 public:
 	INILinkedBuffer();
-	INILinkedBuffer(INIBuffer* buffer, INILinkedBuffer* nextBuffer);
-	
+	INILinkedBuffer(INIBuffer *buffer, INILinkedBuffer *nextBuffer);
+
+	auto operator<=>(const INILinkedBuffer &) const = default;
+
 	std::vector<std::string> GetDependency();
 	std::string GetSection();
 
 	void ClearBuffer();
 	void Expired();
 	bool IsExpired();
-	
+
 	/// <summary>
 	/// 返回首个持有key的buffer
 	/// </summary>
 	/// <param name="key"></param>
 	/// <returns></returns>
-	INIBuffer* GetFirstOccurrence(const char* key);
+	INIBuffer *GetFirstOccurrence(const char *key);
 
 	// 读取未经转换的value
-	bool GetUnparsed(const char* key, std::string& val);
+	bool GetUnparsed(const char *key, std::string &val);
 
 	// 将Value转换成指定的type
-	template<typename T>
-	bool GetParsed(const char* key, T& outValue)
+	template <typename T>
+	bool GetParsed(const char *key, T &outValue)
 	{
 		if (m_Buffer->GetParsed<T>(key, outValue))
 		{
@@ -197,8 +199,8 @@ public:
 	}
 
 	// 读取多次value
-	template<typename T>
-	bool GetParsedList(const char* key, std::vector<T>& outValue)
+	template <typename T>
+	bool GetParsedList(const char *key, std::vector<T> &outValue)
 	{
 		if (m_Buffer->GetParsedList<T>(key, outValue))
 		{
@@ -210,12 +212,12 @@ public:
 		}
 		return false;
 	}
+
 private:
 	bool _expired = false;
 
-	void GetDependency(std::vector<std::string>& dependency);
+	void GetDependency(std::vector<std::string> &dependency);
 
-	INIBuffer* m_Buffer{};
-	INILinkedBuffer* m_LinkedBuffer{};
+	INIBuffer *m_Buffer{};
+	INILinkedBuffer *m_LinkedBuffer{};
 };
-

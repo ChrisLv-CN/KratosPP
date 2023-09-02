@@ -1,8 +1,7 @@
-#include "INIFileBuffer.h"
+ï»¿#include "INIFileBuffer.h"
 
 INIFileBuffer::INIFileBuffer()
 {
-
 }
 
 INIFileBuffer::INIFileBuffer(std::string fileName)
@@ -15,14 +14,14 @@ void INIFileBuffer::ClearBuffer()
 {
 	for (auto buffer : m_Section)
 	{
-		INIBuffer* b = buffer.second;
+		INIBuffer *b = buffer.second;
 		b->ClearBuffer();
 		GameDelete(b);
 	}
 	m_Section.clear();
 	for (auto cache : m_SectionCache)
-	{	
-		std::vector<Buffer>* pairs = cache.second;
+	{
+		std::vector<Buffer> *pairs = cache.second;
 		GameDelete(pairs);
 	}
 	m_SectionCache.clear();
@@ -34,14 +33,14 @@ bool INIFileBuffer::HasSection(std::string section)
 	return it != m_SectionCache.end();
 }
 
-INIBuffer* INIFileBuffer::GetSection(std::string section)
+INIBuffer *INIFileBuffer::GetSection(std::string section)
 {
 	auto it = m_Section.find(section);
 	if (it != m_Section.end())
 	{
 		return it->second;
 	}
-	INIBuffer* buffer = GameCreate<INIBuffer>(FileName, section);
+	INIBuffer *buffer = GameCreate<INIBuffer>(FileName, section);
 	auto ite = m_SectionCache.find(section);
 	if (ite != m_SectionCache.end())
 	{
@@ -56,24 +55,24 @@ INIBuffer* INIFileBuffer::GetSection(std::string section)
 
 void INIFileBuffer::InitCache()
 {
-	CCINIClass* pINI = GameCreate<CCINIClass>();
-	CCFileClass* pFile = GameCreate<CCFileClass>(FileName.c_str());
+	CCINIClass *pINI = GameCreate<CCINIClass>();
+	CCFileClass *pFile = GameCreate<CCFileClass>(FileName.c_str());
 	INI_EX reader(pINI);
-	// ¶ÁÈëini
+	// è¯»å…¥ini
 	pINI->ReadCCFile(pFile);
 	GameDelete(pFile);
-	// ÓÃstring»º´æËùÓÐµÄKV¶Ô
+	// ç”¨stringç¼“å­˜æ‰€æœ‰çš„KVå¯¹
 	auto pSection = pINI->Sections.First();
 	while (pSection)
 	{
-		char* _section = pSection->Name;
+		char *_section = pSection->Name;
 		if (_section)
 		{
 			int keyCount = pINI->GetKeyCount(_section);
-			std::vector<Buffer>* pairs = GameCreate<std::vector<Buffer>>();
+			std::vector<Buffer> *pairs = GameCreate<std::vector<Buffer>>();
 			for (int i = 0; i < keyCount; i++)
 			{
-				const char* k = pINI->GetKeyName(_section, i);
+				const char *k = pINI->GetKeyName(_section, i);
 				if (k)
 				{
 					// deep copy key
@@ -84,7 +83,7 @@ void INIFileBuffer::InitCache()
 					{
 						std::string _value(reader.value());
 						std::string value = _value.c_str();
-						const Buffer b{ key, value };
+						const Buffer b{key, value};
 						pairs->push_back(b);
 					}
 				}

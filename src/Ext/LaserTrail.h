@@ -14,17 +14,19 @@
 #include <Common/EventSystems/EventSystem.h>
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
+#include <Common/INI/INIReader.h>
 #include <Extension/GOExtension.h>
 #include <Extension/TechnoExt.h>
 
 class LaserTrailData : public INIConfig<LaserTrailData>
 {
 public:
-	virtual void Read(INI_EX ini) override
+	virtual void Read(INIBufferReader *ini) override
 	{
+		ColorChanged = ini->Get("ColorChanged", false);
 	}
 
-	Valueable<bool> ColorChanged{false};
+	Valueable<bool> ColorChanged{true};
 };
 
 class LaserTrail : public TechnoScript
@@ -53,6 +55,20 @@ public:
 		}
 		logMsg.append("\n");
 		Debug::Log(logMsg.c_str());
+
+		LaserTrailData* data = INI::GetConfig<LaserTrailData>(INI::Rules, _owner->GetType()->ID)->Data;
+		if (data->ColorChanged)
+		{
+			Debug::Log("LaserTrailData::ColorChanged = true\n");
+		}
+		else
+		{
+			Debug::Log("LaserTrailData::ColorChanged = false\n");
+		}
+	}
+
+	virtual void Destroy() override
+	{
 	}
 
 	template<typename T>

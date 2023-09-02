@@ -1,23 +1,40 @@
 ﻿#pragma once
 
 #include "INIBuffer.h"
-#include "INIReaderManager.h"
-
+#include "INIBufferManager.h"
+#include "INIConfigManager.h"
 
 #include <CCINIClass.h>
+
+class INIReader
+{
+public:
+	INIReader(std::vector<std::string> dependency, const char *section);
+
+	bool HasSection(const char *section);
+
+	INILinkedBuffer *GetLinkedBuffer();
+
+protected:
+	std::vector<std::string> m_Dependency{};
+	std::string m_Section{};
+	INILinkedBuffer *m_LinkedBuffer = nullptr;
+};
 
 /// <summary>
 /// 读取指定dependency下的指定section的KV对
 /// </summary>
-class INIBufferReader
+class INIBufferReader : public INIReader
 {
 public:
-	INIBufferReader(std::vector<std::string> dependency, const char* section);
+	INIBufferReader(std::vector<std::string> dependency, const char *section) : INIReader(dependency, section){};
+	INIBufferReader(std::vector<std::string> dependency, const char *section, INILinkedBuffer *linkedBuffer) : INIReader(dependency, section)
+	{
+		this->m_LinkedBuffer = linkedBuffer;
+	}
 
-	bool HasSection(const char* section);
-
-	template<typename OutType>
-	OutType Get(const char* key, const OutType def)
+	template <typename OutType>
+	OutType Get(const char *key, const OutType def)
 	{
 		OutType val{};
 		if (TryGet(key, val))
@@ -27,14 +44,14 @@ public:
 		return def;
 	}
 
-	template<typename OutType>
-	bool TryGet(const char* key, OutType& outValue)
+	template <typename OutType>
+	bool TryGet(const char *key, OutType &outValue)
 	{
-		return GetBuffer()->GetParsed(key, outValue);
+		return GetLinkedBuffer()->GetParsed(key, outValue);
 	}
 
-	template<typename OutType>
-	std::vector<OutType> GetList(const char* key, std::vector<OutType> def)
+	template <typename OutType>
+	std::vector<OutType> GetList(const char *key, std::vector<OutType> def)
 	{
 		std::vector<OutType> vals{};
 		if (TryGetList(key, vals))
@@ -44,16 +61,9 @@ public:
 		return def;
 	}
 
-	template<typename OutType>
-	bool TryGetList(const char* key, std::vector<OutType>& outValues)
+	template <typename OutType>
+	bool TryGetList(const char *key, std::vector<OutType> &outValues)
 	{
-		return GetBuffer()->GetParsedList(key, outValues);
+		return GetLinkedBuffer()->GetParsedList(key, outValues);
 	}
-
-private:
-	INILinkedBuffer* GetBuffer();
-
-	std::vector<std::string> m_Dependency;
-	std::string m_Section;
-	INILinkedBuffer* m_LinkedBuffer;
 };

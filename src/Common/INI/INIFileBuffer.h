@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <string>
 #include <vector>
@@ -7,7 +7,7 @@
 #include "INIBuffer.h"
 
 /// <summary>
-/// ´ÓÖ¸¶¨µÄiniÎÄ¼ş¶ÁÈ¡ËùÓĞµÄKV¶Ô£¬ÓÃstring´¢´ævalue
+/// ä»æŒ‡å®šçš„iniæ–‡ä»¶è¯»å–æ‰€æœ‰çš„KVå¯¹ï¼Œç”¨stringå‚¨å­˜value
 /// </summary>
 class INIFileBuffer
 {
@@ -15,14 +15,15 @@ public:
 	INIFileBuffer();
 	INIFileBuffer(std::string fileName);
 	bool HasSection(std::string section);
-	INIBuffer* GetSection(std::string section);
+	INIBuffer *GetSection(std::string section);
 
-	// ÓÎÏ·¿ª¾ÖÇå¿ÕËùÓĞµÄ»º´æ£¬ÖØĞÂ¶ÁÈ¡
+	// æ¸¸æˆå¼€å±€æ¸…ç©ºæ‰€æœ‰çš„ç¼“å­˜ï¼Œé‡æ–°è¯»å–
 	void ClearBuffer();
 
 	std::string FileName{};
+
 private:
-	// ×Ö·û´®¸ñÊ½µÄÒ»ĞĞKV¶Ô
+	// å­—ç¬¦ä¸²æ ¼å¼çš„ä¸€è¡ŒKVå¯¹
 	struct Buffer
 	{
 		std::string Key;
@@ -32,15 +33,13 @@ private:
 	void InitCache();
 
 	/// <summary>
-	/// µ±ĞèÒª»ñÈ¡Ä³¸ösectionµÄÊ±ºò£¬ÔÙ¶ÁÈ¡CacheÖĞµÄÄÚÈİ´æÈë¡£
-	/// KeyÊÇSection
+	/// å½“éœ€è¦è·å–æŸä¸ªsectionçš„æ—¶å€™ï¼Œå†è¯»å–Cacheä¸­çš„å†…å®¹å­˜å…¥ã€‚
+	/// Keyæ˜¯Section
 	/// </summary>
-	std::map<std::string, INIBuffer*> m_Section{};
+	std::map<std::string, INIBuffer *> m_Section{};
 	/// <summary>
-	/// ´ÓÎÄ¼şÖĞ¶ÁÈëiniÎÄ¼ş£¬¼´¿Ì¶ÁÈ¡sectionµÄËùÓĞKV¶Ô½øĞĞ»º´æ
-	/// KeyÊÇSection
+	/// ä»æ–‡ä»¶ä¸­è¯»å…¥iniæ–‡ä»¶ï¼Œå³åˆ»è¯»å–sectionçš„æ‰€æœ‰KVå¯¹è¿›è¡Œç¼“å­˜
+	/// Keyæ˜¯Section
 	/// </summary>
-	std::map<std::string, std::vector<Buffer>*> m_SectionCache{};
-
+	std::map<std::string, std::vector<Buffer> *> m_SectionCache{};
 };
-

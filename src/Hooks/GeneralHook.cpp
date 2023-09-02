@@ -19,7 +19,7 @@ public:
 		EventSystems::General.AddHandler(Events::ExeRun, Common::ExeRun);
 		EventSystems::General.AddHandler(Events::ExeTerminate, Common::ExeTerminate);
 		EventSystems::General.AddHandler(Events::ScenarioStartEvent, INIConstant::SetGameModeName);
-		EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, INIReaderManager::ClearBuffer);
+		EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, INI::ClearBuffer);
 		EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, ExtTypeRegistryClear);
 	}
 };

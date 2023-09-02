@@ -22,9 +22,12 @@
     <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
     <ClCompile Include="src\Common\INI\INIBuffer.cpp" />
     <ClCompile Include="src\Common\INI\INIConfig.cpp" />
+    <ClCompile Include="src\Common\INI\INIConfigManager.cpp" />
+    <ClCompile Include="src\Common\INI\INIConfigReader.cpp" />
     <ClCompile Include="src\Common\INI\INIConstant.cpp" />
     <ClCompile Include="src\Common\INI\INIFileBuffer.cpp" />
     <ClCompile Include="src\Common\INI\INIReader.cpp" />
+    <ClCompile Include="src\Common\INI\INIBufferManager.cpp" />
     <ClCompile Include="src\Common\INI\INIReaderManager.cpp" />
     <ClCompile Include="src\CRTExt.cpp" />
     <ClCompile Include="src\Extension.cpp" />
@@ -60,9 +63,12 @@
     <ClInclude Include="src\Common\EventSystems\EventSystem.h" />
     <ClInclude Include="src\Common\INI\INIBuffer.h" />
     <ClInclude Include="src\Common\INI\INIConfig.h" />
+    <ClInclude Include="src\Common\INI\INIConfigManager.h" />
+    <ClInclude Include="src\Common\INI\INIConfigReader.h" />
     <ClInclude Include="src\Common\INI\INIConstant.h" />
     <ClInclude Include="src\Common\INI\INIFileBuffer.h" />
     <ClInclude Include="src\Common\INI\INIReader.h" />
+    <ClInclude Include="src\Common\INI\INIBufferManager.h" />
     <ClInclude Include="src\Common\INI\INIReaderManager.h" />
     <ClInclude Include="src\Common\MyDelegate.h" />
     <ClInclude Include="src\CRTExt.h" />
