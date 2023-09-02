@@ -24,19 +24,6 @@ public:
 	public:
 		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
 		{
-			char t[1024];
-			sprintf_s(t, "%p", this);
-			std::string thisId{t};
-			this->thisID.assign(thisId);
-			char o[1024];
-			sprintf_s(o, "%p", OwnerObject);
-			std::string ownerId{o};
-			this->ownerID.assign(ownerId);
-			goName = std::format("{}_GameObject[{}]{}", goName, this->thisID, this->ownerID);
-			// debug
-			std::string msg = std::format("ExtData [{}]{} is create. create gameObject {}\n", this->thisID, this->ownerID, goName);
-			Debug::Log(msg.c_str());
-
 			m_GameObject = new GameObject(goName);
 			m_GameObject->_OnAwake += newDelegate(this, &ExtData::Awake);
 			// 读取全局脚本附加给GameObject，但不激活，等待GameObject首次访问触发Awake
@@ -47,10 +34,6 @@ public:
 
 		~ExtData() override
 		{
-			// debug
-			std::string msg = std::format("ExtData [{}]{} is delete. delete gameObject {}\n", this->thisID, this->ownerID, goName);
-			Debug::Log(msg.c_str());
-
 			m_GameObject->EnsureDestroy();
 			delete m_GameObject;
 		};
