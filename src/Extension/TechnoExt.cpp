@@ -1,12 +1,12 @@
 #include "TechnoExt.h"
 
-#include <Utilities/AresFunctions.h>
-#include <Utilities/EnumFunctions.h>
-
-void TechnoExt::AddGlobalScripts(std::list<Component*>* globalScripts, ExtData* ext)
+void TechnoExt::AddGlobalScripts(std::list<Component *> *globalScripts, ExtData *ext)
 {
-	LaserTrail* pLaserTrail = GameCreate<LaserTrail>(ext);
+	// debug
+	std::string msg = std::format("TechenExt ready to create Scripts to ExtData [{}]{}\n", ext->thisID, ext->ownerID);
+	Debug::Log(msg.c_str());
+	LaserTrail *pLaserTrail = GameCreate<LaserTrail>(ext);
 	globalScripts->push_back(pLaserTrail);
 }
 
-TechnoExt::ExtContainer TechnoExt::ExtMap;
+TechnoExt::ExtContainer TechnoExt::ExtMap{};

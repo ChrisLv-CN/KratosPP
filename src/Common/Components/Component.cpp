@@ -58,15 +58,15 @@ void Component::EnsureStarted()
 	}
 }
 
-void Component::Destroy()
+void Component::EnsureDestroy()
 {
-	OnDestroy();
+	Destroy();
 	for (Component* c : _children)
 	{
-		c->Destroy();
+		c->EnsureDestroy();
 	}
-	_children.clear();
 
+	_children.clear();
 	DetachFromParent();
 }
 

@@ -14,7 +14,7 @@ class ScriptComponent : public Component
 public:
 	ScriptComponent(Extension<TBase> *ext)
 	{
-		ExtData = ext;
+		this->ExtData = ext;
 	}
 
 	Extension<TBase> *ExtData;
@@ -46,7 +46,7 @@ public:
 class TechnoScript : public ScriptComponent<TechnoClass>, public IObjectScript
 {
 public:
-	TechnoScript(Extension<TechnoClass> *ext) : ScriptComponent(ext) {}
+	TechnoScript(Extension<TechnoClass> *ext) : ScriptComponent(ext){}
 
 	GameObject *GetGameObject();
 	__declspec(property(get = GetGameObject)) GameObject *_gameObject;

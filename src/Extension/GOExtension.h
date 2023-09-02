@@ -26,11 +26,17 @@ public:
 		{
 			char t[1024];
 			sprintf_s(t, "%p", this);
-			std::string tt = { t };
+			std::string thisId{t};
+			this->thisID.assign(thisId);
 			char o[1024];
 			sprintf_s(o, "%p", OwnerObject);
-			std::string oo = { o };
-			goName = std::format("{}_GameObject[{}] {}", goName, tt, oo);
+			std::string ownerId{o};
+			this->ownerID.assign(ownerId);
+			goName = std::format("{}_GameObject[{}]{}", goName, this->thisID, this->ownerID);
+			// debug
+			std::string msg = std::format("ExtData [{}]{} is create. create gameObject {}\n", this->thisID, this->ownerID, goName);
+			Debug::Log(msg.c_str());
+
 			m_GameObject = new GameObject(goName);
 			m_GameObject->_OnAwake += newDelegate(this, &ExtData::Awake);
 			// 读取全局脚本附加给GameObject，但不激活，等待GameObject首次访问触发Awake
@@ -41,24 +47,28 @@ public:
 
 		~ExtData() override
 		{
-			m_GameObject->Destroy();
+			// debug
+			std::string msg = std::format("ExtData [{}]{} is delete. delete gameObject {}\n", this->thisID, this->ownerID, goName);
+			Debug::Log(msg.c_str());
+
+			m_GameObject->EnsureDestroy();
 			delete m_GameObject;
 		};
 
 		virtual void InvalidatePointer(void* ptr, bool bRemoved) override { };
 
-		virtual void LoadFromStream(ExStreamReader& Stm) override
+		virtual void LoadFromStream(ExStreamReader& stream) override
 		{
-			Extension<TBase>::LoadFromStream(Stm);
-			this->Serialize(Stm);
-			m_GameObject->Foreach([&Stm](Component* c) {c->LoadFromStream(Stm); });
+			Extension<TBase>::LoadFromStream(stream);
+			this->Serialize(stream);
+			m_GameObject->Foreach([&stream](Component* c) {c->LoadFromStream(stream); });
 		};
 
-		virtual void SaveToStream(ExStreamWriter& Stm) override
+		virtual void SaveToStream(ExStreamWriter& stream) override
 		{
-			Extension<TBase>::SaveToStream(Stm);
-			this->Serialize(Stm);
-			m_GameObject->Foreach([&Stm](Component* c) {c->SaveToStream(Stm); });
+			Extension<TBase>::SaveToStream(stream);
+			this->Serialize(stream);
+			m_GameObject->Foreach([&stream](Component* c) {c->SaveToStream(stream); });
 		};
 
 		//----------------------
@@ -70,11 +80,9 @@ public:
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
 	private:
-		void Serialize(StreamWorkerBase& Stm)
-		{
-			//Stm.Process(this->m_ScriptsCreated);
-			//_GameObject->Foreach([&](Component* c) {c->Serialize(Stm); });
-		};
+		template <typename T>
+		void Serialize(T& Stm)
+		{ };
 
 		//----------------------
 		// GameObject
@@ -88,9 +96,7 @@ public:
 		///  call by GameObject _OnAwake Event
 		/// </summary>
 		void Awake()
-		{
-			
-		};
+		{ };
 
 		void CreateGlobalScriptable()
 		{

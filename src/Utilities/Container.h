@@ -58,6 +58,9 @@ class Extension
 public:
 	static const DWORD Canary;
 
+	std::string thisID;
+	std::string ownerID;
+
 	Extension(T* const OwnerObject) : AttachedToObject { OwnerObject }, Initialized { InitState::Blank }
 	{ }
 

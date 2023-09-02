@@ -6,15 +6,14 @@
 #include <Extension/TechnoTypeExt.h>
 #include <Common/EventSystems/EventSystem.h>
 
-extern bool IsLoadGame;
-
+// The TypeClass can't use flag IsLoadGame to skip create TypeExt.
+// It creating everywhere.
 DEFINE_HOOK(0x711835, TechnoTypeClass_CTOR, 0x5)
 {
 	GET(TechnoTypeClass *, pItem, ESI);
-	if (!IsLoadGame)
-	{
-		TechnoTypeExt::ExtMap.TryAllocate(pItem);
-	}
+
+	TechnoTypeExt::ExtMap.TryAllocate(pItem);
+
 	return 0;
 }
 

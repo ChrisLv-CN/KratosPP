@@ -31,21 +31,12 @@ public:
 	virtual void OnWarpUpdate(){};
 
 	/// <summary>
-	/// OnDestroy is called when enabled instance is delete.
+	/// Destroy is called when enabled instance is delete.
 	/// </summary>
-	virtual void OnDestroy(){};
+	virtual void Destroy(){};
 
-	virtual void Serialize(StreamWorkerBase &stream){};
-
-	virtual void LoadFromStream(ExStreamReader &stream)
-	{
-		this->Serialize(stream);
-	};
-
-	virtual void SaveToStream(ExStreamWriter &stream)
-	{
-		this->Serialize(stream);
-	};
+	virtual void LoadFromStream(ExStreamReader &stream){};
+	virtual void SaveToStream(ExStreamWriter &stream){};
 };
 
 class Component : public IComponent
@@ -158,7 +149,7 @@ public:
 
 	void EnsureAwaked();
 	void EnsureStarted();
-	void Destroy();
+	void EnsureDestroy();
 
 	void AddComponent(Component *component);
 	void RemoveComponent(Component *component);

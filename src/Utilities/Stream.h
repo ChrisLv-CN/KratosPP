@@ -118,12 +118,6 @@ public:
 		return this->success;
 	}
 
-	template<typename T>
-	StreamWorkerBase& Process(T& value, bool RegisterForChange = true)
-	{
-		return *this;
-	}
-
 protected:
 	// set to false_type or true_type to disable or enable debugging checks
 	using stream_debugging_t =
