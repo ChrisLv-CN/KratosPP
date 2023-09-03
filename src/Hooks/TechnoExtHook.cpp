@@ -1,4 +1,4 @@
-#include <exception>
+﻿#include <exception>
 #include <Windows.h>
 
 #include <Extension.h>
@@ -188,6 +188,7 @@ DEFINE_HOOK(0x701900, TechnoClass_ReceiveDamage, 0x6)
 }
 
 bool DamageByToyWH = false;
+
 DEFINE_HOOK(0x701F9A, TechnoClass_ReceiveDamage_SkipAllReaction, 0x6)
 {
 	// Toy warhead
@@ -200,7 +201,7 @@ DEFINE_HOOK(0x701F9A, TechnoClass_ReceiveDamage_SkipAllReaction, 0x6)
 
 DEFINE_HOOK(0x701DFF, TechnoClass_ReceiveDamageEnd, 0x7)
 {
-	GET(TechnoClass *, pThis, ECX);
+	GET(TechnoClass *, pThis, ESI);
 	GET(int *, pRealDamage, EBX);
 	GET(WarheadTypeClass *, pWH, EBP);
 	GET(DamageState, damageState, EDI);
