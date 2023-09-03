@@ -7,9 +7,6 @@
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConstant.h>
 
-// Loading a save game skip the Hook like TechnoClass_CTOR to Allocate a new TechnoExt
-bool IsLoadGame = true;
-
 class GeneraHook
 {
 public:
@@ -69,7 +66,6 @@ DEFINE_JUMP(LJMP, 0x7CD8EA, GET_OFFSET(_ExeTerminate));
 
 DEFINE_HOOK(0x685659, Scenario_ClearClasses, 0xA)
 {
-	IsLoadGame = true;
 	EventSystems::General.Broadcast(Events::ScenarioClearClassesEvent);
 	return 0;
 }
@@ -77,7 +73,6 @@ DEFINE_HOOK(0x685659, Scenario_ClearClasses, 0xA)
 // in progress: Initializing Tactical display
 DEFINE_HOOK(0x6875F3, Scenario_Start1, 0x6)
 {
-	IsLoadGame = false;
 	EventSystems::General.Broadcast(Events::ScenarioStartEvent);
 	return 0;
 }

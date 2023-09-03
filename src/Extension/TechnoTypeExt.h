@@ -2,10 +2,7 @@
 
 #include "TypeExtension.h"
 
-#include <TechnoClass.h>
 #include <TechnoTypeClass.h>
-
-class Matrix3D;
 
 class TechnoTypeExt : public TypeExtension<TechnoTypeClass, TechnoTypeExt>
 {

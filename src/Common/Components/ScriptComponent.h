@@ -26,14 +26,14 @@ public:
 	__declspec(property(get = GetOwner)) TBase *_owner;
 };
 
-class IAbstractScriptable
+class AbstractScript
 {
 public:
 	virtual void OnInit(){};
 	virtual void OnUnInit(){};
 };
 
-class IObjectScript : public IAbstractScriptable
+class ObjectScript : public AbstractScript
 {
 public:
 	virtual void OnPut(CoordStruct *location, DirType faceDir){};
@@ -43,10 +43,10 @@ public:
 	virtual void OnReceiveDamageDestroy(){};
 };
 
-class TechnoScript : public ScriptComponent<TechnoClass>, public IObjectScript
+class TechnoScript : public ScriptComponent<TechnoClass>, public ObjectScript
 {
 public:
-	TechnoScript(Extension<TechnoClass> *ext) : ScriptComponent(ext){}
+	TechnoScript(Extension<TechnoClass> *ext) : ScriptComponent(ext) {}
 
 	GameObject *GetGameObject();
 	__declspec(property(get = GetGameObject)) GameObject *_gameObject;
@@ -64,4 +64,39 @@ public:
 
 	virtual void OnGuardCommand(){};
 	virtual void OnStopCommand(){};
+};
+
+class BulletScript : public ScriptComponent<BulletClass>, public ObjectScript
+{
+public:
+	BulletScript(Extension<BulletClass> *ext) : ScriptComponent(ext) {}
+
+	GameObject *GetGameObject();
+	__declspec(property(get = GetGameObject)) GameObject *_gameObject;
+
+	virtual void OnDetonate(CoordStruct *pCoords, bool &skip){};
+};
+
+class AnimScript : public ScriptComponent<AnimClass>, public AbstractScript
+{
+public:
+	AnimScript(Extension<AnimClass> *ext) : ScriptComponent(ext) {}
+
+	GameObject *GetGameObject();
+	__declspec(property(get = GetGameObject)) GameObject *_gameObject;
+
+	virtual void OnLoop(){};
+	virtual void OnDone(){};
+	virtual void OnNext(AnimTypeClass *next){};
+};
+
+class SuperWeaponScript : public ScriptComponent<SuperClass>, public AbstractScript
+{
+public:
+	SuperWeaponScript(Extension<SuperClass> *ext) : ScriptComponent(ext) {}
+
+	GameObject *GetGameObject();
+	__declspec(property(get = GetGameObject)) GameObject *_gameObject;
+
+	virtual void OnLaunch(CellStruct cell, bool isPlayer){};
 };

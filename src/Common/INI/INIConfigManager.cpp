@@ -15,4 +15,4 @@ void INIConfigManager::ClearBuffer(EventSystem* sender, Event e, void* args)
 	s_Configs.clear();
 }
 
-std::map<INILinkedBuffer, std::map<std::string, INIConfigBase*>> INIConfigManager::s_Configs = {};
+std::map<INILinkedBuffer, std::map<std::string, INIConfig*>> INIConfigManager::s_Configs = {};

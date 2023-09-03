@@ -1,36 +1,18 @@
 ﻿#include <Extension.h>
 
-/*
-#include <Ext/Aircraft/Body.h>
-#include <Ext/AnimType/Body.h>
-#include <Ext/Anim/Body.h>
-#include <Ext/Building/Body.h>
-#include <Ext/BuildingType/Body.h>
-#include <Ext/Bullet/Body.h>
-#include <Ext/BulletType/Body.h>
-#include <Ext/House/Body.h>
-#include <Ext/RadSite/Body.h>
-#include <Ext/Rules/Body.h>
-#include <Ext/Scenario/Body.h>
-#include <Ext/Script/Body.h>
-#include <Ext/Side/Body.h>
-#include <Ext/SWType/Body.h>
-#include <Ext/TAction/Body.h>
-#include <Ext/Team/Body.h>
-#include <Ext/Techno/Body.h>
-#include <Ext/TechnoType/Body.h>
-#include <Ext/TerrainType/Body.h>
-#include <Ext/Tiberium/Body.h>
-#include <Ext/VoxelAnim/Body.h>
-#include <Ext/VoxelAnimType/Body.h>
-#include <Ext/WarheadType/Body.h>
-#include <Ext/WeaponType/Body.h>
-
-#include <New/Type/RadTypeClass.h>
-#include <New/Type/LaserTrailTypeClass.h>
-#include <New/Type/DigitalDisplayTypeClass.h>
-*/
-
+#include <Extension/AnimExt.h>
+#include <Extension/AnimTypeExt.h>
+#include <Extension/BulletExt.h>
+#include <Extension/BulletTypeExt.h>
+#include <Extension/SuperWeaponExt.h>
+#include <Extension/SuperWeaponTypeExt.h>
+#include <Extension/TechnoExt.h>
+#include <Extension/TechnoTypeExt.h>
+#include <Extension/TerrainTypeExt.h>
+#include <Extension/VoxelAnimExt.h>
+#include <Extension/VoxelAnimTypeExt.h>
+#include <Extension/WarheadTypeExt.h>
+#include <Extension/WeaponTypeExt.h>
 
 #pragma region Implementation details
 
@@ -187,40 +169,19 @@ private:
 
 // Add more class names as you like
 using ExtTypeRegistry = TypeRegistry<
-	/*
+
 	// Ext classes
-	AircraftExt,
 	AnimTypeExt,
 	AnimExt,
-	BuildingExt,
-	BuildingTypeExt,
 	BulletExt,
 	BulletTypeExt,
-	HouseExt,
-	RadSiteExt,
-	RulesExt,
-	ScenarioExt,
-	ScriptExt,
-	SideExt,
-	SWTypeExt,
-	TActionExt,
-	TeamExt,
 	TechnoExt,
 	TechnoTypeExt,
 	TerrainTypeExt,
-	TiberiumExt,
 	VoxelAnimExt,
 	VoxelAnimTypeExt,
 	WarheadTypeExt,
-	WeaponTypeExt,
-	// New classes
-	ShieldTypeClass,
-	LaserTrailTypeClass,
-	RadTypeClass,
-	ShieldClass,
-	DigitalDisplayTypeClass
-	// other classes
-	*/
+	WeaponTypeExt
 >;
 
 void ExtTypeRegistryClear(EventSystem* sender, Event e, void* args)
@@ -240,7 +201,7 @@ void InvalidatePointer(EventSystem* sender, Event e, void* args)
 // Phobos will save the things at the beginning of the save
 // Considering how DTA gets the scenario name, I decided to save it after Rules - secsome
 
-DEFINE_HOOK(0x67D32C, SaveGame_Phobos, 0x5)
+DEFINE_HOOK(0x67D32C, SaveGame_Ext, 0x5)
 {
 	GET(IStream*, pStm, ESI);
 	//UNREFERENCED_PARAMETER(pStm);
@@ -248,7 +209,7 @@ DEFINE_HOOK(0x67D32C, SaveGame_Phobos, 0x5)
 	return 0;
 }
 
-DEFINE_HOOK(0x67E826, LoadGame_Phobos, 0x6)
+DEFINE_HOOK(0x67E826, LoadGame_Ext, 0x6)
 {
 	GET(IStream*, pStm, ESI);
 	//UNREFERENCED_PARAMETER(pStm);

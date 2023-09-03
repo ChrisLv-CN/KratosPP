@@ -18,7 +18,7 @@
 #include <Extension/GOExtension.h>
 #include <Extension/TechnoExt.h>
 
-class LaserTrailData : public INIConfig<LaserTrailData>
+class LaserTrailData : public INIConfig
 {
 public:
 	virtual void Read(INIBufferReader *ini) override

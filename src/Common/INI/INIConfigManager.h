@@ -7,7 +7,7 @@
 #include "INIConfig.h"
 
 class INIBufferReader;
-class INIConfigBase;
+class INIConfig;
 
 class INIConfigManager
 {
@@ -17,7 +17,7 @@ public:
 	template <typename TConfig>
 	static TConfig *FindConfig(INILinkedBuffer &buffer, INIBufferReader *reader)
 	{
-		std::map<std::string, INIConfigBase *> configs{};
+		std::map<std::string, INIConfig *> configs{};
 		auto it = s_Configs.find(buffer);
 		if (it != s_Configs.end())
 		{
@@ -39,5 +39,5 @@ public:
 
 private:
 	// INILinkedBuffer里的未转换的kv对转换成对象后，用类名存储
-	static std::map<INILinkedBuffer, std::map<std::string, INIConfigBase *>> s_Configs;
+	static std::map<INILinkedBuffer, std::map<std::string, INIConfig *>> s_Configs;
 };

@@ -19,10 +19,11 @@ class INI
 public:
 	static void ClearBuffer(EventSystem *sender, Event e, void *args)
 	{
-		INIReaderManager::ClearBuffer(sender, e, args);
 		s_Rules.clear();
 		s_Art.clear();
 		s_AI.clear();
+
+		INIReaderManager::ClearBuffer(sender, e, args);
 	}
 
 	static bool HasSection(Dependency dependency, const char *section)
@@ -44,6 +45,10 @@ public:
 	static GetDependency Rules;
 	static GetDependency Art;
 	static GetDependency AI;
+
+	static const char *SectionGeneral;
+    static const char *SectionCombatDamage;
+	static const char *SectionAudioVisual;
 
 private:
 	static bool ICaseCompare(std::string_view a, std::string_view b)
@@ -144,4 +149,3 @@ private:
 	static Dependency s_Art;
 	static Dependency s_AI;
 };
-

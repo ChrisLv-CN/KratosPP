@@ -18,11 +18,12 @@ extern bool IsLoadGame;
 
 DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 {
-	GET(TechnoClass *, pItem, ESI);
 	// skip this Allocate just left TechnoClass_Load_Suffix => LoadKey to Allocate
 	// when is loading a save game.
 	if (!IsLoadGame)
 	{
+		GET(TechnoClass *, pItem, ESI);
+
 		TechnoExt::ExtMap.TryAllocate(pItem);
 	}
 	return 0;
@@ -103,7 +104,7 @@ DEFINE_HOOK(0x6F6AC4, TechnoClass_Remove, 0x5)
 	return 0;
 }
 
-DEFINE_HOOK(0x6F9E50, TechnoClass_AI, 0x5)
+DEFINE_HOOK(0x6F9E50, TechnoClass_Update, 0x5)
 {
 	GET(TechnoClass *, pThis, ECX);
 
@@ -115,23 +116,23 @@ DEFINE_HOOK(0x6F9E50, TechnoClass_AI, 0x5)
 	return 0;
 }
 
-DEFINE_HOOK_AGAIN(0x6FAFFD, TechnoClass_AI2, 0x7)
-DEFINE_HOOK(0x6FAF7A, TechnoClass_AI2, 0x7)
+DEFINE_HOOK_AGAIN(0x6FAFFD, TechnoClass_UpdateEnd, 0x7)
+DEFINE_HOOK(0x6FAF7A, TechnoClass_UpdateEnd, 0x7)
 {
 	GET(TechnoClass *, pThis, ESI);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component *c)
-							   { if (c)c->OnLateUpdate(); });
+							   { if (c)c->OnUpdateEnd(); });
 
 	return 0;
 }
 
 // If pObject.Is_Being_Warped() is ture, will skip Foot::AI and Techno::AI
-DEFINE_HOOK_AGAIN(0x44055D, TechnoClass_WarpAI, 0x6) // Building
-DEFINE_HOOK_AGAIN(0x51BBDF, TechnoClass_WarpAI, 0x6) // Infantry
-DEFINE_HOOK_AGAIN(0x736321, TechnoClass_WarpAI, 0x6) // Unit
-DEFINE_HOOK(0x414CF2, TechnoClass_WarpAI, 0x6)		 // Aircraft
+DEFINE_HOOK_AGAIN(0x44055D, TechnoClass_WarpUpdate, 0x6) // Building
+DEFINE_HOOK_AGAIN(0x51BBDF, TechnoClass_WarpUpdate, 0x6) // Infantry
+DEFINE_HOOK_AGAIN(0x736321, TechnoClass_WarpUpdate, 0x6) // Unit
+DEFINE_HOOK(0x414CF2, TechnoClass_WarpUpdate, 0x6)		 // Aircraft
 {
 	GET(TechnoClass *, pThis, ESI);
 
@@ -142,7 +143,7 @@ DEFINE_HOOK(0x414CF2, TechnoClass_WarpAI, 0x6)		 // Aircraft
 	return 0;
 }
 
-DEFINE_HOOK(0x71A88D, TemporalClass_UpdateA, 0x0)
+DEFINE_HOOK(0x71A88D, TemporalClass_Update, 0x0)
 {
 	GET(TemporalClass *, pTemporal, ESI);
 
@@ -160,7 +161,7 @@ DEFINE_HOOK(0x71A88D, TemporalClass_UpdateA, 0x0)
 	return 0x71AB08;
 }
 
-DEFINE_HOOK(0x71A917, TemporalClass_UpdateA_Eliminate, 0x5)
+DEFINE_HOOK(0x71A917, TemporalClass_Update_Eliminate, 0x5)
 {
 	GET(TemporalClass *, pTemporal, ESI);
 
@@ -197,7 +198,7 @@ DEFINE_HOOK(0x701F9A, TechnoClass_ReceiveDamage_SkipAllReaction, 0x6)
 	return 0x70202E;
 }
 
-DEFINE_HOOK(0x701DFF, TechnoClass_ReceiveDamage_End, 0x7)
+DEFINE_HOOK(0x701DFF, TechnoClass_ReceiveDamageEnd, 0x7)
 {
 	GET(TechnoClass *, pThis, ECX);
 	GET(int *, pRealDamage, EBX);

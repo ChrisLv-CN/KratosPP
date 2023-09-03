@@ -2,20 +2,21 @@
 
 void INIReaderManager::ClearBuffer(EventSystem *sender, Event e, void *args)
 {
-	INIBufferManager::ClearBuffer(sender, e, args);
-	INIConfigManager::ClearBuffer(sender, e, args);
-	// 释放BufferReader
-	for (auto bufferReader : s_BufferReader)
-	{
-		GameDelete(bufferReader.second);
-	}
-	s_BufferReader.clear();
 	// 释放ConfigReader
 	for (auto configReader : s_ConfigReader)
 	{
 		GameDelete(configReader.second);
 	}
 	s_ConfigReader.clear();
+	INIConfigManager::ClearBuffer(sender, e, args);
+
+	// 释放BufferReader
+	for (auto bufferReader : s_BufferReader)
+	{
+		GameDelete(bufferReader.second);
+	}
+	s_BufferReader.clear();
+	INIBufferManager::ClearBuffer(sender, e, args);
 }
 
 INIBufferReader *INIReaderManager::FindBufferReader(std::vector<std::string> dependency, const char *section)

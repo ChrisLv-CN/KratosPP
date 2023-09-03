@@ -27,13 +27,15 @@ public:
 	virtual void Start(){};
 
 	virtual void OnUpdate(){};
-	virtual void OnLateUpdate(){};
+	virtual void OnUpdateEnd(){};
 	virtual void OnWarpUpdate(){};
 
 	/// <summary>
 	/// Destroy is called when enabled instance is delete.
 	/// </summary>
 	virtual void Destroy(){};
+
+	virtual void InvalidatePointer(void* ptr){};
 
 	virtual void LoadFromStream(ExStreamReader &stream){};
 	virtual void SaveToStream(ExStreamWriter &stream){};
@@ -87,7 +89,7 @@ public:
 		// find first level
 		for (Component *children : _children)
 		{
-			if (typeid(children) == TComponent)
+			if (typeid(children) == typeid(TComponent))
 			{
 				c = (TComponent *)children;
 				break;
