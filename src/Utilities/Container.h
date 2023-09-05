@@ -564,6 +564,7 @@ protected:
 		}
 
 		ExStreamReader reader(loader);
+
 		if (reader.Expect(T::Canary) && reader.RegisterChange(buffer))
 		{
 			buffer->LoadFromStream(reader);

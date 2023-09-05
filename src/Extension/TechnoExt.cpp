@@ -7,8 +7,8 @@ void TechnoExt::AddGlobalScripts(std::list<Component *> *globalScripts, ExtData 
 {
 	TechnoStatus *status = GameCreate<TechnoStatus>(ext);
 	globalScripts->push_back(status);
-	LaserTrail *pLaserTrail = GameCreate<LaserTrail>(ext);
-	globalScripts->push_back(pLaserTrail);
+	LaserTrail *laserTrail = GameCreate<LaserTrail>(ext);
+	globalScripts->push_back(laserTrail);
 }
 
 TechnoExt::ExtContainer TechnoExt::ExtMap{};

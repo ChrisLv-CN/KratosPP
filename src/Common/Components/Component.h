@@ -7,8 +7,6 @@
 
 #include <Utilities/Stream.h>
 
-class Component;
-
 class IComponent
 {
 public:
@@ -35,7 +33,7 @@ public:
 	/// </summary>
 	virtual void Destroy(){};
 
-	virtual void InvalidatePointer(void* ptr){};
+	virtual void InvalidatePointer(void *ptr){};
 
 	virtual void LoadFromStream(ExStreamReader &stream){};
 	virtual void SaveToStream(ExStreamWriter &stream){};
@@ -47,13 +45,14 @@ public:
 	std::string Name;
 	std::string Tag;
 
-	__declspec(property(get = GetParent)) Component *Parent;
-	__declspec(property(get = GetRoot)) Component *Root;
+	void EnsureAwaked();
+	void EnsureStarted();
+	void EnsureDestroy();
 
-	Component *GetParent();
-	Component *GetRoot();
+	void AddComponent(Component *component);
+	void RemoveComponent(Component *component);
 
-	void AttachToComponent(Component component);
+	void AttachToComponent(Component *component);
 	void DetachFromParent();
 
 	template <typename TComponent>
@@ -110,8 +109,6 @@ public:
 		return c;
 	}
 
-	std::vector<Component *> GetComponentsInChildren();
-
 	/// <summary>
 	/// execute action for each components in root (include itself)
 	/// </summary>
@@ -125,7 +122,7 @@ public:
 	template <typename T>
 	void ForeachChild(T action)
 	{
-		Component::ForeachComponents<T>(GetComponentsInChildren(), action);
+		Component::ForeachComponents<T>(_children, action);
 	}
 
 	template <typename T>
@@ -149,16 +146,31 @@ public:
 		root->ForeachChild(action);
 	}
 
-	void EnsureAwaked();
-	void EnsureStarted();
-	void EnsureDestroy();
-
-	void AddComponent(Component *component);
-	void RemoveComponent(Component *component);
+#pragma region save/load
+	template <typename T>
+	void Serialize(T &stream)
+	{
+		stream
+			.Process(this->Name)
+			// 所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
+			.Process(this->_awaked)
+			.Process(this->_started)
+			;
+	}
+	virtual void LoadFromStream(ExStreamReader &stream) override
+	{
+		this->Serialize(stream);
+	}
+	virtual void SaveToStream(ExStreamWriter &stream) override
+	{
+		this->Serialize(stream);
+	}
+#pragma endregion
 
 private:
-	Component *_parent;
-	std::vector<Component *> _children{};
 	bool _awaked = false;
 	bool _started = false;
+
+	Component *_parent = nullptr;
+	std::vector<Component *> _children{};
 };

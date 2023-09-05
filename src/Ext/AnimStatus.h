@@ -36,7 +36,7 @@ public:
 
 	/// @brief 替换流星、碎片击中水中的动画
 	/// @return true=替换成其他的动画
-	bool OverrideExpireAnimOnWater() { return false;  };
+	bool OverrideExpireAnimOnWater() { return false; };
 
 	TechnoClass *pCreater;
 
@@ -44,28 +44,33 @@ public:
 	{
 		AnnounceInvalidPointer(this->pCreater, ptr);
 	};
-
-#pragma region save/load
+#pragma region Save/Load
 	template <typename T>
-	void Serialize(T &stream){
-		// stream.Process(this->laserColor).Process(this->colorChanged);
-	};
+	void Serialize(T &stream)
+	{ };
 
 	virtual void LoadFromStream(ExStreamReader &stream) override
 	{
+#ifdef DEBUG
+		const char *typeId = "Unknow";
+		if (_owner->GetType())
+		{
+			typeId = _owner->GetType()->ID;
+		}
+		Debug::Log("Anim [%s]%d calling AnimStatus::Load to Serialize data.\n", typeId, _owner);
+#endif
 		Component::LoadFromStream(stream);
 		this->Serialize(stream);
 	}
-
 	virtual void SaveToStream(ExStreamWriter &stream) override
 	{
 		Component::SaveToStream(stream);
 		this->Serialize(stream);
 	}
 #pragma endregion
+
 private:
 };
-
 
 // Helper
 static AnimClass *SetAnimOwner(AnimClass *pAnim, HouseClass *pHouse)

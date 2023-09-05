@@ -87,6 +87,15 @@ void BulletStatus::Awake()
 	}
 }
 
+void BulletStatus::Destroy()
+{
+	auto it = std::find(TargetAircraftBullets.begin(), TargetAircraftBullets.end(), _owner);
+	if (it != TargetAircraftBullets.end())
+	{
+		TargetAircraftBullets.erase(it);
+	}
+}
+
 void BulletStatus::TakeDamage(int damage, bool eliminate, bool harmless, bool checkInterceptable)
 {
 	if (!checkInterceptable || life.Interceptable)
@@ -153,9 +162,10 @@ void BulletStatus::OnPut(CoordStruct *pLocation, DirType dir)
 		}
 	}
 	// 是否是对飞行器攻击
-	AbstractClass *pTarget = nullptr;
-	if (IsMissile() && (pTarget = _owner->Target) && (pTarget->What_Am_I() == AbstractType::Aircraft || pTarget->IsInAir()))
+	// AbstractClass *pTarget = nullptr;
+	// if (IsMissile() && (pTarget = _owner->Target) && (pTarget->What_Am_I() == AbstractType::Aircraft || pTarget->IsInAir()))
 	{
+		life.Health = 9999;
 		TargetAircraftBullets.push_back(_owner);
 	}
 }
@@ -289,12 +299,3 @@ void BulletStatus::OnDetonate(CoordStruct *pCoords, bool &skip)
 bool BulletStatus::OnDetonate_Bounce(CoordStruct *pCoords) { return false; };
 bool BulletStatus::OnDetonate_GiftBox(CoordStruct *pCoords) { return false; };
 bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct *pCoords) { return false; };
-
-void BulletStatus::OnUnInit()
-{
-	auto it = std::find(TargetAircraftBullets.begin(), TargetAircraftBullets.end(), _owner);
-	if (it != TargetAircraftBullets.end())
-	{
-		TargetAircraftBullets.erase(it);
-	}
-}

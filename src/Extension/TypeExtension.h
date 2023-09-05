@@ -23,8 +23,7 @@ public:
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override{};
 
-		virtual void Initialize() override
-		{ };
+		virtual void Initialize() override{};
 
 		virtual void LoadFromINIFile(CCINIClass *pINI) override
 		{
@@ -38,7 +37,7 @@ public:
 
 			INI_EX exINI(pINI);
 
-			// TODO read ini
+			// read ini
 		};
 
 		virtual void LoadFromStream(ExStreamReader &Stm) override
@@ -55,8 +54,7 @@ public:
 
 	private:
 		template <typename T>
-		void Serialize(T &Stm)
-		{ };
+		void Serialize(T &Stm){};
 	};
 
 	class ExtContainer : public Container<TExt>

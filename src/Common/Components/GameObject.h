@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <list>
 #include <vector>
@@ -6,7 +6,6 @@
 #include "Component.h"
 
 #include <Common/MyDelegate.h>
-
 
 using namespace Delegate;
 
@@ -20,12 +19,29 @@ public:
 
 	virtual void OnUpdate() override;
 
-	GameObject* GetAwaked();
+#pragma region save/load
+	template <typename T>
+	void Serialize(T &stream)
+	{ }
 
-	void AddComponentNotAwake(Component* component);
+	virtual void LoadFromStream(ExStreamReader &stream) override
+	{
+		Component::LoadFromStream(stream);
+		this->Serialize(stream);
+	}
+	virtual void SaveToStream(ExStreamWriter &stream) override
+	{
+		Component::SaveToStream(stream);
+		this->Serialize(stream);
+	}
+#pragma endregion
+
+	GameObject *GetAwaked();
+
+	void AddComponentNotAwake(Component *component);
 
 	CMultiDelegate<void> _OnAwake;
-private:
-	std::vector<Component*> _unstartedComponents{};
-};
 
+private:
+	std::vector<Component *> _unstartedComponents{};
+};

@@ -22,25 +22,33 @@ public:
 	{
 	public:
 		ExtData(TBase *OwnerObject) : Extension<TBase>(OwnerObject)
+			, m_GameObject{}
 		{
-			m_GameObject = new GameObject(goName);
+			// m_GameObject = new GameObject(goName);
+			m_GameObject = std::make_unique<GameObject>(goName);
 			m_GameObject->_OnAwake += newDelegate(this, &ExtData::Awake);
 			// 读取全局脚本附加给GameObject，但不激活，等待GameObject首次访问触发Awake
 			// Search and instantiate global script objects in TechnoExt
 			TExt::AddGlobalScripts(&m_GlobalScripts, this);
+			// 该函数只将Component实例加入GameObject
+			// Component的Awake分两种情况调用：
+			// 当正常开始游戏时，TechnoClass_Init触发调用_GameObject，唤醒Components，此时可以获得TechnoType；
+			// 但当从存档载入时，TechnoClass_Init不会触发，而是通过TechnoClass_Load_Suffix实例化TechnoExt，此时无法获得TechnoType，
+			// 在LoadFromStream里调用_GameObject，唤醒Components，先执行Awake对控制变量初始化，再调用Serialize修改
 			CreateGlobalScriptable();
 		};
 
 		~ExtData() override
 		{
 			m_GameObject->EnsureDestroy();
-			delete m_GameObject;
+			// delete *m_GameObject;
+			m_GameObject.release();
 		};
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override
 		{
 			m_GameObject->Foreach([&ptr](Component *c)
-								  { c->InvalidatePointer(ptr); });
+								 { c->InvalidatePointer(ptr); });
 		};
 
 		virtual void LoadFromStream(ExStreamReader &stream) override
@@ -48,7 +56,7 @@ public:
 			Extension<TBase>::LoadFromStream(stream);
 			this->Serialize(stream);
 			m_GameObject->Foreach([&stream](Component *c)
-								  { c->LoadFromStream(stream); });
+			 					 { c->LoadFromStream(stream); });
 		};
 
 		virtual void SaveToStream(ExStreamWriter &stream) override
@@ -56,7 +64,7 @@ public:
 			Extension<TBase>::SaveToStream(stream);
 			this->Serialize(stream);
 			m_GameObject->Foreach([&stream](Component *c)
-								  { c->SaveToStream(stream); });
+								 { c->SaveToStream(stream); });
 		};
 
 		//----------------------
@@ -69,12 +77,15 @@ public:
 
 	private:
 		template <typename T>
-		void Serialize(T &Stm){};
+		void Serialize(T &stream)
+		{
+			// stream.Process(this->m_GameObject);
+		};
 
 		//----------------------
 		// GameObject
 		std::string goName = typeid(TExt).name();
-		GameObject *m_GameObject;
+		std::unique_ptr<GameObject> m_GameObject;
 
 		//----------------------
 		// Scripts

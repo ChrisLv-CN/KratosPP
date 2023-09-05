@@ -71,23 +71,34 @@ public:
 	{
 	}
 
-	template<typename T>
-	void Serialize(T &stream)
-	{
-		stream.Process(this->laserColor).Process(this->colorChanged);
+#pragma region Save/Load
+	template <typename T>
+	void Serialize(T &stream){
+		stream
+			.Process(this->laserColor)
+			.Process(this->colorChanged)
+			;
 	};
 
 	virtual void LoadFromStream(ExStreamReader &stream) override
 	{
+#ifdef DEBUG
+		const char *typeId = "Unknow";
+		if (_owner->GetType())
+		{
+			typeId = _owner->GetType()->ID;
+		}
+		Debug::Log("Techno [%s]%d calling LaserTrail::Load to Serialize data.\n", typeId, _owner);
+#endif
 		Component::LoadFromStream(stream);
 		this->Serialize(stream);
 	}
-
 	virtual void SaveToStream(ExStreamWriter &stream) override
 	{
 		Component::SaveToStream(stream);
 		this->Serialize(stream);
 	}
+#pragma endregion
 
 	ColorStruct laserColor = {0, 255, 0};
 

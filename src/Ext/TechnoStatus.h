@@ -43,6 +43,14 @@ public:
 
 	virtual void Awake() override
 	{
+#ifdef DEBUG
+		const char *typeId = "Unknow";
+		if (_owner->GetTechnoType())
+		{
+			typeId = _owner->GetTechnoType()->ID;
+		}
+		Debug::Log("Techno [%s]%d calling TechnoStatus::Awake to init data.\n", typeId, _owner);
+#endif
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::DrawINFO);
 	}
 
@@ -67,16 +75,21 @@ public:
 #pragma region save/load
 	template <typename T>
 	void Serialize(T &stream)
-	{
-
-	};
+	{ };
 
 	virtual void LoadFromStream(ExStreamReader &stream) override
 	{
+#ifdef DEBUG
+		const char *typeId = "Unknow";
+		if (_owner->GetType())
+		{
+			typeId = _owner->GetType()->ID;
+		}
+		Debug::Log("Techno [%s]%d calling TechnoStatus::Load to Serialize data.\n", typeId, _owner);
+#endif
 		Component::LoadFromStream(stream);
 		this->Serialize(stream);
 	}
-
 	virtual void SaveToStream(ExStreamWriter &stream) override
 	{
 		Component::SaveToStream(stream);

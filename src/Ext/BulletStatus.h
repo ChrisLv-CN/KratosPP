@@ -106,6 +106,7 @@ public:
 	bool IsBomb();
 
 	virtual void Awake() override;
+	virtual void Destroy() override;
 
 	void TakeDamage(int damage, bool eliminate, bool harmless, bool checkInterceptable = false);
 
@@ -154,8 +155,6 @@ public:
 	bool OnDetonate_GiftBox(CoordStruct *pCoords);
 	bool OnDetonate_SelfLaunch(CoordStruct *pCoords);
 
-	virtual void OnUnInit() override;
-
 	TechnoClass *pSource = nullptr;
 	HouseClass *pSourceHouse = nullptr;
 
@@ -196,16 +195,24 @@ public:
 
 	virtual void LoadFromStream(ExStreamReader &stream) override
 	{
+#ifdef DEBUG
+		const char *typeId = "Unknow";
+		if (_owner->GetType())
+		{
+			typeId = _owner->GetType()->ID;
+		}
+		Debug::Log("Bullet [%s]%d calling BulletStatus::Load to Serialize data.\n", typeId, _owner);
+#endif
 		Component::LoadFromStream(stream);
 		this->Serialize(stream);
 	}
-
 	virtual void SaveToStream(ExStreamWriter &stream) override
 	{
 		Component::SaveToStream(stream);
 		this->Serialize(stream);
 	}
 #pragma endregion
+
 private:
 	BulletType _bulletType = BulletType::UNKNOWN;
 	// 弹道配置
