@@ -4,14 +4,14 @@
 
 #include <SwizzleManagerClass.h>
 
-PhobosSwizzle PhobosSwizzle::Instance;
+ExSwizzle ExSwizzle::Instance;
 
-HRESULT PhobosSwizzle::RegisterForChange(void** p)
+HRESULT ExSwizzle::RegisterForChange(void** p)
 {
 	return SwizzleManagerClass::Instance().Swizzle(p);
 }
 
-HRESULT PhobosSwizzle::RegisterChange(void* was, void* is)
+HRESULT ExSwizzle::RegisterChange(void* was, void* is)
 {
 	return SwizzleManagerClass::Instance().Here_I_Am((long)was, is);
 }

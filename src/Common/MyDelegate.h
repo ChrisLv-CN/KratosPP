@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <typeinfo>
 #include <list>
@@ -7,161 +7,158 @@
 namespace Delegate
 {
 
-	// IDelegate   Ìá¹©½Ó¿ÚµÄ»ùÀà
+	// IDelegate   æä¾›æ¥å£çš„åŸºç±»
 
-	template<typename ReturnType, typename ...ParamType>
+	template <typename ReturnType, typename... ParamType>
 	class IDelegate
 	{
 	public:
-		IDelegate(){}
-		virtual ~IDelegate(){}
-		virtual bool isType(const std::type_info& _type) = 0;
-		virtual ReturnType invoke(ParamType ... params) = 0;
+		IDelegate() {}
+		virtual ~IDelegate() {}
+		virtual bool isType(const std::type_info &_type) = 0;
+		virtual ReturnType invoke(ParamType... params) = 0;
 		virtual bool compare(IDelegate<ReturnType, ParamType...> *_delegate) const = 0;
 	};
 
-	
-	//StaticDelegate ÆÕÍ¨º¯ÊıµÄÎ¯ÍĞ
+	// StaticDelegate æ™®é€šå‡½æ•°çš„å§”æ‰˜
 
-	template<typename ReturnType, typename ...ParamType>
-	class CStaticDelegate :
-		public IDelegate<ReturnType, ParamType...>
+	template <typename ReturnType, typename... ParamType>
+	class CStaticDelegate : public IDelegate<ReturnType, ParamType...>
 	{
 	public:
+		typedef ReturnType (*Func)(ParamType...);
 
-		typedef  ReturnType(*Func)(ParamType...);
+		CStaticDelegate(Func _func) : mFunc(_func) {}
 
-		CStaticDelegate(Func _func) : mFunc(_func) { }
+		virtual bool isType(const std::type_info &_type) { return typeid(CStaticDelegate<ReturnType, ParamType...>) == _type; }
 
-		virtual bool isType(const std::type_info& _type) { return typeid(CStaticDelegate<ReturnType, ParamType...>) == _type; }
+		virtual ReturnType invoke(ParamType... params) { return mFunc(params...); }
 
-		virtual ReturnType invoke(ParamType ... params) { return mFunc(params...); }
-
-		virtual bool compare(IDelegate<ReturnType, ParamType ...> *_delegate)const
+		virtual bool compare(IDelegate<ReturnType, ParamType...> *_delegate) const
 		{
-			if (0 == _delegate || !_delegate->isType(typeid(CStaticDelegate<ReturnType, ParamType ...>))) return false;
-			CStaticDelegate<ReturnType, ParamType ...> * cast = static_cast<CStaticDelegate<ReturnType, ParamType ...>*>(_delegate);
+			if (0 == _delegate || !_delegate->isType(typeid(CStaticDelegate<ReturnType, ParamType...>)))
+				return false;
+			CStaticDelegate<ReturnType, ParamType...> *cast = static_cast<CStaticDelegate<ReturnType, ParamType...> *>(_delegate);
 			return cast->mFunc == mFunc;
 		}
 
-		virtual ~CStaticDelegate(){}
+		virtual ~CStaticDelegate() {}
+
 	private:
 		Func mFunc;
 	};
 
-
-	//ÆÕÍ¨º¯ÊıµÄÎ¯ÍĞÌØ»¯°æ±¾
-	template<typename ReturnType, typename ...ParamType>
-	class CStaticDelegate<ReturnType(*)(ParamType ...)> :
-		public IDelegate<ReturnType, ParamType ...>
+	// æ™®é€šå‡½æ•°çš„å§”æ‰˜ç‰¹åŒ–ç‰ˆæœ¬
+	template <typename ReturnType, typename... ParamType>
+	class CStaticDelegate<ReturnType (*)(ParamType...)> : public IDelegate<ReturnType, ParamType...>
 	{
 	public:
+		// å®šä¹‰ Func ä¸º void (void) å‡½æ•°ç±»å‹æŒ‡é’ˆã€‚
+		typedef ReturnType (*Func)(ParamType...);
 
-		//¶¨Òå Func Îª void (void) º¯ÊıÀàĞÍÖ¸Õë¡£
-		typedef  ReturnType(*Func)(ParamType...);
+		CStaticDelegate(Func _func) : mFunc(_func) {}
 
-		CStaticDelegate(Func _func) : mFunc(_func) { }
+		virtual bool isType(const std::type_info &_type) { return typeid(CStaticDelegate<ReturnType (*)(ParamType...)>) == _type; }
 
-		virtual bool isType(const std::type_info& _type) { return typeid(CStaticDelegate<ReturnType(*)(ParamType ...)>) == _type; }
+		virtual ReturnType invoke(ParamType... params) { return mFunc(params...); }
 
-		virtual ReturnType invoke(ParamType ... params) { return mFunc(params...); }
-
-		virtual bool compare(IDelegate<ReturnType, ParamType ...> *_delegate)const
+		virtual bool compare(IDelegate<ReturnType, ParamType...> *_delegate) const
 		{
-			if (0 == _delegate || !_delegate->isType(typeid(CStaticDelegate<ReturnType(*)(ParamType ...)>))) return false;
-			CStaticDelegate<ReturnType(*)(ParamType ...)> * cast = static_cast<CStaticDelegate<ReturnType(*)(ParamType ...)>*>(_delegate);
+			if (0 == _delegate || !_delegate->isType(typeid(CStaticDelegate<ReturnType (*)(ParamType...)>)))
+				return false;
+			CStaticDelegate<ReturnType (*)(ParamType...)> *cast = static_cast<CStaticDelegate<ReturnType (*)(ParamType...)> *>(_delegate);
 			return cast->mFunc == mFunc;
 		}
 
-		virtual ~CStaticDelegate(){}
+		virtual ~CStaticDelegate() {}
+
 	private:
 		Func mFunc;
 	};
 
-	//³ÉÔ±º¯ÊıÎ¯ÍĞ
-	template<typename T, typename ReturnType, typename ...ParamType>
-	class CMethodDelegate :
-		public IDelegate<ReturnType, ParamType...>
+	// æˆå‘˜å‡½æ•°å§”æ‰˜
+	template <typename T, typename ReturnType, typename... ParamType>
+	class CMethodDelegate : public IDelegate<ReturnType, ParamType...>
 	{
 	public:
-		typedef ReturnType(T::*Method)(ParamType...);
+		typedef ReturnType (T::*Method)(ParamType...);
 
-		CMethodDelegate(T * _object, Method _method) : mObject(_object), mMethod(_method) { }
+		CMethodDelegate(T *_object, Method _method) : mObject(_object), mMethod(_method) {}
 
-		virtual bool isType(const std::type_info& _type) { return typeid(CMethodDelegate<T, ReturnType, ParamType...>) == _type; }
+		virtual bool isType(const std::type_info &_type) { return typeid(CMethodDelegate<T, ReturnType, ParamType...>) == _type; }
 
-		virtual ReturnType invoke(ParamType...params)
+		virtual ReturnType invoke(ParamType... params)
 		{
 			(mObject->*mMethod)(params...);
 		}
 
 		virtual bool compare(IDelegate<ReturnType, ParamType...> *_delegate) const
 		{
-			if (0 == _delegate || !_delegate->isType(typeid(CMethodDelegate<ReturnType, ParamType...>))) return false;
-			CMethodDelegate<ReturnType, ParamType...>* cast = static_cast<CMethodDelegate<ReturnType, ParamType...>*>(_delegate);
+			if (0 == _delegate || !_delegate->isType(typeid(CMethodDelegate<ReturnType, ParamType...>)))
+				return false;
+			CMethodDelegate<ReturnType, ParamType...> *cast = static_cast<CMethodDelegate<ReturnType, ParamType...> *>(_delegate);
 			return cast->mObject == mObject && cast->mMethod == mMethod;
 		}
 
-		CMethodDelegate(){}
-		virtual ~CMethodDelegate(){}
+		CMethodDelegate() {}
+		virtual ~CMethodDelegate() {}
+
 	private:
-		T * mObject;
+		T *mObject;
 		Method mMethod;
 	};
 
-	//³ÉÔ±º¯ÊıÎ¯ÍĞÌØ»¯
-	template<typename T, typename ReturnType, typename ...ParamType>
-	class CMethodDelegate<T,ReturnType (T:: *)(ParamType...)> :
-		public IDelegate<ReturnType, ParamType...>
+	// æˆå‘˜å‡½æ•°å§”æ‰˜ç‰¹åŒ–
+	template <typename T, typename ReturnType, typename... ParamType>
+	class CMethodDelegate<T, ReturnType (T::*)(ParamType...)> : public IDelegate<ReturnType, ParamType...>
 	{
 	public:
-		typedef ReturnType(T::*Method)(ParamType...);
+		typedef ReturnType (T::*Method)(ParamType...);
 
-		CMethodDelegate(T * _object, Method _method) : mObject(_object), mMethod(_method) { }
+		CMethodDelegate(T *_object, Method _method) : mObject(_object), mMethod(_method) {}
 
-		virtual bool isType(const std::type_info& _type) { return typeid(CMethodDelegate<T,ReturnType(T:: *)(ParamType...)>) == _type; }
+		virtual bool isType(const std::type_info &_type) { return typeid(CMethodDelegate<T, ReturnType (T::*)(ParamType...)>) == _type; }
 
-		virtual ReturnType invoke(ParamType...params)
+		virtual ReturnType invoke(ParamType... params)
 		{
 			return (mObject->*mMethod)(params...);
 		}
 
 		virtual bool compare(IDelegate<ReturnType, ParamType...> *_delegate) const
 		{
-			if (0 == _delegate || !_delegate->isType(typeid(CMethodDelegate<T, ReturnType(T:: *)(ParamType...)>))) return false;
-			CMethodDelegate<T, ReturnType(T:: *)(ParamType...)>* cast = static_cast<CMethodDelegate<T, ReturnType(T:: *)(ParamType...)>*>(_delegate);
+			if (0 == _delegate || !_delegate->isType(typeid(CMethodDelegate<T, ReturnType (T::*)(ParamType...)>)))
+				return false;
+			CMethodDelegate<T, ReturnType (T::*)(ParamType...)> *cast = static_cast<CMethodDelegate<T, ReturnType (T::*)(ParamType...)> *>(_delegate);
 			return cast->mObject == mObject && cast->mMethod == mMethod;
 		}
 
-		CMethodDelegate(){}
-		virtual ~CMethodDelegate(){}
+		CMethodDelegate() {}
+		virtual ~CMethodDelegate() {}
+
 	private:
-		T * mObject;
+		T *mObject;
 		Method mMethod;
 	};
 
-	
-
-
-	//¶à²¥Î¯ÍĞ
-	template<typename ReturnType, typename ...ParamType>
+	// å¤šæ’­å§”æ‰˜
+	template <typename ReturnType, typename... ParamType>
 	class CMultiDelegate
 	{
-		
+
 	public:
-		
-		typedef std::list<IDelegate<ReturnType, ParamType...>*> ListDelegate;
+		typedef std::list<IDelegate<ReturnType, ParamType...> *> ListDelegate;
 		typedef typename ListDelegate::iterator ListDelegateIterator;
 		typedef typename ListDelegate::const_iterator ConstListDelegateIterator;
 
-		CMultiDelegate() { }
+		CMultiDelegate() {}
 		~CMultiDelegate() { clear(); }
 
 		bool empty() const
 		{
 			for (ConstListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 			{
-				if (*iter) return false;
+				if (*iter)
+					return false;
 			}
 			return true;
 		}
@@ -178,8 +175,7 @@ namespace Delegate
 			}
 		}
 
-
-		CMultiDelegate<ReturnType, ParamType...>& operator+=(IDelegate<ReturnType, ParamType...>* _delegate)
+		CMultiDelegate<ReturnType, ParamType...> &operator+=(IDelegate<ReturnType, ParamType...> *_delegate)
 		{
 			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 			{
@@ -193,13 +189,14 @@ namespace Delegate
 			return *this;
 		}
 
-		CMultiDelegate<ReturnType, ParamType...>& operator-=(IDelegate<ReturnType, ParamType...>* _delegate)
+		CMultiDelegate<ReturnType, ParamType...> &operator-=(IDelegate<ReturnType, ParamType...> *_delegate)
 		{
 			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 			{
 				if ((*iter) && (*iter)->compare(_delegate))
 				{
-					if ((*iter) != _delegate) delete (*iter);       //±ÜÃâÍ¬Ò»¸öµØÖ·±»deleteÁ½´Î
+					if ((*iter) != _delegate)
+						delete (*iter); // é¿å…åŒä¸€ä¸ªåœ°å€è¢«deleteä¸¤æ¬¡
 					(*iter) = 0;
 					break;
 				}
@@ -226,32 +223,33 @@ namespace Delegate
 			}
 			return _Results;
 		}
+
 	private:
-		CMultiDelegate<ReturnType, ParamType...>(const CMultiDelegate& _event);
-		CMultiDelegate<ReturnType, ParamType...>& operator=(const CMultiDelegate& _event);
+		CMultiDelegate<ReturnType, ParamType...>(const CMultiDelegate &_event);
+		CMultiDelegate<ReturnType, ParamType...> &operator=(const CMultiDelegate &_event);
 
 	private:
 		ListDelegate mListDelegates;
 	};
 
-	template< typename ...ParamType>
+	template <typename... ParamType>
 	class CMultiDelegate<void, ParamType...>
 	{
 
 	public:
-
-		typedef std::list<IDelegate<void, ParamType...>*> ListDelegate;
+		typedef std::list<IDelegate<void, ParamType...> *> ListDelegate;
 		typedef typename ListDelegate::iterator ListDelegateIterator;
 		typedef typename ListDelegate::const_iterator ConstListDelegateIterator;
 
-		CMultiDelegate() { }
+		CMultiDelegate() {}
 		~CMultiDelegate() { clear(); }
 
 		bool empty() const
 		{
 			for (ConstListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 			{
-				if (*iter) return false;
+				if (*iter)
+					return false;
 			}
 			return true;
 		}
@@ -268,7 +266,7 @@ namespace Delegate
 			}
 		}
 
-		CMultiDelegate<void, ParamType...>& operator+=(IDelegate<void, ParamType...>* _delegate)
+		CMultiDelegate<void, ParamType...> &operator+=(IDelegate<void, ParamType...> *_delegate)
 		{
 			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 			{
@@ -282,13 +280,14 @@ namespace Delegate
 			return *this;
 		}
 
-		CMultiDelegate<void, ParamType...>& operator-=(IDelegate<void, ParamType...>* _delegate)
+		CMultiDelegate<void, ParamType...> &operator-=(IDelegate<void, ParamType...> *_delegate)
 		{
 			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
 			{
 				if ((*iter) && (*iter)->compare(_delegate))
 				{
-					if ((*iter) != _delegate) delete (*iter);       //±ÜÃâÍ¬Ò»¸öµØÖ·±»deleteÁ½´Î
+					if ((*iter) != _delegate)
+						delete (*iter); // é¿å…åŒä¸€ä¸ªåœ°å€è¢«deleteä¸¤æ¬¡
 					(*iter) = 0;
 					break;
 				}
@@ -313,28 +312,23 @@ namespace Delegate
 				}
 			}
 		}
+
 	private:
-		CMultiDelegate<void, ParamType...>(const CMultiDelegate& _event);
-		CMultiDelegate<void, ParamType...>& operator=(const CMultiDelegate& _event);
+		CMultiDelegate<void, ParamType...>(const CMultiDelegate &_event);
+		CMultiDelegate<void, ParamType...> &operator=(const CMultiDelegate &_event);
 
 	private:
 		ListDelegate mListDelegates;
 	};
 
-
-
-
-
-	template< typename T>
-	CStaticDelegate<T>* newDelegate(T func)
+	template <typename T>
+	CStaticDelegate<T> *newDelegate(T func)
 	{
 		return new CStaticDelegate<T>(func);
 	}
-	template< typename T,typename F>
-	CMethodDelegate<T,F>* newDelegate(T * _object, F func)
+	template <typename T, typename F>
+	CMethodDelegate<T, F> *newDelegate(T *_object, F func)
 	{
 		return new CMethodDelegate<T, F>(_object, func);
 	}
 }
-
-

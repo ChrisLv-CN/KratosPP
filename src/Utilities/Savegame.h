@@ -19,7 +19,7 @@ namespace Savegame {
 	bool PersistObject(ExStreamWriter& Stm, const T* pValue);
 
 	template <typename T>
-	struct PhobosStreamObject
+	struct ExStreamObject
 	{
 		bool ReadFromStream(ExStreamReader& Stm, T& Value, bool RegisterForChange) const;
 		bool WriteToStream(ExStreamWriter& Stm, const T& Value) const;

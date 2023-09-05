@@ -101,22 +101,22 @@ bool ExStreamReader::RegisterChange(void* newPtr)
 
 void ExStreamReader::EmitExpectEndOfBlockWarning(std::true_type) const
 {
-	Debug::Log("PhobosStreamReader - Read %X bytes instead of %X!\n",
+	Debug::Log("ExStreamReader - Read %X bytes instead of %X!\n",
 		this->stream->Offset(), this->stream->Size());
 }
 
 void ExStreamReader::EmitLoadWarning(size_t size, std::true_type) const
 {
-	Debug::Log("PhobosStreamReader - Could not read data of length %u at %X of %X.\n",
+	Debug::Log("ExStreamReader - Could not read data of length %u at %X of %X.\n",
 		size, this->stream->Offset() - size, this->stream->Size());
 }
 
 void ExStreamReader::EmitExpectWarning(unsigned int found, unsigned int expect, std::true_type) const
 {
-	Debug::Log("PhobosStreamReader - Found %X, expected %X\n", found, expect);
+	Debug::Log("ExStreamReader - Found %X, expected %X\n", found, expect);
 }
 
 void ExStreamReader::EmitSwizzleWarning(long id, void* pointer, std::true_type) const
 {
-	Debug::Log("PhobosStreamReader - Could not register change from %X to %p\n", id, pointer);
+	Debug::Log("ExStreamReader - Could not register change from %X to %p\n", id, pointer);
 }

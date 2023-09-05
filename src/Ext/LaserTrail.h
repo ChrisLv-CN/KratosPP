@@ -82,14 +82,6 @@ public:
 
 	virtual void LoadFromStream(ExStreamReader &stream) override
 	{
-#ifdef DEBUG
-		const char *typeId = "Unknow";
-		if (_owner->GetType())
-		{
-			typeId = _owner->GetType()->ID;
-		}
-		Debug::Log("Techno [%s]%d calling LaserTrail::Load to Serialize data.\n", typeId, _owner);
-#endif
 		Component::LoadFromStream(stream);
 		this->Serialize(stream);
 	}

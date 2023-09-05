@@ -7,13 +7,13 @@
 
 #include <Objidl.h>
 
-class PhobosSwizzle
+class ExSwizzle
 {
 public:
-	static PhobosSwizzle Instance;
+	static ExSwizzle Instance;
 
-	PhobosSwizzle() { }
-	~PhobosSwizzle() { }
+	ExSwizzle() { }
+	~ExSwizzle() { }
 
 	/**
 	* pass in the *address* of the pointer you want to have changed
@@ -49,7 +49,7 @@ private:
 	template <typename TSwizzle>
 	void swizzle(TSwizzle& object, std::true_type)
 	{
-		PhobosSwizzle::Instance.RegisterPointerForChange(object);
+		ExSwizzle::Instance.RegisterPointerForChange(object);
 	}
 
 	template <typename TSwizzle>

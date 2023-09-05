@@ -11,7 +11,8 @@
 #include <CCINIClass.h>
 #include "Swizzle.h"
 
-template <typename T> class Enumerable
+template <typename T>
+class Enumerable
 {
 	typedef std::vector<std::unique_ptr<T>> container_t;
 
@@ -84,7 +85,7 @@ public:
 				return false;
 
 			auto newPtr = FindOrAllocate(name);
-			PhobosSwizzle::Instance.RegisterChange(oldPtr, newPtr);
+			ExSwizzle::Instance.RegisterChange(oldPtr, newPtr);
 
 			newPtr->LoadFromStream(Stm);
 		}
@@ -122,5 +123,5 @@ public:
 
 	virtual void SaveToStream(ExStreamWriter& Stm) = 0;
 
-	PhobosFixedString<32> Name;
+	ExFixedString<32> Name;
 };

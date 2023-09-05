@@ -21,8 +21,7 @@ public:
 	class ExtData : public Extension<TBase>
 	{
 	public:
-		ExtData(TBase *OwnerObject) : Extension<TBase>(OwnerObject)
-			, m_GameObject{}
+		ExtData(TBase *OwnerObject) : Extension<TBase>(OwnerObject), m_GameObject{}
 		{
 			// m_GameObject = new GameObject(goName);
 			m_GameObject = std::make_unique<GameObject>(goName);
@@ -34,7 +33,7 @@ public:
 			// Component的Awake分两种情况调用：
 			// 当正常开始游戏时，TechnoClass_Init触发调用_GameObject，唤醒Components，此时可以获得TechnoType；
 			// 但当从存档载入时，TechnoClass_Init不会触发，而是通过TechnoClass_Load_Suffix实例化TechnoExt，此时无法获得TechnoType，
-			// 在LoadFromStream里调用_GameObject，唤醒Components，先执行Awake对控制变量初始化，再调用Serialize修改
+			// 在LoadFromStream里读取_awaked，跳过执行Awake()，直接通过LoadFromStream读取数据
 			CreateGlobalScriptable();
 		};
 
@@ -48,24 +47,29 @@ public:
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override
 		{
 			m_GameObject->Foreach([&ptr](Component *c)
-								 { c->InvalidatePointer(ptr); });
+								  { c->InvalidatePointer(ptr); });
 		};
+
+#pragma region Save/Load
+		template <typename T>
+		void Serialize(T &stream)
+		{ };
 
 		virtual void LoadFromStream(ExStreamReader &stream) override
 		{
 			Extension<TBase>::LoadFromStream(stream);
 			this->Serialize(stream);
 			m_GameObject->Foreach([&stream](Component *c)
-			 					 { c->LoadFromStream(stream); });
+								  { c->LoadFromStream(stream); });
 		};
-
 		virtual void SaveToStream(ExStreamWriter &stream) override
 		{
 			Extension<TBase>::SaveToStream(stream);
 			this->Serialize(stream);
 			m_GameObject->Foreach([&stream](Component *c)
-								 { c->SaveToStream(stream); });
+								  { c->SaveToStream(stream); });
 		};
+#pragma endregion
 
 		//----------------------
 		// GameObject
@@ -76,12 +80,6 @@ public:
 		__declspec(property(get = GetGameObject)) GameObject *_GameObject;
 
 	private:
-		template <typename T>
-		void Serialize(T &stream)
-		{
-			// stream.Process(this->m_GameObject);
-		};
-
 		//----------------------
 		// GameObject
 		std::string goName = typeid(TExt).name();

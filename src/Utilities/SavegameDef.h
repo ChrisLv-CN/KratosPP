@@ -47,7 +47,7 @@ namespace Savegame
 		else if constexpr (ImplementsLowerCaseSaveLoad<T>)
 			return value.load(stm, registerForChange);
 
-		PhobosStreamObject<T> item;
+		ExStreamObject<T> item;
 		return item.ReadFromStream(stm, value, registerForChange);
 	}
 
@@ -60,7 +60,7 @@ namespace Savegame
 		if constexpr (ImplementsLowerCaseSaveLoad<T>)
 			return value.save(stm);
 
-		PhobosStreamObject<T> item;
+		ExStreamObject<T> item;
 		return item.WriteToStream(stm, value);
 	}
 
@@ -79,7 +79,7 @@ namespace Savegame
 
 			if (Savegame::ReadExStream(Stm, *ptrNew, RegisterForChange))
 			{
-				PhobosSwizzle::Instance.RegisterChange(ptrOld, ptrNew.get());
+				ExSwizzle::Instance.RegisterChange(ptrOld, ptrNew.get());
 				return ptrNew.release();
 			}
 		}
@@ -100,7 +100,7 @@ namespace Savegame
 	}
 
 	template <typename T>
-	bool PhobosStreamObject<T>::ReadFromStream(ExStreamReader& Stm, T& Value, bool RegisterForChange) const
+	bool ExStreamObject<T>::ReadFromStream(ExStreamReader& Stm, T& Value, bool RegisterForChange) const
 	{
 		bool ret = Stm.Load(Value);
 
@@ -111,7 +111,7 @@ namespace Savegame
 	}
 
 	template <typename T>
-	bool PhobosStreamObject<T>::WriteToStream(ExStreamWriter& Stm, const T& Value) const
+	bool ExStreamObject<T>::WriteToStream(ExStreamWriter& Stm, const T& Value) const
 	{
 		Stm.Save(Value);
 		return true;
@@ -121,7 +121,7 @@ namespace Savegame
 	// specializations
 
 	template <typename T>
-	struct Savegame::PhobosStreamObject<VectorClass<T>>
+	struct Savegame::ExStreamObject<VectorClass<T>>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, VectorClass<T>& Value, bool RegisterForChange) const
 		{
@@ -157,7 +157,7 @@ namespace Savegame
 	};
 
 	template <typename T>
-	struct Savegame::PhobosStreamObject<DynamicVectorClass<T>>
+	struct Savegame::ExStreamObject<DynamicVectorClass<T>>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, DynamicVectorClass<T>& Value, bool RegisterForChange) const
 		{
@@ -198,7 +198,7 @@ namespace Savegame
 	};
 
 	template <typename T>
-	struct Savegame::PhobosStreamObject<TypeList<T>>
+	struct Savegame::ExStreamObject<TypeList<T>>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, TypeList<T>& Value, bool RegisterForChange) const
 		{
@@ -219,7 +219,7 @@ namespace Savegame
 	};
 
 	template <>
-	struct Savegame::PhobosStreamObject<CounterClass>
+	struct Savegame::ExStreamObject<CounterClass>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, CounterClass& Value, bool RegisterForChange) const
 		{
@@ -240,7 +240,7 @@ namespace Savegame
 	};
 
 	template <size_t Size>
-	struct Savegame::PhobosStreamObject<std::bitset<Size>>
+	struct Savegame::ExStreamObject<std::bitset<Size>>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, std::bitset<Size>& Value, bool RegisterForChange) const
 		{
@@ -280,7 +280,7 @@ namespace Savegame
 	};
 
 	template <>
-	struct Savegame::PhobosStreamObject<std::string>
+	struct Savegame::ExStreamObject<std::string>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, std::string& Value, bool RegisterForChange) const
 		{
@@ -309,7 +309,7 @@ namespace Savegame
 	};
 
 	template <typename T>
-	struct Savegame::PhobosStreamObject<std::unique_ptr<T>>
+	struct Savegame::ExStreamObject<std::unique_ptr<T>>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, std::unique_ptr<T>& Value, bool RegisterForChange) const
 		{
@@ -324,7 +324,7 @@ namespace Savegame
 	};
 
 	template <typename T>
-	struct Savegame::PhobosStreamObject<std::vector<T>>
+	struct Savegame::ExStreamObject<std::vector<T>>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, std::vector<T>& Value, bool RegisterForChange) const
 		{
@@ -369,7 +369,7 @@ namespace Savegame
 	};
 
 	template <typename TKey, typename TValue>
-	struct Savegame::PhobosStreamObject<std::map<TKey, TValue>>
+	struct Savegame::ExStreamObject<std::map<TKey, TValue>>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, std::map<TKey, TValue>& Value, bool RegisterForChange) const
 		{
@@ -410,7 +410,7 @@ namespace Savegame
 	};
 
 	template <>
-	struct Savegame::PhobosStreamObject<SHPStruct*>
+	struct Savegame::ExStreamObject<SHPStruct*>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, SHPStruct*& Value, bool RegisterForChange) const
 		{
@@ -461,7 +461,7 @@ namespace Savegame
 	};
 
 	template <>
-	struct Savegame::PhobosStreamObject<RocketStruct>
+	struct Savegame::ExStreamObject<RocketStruct>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, RocketStruct& Value, bool RegisterForChange) const
 		{
@@ -482,7 +482,7 @@ namespace Savegame
 	};
 
 	template <>
-	struct Savegame::PhobosStreamObject<BuildType>
+	struct Savegame::ExStreamObject<BuildType>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, BuildType& Value, bool RegisterForChange) const
 		{
@@ -503,7 +503,7 @@ namespace Savegame
 	};
 
 	template <>
-	struct Savegame::PhobosStreamObject<TranslucencyLevel*>
+	struct Savegame::ExStreamObject<TranslucencyLevel*>
 	{
 		bool ReadFromStream(ExStreamReader& Stm, TranslucencyLevel*& Value, bool RegisterForChange) const
 		{

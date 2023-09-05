@@ -8,6 +8,7 @@
 #include <TechnoClass.h>
 
 #include <Utilities/Debug.h>
+#include <Utilities/Swizzle.h>
 
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
@@ -155,8 +156,10 @@ public:
 	bool OnDetonate_GiftBox(CoordStruct *pCoords);
 	bool OnDetonate_SelfLaunch(CoordStruct *pCoords);
 
-	TechnoClass *pSource = nullptr;
-	HouseClass *pSourceHouse = nullptr;
+	TechnoClass *pSource;
+	HouseClass *pSourceHouse;
+
+	ObjectClass *pFakeTarget;
 
 	BulletLife life = {};
 	BulletDamage damage = {};
@@ -164,8 +167,6 @@ public:
 	bool SubjectToGround = false;
 
 	bool IsBounceSplit = false;
-
-	ObjectClass *pFakeTarget = nullptr;
 
 	static std::vector<BulletClass *> TargetAircraftBullets;
 
@@ -189,20 +190,11 @@ public:
 			.Process(this->IsBounceSplit)
 			.Process(this->pFakeTarget)
 			.Process(this->TargetAircraftBullets)
-			.Process(this->_initFlag)
-			;
+			.Process(this->_initFlag);
 	};
 
 	virtual void LoadFromStream(ExStreamReader &stream) override
 	{
-#ifdef DEBUG
-		const char *typeId = "Unknow";
-		if (_owner->GetType())
-		{
-			typeId = _owner->GetType()->ID;
-		}
-		Debug::Log("Bullet [%s]%d calling BulletStatus::Load to Serialize data.\n", typeId, _owner);
-#endif
 		Component::LoadFromStream(stream);
 		this->Serialize(stream);
 	}
@@ -213,6 +205,31 @@ public:
 	}
 #pragma endregion
 
+#pragma region Save/Load Ex
+
+	template <typename T>
+	bool SerializeEx(T &stm)
+	{
+		Debug::Log("***********SerializeEx************");
+		return stm
+			.Process(this->pSource)
+			.Process(this->pSourceHouse)
+			.Success();
+	}
+
+	bool Load(ExStreamReader &stm, bool RegisterForChange)
+	{
+		Debug::Log("***********Load************");
+		return SerializeEx(stm);
+	}
+
+	bool Save(ExStreamWriter &stm) const
+	{
+		Debug::Log("***********Save************");
+		return const_cast<BulletStatus *>(this)->SerializeEx(stm);
+	}
+
+#pragma endregion
 private:
 	BulletType _bulletType = BulletType::UNKNOWN;
 	// 弹道配置

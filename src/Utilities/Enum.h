@@ -164,13 +164,6 @@ enum class InterceptedStatus
 	Intercepted = 2
 };
 
-enum class PhobosAction
-{
-	None = 0,
-	Hijack = 1,
-	Drive = 2
-};
-
 enum class TextAlign : int
 {
 	None = 0xFFF,

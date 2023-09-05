@@ -14,6 +14,8 @@
 #include <Extension/WarheadTypeExt.h>
 #include <Extension/WeaponTypeExt.h>
 
+#include <Ext/BulletStatus.h>
+
 #pragma region Implementation details
 
 #pragma region Concepts
@@ -84,7 +86,7 @@ struct InvalidatePointerAction
 };
 
 // calls:
-// T::LoadGlobals(PhobosStreamReader&)
+// T::LoadGlobals(ExStreamReader&)
 struct LoadGlobalsAction
 {
 	template <typename T>
@@ -106,7 +108,7 @@ struct LoadGlobalsAction
 };
 
 // calls:
-// T::SaveGlobals(PhobosStreamWriter&)
+// T::SaveGlobals(ExStreamWriter&)
 struct SaveGlobalsAction
 {
 	template <typename T>
@@ -181,7 +183,9 @@ using ExtTypeRegistry = TypeRegistry<
 	VoxelAnimExt,
 	VoxelAnimTypeExt,
 	WarheadTypeExt,
-	WeaponTypeExt
+	WeaponTypeExt,
+	// New classes
+	BulletStatus
 >;
 
 void ExtTypeRegistryClear(EventSystem* sender, Event e, void* args)

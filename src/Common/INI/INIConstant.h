@@ -26,6 +26,8 @@ public:
 				   GetGameModeName().data());
 #endif // DEBUG
 	}
+
+#pragma region Save/Load
 	static void SaveGameModeName(EventSystem *sender, Event e, void *args)
 	{
 		SaveGameEventArgs *arg = (SaveGameEventArgs *)args;
@@ -48,6 +50,7 @@ public:
 			reader.Process(_gameModeName, false);
 		}
 	}
+#pragma endregion
 
 	static std::string_view GetRulesName()
 	{

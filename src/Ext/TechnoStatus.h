@@ -28,6 +28,8 @@ public:
 	{
 		this->Name = typeid(this).name();
 
+		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::DrawINFO);
+
 		char t[1024];
 		sprintf_s(t, "%p", this);
 		thisID = {t};
@@ -51,7 +53,6 @@ public:
 		}
 		Debug::Log("Techno [%s]%d calling TechnoStatus::Awake to init data.\n", typeId, _owner);
 #endif
-		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::DrawINFO);
 	}
 
 	virtual void Destroy() override
@@ -79,14 +80,6 @@ public:
 
 	virtual void LoadFromStream(ExStreamReader &stream) override
 	{
-#ifdef DEBUG
-		const char *typeId = "Unknow";
-		if (_owner->GetType())
-		{
-			typeId = _owner->GetType()->ID;
-		}
-		Debug::Log("Techno [%s]%d calling TechnoStatus::Load to Serialize data.\n", typeId, _owner);
-#endif
 		Component::LoadFromStream(stream);
 		this->Serialize(stream);
 	}

@@ -443,11 +443,11 @@ public:
 
 // fixed string with read method
 template <size_t Capacity>
-class PhobosFixedString : public FixedString<Capacity> {
+class ExFixedString : public FixedString<Capacity> {
 public:
-	PhobosFixedString() = default;
-	explicit PhobosFixedString(nullptr_t) noexcept {};
-	explicit PhobosFixedString(const char* value) noexcept : FixedString<Capacity>(value) {}
+	ExFixedString() = default;
+	explicit ExFixedString(nullptr_t) noexcept {};
+	explicit ExFixedString(const char* value) noexcept : FixedString<Capacity>(value) {}
 
 	using FixedString<Capacity>::operator=;
 
