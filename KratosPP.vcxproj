@@ -35,11 +35,13 @@
     <ClCompile Include="src\Extension\AnimTypeExt.cpp" />
     <ClCompile Include="src\Extension\BulletExt.cpp" />
     <ClCompile Include="src\Extension\BulletTypeExt.cpp" />
+    <ClCompile Include="src\Extension\GOExtension.cpp" />
     <ClCompile Include="src\Extension\SuperWeaponExt.cpp" />
     <ClCompile Include="src\Extension\SuperWeaponTypeExt.cpp" />
     <ClCompile Include="src\Extension\TechnoExt.cpp" />
     <ClCompile Include="src\Extension\TechnoTypeExt.cpp" />
     <ClCompile Include="src\Extension\TerrainTypeExt.cpp" />
+    <ClCompile Include="src\Extension\TypeExtension.cpp" />
     <ClCompile Include="src\Extension\VoxelAnimExt.cpp" />
     <ClCompile Include="src\Extension\VoxelAnimTypeExt.cpp" />
     <ClCompile Include="src\Extension\WarheadTypeExt.cpp" />

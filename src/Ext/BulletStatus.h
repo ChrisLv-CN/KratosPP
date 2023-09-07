@@ -95,6 +95,8 @@ public:
 	BulletStatus(Extension<BulletClass> *ext) : BulletScript(ext)
 	{
 		this->Name = typeid(this).name();
+
+		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &BulletStatus::DrawINFO);
 	}
 
 	TrajectoryData *GetTrajectoryData();
@@ -109,6 +111,21 @@ public:
 	virtual void Awake() override;
 	virtual void Destroy() override;
 
+	void DrawINFO(EventSystem* sender, Event e, void* args)
+	{
+		if (args)
+		{
+			std::string sourceId = std::to_string((unsigned int)pSource);
+			std::string sourceHouseId = std::to_string((unsigned int)pSourceHouse);
+			std::wstring_convert<std::codecvt_utf8<wchar_t>> conver;
+			std::wstring text = std::format(L"{} {}", conver.from_bytes(sourceId), conver.from_bytes(sourceHouseId));
+			Point2D pos{};
+			CoordStruct sourcePos = _owner->GetCoords();
+			TacticalClass::Instance->CoordsToClient(sourcePos, &pos);
+			DSurface::Temp->DrawText(text.c_str(), &pos, Drawing::RGB_To_Int(Drawing::TooltipColor.get()));
+		}
+	}
+
 	void TakeDamage(int damage, bool eliminate, bool harmless, bool checkInterceptable = false);
 
 	void TakeDamage(BulletDamage damageData, bool checkInterceptable = false);
@@ -116,6 +133,8 @@ public:
 	void ResetTarget(AbstractClass *pNewTarget, CoordStruct targetPos);
 
 	void ResetArcingVelocity(float speedMultiple = 1.0f, bool force = false);
+
+	virtual void OnInit() override;
 
 	virtual void OnPut(CoordStruct *pLocation, DirType dir) override;
 
@@ -156,10 +175,10 @@ public:
 	bool OnDetonate_GiftBox(CoordStruct *pCoords);
 	bool OnDetonate_SelfLaunch(CoordStruct *pCoords);
 
-	TechnoClass *pSource;
-	HouseClass *pSourceHouse;
+	TechnoClass* pSource = nullptr;
+	HouseClass *pSourceHouse = nullptr;
 
-	ObjectClass *pFakeTarget;
+	ObjectClass *pFakeTarget = nullptr;
 
 	BulletLife life = {};
 	BulletDamage damage = {};
@@ -181,6 +200,7 @@ public:
 	template <typename T>
 	void Serialize(T &stream)
 	{
+		Debug::Log("Ready to save pSource = %d\n", pSource);
 		stream
 			.Process(this->pSource)
 			.Process(this->pSourceHouse)
@@ -242,7 +262,7 @@ private:
 static bool IsDead(BulletClass *pBullet)
 {
 	BulletStatus *status = nullptr;
-	return !pBullet || !pBullet->Type || pBullet->Health <= 0 || !pBullet->IsAlive || !TryGetStatus<BulletExt>(pBullet, status) || status->life.IsDetonate;
+	return !pBullet || !pBullet->Type || pBullet->Health <= 0 || !pBullet->IsAlive || !TryGetStatus<BulletExt>(pBullet, status) || !status || status->life.IsDetonate;
 }
 
 static bool IsDeadOrInvisible(BulletClass *pBullet)

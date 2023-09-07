@@ -2,9 +2,9 @@
 
 #include <Extension/WarheadTypeExt.h>
 
-std::vector<BulletClass *> BulletStatus::TargetAircraftBullets = {};
+std::vector<BulletClass*> BulletStatus::TargetAircraftBullets = {};
 
-TrajectoryData *BulletStatus::GetTrajectoryData()
+TrajectoryData* BulletStatus::GetTrajectoryData()
 {
 	if (!_trajectoryData)
 	{
@@ -48,47 +48,18 @@ bool BulletStatus::IsBomb()
 
 void BulletStatus::Awake()
 {
-	pSource = _owner->Owner;
-	if (pSource)
+	TechnoClass* source = _owner->Owner;
+	if (source->Owner)
 	{
-		pSourceHouse = pSource->Owner;
+		HouseClass* house = source->Owner;
 	}
-
 	// 读取生命值
 	int health = _owner->Health;
-	// 抛射体武器伤害为复述或者零时需要处理
-	if (health < 0)
-	{
-		health = -health;
-	}
-	else if (health == 0)
-	{
-		health = 1; // 武器伤害为0，如[NukeCarrier]
-	}
-
-	INIBufferReader *reader = INI::GetSection(INI::Rules, _owner->GetType()->ID);
-	// 初始化生命
-	this->life.Health = health;
-	this->life.Read(reader);
-	// 初始化伤害
-	this->damage.Damage = health;
-	// 初始化地面碰撞属性
-	switch (GetTrajectoryData()->SubjectToGround)
-	{
-	case SubjectToGroundType::YES:
-		this->SubjectToGround = true;
-		break;
-	case SubjectToGroundType::NO:
-		this->SubjectToGround = false;
-		break;
-	default:
-		this->SubjectToGround = !IsArcing() && !IsRocket() && !GetTrajectoryData()->IsStraight();
-		break;
-	}
 }
 
 void BulletStatus::Destroy()
 {
+	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &BulletStatus::DrawINFO);
 	auto it = std::find(TargetAircraftBullets.begin(), TargetAircraftBullets.end(), _owner);
 	if (it != TargetAircraftBullets.end())
 	{
@@ -116,7 +87,7 @@ void BulletStatus::TakeDamage(BulletDamage damageData, bool checkInterceptable)
 	TakeDamage(damageData.Damage, damageData.Eliminate, damageData.Harmless, checkInterceptable);
 }
 
-void BulletStatus::ResetTarget(AbstractClass *pNewTarget, CoordStruct targetPos)
+void BulletStatus::ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos)
 {
 	_owner->SetTarget(pNewTarget);
 	if (targetPos == CoordStruct::Empty && pNewTarget)
@@ -139,7 +110,47 @@ void BulletStatus::ResetTarget(AbstractClass *pNewTarget, CoordStruct targetPos)
 	}
 }
 
-void BulletStatus::OnPut(CoordStruct *pLocation, DirType dir)
+void BulletStatus::OnInit()
+{
+	pSource = _owner->Owner;
+	if (pSource)
+	{
+		pSourceHouse = pSource->Owner;
+	}
+	// 读取生命值
+	int health = _owner->Health;
+	// 抛射体武器伤害为复述或者零时需要处理
+	if (health < 0)
+	{
+		health = -health;
+	}
+	else if (health == 0)
+	{
+		health = 1; // 武器伤害为0，如[NukeCarrier]
+	}
+
+	INIBufferReader* reader = INI::GetSection(INI::Rules, _owner->GetType()->ID);
+	// 初始化生命
+	this->life.Health = health;
+	this->life.Read(reader);
+	// 初始化伤害
+	this->damage.Damage = health;
+	// 初始化地面碰撞属性
+	switch (GetTrajectoryData()->SubjectToGround)
+	{
+	case SubjectToGroundType::YES:
+		this->SubjectToGround = true;
+		break;
+	case SubjectToGroundType::NO:
+		this->SubjectToGround = false;
+		break;
+	default:
+		this->SubjectToGround = !IsArcing() && !IsRocket() && !GetTrajectoryData()->IsStraight();
+		break;
+	}
+}
+
+void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 {
 	if (!_initFlag)
 	{
@@ -170,16 +181,17 @@ void BulletStatus::OnPut(CoordStruct *pLocation, DirType dir)
 	}
 }
 
-void BulletStatus::InitState_BlackHole(){};
-void BulletStatus::InitState_Bounce(){};
-void BulletStatus::InitState_DestroySelf(){};
-void BulletStatus::InitState_ECM(){};
-void BulletStatus::InitState_GiftBox(){};
-void BulletStatus::InitState_Paintball(){};
-void BulletStatus::InitState_Proximity(){};
+void BulletStatus::InitState_BlackHole() {};
+void BulletStatus::InitState_Bounce() {};
+void BulletStatus::InitState_DestroySelf() {};
+void BulletStatus::InitState_ECM() {};
+void BulletStatus::InitState_GiftBox() {};
+void BulletStatus::InitState_Paintball() {};
+void BulletStatus::InitState_Proximity() {};
 
 void BulletStatus::OnUpdate()
 {
+	Debug::Log("********* pSource = %d, pSourceHouse = %d\n", pSource, pSourceHouse);
 	// 弹道
 	if (IsArcing())
 	{
@@ -204,7 +216,7 @@ void BulletStatus::OnUpdate()
 		{
 			// 抛射体潜入地下，重新设置目标参数，并手动引爆
 			CoordStruct targetPos = location;
-			if (CellClass *pTargetCell = MapClass::Instance->TryGetCellAt(location))
+			if (CellClass* pTargetCell = MapClass::Instance->TryGetCellAt(location))
 			{
 				targetPos.Z = pTargetCell->GetCoordsWithBridge().Z;
 				_owner->SetTarget(pTargetCell);
@@ -252,13 +264,13 @@ void BulletStatus::OnUpdate()
 	}
 }
 
-void BulletStatus::OnUpdate_DestroySelf(){};
+void BulletStatus::OnUpdate_DestroySelf() {};
 
-void BulletStatus::OnUpdate_BlackHole(){};
-void BulletStatus::OnUpdate_ECM(){};
-void BulletStatus::OnUpdate_GiftBox(){};
-void BulletStatus::OnUpdate_RecalculateStatus(){};
-void BulletStatus::OnUpdate_SelfLaunchOrPumpAction(){};
+void BulletStatus::OnUpdate_BlackHole() {};
+void BulletStatus::OnUpdate_ECM() {};
+void BulletStatus::OnUpdate_GiftBox() {};
+void BulletStatus::OnUpdate_RecalculateStatus() {};
+void BulletStatus::OnUpdate_SelfLaunchOrPumpAction() {};
 
 void BulletStatus::OnUpdateEnd()
 {
@@ -270,10 +282,10 @@ void BulletStatus::OnUpdateEnd()
 	}
 };
 
-void BulletStatus::OnUpdateEnd_BlackHole(CoordStruct &sourcePos){};
-void BulletStatus::OnUpdateEnd_Proximity(CoordStruct &sourcePos){};
+void BulletStatus::OnUpdateEnd_BlackHole(CoordStruct& sourcePos) {};
+void BulletStatus::OnUpdateEnd_Proximity(CoordStruct& sourcePos) {};
 
-void BulletStatus::OnDetonate(CoordStruct *pCoords, bool &skip)
+void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 {
 	if (pFakeTarget)
 	{
@@ -296,6 +308,6 @@ void BulletStatus::OnDetonate(CoordStruct *pCoords, bool &skip)
 	}
 };
 
-bool BulletStatus::OnDetonate_Bounce(CoordStruct *pCoords) { return false; };
-bool BulletStatus::OnDetonate_GiftBox(CoordStruct *pCoords) { return false; };
-bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct *pCoords) { return false; };
+bool BulletStatus::OnDetonate_Bounce(CoordStruct* pCoords) { return false; };
+bool BulletStatus::OnDetonate_GiftBox(CoordStruct* pCoords) { return false; };
+bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords) { return false; };

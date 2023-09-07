@@ -21,7 +21,7 @@ public:
 	class ExtData : public Extension<TBase>
 	{
 	public:
-		ExtData(TBase *OwnerObject) : Extension<TBase>(OwnerObject), m_GameObject{}
+		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject), m_GameObject{}
 		{
 			// m_GameObject = new GameObject(goName);
 			m_GameObject = std::make_unique<GameObject>(goName);
@@ -44,40 +44,40 @@ public:
 			m_GameObject.release();
 		};
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) override
+		virtual void InvalidatePointer(void* ptr, bool bRemoved) override
 		{
-			m_GameObject->Foreach([&ptr](Component *c)
-								  { c->InvalidatePointer(ptr); });
+			m_GameObject->Foreach([&ptr](Component* c)
+				{ c->InvalidatePointer(ptr); });
 		};
 
 #pragma region Save/Load
 		template <typename T>
-		void Serialize(T &stream)
+		void Serialize(T& stream)
 		{ };
 
-		virtual void LoadFromStream(ExStreamReader &stream) override
+		virtual void LoadFromStream(ExStreamReader& stream) override
 		{
 			Extension<TBase>::LoadFromStream(stream);
 			this->Serialize(stream);
-			m_GameObject->Foreach([&stream](Component *c)
-								  { c->LoadFromStream(stream); });
+			m_GameObject->Foreach([&stream](Component* c)
+				{ c->LoadFromStream(stream); });
 		};
-		virtual void SaveToStream(ExStreamWriter &stream) override
+		virtual void SaveToStream(ExStreamWriter& stream) override
 		{
 			Extension<TBase>::SaveToStream(stream);
 			this->Serialize(stream);
-			m_GameObject->Foreach([&stream](Component *c)
-								  { c->SaveToStream(stream); });
+			m_GameObject->Foreach([&stream](Component* c)
+				{ c->SaveToStream(stream); });
 		};
 #pragma endregion
 
 		//----------------------
 		// GameObject
-		GameObject *GetGameObject()
+		GameObject* GetGameObject()
 		{
 			return m_GameObject->GetAwaked();
 		};
-		__declspec(property(get = GetGameObject)) GameObject *_GameObject;
+		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
 	private:
 		//----------------------
@@ -91,7 +91,8 @@ public:
 		/// <summary>
 		///  call by GameObject _OnAwake Event
 		/// </summary>
-		void Awake(){};
+		void Awake()
+		{ };
 
 		void CreateGlobalScriptable()
 		{
@@ -101,7 +102,7 @@ public:
 			}
 			auto buffer = TakeBuffer();
 			buffer.merge(m_GlobalScripts);
-			for (Component *s : buffer)
+			for (Component* s : buffer)
 			{
 				TExt::ExtData::m_GameObject->AddComponentNotAwake(s);
 			}
@@ -109,7 +110,7 @@ public:
 			m_GlobalScriptsCreated = true;
 		}
 
-		void CreateScriptable(std::list<Component *> *scripts)
+		void CreateScriptable(std::list<Component*>* scripts)
 		{
 			if (m_ScriptsCreated)
 			{
@@ -117,11 +118,11 @@ public:
 			}
 			auto buffer = TakeBuffer();
 			buffer.merge(*scripts);
-			for (Component *s : buffer)
+			for (Component* s : buffer)
 			{
 				TExt::ExtData::m_GameObject->AddComponentNotAwake(s);
 			}
-			for (Component *s : buffer)
+			for (Component* s : buffer)
 			{
 				s->EnsureAwaked();
 			}
@@ -134,7 +135,7 @@ public:
 
 		// 全局脚本
 		bool m_GlobalScriptsCreated = false;
-		std::list<Component *> m_GlobalScripts{};
+		std::list<Component*> m_GlobalScripts{};
 	};
 
 	class ExtContainer : public Container<TExt>
@@ -146,32 +147,32 @@ public:
 
 	//----------------------
 	// Scripts Helper
-	static std::list<Component *> TakeBuffer()
+	static std::list<Component*> TakeBuffer()
 	{
 		if (m_ScriptBuffer.empty())
 		{
-			m_ScriptBuffer.push(std::list<Component *>());
+			m_ScriptBuffer.push(std::list<Component*>());
 		}
-		std::list<Component *> res = m_ScriptBuffer.top();
+		std::list<Component*> res = m_ScriptBuffer.top();
 		m_ScriptBuffer.pop();
 		return res;
 	};
 
-	static void GiveBackBuffer(std::list<Component *> &buffer)
+	static void GiveBackBuffer(std::list<Component*>& buffer)
 	{
 		buffer.clear();
 		m_ScriptBuffer.push(buffer);
 	};
 
-	inline static std::stack<std::list<Component *>> m_ScriptBuffer{};
+	inline static std::stack<std::list<Component*>> m_ScriptBuffer{};
 };
 
 //----------------------
 // Helper
 template <typename TExt, typename TStatus, typename TBase>
-static bool TryGetStatus(TBase *p, TStatus *status)
+static bool TryGetStatus(TBase* p, TStatus* status)
 {
-	auto *ext = TExt::ExtMap.Find(p);
+	auto* ext = TExt::ExtMap.Find(p);
 	if (ext)
 	{
 		status = ext->_GameObject->GetComponent<TStatus>();
@@ -180,9 +181,9 @@ static bool TryGetStatus(TBase *p, TStatus *status)
 	return false;
 }
 template <typename TExt, typename TStatus, typename TBase>
-static TStatus *GetStatus(TBase *p)
+static TStatus* GetStatus(TBase* p)
 {
-	TStatus *status = nullptr;
+	TStatus* status = nullptr;
 	TryGetStatus<TExt>(p, status);
 	return status;
 }
