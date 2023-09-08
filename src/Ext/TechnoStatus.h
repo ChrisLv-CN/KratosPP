@@ -6,6 +6,7 @@
 
 #include <Extension.h>
 #include <TechnoClass.h>
+#include <Matrix3D.h>
 
 #include <Utilities/Debug.h>
 
@@ -24,7 +25,7 @@ public:
 	std::string extID{};
 	std::string technoID{};
 
-	TechnoStatus(Extension<TechnoClass> *ext) : TechnoScript(ext)
+	TechnoStatus(Extension<TechnoClass>* ext) : TechnoScript(ext)
 	{
 		this->Name = typeid(this).name();
 
@@ -32,21 +33,21 @@ public:
 
 		char t[1024];
 		sprintf_s(t, "%p", this);
-		thisID = {t};
+		thisID = { t };
 
 		char tt[1024];
 		sprintf_s(tt, "%p", ext);
-		extID = {tt};
+		extID = { tt };
 
 		char ttt[1024];
 		sprintf_s(ttt, "%p", ext->OwnerObject());
-		technoID = {ttt};
+		technoID = { ttt };
 	}
 
 	virtual void Awake() override
 	{
 #ifdef DEBUG
-		const char *typeId = "Unknow";
+		const char* typeId = "Unknow";
 		if (_owner->GetTechnoType())
 		{
 			typeId = _owner->GetTechnoType()->ID;
@@ -60,7 +61,7 @@ public:
 		EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::DrawINFO);
 	}
 
-	void DrawINFO(EventSystem *sender, Event e, void *args)
+	void DrawINFO(EventSystem* sender, Event e, void* args)
 	{
 		if (args)
 		{
@@ -75,15 +76,15 @@ public:
 
 #pragma region save/load
 	template <typename T>
-	void Serialize(T &stream)
+	void Serialize(T& stream)
 	{ };
 
-	virtual void LoadFromStream(ExStreamReader &stream) override
+	virtual void LoadFromStream(ExStreamReader& stream) override
 	{
 		Component::LoadFromStream(stream);
 		this->Serialize(stream);
 	}
-	virtual void SaveToStream(ExStreamWriter &stream) override
+	virtual void SaveToStream(ExStreamWriter& stream) override
 	{
 		Component::SaveToStream(stream);
 		this->Serialize(stream);
@@ -92,9 +93,3 @@ public:
 
 private:
 };
-
-// Helper
-static bool IsDead(TechnoClass *pTechno)
-{
-	return !pTechno || !pTechno->GetType() || pTechno->Health <= 0 || !pTechno->IsAlive || pTechno->IsCrashing || pTechno->IsSinking;
-}

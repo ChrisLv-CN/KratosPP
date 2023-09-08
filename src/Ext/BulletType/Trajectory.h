@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>

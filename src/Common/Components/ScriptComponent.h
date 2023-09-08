@@ -4,6 +4,7 @@
 #include "GameObject.h"
 
 #include <Utilities/Container.h>
+#include <Ext/Helper.h>
 
 #include <YRPP.h>
 #include <SpecificStructures.h>

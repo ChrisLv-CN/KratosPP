@@ -86,6 +86,8 @@
 			"xlocmon": "cpp",
 			"xlocnum": "cpp",
 			"xloctime": "cpp"
-		}
+		},
+		"C_Cpp.formatting": "vcFormat",
+		"files.encoding": "utf8bom"
 	}
 }

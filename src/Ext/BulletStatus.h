@@ -42,7 +42,7 @@ public:
 	bool IsHarmless = false; // 无害
 	bool SkipAE = false;	 // 爆炸不赋予AE
 
-	void Read(INIBufferReader *ini)
+	void Read(INIBufferReader* ini)
 	{
 		this->Interceptable = ini->Get("Interceptable", Interceptable);
 		this->Strength = ini->Get("Strength", Strength);
@@ -92,14 +92,12 @@ public:
 class BulletStatus : public BulletScript
 {
 public:
-	BulletStatus(Extension<BulletClass> *ext) : BulletScript(ext)
+	BulletStatus(Extension<BulletClass>* ext) : BulletScript(ext)
 	{
 		this->Name = typeid(this).name();
-
-		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &BulletStatus::DrawINFO);
 	}
 
-	TrajectoryData *GetTrajectoryData();
+	TrajectoryData* GetTrajectoryData();
 
 	BulletType GetBulletType();
 
@@ -111,32 +109,15 @@ public:
 	virtual void Awake() override;
 	virtual void Destroy() override;
 
-	void DrawINFO(EventSystem* sender, Event e, void* args)
-	{
-		if (args)
-		{
-			std::string sourceId = std::to_string((unsigned int)pSource);
-			std::string sourceHouseId = std::to_string((unsigned int)pSourceHouse);
-			std::wstring_convert<std::codecvt_utf8<wchar_t>> conver;
-			std::wstring text = std::format(L"{} {}", conver.from_bytes(sourceId), conver.from_bytes(sourceHouseId));
-			Point2D pos{};
-			CoordStruct sourcePos = _owner->GetCoords();
-			TacticalClass::Instance->CoordsToClient(sourcePos, &pos);
-			DSurface::Temp->DrawText(text.c_str(), &pos, Drawing::RGB_To_Int(Drawing::TooltipColor.get()));
-		}
-	}
-
 	void TakeDamage(int damage, bool eliminate, bool harmless, bool checkInterceptable = false);
 
 	void TakeDamage(BulletDamage damageData, bool checkInterceptable = false);
 
-	void ResetTarget(AbstractClass *pNewTarget, CoordStruct targetPos);
+	void ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos);
 
 	void ResetArcingVelocity(float speedMultiple = 1.0f, bool force = false);
 
-	virtual void OnInit() override;
-
-	virtual void OnPut(CoordStruct *pLocation, DirType dir) override;
+	virtual void OnPut(CoordStruct* pLocation, DirType dir) override;
 
 	void InitState_Trajectory_Missile();
 	void InitState_Trajectory_Straight();
@@ -166,19 +147,19 @@ public:
 
 	virtual void OnUpdateEnd() override;
 
-	void OnUpdateEnd_BlackHole(CoordStruct &sourcePos);
-	void OnUpdateEnd_Proximity(CoordStruct &sourcePos);
+	void OnUpdateEnd_BlackHole(CoordStruct& sourcePos);
+	void OnUpdateEnd_Proximity(CoordStruct& sourcePos);
 
-	virtual void OnDetonate(CoordStruct *pCoords, bool &skip) override;
+	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
-	bool OnDetonate_Bounce(CoordStruct *pCoords);
-	bool OnDetonate_GiftBox(CoordStruct *pCoords);
-	bool OnDetonate_SelfLaunch(CoordStruct *pCoords);
+	bool OnDetonate_Bounce(CoordStruct* pCoords);
+	bool OnDetonate_GiftBox(CoordStruct* pCoords);
+	bool OnDetonate_SelfLaunch(CoordStruct* pCoords);
 
 	TechnoClass* pSource = nullptr;
-	HouseClass *pSourceHouse = nullptr;
+	HouseClass* pSourceHouse = nullptr;
 
-	ObjectClass *pFakeTarget = nullptr;
+	ObjectClass* pFakeTarget = nullptr;
 
 	BulletLife life = {};
 	BulletDamage damage = {};
@@ -187,9 +168,9 @@ public:
 
 	bool IsBounceSplit = false;
 
-	static std::vector<BulletClass *> TargetAircraftBullets;
+	static std::vector<BulletClass*> TargetAircraftBullets;
 
-	virtual void InvalidatePointer(void *ptr) override
+	virtual void InvalidatePointer(void* ptr) override
 	{
 		AnnounceInvalidPointer(this->pSource, ptr);
 		AnnounceInvalidPointer(this->pSourceHouse, ptr);
@@ -198,9 +179,8 @@ public:
 
 #pragma region Save/Load
 	template <typename T>
-	void Serialize(T &stream)
+	void Serialize(T& stream)
 	{
-		Debug::Log("Ready to save pSource = %d\n", pSource);
 		stream
 			.Process(this->pSource)
 			.Process(this->pSourceHouse)
@@ -210,107 +190,84 @@ public:
 			.Process(this->IsBounceSplit)
 			.Process(this->pFakeTarget)
 			.Process(this->TargetAircraftBullets)
-			.Process(this->_initFlag);
+			.Process(this->_initFlag)
+			.Process(this->_arcingTrajectoryInitFlag)
+			;
 	};
 
-	virtual void LoadFromStream(ExStreamReader &stream) override
+	virtual void LoadFromStream(ExStreamReader& stream) override
 	{
 		Component::LoadFromStream(stream);
 		this->Serialize(stream);
 	}
-	virtual void SaveToStream(ExStreamWriter &stream) override
+	virtual void SaveToStream(ExStreamWriter& stream) override
 	{
 		Component::SaveToStream(stream);
 		this->Serialize(stream);
 	}
 #pragma endregion
 
-#pragma region Save/Load Ex
-
-	template <typename T>
-	bool SerializeEx(T &stm)
-	{
-		Debug::Log("***********SerializeEx************");
-		return stm
-			.Process(this->pSource)
-			.Process(this->pSourceHouse)
-			.Success();
-	}
-
-	bool Load(ExStreamReader &stm, bool RegisterForChange)
-	{
-		Debug::Log("***********Load************");
-		return SerializeEx(stm);
-	}
-
-	bool Save(ExStreamWriter &stm) const
-	{
-		Debug::Log("***********Save************");
-		return const_cast<BulletStatus *>(this)->SerializeEx(stm);
-	}
-
-#pragma endregion
 private:
 	BulletType _bulletType = BulletType::UNKNOWN;
 	// 弹道配置
-	TrajectoryData *_trajectoryData = nullptr;
+	TrajectoryData* _trajectoryData = nullptr;
 
 	bool _initFlag = false;
+	bool _arcingTrajectoryInitFlag = false;
 };
 
+// ----------------
 // Helper
-static bool IsDead(BulletClass *pBullet)
-{
-	BulletStatus *status = nullptr;
-	return !pBullet || !pBullet->Type || pBullet->Health <= 0 || !pBullet->IsAlive || !TryGetStatus<BulletExt>(pBullet, status) || !status || status->life.IsDetonate;
-}
+// ----------------
 
-static bool IsDeadOrInvisible(BulletClass *pBullet)
-{
-	return IsDead(pBullet) || pBullet->InLimbo;
-}
+/// @brief 获取抛射体的轨迹类型.
+///
+/// Inviso优先级最高；\n
+/// Arcing 和 ROT>0 一起写，无法发射；\n
+/// Arcing 和 ROT=0 一起写，是抛物线；\n
+/// Arcing 和 Vertical 一起写，无法发射；\n
+/// ROT>0 和 Vertical 一起写，是导弹；\n
+/// ROT=0 和 Vertical 一起写，是垂直，SHP会变直线导弹，VXL会垂直下掉。\n
+BulletType WhatTypeAmI(BulletClass* pBullet);
 
-/// @brief 获取抛射体的轨迹类型：
-/// Inviso优先级最高；
-/// Arcing 和 ROT>0 一起写，无法发射；
-/// Arcing 和 ROT=0 一起写，是抛物线；
-/// Arcing 和 Vertical 一起写，无法发射；
-/// ROT>0 和 Vertical 一起写，是导弹；
-/// ROT=0 和 Vertical 一起写，是垂直，SHP会变直线导弹，VXL会垂直下掉。
-static BulletType WhatTypeAmI(BulletClass *pBullet)
-{
-	BulletTypeClass *pType = nullptr;
-	if (pBullet && (pType = pBullet->Type))
-	{
-		if (pType->Inviso)
-		{
-			// Inviso 优先级最高
-			return BulletType::INVISO;
-		}
-		else if (pType->ROT > 0)
-		{
-			// 导弹类型
-			if (pType->ROT == 1)
-			{
-				return BulletType::ROCKET;
-			}
-			return BulletType::MISSILE;
-		}
-		else if (pType->Vertical)
-		{
-			// 炸弹
-			return BulletType::BOMB;
-		}
-		else if (pType->Arcing)
-		{
-			// 最后是Arcing
-			return BulletType::ARCING;
-		}
-		else if (pType->ROT == 0)
-		{
-			// 再然后还有一个ROT=0的抛物线，但不是Arcing
-			return BulletType::NOROT;
-		}
-	}
-	return BulletType::UNKNOWN;
-}
+// ----------------
+// 高级弹道学
+// ----------------
+
+/// @brief 获取不精确落点的散布偏移值.
+/// @param scatterMin 最小散布范围，单位格
+/// @param scatterMax 最大散布范围，单位格
+/// @return offset
+CoordStruct GetInaccurateOffset(float scatterMin, float scatterMax);
+
+/// @brief 计算抛物线弹道的出膛速度向量.
+/// @param sourcePos 炮弹初始位置
+/// @param targetPos 炮弹目标位置
+/// @param speed 速度
+/// @param gravity 重力
+/// @param lobber 是否高抛
+/// @param zOffset 高度修正
+/// @param straightDistance out 距离
+/// @param realSpeed out 计算后的实际速度
+/// @return velocity
+BulletVelocity GetBulletArcingVelocity(CoordStruct sourcePos, CoordStruct targetPos,
+	double speed, double gravity, bool lobber,
+	int zOffset, double& straightDistance, double& realSpeed);
+
+/// @brief 计算抛物线弹道的出膛速度向量.
+/// @param sourcePos 炮弹初始位置
+/// @param targetPos out 炮弹目标位置
+/// @param speed 速度
+/// @param gravity 重力
+/// @param lobber 是否高抛
+/// @param inaccurate 是否不精确散布
+/// @param scatterMin 散布最小范围
+/// @param scatterMax 散布最大范围
+/// @param zOffset 高度修正
+/// @param straightDistance out 距离
+/// @param realSpeed out 实际速度
+/// @param pTargetCell out 目标格子
+/// @return velocity
+BulletVelocity GetBulletArcingVelocity(CoordStruct sourcePos, CoordStruct& targetPos,
+	double speed, double gravity, bool lobber, bool inaccurate, float scatterMin, float scatterMax,
+	int zOffset, double& straightDistance, double& realSpeed, CellClass*& pTargetCell);

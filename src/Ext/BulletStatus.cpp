@@ -1,6 +1,7 @@
 ﻿#include "BulletStatus.h"
 
 #include <Extension/WarheadTypeExt.h>
+#include <Ext/Helper.h>
 
 std::vector<BulletClass*> BulletStatus::TargetAircraftBullets = {};
 
@@ -48,18 +49,46 @@ bool BulletStatus::IsBomb()
 
 void BulletStatus::Awake()
 {
-	TechnoClass* source = _owner->Owner;
-	if (source->Owner)
+	pSource = _owner->Owner;
+	if (pSource)
 	{
-		HouseClass* house = source->Owner;
+		pSourceHouse = pSource->Owner;
 	}
 	// 读取生命值
 	int health = _owner->Health;
+	// 抛射体武器伤害为复述或者零时需要处理
+	if (health < 0)
+	{
+		health = -health;
+	}
+	else if (health == 0)
+	{
+		health = 1; // 武器伤害为0，如[NukeCarrier]
+	}
+
+	INIBufferReader* reader = INI::GetSection(INI::Rules, _owner->GetType()->ID);
+	// 初始化生命
+	this->life.Health = health;
+	this->life.Read(reader);
+	// 初始化伤害
+	this->damage.Damage = health;
+	// 初始化地面碰撞属性
+	switch (GetTrajectoryData()->SubjectToGround)
+	{
+	case SubjectToGroundType::YES:
+		this->SubjectToGround = true;
+		break;
+	case SubjectToGroundType::NO:
+		this->SubjectToGround = false;
+		break;
+	default:
+		this->SubjectToGround = !IsArcing() && !IsRocket() && !GetTrajectoryData()->IsStraight();
+		break;
+	}
 }
 
 void BulletStatus::Destroy()
 {
-	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &BulletStatus::DrawINFO);
 	auto it = std::find(TargetAircraftBullets.begin(), TargetAircraftBullets.end(), _owner);
 	if (it != TargetAircraftBullets.end())
 	{
@@ -110,46 +139,6 @@ void BulletStatus::ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos)
 	}
 }
 
-void BulletStatus::OnInit()
-{
-	pSource = _owner->Owner;
-	if (pSource)
-	{
-		pSourceHouse = pSource->Owner;
-	}
-	// 读取生命值
-	int health = _owner->Health;
-	// 抛射体武器伤害为复述或者零时需要处理
-	if (health < 0)
-	{
-		health = -health;
-	}
-	else if (health == 0)
-	{
-		health = 1; // 武器伤害为0，如[NukeCarrier]
-	}
-
-	INIBufferReader* reader = INI::GetSection(INI::Rules, _owner->GetType()->ID);
-	// 初始化生命
-	this->life.Health = health;
-	this->life.Read(reader);
-	// 初始化伤害
-	this->damage.Damage = health;
-	// 初始化地面碰撞属性
-	switch (GetTrajectoryData()->SubjectToGround)
-	{
-	case SubjectToGroundType::YES:
-		this->SubjectToGround = true;
-		break;
-	case SubjectToGroundType::NO:
-		this->SubjectToGround = false;
-		break;
-	default:
-		this->SubjectToGround = !IsArcing() && !IsRocket() && !GetTrajectoryData()->IsStraight();
-		break;
-	}
-}
-
 void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 {
 	if (!_initFlag)
@@ -173,10 +162,9 @@ void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 		}
 	}
 	// 是否是对飞行器攻击
-	// AbstractClass *pTarget = nullptr;
-	// if (IsMissile() && (pTarget = _owner->Target) && (pTarget->What_Am_I() == AbstractType::Aircraft || pTarget->IsInAir()))
+	AbstractClass *pTarget = nullptr;
+	if (IsMissile() && (pTarget = _owner->Target) != nullptr && (pTarget->What_Am_I() == AbstractType::Aircraft || pTarget->IsInAir()))
 	{
-		life.Health = 9999;
 		TargetAircraftBullets.push_back(_owner);
 	}
 }
@@ -191,7 +179,6 @@ void BulletStatus::InitState_Proximity() {};
 
 void BulletStatus::OnUpdate()
 {
-	Debug::Log("********* pSource = %d, pSourceHouse = %d\n", pSource, pSourceHouse);
 	// 弹道
 	if (IsArcing())
 	{
@@ -231,7 +218,7 @@ void BulletStatus::OnUpdate()
 			tempSoucePos.Z = 0;
 			CoordStruct tempTargetPos = _owner->TargetCoords;
 			tempTargetPos.Z = 0;
-			if (tempSoucePos.DistanceFrom(tempTargetPos) <= 256 + _owner->Type->Acceleration)
+			if (tempSoucePos.DistanceFrom(tempTargetPos) <= static_cast<double>(256 + _owner->Type->Acceleration))
 			{
 				// 距离目标太近，强制爆炸
 				life.Detonate();
@@ -293,15 +280,15 @@ void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 	}
 	if (!skip)
 	{
-		if (skip = OnDetonate_Bounce(pCoords))
+		if ((skip = OnDetonate_Bounce(pCoords)) == true)
 		{
 			return;
 		}
-		if (skip = OnDetonate_GiftBox(pCoords))
+		if ((skip = OnDetonate_GiftBox(pCoords)) == true)
 		{
 			return;
 		}
-		if (skip = OnDetonate_SelfLaunch(pCoords))
+		if ((skip = OnDetonate_SelfLaunch(pCoords)) == true)
 		{
 			return;
 		}
@@ -311,3 +298,128 @@ void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 bool BulletStatus::OnDetonate_Bounce(CoordStruct* pCoords) { return false; };
 bool BulletStatus::OnDetonate_GiftBox(CoordStruct* pCoords) { return false; };
 bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords) { return false; };
+
+
+
+// ----------------
+// Helper
+// ----------------
+
+BulletType WhatTypeAmI(BulletClass* pBullet)
+{
+	BulletTypeClass* pType = nullptr;
+	if (pBullet && (pType = pBullet->Type) != nullptr)
+	{
+		if (pType->Inviso)
+		{
+			// Inviso 优先级最高
+			return BulletType::INVISO;
+		}
+		else if (pType->ROT > 0)
+		{
+			// 导弹类型
+			if (pType->ROT == 1)
+			{
+				return BulletType::ROCKET;
+			}
+			return BulletType::MISSILE;
+		}
+		else if (pType->Vertical)
+		{
+			// 炸弹
+			return BulletType::BOMB;
+		}
+		else if (pType->Arcing)
+		{
+			// 最后是Arcing
+			return BulletType::ARCING;
+		}
+		else if (pType->ROT == 0)
+		{
+			// 再然后还有一个ROT=0的抛物线，但不是Arcing
+			return BulletType::NOROT;
+		}
+	}
+	return BulletType::UNKNOWN;
+}
+
+// ----------------
+// 高级弹道学
+// ----------------
+
+CoordStruct GetInaccurateOffset(float scatterMin, float scatterMax)
+{
+	// 不精确, 需要修改目标坐标
+	int min = (int)(scatterMin * 256);
+	int max = scatterMax > 0 ? (int)(scatterMax * 256) : RulesClass::Instance->BallisticScatter;
+	// Logger.Log("炮弹[{0}]不精确, 需要重新计算目标位置, 散布范围=[{1}, {2}]", pBullet.Ref.Type.Convert<AbstractTypeClass>().Ref.ID, min, max);
+	if (min > max)
+	{
+		int temp = min;
+		min = max;
+		max = temp;
+	}
+	// 随机偏移
+	return RandomOffset(min, max);
+}
+
+BulletVelocity GetBulletArcingVelocity(CoordStruct sourcePos, CoordStruct targetPos,
+	double speed, double gravity, bool lobber,
+	int zOffset, double& straightDistance, double& realSpeed)
+{
+	// 重算抛物线弹道
+	if (gravity == 0)
+	{
+		gravity = RulesClass::Instance->Gravity;
+	}
+	CoordStruct tempSourcePos = sourcePos;
+	CoordStruct tempTargetPos = targetPos;
+	int zDiff = tempTargetPos.Z - tempSourcePos.Z + zOffset; // 修正高度差
+	tempTargetPos.Z = 0;
+	tempSourcePos.Z = 0;
+	straightDistance = tempTargetPos.DistanceFrom(tempSourcePos);
+	// Logger.Log("位置和目标的水平距离{0}", straightDistance);
+	realSpeed = speed;
+	if (straightDistance == 0 || std::isnan(straightDistance))
+	{
+		// 直上直下
+		return BulletVelocity{ 0.0, 0.0, gravity };
+	}
+	if (realSpeed == 0)
+	{
+		// realSpeed = WeaponTypeClass.GetSpeed((int)straightDistance, gravity);
+		realSpeed = Math::sqrt(straightDistance * gravity * 1.2);
+		// Logger.Log($"YR计算的速度{realSpeed}, 距离 {(int)straightDistance}, 重力 {gravity}");
+	}
+	// 高抛弹道
+	if (lobber)
+	{
+		realSpeed = (int)(realSpeed * 0.5);
+		// Logger.Log("高抛弹道, 削减速度{0}", realSpeed);
+	}
+	// Logger.Log("重新计算初速度, 当前速度{0}", realSpeed);
+	double vZ = (zDiff * realSpeed) / straightDistance + 0.5 * gravity * straightDistance / realSpeed;
+	// Logger.Log("计算Z方向的初始速度{0}", vZ);
+	BulletVelocity v(tempTargetPos.X - tempSourcePos.X, tempTargetPos.Y - tempSourcePos.Y, 0.0);
+	v *= realSpeed / straightDistance;
+	v.Z = vZ;
+	return v;
+}
+
+BulletVelocity GetBulletArcingVelocity(CoordStruct sourcePos, CoordStruct& targetPos,
+	double speed, double gravity, bool lobber, bool inaccurate, float scatterMin, float scatterMax,
+	int zOffset, double& straightDistance, double& realSpeed, CellClass*& pTargetCell)
+{
+	// 不精确
+	if (inaccurate)
+	{
+		targetPos += GetInaccurateOffset(scatterMin, scatterMax);
+	}
+	// 不潜地
+	if ((pTargetCell = MapClass::Instance->TryGetCellAt(targetPos)) != nullptr)
+	{
+		targetPos.Z = pTargetCell->GetCoordsWithBridge().Z;
+	}
+	return GetBulletArcingVelocity(sourcePos, targetPos, speed, gravity, lobber, zOffset, straightDistance, realSpeed);
+}
+
