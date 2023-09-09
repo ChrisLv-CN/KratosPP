@@ -3,6 +3,10 @@
 #include <typeinfo>
 #include <stack>
 
+#include <Common/INI/INI.h>
+#include <Common/INI/INIConfig.h>
+#include <Common/INI/INIReader.h>
+
 #include <Helpers/Macro.h>
 #include <Utilities/Container.h>
 #include <Utilities/TemplateDef.h>
@@ -51,6 +55,8 @@ public:
 			Extension<TBase>::SaveToStream(Stm);
 			this->Serialize(Stm);
 		};
+
+		INIReader* pTypeData = nullptr;
 
 	private:
 		template <typename T>

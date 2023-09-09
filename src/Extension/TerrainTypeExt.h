@@ -7,6 +7,16 @@
 class TerrainTypeExt : public TypeExtension<TerrainTypeClass, TerrainTypeExt>
 {
 public:
+	class TypeData : public INIConfig
+	{
+	public:
+		virtual void Read(INIBufferReader* ini) override
+		{
+		}
+
+		// Ares
+	};
+
 	static constexpr DWORD Canary = 0xBEE78007;
 	static constexpr size_t ExtPointerOffset = 0x18;
 

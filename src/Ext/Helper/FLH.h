@@ -34,12 +34,12 @@ Matrix3D RotateMatrix3DOnTurret(Matrix3D& mtx, double turretRad, bool isBuilding
 // Step 4: apply FLH offset
 Vector3D<float> GetFLHOffset(Matrix3D& mtx, CoordStruct flh);
 
-CoordStruct GetFLHAbsoluteOffset(CoordStruct flh, DirStruct dir, CoordStruct turretOffset);
+CoordStruct GetFLHAbsoluteOffset(CoordStruct flh, DirStruct dir, CoordStruct turretOffset = CoordStruct::Empty);
 
 CoordStruct GetFLHAbsoluteCoords(CoordStruct source, CoordStruct flh, DirStruct dir, CoordStruct turretOffset = CoordStruct::Empty);
 
 // reversed from 6F3D60
-CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isOnTurret, int flipY, CoordStruct turretOffset);
+CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isOnTurret, int flipY, CoordStruct turretOffset = CoordStruct::Empty);
 #pragma endregion
 
 #pragma region Random offset
@@ -73,8 +73,6 @@ int Dir2FacingIndex(DirStruct dir, int facing);
 /// @param facing 面数
 /// @return index
 int Dir2FrameIndex(DirStruct dir, int facing);
-
-DirType ToDirType(DirStruct dir);
 
 DirStruct Radians2Dir(double radians);
 DirStruct Point2Dir(CoordStruct source, CoordStruct target);

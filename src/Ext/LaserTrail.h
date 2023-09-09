@@ -39,32 +39,6 @@ public:
 
 	virtual void Awake() override
 	{
-		std::string adjacent = INI::GetSection(INI::Rules, _owner->GetType()->ID)->Get<std::string>("Adjacent", "0");
-		Debug::Log("Adjacent = %s\n", adjacent.c_str());
-		// test
-		CoordStruct offset = INI::GetSection(INI::Rules, "MarkTest")->Get<CoordStruct>("Paintball.Color", CoordStruct::Empty);
-		Debug::Log("Paintball.Color = {%d, %d, %d}\n", offset.X, offset.Y, offset.Z);
-		std::string section = "EnemyDefenseSpecial";
-		std::string key = "Deliver.Types";
-		std::vector<std::string> def;
-		std::vector<std::string> vals = INI::GetSection(INI::Rules, section.c_str())->GetList<std::string>(key.c_str(), def);
-		std::string logMsg = "[EnemyDefenseSpecial]\nDeliver.Types=";
-		for (std::string s : vals)
-		{
-			logMsg.append(s).append(", ");
-		}
-		logMsg.append("\n");
-		Debug::Log(logMsg.c_str());
-
-		LaserTrailData* data = INI::GetConfig<LaserTrailData>(INI::Rules, _owner->GetType()->ID)->Data;
-		if (data->ColorChanged)
-		{
-			Debug::Log("LaserTrailData::ColorChanged = true\n");
-		}
-		else
-		{
-			Debug::Log("LaserTrailData::ColorChanged = false\n");
-		}
 	}
 
 	virtual void Destroy() override
@@ -98,22 +72,13 @@ public:
 
 	virtual void OnUpdate() override
 	{
-		INI::GetSection(INI::Rules, this->_owner->GetType()->get_ID());
-		if (_owner->IsSelected)
-		{
-			laserColor = ColorStruct{0, 0, 255};
-			colorChanged = true;
-		}
 		CoordStruct sourcePos = _owner->GetCoords();
-		CoordStruct targetPos = sourcePos + CoordStruct(0, 0, 1024);
-		LaserDrawClass *pLaser = GameCreate<LaserDrawClass>(
-			sourcePos, targetPos,
-			laserColor, ColorStruct{0, 0, 0}, ColorStruct{0, 0, 0},
-			2);
-
-		pLaser->Thickness = 5;
-		pLaser->IsHouseColor = true;
-		pLaser->IsSupported = true;
+		CoordStruct targetPos = GetFLHAbsoluteCoords(sourcePos, { 1024, 0, 0 }, _owner->PrimaryFacing.Current());
+		CoordStruct turretPos = GetFLHAbsoluteCoords(sourcePos, { 2048, 0, 0 }, _owner->SecondaryFacing.Current());
+		LaserHelper::RedLine(sourcePos, targetPos);
+		LaserHelper::RedLineZ(targetPos, 512);
+		LaserHelper::GreenLine(sourcePos, turretPos);
+		LaserHelper::GreenLineZ(turretPos, 512);
 	}
 
 private:

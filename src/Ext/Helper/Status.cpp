@@ -1,9 +1,11 @@
 ﻿#include "Status.h"
 #include <Ext/Helper/CastEx.h>
+#include <Ext/Helper/Component.h>
 
 #include <Ext/AnimStatus.h>
 #include <Ext/BulletStatus.h>
 #include <Ext/TechnoStatus.h>
+
 
 #pragma endregion AnimClass
 AnimClass* SetAnimOwner(AnimClass* pAnim, HouseClass* pHouse)
@@ -60,6 +62,42 @@ bool IsDeadOrInvisible(TechnoClass* pTechno)
 {
 	return IsDead(pTechno) || pTechno->InLimbo;
 }
+
+double GetROFMulti(TechnoClass* pTechno)
+{
+	if (IsDead(pTechno))
+	{
+		return 1;
+	}
+	bool rof = false;
+	if (pTechno->Veterancy.IsElite())
+	{
+		rof = pTechno->GetTechnoType()->VeteranAbilities.ROF || pTechno->GetTechnoType()->EliteAbilities.ROF;
+	}
+	else if (pTechno->Veterancy.IsVeteran())
+	{
+		rof = pTechno->GetTechnoType()->VeteranAbilities.ROF;
+	}
+	return (!rof ? 1.0 : RulesClass::Instance->VeteranROF) * pTechno->FirepowerMultiplier * ((!pTechno->Owner || !pTechno->Owner->Type) ? 1.0 : pTechno->Owner->Type->ROFMult);
+}
+
+double GetDamageMulti(TechnoClass* pTechno)
+{
+	if (IsDead(pTechno))
+	{
+		return 1;
+	}
+	bool firepower = false;
+	if (pTechno->Veterancy.IsElite())
+	{
+		firepower = pTechno->GetTechnoType()->VeteranAbilities.FIREPOWER || pTechno->GetTechnoType()->EliteAbilities.FIREPOWER;
+	}
+	else if (pTechno->Veterancy.IsVeteran())
+	{
+		firepower = pTechno->GetTechnoType()->VeteranAbilities.FIREPOWER;
+	}
+	return (!firepower ? 1.0 : RulesClass::Instance->VeteranCombat) * pTechno->FirepowerMultiplier * ((!pTechno->Owner || !pTechno->Owner->Type) ? 1.0 : pTechno->Owner->Type->FirepowerMult);
+}
 #pragma endregion
 
 #pragma endregion BulletClass
@@ -72,6 +110,14 @@ bool IsDead(BulletClass* pBullet)
 bool IsDeadOrInvisible(BulletClass* pBullet)
 {
 	return IsDead(pBullet) || pBullet->InLimbo;
+}
+
+void SetSourceHouse(BulletClass* pBullet, HouseClass* pHouse)
+{
+	if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pBullet))
+	{
+		status->pSourceHouse = pHouse;
+	}
 }
 
 DirStruct Facing(BulletClass* pBullet, CoordStruct location)

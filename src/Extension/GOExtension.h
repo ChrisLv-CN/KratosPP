@@ -166,24 +166,3 @@ public:
 
 	inline static std::stack<std::list<Component*>> m_ScriptBuffer{};
 };
-
-//----------------------
-// Helper
-template <typename TExt, typename TStatus, typename TBase>
-static bool TryGetStatus(TBase* p, TStatus* status)
-{
-	auto* ext = TExt::ExtMap.Find(p);
-	if (ext)
-	{
-		status = ext->_GameObject->GetComponent<TStatus>();
-		return status;
-	}
-	return false;
-}
-template <typename TExt, typename TStatus, typename TBase>
-static TStatus* GetStatus(TBase* p)
-{
-	TStatus* status = nullptr;
-	TryGetStatus<TExt>(p, status);
-	return status;
-}

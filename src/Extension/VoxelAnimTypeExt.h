@@ -7,6 +7,16 @@
 class VoxelAnimTypeExt : public TypeExtension<VoxelAnimTypeClass, VoxelAnimTypeExt>
 {
 public:
+	class TypeData : public INIConfig
+	{
+	public:
+		virtual void Read(INIBufferReader* ini) override
+		{
+		}
+
+		// Ares
+	};
+
 	static constexpr DWORD Canary = 0xAAAEEEEE;
 	static constexpr size_t ExtPointerOffset = 0x18;
 

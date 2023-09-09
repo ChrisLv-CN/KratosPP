@@ -18,11 +18,15 @@ AnimClass* SetAnimCreater(AnimClass* pAnim, BulletClass* pBullet);
 #pragma region TechnoClass
 bool IsDead(TechnoClass* pTechno);
 bool IsDeadOrInvisible(TechnoClass* pTechno);
+
+double GetROFMulti(TechnoClass* pTechno);
+double GetDamageMulti(TechnoClass* pTechno);
 #pragma endregion
 
 #pragma region BulletClass
 bool IsDead(BulletClass* pBullet);
 bool IsDeadOrInvisible(BulletClass* pBullet);
+void SetSourceHouse(BulletClass* pBullet, HouseClass* pHouse);
 
 DirStruct Facing(BulletClass* pBullet, CoordStruct location = CoordStruct::Empty);
 #pragma endregion

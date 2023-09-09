@@ -9,7 +9,7 @@
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
 
-#include <Ext/AnimStatus.h>
+#include <Ext/BulletStatus.h>
 
 #include <AnimClass.h>
 #include <AnimTypeClass.h>

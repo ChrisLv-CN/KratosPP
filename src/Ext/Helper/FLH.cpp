@@ -86,7 +86,8 @@ Matrix3D RotateMatrix3DOnTurret(Matrix3D& mtx, double turretRad, bool isBuilding
 Vector3D<float> GetFLHOffset(Matrix3D& mtx, CoordStruct flh)
 {
 	mtx.Translate(ToVector3D<float>(flh));
-	Vector3D<float> res = Matrix3D::MatrixMultiply(mtx, Vector3D<float>::Empty);
+	// Vector3D<float> res = Matrix3D::MatrixMultiply(mtx, Vector3D<float>::Empty);
+	Vector3D<float> res = mtx * Vector3D<float>::Empty;
 	// Resulting FLH is mirrored along X axis, so we mirror it back - Kerbiter
 	res.Y *= -1;
 	return res;
@@ -98,12 +99,14 @@ CoordStruct GetFLHAbsoluteOffset(CoordStruct flh, DirStruct dir, CoordStruct tur
 	if (flh != CoordStruct::Empty)
 	{
 		Matrix3D mtx;
+		mtx.MakeIdentity();
 		mtx.Translate(ToVector3D<float>(turretOffset));
 		mtx.RotateZ((float)dir.GetRadian());
-		res = GetFLHOffset(mtx, flh);
-		// res.X = static_cast<int>(offset.X);
-		// res.Y = static_cast<int>(offset.Y);
-		// res.Z = static_cast<int>(offset.Z);
+		Vector3D<float> offset = GetFLHOffset(mtx, flh);
+
+		res.X = std::lround(offset.X);
+		res.Y = std::lround(offset.Y);
+		res.Z = std::lround(offset.Z);
 	}
 	return res;
 }
@@ -156,10 +159,10 @@ CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isO
 			// step 4
 			CoordStruct tempFLH = flh;
 			tempFLH.Y *= flipY;
-			source = GetFLHOffset(mtx, tempFLH);
-			// source.X = (int)offset.X;
-			// source.Y = (int)offset.Y;
-			// source.Z = (int)offset.Z;
+			Vector3D<float> offset = GetFLHOffset(mtx, tempFLH);
+			source.X = std::lround(offset.X);
+			source.Y = std::lround(offset.Y);
+			source.Z = std::lround(offset.Z);
 		}
 	}
 	return source;
@@ -214,31 +217,6 @@ int Dir2FrameIndex(DirStruct dir, int facing)
 		index -= facing;
 	}
 	return index;
-}
-
-DirType ToDirType(DirStruct dir)
-{
-	int i = Dir2FacingIndex(dir, 8);
-	switch (i)
-	{
-	case 0:
-		return DirType::North;
-	case 1:
-		return DirType::NorthEast;
-	case 2:
-		return DirType::East;
-	case 3:
-		return DirType::SouthEast;
-	case 4:
-		return DirType::South;
-	case 5:
-		return DirType::SouthWest;
-	case 6:
-		return DirType::West;
-	case 7:
-		return DirType::NorthWest;
-	}
-	return DirType::North;
 }
 
 DirStruct Radians2Dir(double radians)

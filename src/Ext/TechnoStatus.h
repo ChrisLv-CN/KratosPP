@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <Windows.h>
 #include <string>
 #include <format>
 #include <codecvt>
@@ -12,7 +13,6 @@
 
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
-#include <Extension/TechnoExt.h>
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
 #include <Common/INI/INIReader.h>

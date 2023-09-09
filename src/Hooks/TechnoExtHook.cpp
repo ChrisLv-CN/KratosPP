@@ -3,7 +3,9 @@
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
+#include <Ext/Helper.h>
 #include <Extension/TechnoExt.h>
+#include <Extension/WarheadTypeExt.h>
 #include <Common/Components/Component.h>
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
@@ -195,6 +197,8 @@ DEFINE_HOOK(0x71A917, TemporalClass_Update_Eliminate, 0x5)
 	return 0;
 }
 
+bool DamageByToyWH = false;
+
 DEFINE_HOOK(0x701900, TechnoClass_ReceiveDamage, 0x6)
 {
 	GET(TechnoClass *, pThis, ECX);
@@ -204,12 +208,19 @@ DEFINE_HOOK(0x701900, TechnoClass_ReceiveDamage, 0x6)
 	pExt->_GameObject->Foreach([args](Component *c)
 							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnReceiveDamage(args); } });
 
-	// TODO Toy warhead
-
+	// Toy warhead
+	WarheadTypeExt::TypeData* whData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(args->WH);
+	if (whData->IsToy)
+	{
+		args->Damage = 0;
+		DamageByToyWH = true;
+	}
+	else
+	{
+		DamageByToyWH = false;
+	}
 	return 0;
 }
-
-bool DamageByToyWH = false;
 
 DEFINE_HOOK(0x701F9A, TechnoClass_ReceiveDamage_SkipAllReaction, 0x6)
 {
