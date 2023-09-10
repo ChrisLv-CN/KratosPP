@@ -6,8 +6,8 @@ void Component::EnsureAwaked()
 	{
 		_awaked = true;
 		Awake();
-		ForeachChild([](Component *c)
-					 { c->EnsureAwaked(); });
+		ForeachChild([](Component* c)
+			{ c->EnsureAwaked(); });
 	}
 }
 
@@ -17,42 +17,67 @@ void Component::EnsureStarted()
 	{
 		_started = true;
 		Start();
-		ForeachChild([](Component *c)
-					 { c->EnsureStarted(); });
+		ForeachChild([](Component* c)
+			{ c->EnsureStarted(); });
 	}
 }
 
 void Component::EnsureDestroy()
 {
 	Destroy();
-	for (Component *c : _children)
+	for (Component* c : _children)
 	{
 		c->EnsureDestroy();
 	}
 
 	_children.clear();
 	DetachFromParent();
+
+	// 删除实例
+	// delete this;
 }
 
-void Component::AddComponent(Component *component)
+void Component::AddComponent(Component* component)
 {
-	component->_parent = this;
-	_children.push_back(component);
+	auto it = std::find(_disableComponents.begin(), _disableComponents.end(), component->Name);
+	if (it == _disableComponents.end())
+	{
+		component->_parent = this;
+		_children.push_back(component);
+	}
 }
 
-void Component::RemoveComponent(Component *component)
+void Component::RemoveComponent(Component* component)
 {
 	for (auto it = _children.begin(); it != _children.end(); it++)
 	{
 		if (*it == component)
 		{
 			_children.erase(it);
+
+			std::string disableName = component->Name;
+			_disableComponents.push_back(disableName);
+
 			break;
 		}
 	}
 }
 
-void Component::AttachToComponent(Component *component)
+void Component::ClearDisableComponent()
+{
+	for (std::string disableName : _disableComponents)
+	{
+		for (auto it = _children.begin(); it != _children.end(); it++)
+		{
+			if ((*it)->Name == disableName)
+			{
+				_children.erase(it);
+			}
+		}
+	}
+}
+
+void Component::AttachToComponent(Component* component)
 {
 	if (_parent == component)
 	{

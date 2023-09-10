@@ -33,3 +33,4 @@ void GameObject::AddComponentNotAwake(Component *component)
 	this->Component::AddComponent(component);
 	_unstartedComponents.push_back(component);
 }
+

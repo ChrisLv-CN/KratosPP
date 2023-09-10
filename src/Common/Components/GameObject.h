@@ -38,10 +38,10 @@ public:
 
 	GameObject *GetAwaked();
 
-	void AddComponentNotAwake(Component *component);
+	void AddComponentNotAwake(Component* component);
 
 	CMultiDelegate<void> _OnAwake;
 
 private:
-	std::vector<Component *> _unstartedComponents{};
+	std::vector<Component*> _unstartedComponents{};
 };

@@ -47,7 +47,11 @@ public:
 #pragma region Save/Load
 	template <typename T>
 	void Serialize(T &stream)
-	{ };
+	{
+		stream
+			.Process(this->pCreater)
+			;
+	};
 
 	virtual void LoadFromStream(ExStreamReader &stream) override
 	{

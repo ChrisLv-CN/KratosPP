@@ -208,6 +208,17 @@ public:
 #pragma endregion
 
 private:
+	/// @brief 获取抛射体的轨迹类型.
+	///
+	/// Inviso优先级最高；\n
+	/// Arcing 和 ROT>0 一起写，无法发射；\n
+	/// Arcing 和 ROT=0 一起写，是抛物线；\n
+	/// Arcing 和 Vertical 一起写，无法发射；\n
+	/// ROT>0 和 Vertical 一起写，是导弹；\n
+	/// ROT=0 和 Vertical 一起写，是垂直，SHP会变直线导弹，VXL会垂直下掉。\n
+	BulletType WhatTypeAmI(BulletClass* pBullet);
+
+	// 抛射体类型
 	BulletType _bulletType = BulletType::UNKNOWN;
 	// 弹道配置
 	TrajectoryData* _trajectoryData = nullptr;
@@ -215,17 +226,3 @@ private:
 	bool _initFlag = false;
 	bool _arcingTrajectoryInitFlag = false;
 };
-
-// ----------------
-// Helper
-// ----------------
-
-/// @brief 获取抛射体的轨迹类型.
-///
-/// Inviso优先级最高；\n
-/// Arcing 和 ROT>0 一起写，无法发射；\n
-/// Arcing 和 ROT=0 一起写，是抛物线；\n
-/// Arcing 和 Vertical 一起写，无法发射；\n
-/// ROT>0 和 Vertical 一起写，是导弹；\n
-/// ROT=0 和 Vertical 一起写，是垂直，SHP会变直线导弹，VXL会垂直下掉。\n
-BulletType WhatTypeAmI(BulletClass* pBullet);

@@ -6,37 +6,39 @@
 #include <vector>
 
 #include <Utilities/Stream.h>
+#include <Utilities/Debug.h>
+#include <Memory.h>
 
 class IComponent
 {
 public:
-	IComponent(){};
-	virtual ~IComponent(){};
+	IComponent() {};
+	virtual ~IComponent() {};
 
 	/// <summary>
 	/// Awake is called when an enabled instance is being created.
 	/// TechnoExt::ExtData() call
 	/// </summary>
-	virtual void Awake(){};
+	virtual void Awake() {};
 
 	/// <summary>
 	/// OnStart called on the frame
 	/// </summary>
-	virtual void Start(){};
+	virtual void Start() {};
 
-	virtual void OnUpdate(){};
-	virtual void OnUpdateEnd(){};
-	virtual void OnWarpUpdate(){};
+	virtual void OnUpdate() {};
+	virtual void OnUpdateEnd() {};
+	virtual void OnWarpUpdate() {};
 
 	/// <summary>
 	/// Destroy is called when enabled instance is delete.
 	/// </summary>
-	virtual void Destroy(){};
+	virtual void Destroy() {};
 
-	virtual void InvalidatePointer(void *ptr){};
+	virtual void InvalidatePointer(void* ptr) {};
 
-	virtual void LoadFromStream(ExStreamReader &stream){};
-	virtual void SaveToStream(ExStreamWriter &stream){};
+	virtual void LoadFromStream(ExStreamReader& stream) {};
+	virtual void SaveToStream(ExStreamWriter& stream) {};
 };
 
 class Component : public IComponent
@@ -49,24 +51,26 @@ public:
 	void EnsureStarted();
 	void EnsureDestroy();
 
-	void AddComponent(Component *component);
-	void RemoveComponent(Component *component);
+	void AddComponent(Component* component);
+	void RemoveComponent(Component* component);
 
-	void AttachToComponent(Component *component);
+	void ClearDisableComponent();
+
+	void AttachToComponent(Component* component);
 	void DetachFromParent();
 
 	template <typename TComponent>
-	TComponent *GetComponent()
+	TComponent* GetComponent()
 	{
 		return GetComponentInChildren<TComponent>();
 	}
 
 	template <typename TComponent>
-	TComponent *GetComponentInParent()
+	TComponent* GetComponentInParent()
 	{
-		Component *c = nullptr;
+		Component* c = nullptr;
 		// find first level
-		for (Component *children : _children)
+		for (Component* children : _children)
 		{
 			if (typeid(children) == TComponent)
 			{
@@ -82,23 +86,23 @@ public:
 	}
 
 	template <typename TComponent>
-	TComponent *GetComponentInChildren()
+	TComponent* GetComponentInChildren()
 	{
-		TComponent *c = nullptr;
+		TComponent* c = nullptr;
 		// find first level
-		for (Component *children : _children)
+		for (Component* children : _children)
 		{
 			if (typeid(children) == typeid(TComponent))
 			{
-				c = (TComponent *)children;
+				c = (TComponent*)children;
 				break;
 			}
 		}
 		if (!c)
 		{
-			for (Component *children : _children)
+			for (Component* children : _children)
 			{
-				TComponent *r = children->GetComponentInChildren<TComponent>();
+				TComponent* r = children->GetComponentInChildren<TComponent>();
 				if (r)
 				{
 					c = r;
@@ -126,9 +130,9 @@ public:
 	}
 
 	template <typename T>
-	static void ForeachComponents(std::vector<Component *> components, T action)
+	static void ForeachComponents(std::vector<Component*> components, T action)
 	{
-		for (Component *compoent : components)
+		for (Component* compoent : components)
 		{
 			action(compoent);
 		}
@@ -140,7 +144,7 @@ public:
 	/// <param name="root">the root component</param>
 	/// <param name="action">the action to executed</param>
 	template <typename T>
-	static void ForeachComponents(Component *root, T action)
+	static void ForeachComponents(Component* root, T action)
 	{
 		action(root);
 		root->ForeachChild(action);
@@ -148,20 +152,21 @@ public:
 
 #pragma region save/load
 	template <typename T>
-	void Serialize(T &stream)
+	void Serialize(T& stream)
 	{
 		stream
 			.Process(this->Name)
-			// 所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
+			// 每次读档之后，所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
 			.Process(this->_awaked)
 			.Process(this->_started)
+			.Process(this->_disableComponents)
 			;
 	}
-	virtual void LoadFromStream(ExStreamReader &stream) override
+	virtual void LoadFromStream(ExStreamReader& stream) override
 	{
 		this->Serialize(stream);
 	}
-	virtual void SaveToStream(ExStreamWriter &stream) override
+	virtual void SaveToStream(ExStreamWriter& stream) override
 	{
 		this->Serialize(stream);
 	}
@@ -171,6 +176,9 @@ private:
 	bool _awaked = false;
 	bool _started = false;
 
-	Component *_parent = nullptr;
-	std::vector<Component *> _children{};
+	// 读取存档时，所有的Component都是重新构建的，运行时失效的Component需要被记录
+	std::vector<std::string> _disableComponents{};
+
+	Component* _parent = nullptr;
+	std::vector<Component*> _children{};
 };

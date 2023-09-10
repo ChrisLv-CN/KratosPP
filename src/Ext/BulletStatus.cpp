@@ -305,7 +305,7 @@ bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords) { return false; }
 // Helper
 // ----------------
 
-BulletType WhatTypeAmI(BulletClass* pBullet)
+BulletType BulletStatus::WhatTypeAmI(BulletClass* pBullet)
 {
 	BulletTypeClass* pType = nullptr;
 	if (pBullet && (pType = pBullet->Type) != nullptr)

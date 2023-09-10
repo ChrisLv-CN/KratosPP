@@ -39,6 +39,7 @@ public:
 
 	virtual void Awake() override
 	{
+		// _gameObject->RemoveComponent(this);
 	}
 
 	virtual void Destroy() override

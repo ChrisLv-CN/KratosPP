@@ -66,26 +66,20 @@ public:
 	bool AdvancedBallistics = true;
 
 	// Arcing
-	// [INIField(Key = "Arcing.FixedSpeed")]
-	int ArcingFixedSpeed = 0;
-	bool Inaccurate = false;
-	// [INIField(Key = "BallisticScatter.Min")]
-	float BallisticScatterMin = 0;
-	// [INIField(Key = "BallisticScatter.Max")]
-	float BallisticScatterMax = 0;
-	int Gravity = RulesClass::Instance->Gravity;
+	int ArcingFixedSpeed = 0; // 恒定速度飞行，近距离高抛，远距离平抛
+	bool Inaccurate = false; // 不精确散布
+	float BallisticScatterMin = 0; // 最小散布距离
+	float BallisticScatterMax = 0; // 最大散布距离
+	int Gravity = RulesClass::Instance->Gravity; // 自定义重力
 
 	// Straight
-	bool Straight = false;
-	bool AbsolutelyStraight = false;
+	bool Straight = false; // 直线飞行
+	bool AbsolutelyStraight = false; // 朝向正面的直线飞行
 
 	// Missile
-	// [INIField(Key = "ROT.Reverse")]
-	bool ReverseVelocity = false;
-	// [INIField(Key = "ROT.ReverseZ")]
-	bool ReverseVelocityZ = false;
-	// [INIField(Key = "ROT.ShakeMultiplier")]
-	float ShakeVelocity = 0;
+	bool ReverseVelocity = false; // 反转出膛飞行方向
+	bool ReverseVelocityZ = false; // 反转出膛飞行方向
+	float ShakeVelocity = 0; // 出膛方向随机抖动
 
 	// Status
 	SubjectToGroundType SubjectToGround = SubjectToGroundType::AUTO;

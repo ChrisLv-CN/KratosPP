@@ -23,18 +23,11 @@ public:
 	public:
 		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject), m_GameObject{}
 		{
+			// 为了保证读存档的key一致，除GO外都不进行实例化
 			// m_GameObject = new GameObject(goName);
 			m_GameObject = std::make_unique<GameObject>(goName);
-			m_GameObject->_OnAwake += newDelegate(this, &ExtData::Awake);
-			// 读取全局脚本附加给GameObject，但不激活，等待GameObject首次访问触发Awake
-			// Search and instantiate global script objects in TechnoExt
-			TExt::AddGlobalScripts(&m_GlobalScripts, this);
-			// 该函数只将Component实例加入GameObject
-			// Component的Awake分两种情况调用：
-			// 当正常开始游戏时，TechnoClass_Init触发调用_GameObject，唤醒Components，此时可以获得TechnoType；
-			// 但当从存档载入时，TechnoClass_Init不会触发，而是通过TechnoClass_Load_Suffix实例化TechnoExt，此时无法获得TechnoType，
-			// 在LoadFromStream里读取_awaked，跳过执行Awake()，直接通过LoadFromStream读取数据
-			CreateGlobalScriptable();
+			// m_GameObject->_OnAwake += newDelegate(this, &ExtData::AttachComponents);
+			AttachComponents();
 		};
 
 		~ExtData() override
@@ -57,9 +50,16 @@ public:
 
 		virtual void LoadFromStream(ExStreamReader& stream) override
 		{
+			// 首先读取ext
 			Extension<TBase>::LoadFromStream(stream);
 			this->Serialize(stream);
-			m_GameObject->Foreach([&stream](Component* c)
+			// 准备Component
+			// AttachComponents();
+			// GO读取失效的Component名单，然后清理
+			m_GameObject->LoadFromStream(stream);
+			// m_GameObject->ClearDisableComponent();
+			// 为Component读取内容
+			m_GameObject->ForeachChild([&stream](Component* c)
 				{ c->LoadFromStream(stream); });
 		};
 		virtual void SaveToStream(ExStreamWriter& stream) override
@@ -90,9 +90,20 @@ public:
 
 		/// <summary>
 		///  call by GameObject _OnAwake Event
+		/// 逻辑开始运行时再对Component进行实例化
 		/// </summary>
-		void Awake()
-		{ };
+		void AttachComponents()
+		{
+			// 读取全局脚本附加给GameObject，但不激活，等待GameObject首次访问触发Awake
+			// Search and instantiate global script objects in TechnoExt
+			TExt::AddGlobalScripts(&m_GlobalScripts, this);
+			// 该函数只将Component实例加入GameObject
+			// Component的Awake分两种情况调用：
+			// 当正常开始游戏时，TechnoClass_Init触发调用_GameObject，唤醒Components，此时可以获得TechnoType；
+			// 但当从存档载入时，TechnoClass_Init不会触发，而是通过TechnoClass_Load_Suffix实例化TechnoExt，此时无法获得TechnoType，
+			// 在LoadFromStream里读取_awaked，跳过执行Awake()，直接通过LoadFromStream读取数据
+			CreateGlobalScriptable();
+		};
 
 		void CreateGlobalScriptable()
 		{
@@ -102,6 +113,7 @@ public:
 			}
 			auto buffer = TakeBuffer();
 			buffer.merge(m_GlobalScripts);
+			// m_GlobalScripts.clear();
 			for (Component* s : buffer)
 			{
 				TExt::ExtData::m_GameObject->AddComponentNotAwake(s);
