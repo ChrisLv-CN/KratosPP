@@ -123,7 +123,7 @@ protected:
 	using stream_debugging_t =
 #ifdef DEBUG
 		std::true_type;
-#else
+#else // DEBUG
 		std::false_type;
 #endif // DEBUG
 

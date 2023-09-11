@@ -20,7 +20,7 @@
 class AnimStatus : public AnimScript
 {
 public:
-	AnimStatus(Extension<AnimClass> *ext) : AnimScript(ext)
+	AnimStatus(AnimExt::ExtData* ext) : AnimScript(ext)
 	{
 		this->Name = typeid(this).name();
 	}
@@ -32,36 +32,34 @@ public:
 	/// @brief 接管伤害制造
 	/// @param isBounce 是否流星、碎片类
 	/// @param bright 弹头闪光
-	void Explosion_Damage(bool isBounce = false, bool bright = false){};
+	void Explosion_Damage(bool isBounce = false, bool bright = false) {};
 
 	/// @brief 替换流星、碎片击中水中的动画
 	/// @return true=替换成其他的动画
 	bool OverrideExpireAnimOnWater() { return false; };
 
-	TechnoClass *pCreater;
+	TechnoClass* pCreater;
 
-	virtual void InvalidatePointer(void *ptr) override
+	virtual void InvalidatePointer(void* ptr) override
 	{
 		AnnounceInvalidPointer(this->pCreater, ptr);
 	};
 #pragma region Save/Load
 	template <typename T>
-	void Serialize(T &stream)
+	bool Serialize(T& stream)
 	{
-		stream
+		return stream
 			.Process(this->pCreater)
-			;
+			.Success();
 	};
 
-	virtual void LoadFromStream(ExStreamReader &stream) override
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
-		Component::LoadFromStream(stream);
-		this->Serialize(stream);
+		return this->Serialize(stream);
 	}
-	virtual void SaveToStream(ExStreamWriter &stream) override
+	virtual bool Save(ExStreamWriter& stream) const override
 	{
-		Component::SaveToStream(stream);
-		this->Serialize(stream);
+		return const_cast<AnimStatus*>(this)->Serialize(stream);
 	}
 #pragma endregion
 

@@ -21,39 +21,11 @@
 class TechnoStatus : public TechnoScript
 {
 public:
-	std::string thisID{};
-	std::string extID{};
-	std::string technoID{};
-
-	TechnoStatus(Extension<TechnoClass>* ext) : TechnoScript(ext)
+	TechnoStatus(TechnoExt::ExtData* ext) : TechnoScript(ext)
 	{
 		this->Name = typeid(this).name();
 
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::DrawINFO);
-
-		char t[1024];
-		sprintf_s(t, "%p", this);
-		thisID = { t };
-
-		char tt[1024];
-		sprintf_s(tt, "%p", ext);
-		extID = { tt };
-
-		char ttt[1024];
-		sprintf_s(ttt, "%p", ext->OwnerObject());
-		technoID = { ttt };
-	}
-
-	virtual void Awake() override
-	{
-#ifdef DEBUG
-		const char* typeId = "Unknow";
-		if (_owner->GetTechnoType())
-		{
-			typeId = _owner->GetTechnoType()->ID;
-		}
-		Debug::Log("Techno [%s]%d calling TechnoStatus::Awake to init data.\n", typeId, _owner);
-#endif
 	}
 
 	virtual void Destroy() override
@@ -65,29 +37,32 @@ public:
 	{
 		if (args)
 		{
+#ifdef DEBUG
 			std::wstring_convert<std::codecvt_utf8<wchar_t>> conver;
-			std::wstring text = std::format(L"{} {} {}", conver.from_bytes(extID), conver.from_bytes(thisID), conver.from_bytes(technoID));
+			std::wstring text = std::format(L"{} {} {}", conver.from_bytes(extId), conver.from_bytes(thisId), conver.from_bytes(baseId));
 			Point2D pos{};
 			CoordStruct location = _owner->GetCoords();
 			TacticalClass::Instance->CoordsToClient(location, &pos);
 			DSurface::Temp->DrawText(text.c_str(), &pos, Drawing::RGB_To_Int(Drawing::TooltipColor.get()));
+#endif // DEBUG
 		}
 	}
 
 #pragma region save/load
 	template <typename T>
-	void Serialize(T& stream)
-	{ };
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Success();
+	};
 
-	virtual void LoadFromStream(ExStreamReader& stream) override
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
-		Component::LoadFromStream(stream);
-		this->Serialize(stream);
+		return this->Serialize(stream);
 	}
-	virtual void SaveToStream(ExStreamWriter& stream) override
+	virtual bool Save(ExStreamWriter& stream) const override
 	{
-		Component::SaveToStream(stream);
-		this->Serialize(stream);
+		return const_cast<TechnoStatus*>(this)->Serialize(stream);
 	}
 #pragma endregion
 

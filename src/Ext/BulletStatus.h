@@ -92,7 +92,7 @@ public:
 class BulletStatus : public BulletScript
 {
 public:
-	BulletStatus(Extension<BulletClass>* ext) : BulletScript(ext)
+	BulletStatus(BulletExt::ExtData* ext) : BulletScript(ext)
 	{
 		this->Name = typeid(this).name();
 	}
@@ -179,9 +179,9 @@ public:
 
 #pragma region Save/Load
 	template <typename T>
-	void Serialize(T& stream)
+	bool Serialize(T& stream)
 	{
-		stream
+		return stream
 			.Process(this->pSource)
 			.Process(this->pSourceHouse)
 			.Process(this->life)
@@ -192,18 +192,16 @@ public:
 			.Process(this->TargetAircraftBullets)
 			.Process(this->_initFlag)
 			.Process(this->_arcingTrajectoryInitFlag)
-			;
+			.Success();
 	};
 
-	virtual void LoadFromStream(ExStreamReader& stream) override
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
-		Component::LoadFromStream(stream);
-		this->Serialize(stream);
+		return this->Serialize(stream);
 	}
-	virtual void SaveToStream(ExStreamWriter& stream) override
+	virtual bool Save(ExStreamWriter& stream) const override
 	{
-		Component::SaveToStream(stream);
-		this->Serialize(stream);
+		return const_cast<BulletStatus*>(this)->Serialize(stream);
 	}
 #pragma endregion
 

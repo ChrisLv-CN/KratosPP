@@ -1,11 +1,5 @@
 #include "GameObject.h"
 
-GameObject::GameObject() : Component() {}
-GameObject::GameObject(std::string name) : Component()
-{
-	this->Name = name;
-}
-
 void GameObject::Awake()
 {
 	this->Component::Awake();
@@ -34,3 +28,17 @@ void GameObject::AddComponentNotAwake(Component *component)
 	_unstartedComponents.push_back(component);
 }
 
+void GameObject::ClearUnstartComponents()
+{
+	for (auto it = _unstartedComponents.begin(); it != _unstartedComponents.end();)
+	{
+		if ((*it)->AlreadyStart())
+		{
+			it = _unstartedComponents.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+}

@@ -25,14 +25,7 @@ DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 	if (!IsLoadGame)
 	{
 		GET(TechnoClass *, pItem, ESI);
-#ifdef DEBUG
-		const char *typeId = "Unknow";
-		if (pItem->GetTechnoType())
-		{
-			typeId = pItem->GetTechnoType()->ID;
-		}
-		Debug::Log("Techno [%s]%d calling CTOR\n", typeId, pItem);
-#endif
+
 		TechnoExt::ExtMap.TryAllocate(pItem);
 	}
 	return 0;
@@ -52,14 +45,7 @@ DEFINE_HOOK(0x70BF50, TechnoClass_SaveLoad_Prefix, 0x5)
 {
 	GET_STACK(TechnoClass *, pItem, 0x4);
 	GET_STACK(IStream *, pStm, 0x8);
-#ifdef DEBUG
-	const char *typeId = "Unknow";
-	if (pItem->GetTechnoType())
-	{
-		typeId = pItem->GetTechnoType()->ID;
-	}
-	Debug::Log("Techno [%s]%d calling SaveLoad\n", typeId, pItem);
-#endif
+
 	TechnoExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
@@ -86,14 +72,6 @@ DEFINE_HOOK(0x70C264, TechnoClass_Save_Suffix, 0x5)
 DEFINE_HOOK(0x6F42ED, TechnoClass_Init, 0xA)
 {
 	GET(TechnoClass *, pThis, ESI);
-#ifdef DEBUG
-	const char *typeId = "Unknow";
-	if (pThis->GetType())
-	{
-		typeId = pThis->GetType()->ID;
-	}
-	Debug::Log("Techno [%s]%d calling OnInit()\n", typeId, pThis);
-#endif
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component *c)

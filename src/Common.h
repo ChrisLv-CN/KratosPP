@@ -34,7 +34,7 @@ public:
 
 #ifdef DEBUG
 	static bool DetachFromDebugger();
-#endif
+#endif // DEBUG
 
 	class UI
 	{

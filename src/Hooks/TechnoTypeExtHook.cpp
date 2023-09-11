@@ -1,4 +1,4 @@
-#include <exception>
+﻿#include <exception>
 #include <Windows.h>
 
 #include <Extension.h>
@@ -13,9 +13,7 @@ DEFINE_HOOK(0x711835, TechnoTypeClass_CTOR, 0x5)
 	if (!IsLoadGame)
 	{
 		GET(TechnoTypeClass *, pItem, ESI);
-#ifdef DEBUG
-			Debug::Log("Techno Type [%s] calling CTOR\n", pItem->ID);
-#endif
+
 		TechnoTypeExt::ExtMap.TryAllocate(pItem);
 	}
 	return 0;

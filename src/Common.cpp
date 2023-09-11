@@ -121,7 +121,7 @@ void Common::ExeRun(EventSystem* sender, Event e, void* args)
 		}
 	}
 
-#endif
+#endif // DEBUG
 }
 
 void Common::ExeTerminate(EventSystem* sender, Event e, void* args)
@@ -205,7 +205,7 @@ bool Common::DetachFromDebugger()
 
 	return false;
 }
-#endif
+#endif // DEBUG
 
 bool __stdcall DllMain(HANDLE hInstance, DWORD dwReason, LPVOID v)
 {

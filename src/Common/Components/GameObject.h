@@ -12,8 +12,22 @@ using namespace Delegate;
 class GameObject : public Component
 {
 public:
-	GameObject();
-	GameObject(std::string name);
+	GameObject() : Component()
+	{
+		this->Name = "GameObject";
+#ifdef DEBUG
+		char t_this[1024];
+		sprintf_s(t_this, "%p", this);
+		this->thisId = { t_this };
+#endif // DEBUG
+	}
+	GameObject(std::string name) : Component()
+	{
+		this->Name = name;
+#ifdef DEBUG
+		this->Name.append("_GameObject");
+#endif // DEBUG
+	}
 
 	virtual void Awake() override;
 
@@ -21,24 +35,30 @@ public:
 
 #pragma region save/load
 	template <typename T>
-	void Serialize(T &stream)
-	{ }
-
-	virtual void LoadFromStream(ExStreamReader &stream) override
+	bool Serialize(T& stream)
 	{
-		Component::LoadFromStream(stream);
-		this->Serialize(stream);
+		return stream
+			.Success();
 	}
-	virtual void SaveToStream(ExStreamWriter &stream) override
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
-		Component::SaveToStream(stream);
-		this->Serialize(stream);
+		Component::Load(stream, registerForChange);
+		// 清理_unstartedComponents
+		return this->Serialize(stream);
+	}
+
+	virtual bool Save(ExStreamWriter& stream) const override
+	{
+		Component::Save(stream);
+		return const_cast<GameObject*>(this)->Serialize(stream);
 	}
 #pragma endregion
 
-	GameObject *GetAwaked();
+	GameObject* GetAwaked();
 
 	void AddComponentNotAwake(Component* component);
+	void ClearUnstartComponents();
 
 	CMultiDelegate<void> _OnAwake;
 

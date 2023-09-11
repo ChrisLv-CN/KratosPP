@@ -37,8 +37,8 @@ public:
 
 	virtual void InvalidatePointer(void* ptr) {};
 
-	virtual void LoadFromStream(ExStreamReader& stream) {};
-	virtual void SaveToStream(ExStreamWriter& stream) {};
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) = 0;
+	virtual bool Save(ExStreamWriter& stream) const = 0;
 };
 
 class Component : public IComponent
@@ -47,9 +47,24 @@ public:
 	std::string Name;
 	std::string Tag;
 
+#ifdef DEBUG
+	std::string thisId{};
+	std::string GetThisName() { return Name; }
+	__declspec(property(get = GetThisName)) std::string thisName;
+
+	std::string extId{};
+	std::string extName{};
+
+	std::string baseId{};
+	std::string baseName{};
+#endif // DEBUG
+
 	void EnsureAwaked();
 	void EnsureStarted();
 	void EnsureDestroy();
+
+	bool AlreadyAwake();
+	bool AlreadyStart();
 
 	void AddComponent(Component* component);
 	void RemoveComponent(Component* component);
@@ -152,23 +167,43 @@ public:
 
 #pragma region save/load
 	template <typename T>
-	void Serialize(T& stream)
+	bool Serialize(T& stream, bool isLoad)
 	{
-		stream
+		if (isLoad)
+		{
+			// 从存档读取需要被移除的Component的名单
+			stream.Process(this->_disableComponents);
+#ifdef DEBUG
+			Debug::Log("Component [%s]%s is loading, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
+#endif //DEBUG
+			// 读入存档后，清理失效的Component
+			ClearDisableComponent();
+#ifdef DEBUG
+			Debug::Log("Component [%s]%s is loading, clear disable done, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
+#endif //DEBUG
+		}
+		else
+		{			
+#ifdef DEBUG
+			Debug::Log("Component [%s]%s is saveing, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
+#endif //DEBUG
+			// 需要被移除的Component的名单先写入存档
+			stream.Process(this->_disableComponents);
+		}
+		return stream
 			.Process(this->Name)
 			// 每次读档之后，所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
 			.Process(this->_awaked)
 			.Process(this->_started)
-			.Process(this->_disableComponents)
-			;
+			.Success();
 	}
-	virtual void LoadFromStream(ExStreamReader& stream) override
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
-		this->Serialize(stream);
+		return this->Serialize(stream, true);
 	}
-	virtual void SaveToStream(ExStreamWriter& stream) override
+	virtual bool Save(ExStreamWriter& stream) const override
 	{
-		this->Serialize(stream);
+		return const_cast<Component*>(this)->Serialize(stream, false);
 	}
 #pragma endregion
 

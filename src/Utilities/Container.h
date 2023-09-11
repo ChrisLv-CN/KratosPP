@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <unordered_map>
 
@@ -58,8 +58,28 @@ class Extension
 public:
 	static const DWORD Canary;
 
-	Extension(T* const OwnerObject) : AttachedToObject { OwnerObject }, Initialized { InitState::Blank }
-	{ }
+#ifdef DEBUG
+	std::string thisId{};
+	std::string thisName{};
+
+	std::string baseId{};
+	std::string baseName{};
+#endif // DEBUG
+
+	Extension(T* const OwnerObject) : AttachedToObject{ OwnerObject }, Initialized{ InitState::Blank }
+	{
+#ifdef DEBUG
+		char t_this[1024];
+		sprintf_s(t_this, "%p", this);
+		thisId = { t_this };
+
+		char t_base[1024];
+		sprintf_s(t_base, "%p", OwnerObject);
+		baseId = { t_base };
+
+		baseName = typeid(T).name();
+#endif // DEBUG
+	}
 
 	Extension(const Extension& other) = delete;
 
@@ -136,7 +156,7 @@ protected:
 
 	// load any ini file: rules, game mode, scenario or map
 	virtual void LoadFromINIFile(CCINIClass* pINI) { }
-};
+		};
 
 // a non-virtual base class for a pointer to pointer map.
 // pointers are not owned by this map, so be cautious.
