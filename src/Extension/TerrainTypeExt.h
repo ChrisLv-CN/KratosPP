@@ -7,6 +7,7 @@
 class TerrainTypeExt : public TypeExtension<TerrainTypeClass, TerrainTypeExt>
 {
 public:
+	/// @brief 储存一些通用设置或者其他平台的设置
 	class TypeData : public INIConfig
 	{
 	public:

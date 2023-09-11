@@ -5,13 +5,14 @@
 
 void TechnoExt::AddGlobalScripts(std::list<Component*> *globalScripts, ExtData *ext)
 {
-	TechnoStatus *status = GameCreate<TechnoStatus>(ext);
-	// TechnoStatus *status = new TechnoStatus(ext);
-	// TechnoStatus status{ ext };
+	// Base Component
+	// can't use GameCreate because can't use GameDelete to release memory.
+	// TechnoStatus *status = GameCreate<TechnoStatus>(ext);
+	TechnoStatus *status = new TechnoStatus(ext);
 	globalScripts->push_back(status);
-	LaserTrail *laserTrail = GameCreate<LaserTrail>(ext);
-	// LaserTrail *laserTrail = new LaserTrail(ext);
-	// LaserTrail laserTrail{ ext };
+
+	// Other Components
+	LaserTrail *laserTrail = new LaserTrail(ext);
 	globalScripts->push_back(laserTrail);
 }
 

@@ -39,7 +39,7 @@ public:
 
 	virtual void Awake() override
 	{
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 		Debug::Log("LaserTrail [%s]%s is calling awake to init data.\n", thisName.c_str(), thisId.c_str());
 #endif // DEBUG
 		_gameObject->RemoveComponent(this);

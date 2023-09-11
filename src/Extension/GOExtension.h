@@ -48,9 +48,9 @@ public:
 
 		~ExtData() override
 		{
-			m_GameObject.EnsureDestroy();
 			// delete *m_GameObject;
-			// m_GameObject.release();
+			m_GameObject.ForeachChild([](Component* c)
+				{if (c) { c->EnsureDestroy(); } });
 		};
 
 		virtual void InvalidatePointer(void* ptr, bool bRemoved) override
@@ -74,7 +74,7 @@ public:
 		{
 			// 首先读取ext
 			Extension<TBase>::LoadFromStream(stream);
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 			Debug::Log("[%s]%s [%s]%s GameObject [%s]%s Load from stream.\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
 #endif // DEBUG
 			// 准备Component
@@ -116,7 +116,7 @@ public:
 		/// </summary>
 		void AttachComponents()
 		{
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 			Debug::Log("[%s]%s [%s]%s call AttachComponents\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str());
 #endif // DEBUG
 			if (m_GlobalScriptsCreated)
@@ -125,8 +125,11 @@ public:
 			}
 			// Search and instantiate global script objects in TechnoExt
 			std::list<Component*> m_GlobalScripts{};
+
+			// 在Ext中创建Component实例并加入到GameObject中
+			// Component的创建需要使用new，在Component::EnsureDesroy中Delete
 			TExt::AddGlobalScripts(&m_GlobalScripts, this);
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 			Debug::Log("[%s]%s [%s]%s ready to attach %d components\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GlobalScripts.size());
 #endif // DEBUG
 			// 该函数只将Component实例加入GameObject

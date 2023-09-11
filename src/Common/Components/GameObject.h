@@ -21,13 +21,6 @@ public:
 		this->thisId = { t_this };
 #endif // DEBUG
 	}
-	GameObject(std::string name) : Component()
-	{
-		this->Name = name;
-#ifdef DEBUG
-		this->Name.append("_GameObject");
-#endif // DEBUG
-	}
 
 	virtual void Awake() override;
 
