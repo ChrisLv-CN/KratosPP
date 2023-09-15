@@ -22,6 +22,13 @@ public:
 #endif // DEBUG
 	}
 
+	virtual ~GameObject() override
+	{
+#ifdef DEBUG
+		Debug::Log("GameObject [%s]%s is release.\n", this->thisName.c_str(), this->thisId.c_str());
+#endif // DEBUG
+	}
+
 	virtual void Awake() override;
 
 	virtual void OnUpdate() override;
@@ -50,8 +57,7 @@ public:
 
 	GameObject* GetAwaked();
 
-	void AddComponentNotAwake(Component* component);
-	void ClearUnstartComponents();
+	void AddComponentNotAwake(Component& component);
 
 	CMultiDelegate<void> _OnAwake;
 

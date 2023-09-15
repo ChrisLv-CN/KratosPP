@@ -1,13 +1,28 @@
 ﻿#include "Component.h"
 
+
 void Component::EnsureAwaked()
 {
 	if (!_awaked)
 	{
 		_awaked = true;
+#ifdef DEBUG_COMPONENT
+		char t_this[1024];
+		sprintf_s(t_this, "%p", this);
+		std::string thisId2 = { t_this };
+		Debug::Log("Component [%s]%s - %s calling awake, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _disableComponents.size(), _children.size());
+#endif // DEBUG
 		Awake();
 		ForeachChild([](Component* c)
-			{ c->EnsureAwaked(); });
+			{
+#ifdef DEBUG_COMPONENT
+				char c_this[1024];
+				sprintf_s(c_this, "%p", c);
+				std::string thisId3 = { c_this };
+				Debug::Log("Child Component [%s]%s - %s calling EnsureAwaked.\n", c->thisName.c_str(), c->thisId.c_str(), thisId3.c_str());
+#endif // DEBUG
+				c->EnsureAwaked();
+			});
 	}
 }
 
@@ -16,30 +31,61 @@ void Component::EnsureStarted()
 	if (!_started)
 	{
 		_started = true;
+#ifdef DEBUG_COMPONENT
+		char t_this[1024];
+		sprintf_s(t_this, "%p", this);
+		std::string thisId2 = { t_this };
+		Debug::Log("Component [%s]%s - %s calling start, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _disableComponents.size(), _children.size());
+#endif // DEBUG
 		Start();
 		ForeachChild([](Component* c)
-			{ c->EnsureStarted(); });
+			{
+#ifdef DEBUG_COMPONENT
+				char c_this[1024];
+				sprintf_s(c_this, "%p", c);
+				std::string thisId3 = { c_this };
+				Debug::Log("Child Component [%s]%s - %s calling EnsureStarted.\n", c->thisName.c_str(), c->thisId.c_str(), thisId3.c_str());
+#endif // DEBUG
+				c->EnsureStarted();
+			});
 	}
 }
 
 void Component::EnsureDestroy()
 {
 #ifdef DEBUG_COMPONENT
-	Debug::Log("Component [%s]%s is destroy, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
+	char t_this[1024];
+	sprintf_s(t_this, "%p", this);
+	std::string thisId2 = { t_this };
+	Debug::Log("Component [%s]%s - %s calling destroy, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _disableComponents.size(), _children.size());
 #endif // DEBUG
 	Destroy();
-	for (Component* c : _children)
+	for (auto it = _children.begin(); it != _children.end();)
 	{
-		c->EnsureDestroy();
+#ifdef DEBUG_COMPONENT
+		Component* c = (*it);
+		char c_this[1024];
+		sprintf_s(c_this, "%p", c);
+		std::string thisId3 = { c_this };
+		Debug::Log("Child Component [%s]%s - %s calling EnsureDestroy.\n", c->thisName.c_str(), c->thisId.c_str(), thisId3.c_str());
+#endif // DEBUG
+		(*it)->EnsureDestroy();
+		it = _children.erase(it);
 	}
+	_parent = nullptr;
+	_destroy = true;
 
-	_children.clear();
-	DetachFromParent();
+	// Remove调用该函数之后，将其移除出_children列表
+	// 需要删除实例释放内存，但不可以在本函数内执行，利用EventSystem异步操作
+	EventSystems::Logic.AddHandler(Events::LogicUpdateEvent, this, &Component::DestroySelf);
 
-	// 删除实例
-	// 在Ext中创建component实例时使用new才可以在移除component后将其delete
-	// 如果使用GameCreate创建实例，在移除后不可以GameDelete，游戏会报错，原因不明
 	// GameDelete(this);
+	// delete this;
+}
+
+void Component::DestroySelf(EventSystem* sender, Event e, void* args)
+{
+	sender->RemoveHandler(e, this, &Component::DestroySelf);
 	delete this;
 }
 
@@ -53,42 +99,44 @@ bool Component::AlreadyStart()
 	return _started;
 }
 
-void Component::AddComponent(Component* component)
+void Component::AddComponent(Component& component)
 {
-	auto it = std::find(_disableComponents.begin(), _disableComponents.end(), component->Name);
+	auto it = std::find(_disableComponents.begin(), _disableComponents.end(), component.Name);
 	if (it == _disableComponents.end())
 	{
-		component->_parent = this;
-		_children.push_back(component);
+		component._parent = this;
+		// vector::push_back 和 vector::emplace_back 会调用析构
+		// list::emplace_back 不会
+		_children.emplace_back(&component);
 #ifdef DEBUG_COMPONENT
-		Debug::Log("Add Component [%s]%s to %s [%s]%s.\n", component->thisName.c_str(), component->thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
+		Debug::Log("Add Component [%s]%s to %s [%s]%s.\n", component.thisName.c_str(), component.thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif // DEBUG
 	}
 #ifdef DEBUG_COMPONENT
 	else
 	{
-		Debug::Log("Add Component [%s]%s to %s [%s]%s, but is already exist.\n", component->thisName.c_str(), component->thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
+		Debug::Log("Add Component [%s]%s to %s [%s]%s, but is already exist.\n", component.thisName.c_str(), component.thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 	}
 #endif // DEBUG
 }
 
 void Component::RemoveComponent(Component* component, bool destroy)
 {
-	for (auto it = _children.begin(); it != _children.end(); it++)
+	auto it = std::find(_children.begin(), _children.end(), component);
+	if (it != _children.end())
 	{
-		if (*it == component)
-		{
-			_children.erase(it);
+		(*it)->_parent = nullptr;
+		it = _children.erase(it);
 #ifdef DEBUG_COMPONENT
-			Debug::Log("Remove Component [%s]%s from %s [%s]%s.\n", component->Name.c_str(), component->thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
+		std::string thisId = component->thisId;
+		std::string thisName = component->thisName;
+		Debug::Log("Remove Component [%s]%s from %s [%s]%s.\n", thisName.c_str(), thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif // DEBUG
-			std::string disableName = component->Name;
-			_disableComponents.push_back(disableName);
-			if (destroy)
-			{
-				component->EnsureDestroy();
-			}
-			break;
+		std::string disableName = component->Name;
+		_disableComponents.push_back(disableName);
+		if (destroy)
+		{
+			component->EnsureDestroy();
 		}
 	}
 }
@@ -123,7 +171,7 @@ void Component::AttachToComponent(Component* component)
 	}
 	DetachFromParent();
 
-	component->AddComponent(this);
+	component->AddComponent(*this);
 }
 
 void Component::DetachFromParent()
@@ -135,3 +183,43 @@ void Component::DetachFromParent()
 	}
 }
 
+#pragma region Foreach
+/// <summary>
+/// execute action for each components in root (include itself)
+/// </summary>
+/// <param name="action"></param>
+void Component::Foreach(std::function<void(Component*)> action)
+{
+	ForeachComponents(this, action);
+}
+
+void Component::ForeachChild(std::function<void(Component*)> action)
+{
+	ForeachComponents(_children, action);
+}
+
+/// <summary>
+/// execute action for each components in root (include root)
+/// </summary>
+/// <param name="root">the root component</param>
+/// <param name="action">the action to executed</param>
+void Component::ForeachComponents(Component* root, std::function<void(Component*)> action)
+{
+	action(root);
+	root->ForeachChild(action);
+}
+
+void Component::ForeachComponents(std::list<Component*>& components, std::function<void(Component*)> action)
+{
+	auto it = components.begin();
+	while (it != components.end())
+	{
+		action(*it);
+		if (it == components.end())
+		{
+			break;
+		}
+		it++;
+	}
+}
+#pragma endregion

@@ -48,9 +48,12 @@ public:
 
 		~ExtData() override
 		{
+#ifdef DEBUG
+			Debug::Log("[%s]%s [%s]%s  calling GameObject [%s]%s destroy all component.\n",  this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
+#endif // DEBUG
 			// delete *m_GameObject;
 			m_GameObject.ForeachChild([](Component* c)
-				{if (c) { c->EnsureDestroy(); } });
+				{ c->EnsureDestroy(); });
 		};
 
 		virtual void InvalidatePointer(void* ptr, bool bRemoved) override
@@ -128,25 +131,25 @@ public:
 
 			// 在Ext中创建Component实例并加入到GameObject中
 			// Component的创建需要使用new，在Component::EnsureDesroy中Delete
-			TExt::AddGlobalScripts(&m_GlobalScripts, this);
+			TExt::AddGlobalScripts(m_GlobalScripts, this);
 #ifdef DEBUG_COMPONENT
 			Debug::Log("[%s]%s [%s]%s ready to attach %d components\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GlobalScripts.size());
 #endif // DEBUG
 			// 该函数只将Component实例加入GameObject
 			for (Component* s : m_GlobalScripts)
 			{
-				m_GameObject.AddComponentNotAwake(s);
+				m_GameObject.AddComponentNotAwake(*s);
 			}
 			/*for (Component* s : m_GlobalScripts)
 			{
 				s->EnsureAwaked();
 			}*/
 			m_GlobalScriptsCreated = true;
-		};
+	};
 
 		// 全局脚本
 		bool m_GlobalScriptsCreated = false;
-	};
+};
 
 	class ExtContainer : public Container<TExt>
 	{

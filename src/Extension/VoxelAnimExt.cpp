@@ -1,6 +1,6 @@
 #include "VoxelAnimExt.h"
 
-void VoxelAnimExt::AddGlobalScripts(std::list<Component *> *globalScripts, ExtData *ext)
+void VoxelAnimExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* ext)
 {
 }
 

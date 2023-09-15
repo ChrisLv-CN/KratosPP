@@ -21,37 +21,48 @@
 class LaserTrailData : public INIConfig
 {
 public:
-	virtual void Read(INIBufferReader *ini) override
+	virtual void Read(INIBufferReader* ini) override
 	{
 		ColorChanged = ini->Get("ColorChanged", false);
 	}
 
-	Valueable<bool> ColorChanged{true};
+	Valueable<bool> ColorChanged{ true };
 };
 
 class LaserTrail : public TechnoScript
 {
 public:
-	LaserTrail(TechnoExt::ExtData *ext) : TechnoScript(ext)
+	LaserTrail(TechnoExt::ExtData* ext) : TechnoScript(ext)
 	{
 		this->Name = typeid(this).name();
 	}
 
 	virtual void Awake() override
 	{
-#ifdef DEBUG_COMPONENT
+#ifdef DEBUG
 		Debug::Log("LaserTrail [%s]%s is calling awake to init data.\n", thisName.c_str(), thisId.c_str());
+#endif // DEBUG
+		// _gameObject->RemoveComponent(this);
+	}
+
+	virtual void Start() override
+	{
+#ifdef DEBUG
+		Debug::Log("LaserTrail [%s]%s is calling start to init data.\n", thisName.c_str(), thisId.c_str());
 #endif // DEBUG
 		_gameObject->RemoveComponent(this);
 	}
 
 	virtual void Destroy() override
 	{
+#ifdef DEBUG
+		Debug::Log("LaserTrail [%s]%s is calling destroy.\n", thisName.c_str(), thisId.c_str());
+#endif // DEBUG
 	}
 
 #pragma region Save/Load
 	template <typename T>
-	bool Serialize(T &stream) {
+	bool Serialize(T& stream) {
 		return stream
 			.Process(this->laserColor)
 			.Process(this->colorChanged)
@@ -68,7 +79,7 @@ public:
 	}
 #pragma endregion
 
-	ColorStruct laserColor = {0, 255, 0};
+	ColorStruct laserColor = { 0, 255, 0 };
 
 	bool colorChanged = false;
 
