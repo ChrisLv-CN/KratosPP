@@ -1,5 +1,10 @@
 ﻿#include "Component.h"
 
+void Component::OnUpdate()
+{
+	IComponent::OnUpdate();
+	EnsureStarted();
+}
 
 void Component::EnsureAwaked()
 {
@@ -23,6 +28,8 @@ void Component::EnsureAwaked()
 #endif // DEBUG
 				c->EnsureAwaked();
 			});
+		// 销毁失效的Component
+		ClearDisableComponent();
 	}
 }
 
@@ -48,6 +55,8 @@ void Component::EnsureStarted()
 #endif // DEBUG
 				c->EnsureStarted();
 			});
+		// 销毁失效的Component
+		ClearDisableComponent();
 	}
 }
 
@@ -59,6 +68,7 @@ void Component::EnsureDestroy()
 	std::string thisId2 = { t_this };
 	Debug::Log("Component [%s]%s - %s calling destroy, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _disableComponents.size(), _children.size());
 #endif // DEBUG
+	_disable = true;
 	Destroy();
 	for (auto it = _children.begin(); it != _children.end();)
 	{
@@ -73,19 +83,9 @@ void Component::EnsureDestroy()
 		it = _children.erase(it);
 	}
 	_parent = nullptr;
-	_destroy = true;
 
-	// Remove调用该函数之后，将其移除出_children列表
-	// 需要删除实例释放内存，但不可以在本函数内执行，利用EventSystem异步操作
-	EventSystems::Logic.AddHandler(Events::LogicUpdateEvent, this, &Component::DestroySelf);
-
+	// 释放资源
 	// GameDelete(this);
-	// delete this;
-}
-
-void Component::DestroySelf(EventSystem* sender, Event e, void* args)
-{
-	sender->RemoveHandler(e, this, &Component::DestroySelf);
 	delete this;
 }
 
@@ -97,6 +97,11 @@ bool Component::AlreadyAwake()
 bool Component::AlreadyStart()
 {
 	return _started;
+}
+
+bool Component::IsActive()
+{
+	return !_disable;
 }
 
 void Component::AddComponent(Component& component)
@@ -120,24 +125,22 @@ void Component::AddComponent(Component& component)
 #endif // DEBUG
 }
 
-void Component::RemoveComponent(Component* component, bool destroy)
+void Component::RemoveComponent(Component* component)
 {
 	auto it = std::find(_children.begin(), _children.end(), component);
 	if (it != _children.end())
 	{
-		(*it)->_parent = nullptr;
-		it = _children.erase(it);
 #ifdef DEBUG_COMPONENT
 		std::string thisId = component->thisId;
 		std::string thisName = component->thisName;
 		Debug::Log("Remove Component [%s]%s from %s [%s]%s.\n", thisName.c_str(), thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif // DEBUG
-		std::string disableName = component->Name;
+		// 将Component失活，并记录，在结束_children的循环后，再清除
+		(*it)->_parent = nullptr;
+		(*it)->_disable = true;
+		// it = _children.erase(it);
+		std::string disableName = (*it)->Name;
 		_disableComponents.push_back(disableName);
-		if (destroy)
-		{
-			component->EnsureDestroy();
-		}
 	}
 }
 
@@ -147,13 +150,15 @@ void Component::ClearDisableComponent()
 	{
 		for (auto it = _children.begin(); it != _children.end();)
 		{
-			if ((*it)->Name == disableName)
+			Component* c = *it;
+			if (c->Name == disableName || c->_disable)
 			{
-				(*it)->_parent = nullptr;
-				it = _children.erase(it);
 #ifdef DEBUG_COMPONENT
 				Debug::Log("Remove disable [%s] Component [%s]%s from %s [%s]%s.\n", disableName.c_str(), (*it)->thisName.c_str(), (*it)->thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif //DEBUG
+				c->_parent = nullptr;
+				it = _children.erase(it);
+				c->EnsureDestroy();
 			}
 			else
 			{
@@ -211,15 +216,12 @@ void Component::ForeachComponents(Component* root, std::function<void(Component*
 
 void Component::ForeachComponents(std::list<Component*>& components, std::function<void(Component*)> action)
 {
-	auto it = components.begin();
-	while (it != components.end())
+	for (Component* c : components)
 	{
-		action(*it);
-		if (it == components.end())
+		if (c && c->IsActive())
 		{
-			break;
+			action(c);
 		}
-		it++;
 	}
 }
 #pragma endregion

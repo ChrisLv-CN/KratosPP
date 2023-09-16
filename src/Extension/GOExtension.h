@@ -40,10 +40,11 @@ public:
 			// m_GameObject = std::make_unique<GameObject>();
 			m_GameObject.Name = typeid(TExt).name();
 			m_GameObject.Name.append("_GameObject");
-			// 为GameObject添加激活事件，附加Components.
-			// 不从存档读入时，首次唤醒GameObject时激活Components
+			// 附加Components但是不激活
+			// 不从存档读入时，首次唤醒GameObject时激活所有的Components
 			// 从存档读入时，Component的标记_awaked被读入，不会重复激活
-			m_GameObject._OnAwake += newDelegate(this, &ExtData::AttachComponents);
+			AttachComponents();
+			// m_GameObject._OnAwake += newDelegate(this, &ExtData::AttachComponents);
 		};
 
 		~ExtData() override
@@ -80,8 +81,6 @@ public:
 #ifdef DEBUG_COMPONENT
 			Debug::Log("[%s]%s [%s]%s GameObject [%s]%s Load from stream.\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
 #endif // DEBUG
-			// 准备Component
-			AttachComponents();
 			// 读取GameObject，由GameObject自身清理不用的Component，再读入存档
 			this->Serialize(stream);
 		};
@@ -138,7 +137,7 @@ public:
 			// 该函数只将Component实例加入GameObject
 			for (Component* s : m_GlobalScripts)
 			{
-				m_GameObject.AddComponentNotAwake(*s);
+				m_GameObject.AddComponent(*s);
 			}
 			/*for (Component* s : m_GlobalScripts)
 			{

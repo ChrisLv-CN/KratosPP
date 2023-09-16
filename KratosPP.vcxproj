@@ -48,6 +48,7 @@
     <ClCompile Include="src\Extension\WarheadTypeExt.cpp" />
     <ClCompile Include="src\Extension\WeaponTypeExt.cpp" />
     <ClCompile Include="src\Ext\AnimStatus.cpp" />
+    <ClCompile Include="src\Ext\AttachEffect.cpp" />
     <ClCompile Include="src\Ext\BulletStatus.cpp" />
     <ClCompile Include="src\Ext\CommonStatus.cpp" />
     <ClCompile Include="src\Ext\EBoltStatus.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="src\Extension\WarheadTypeExt.h" />
     <ClInclude Include="src\Extension\WeaponTypeExt.h" />
     <ClInclude Include="src\Ext\AnimStatus.h" />
+    <ClInclude Include="src\Ext\AttachEffect.h" />
     <ClInclude Include="src\Ext\BulletStatus.h" />
     <ClInclude Include="src\Ext\CommonStatus.h" />
     <ClInclude Include="src\Ext\EBoltStatus.h" />

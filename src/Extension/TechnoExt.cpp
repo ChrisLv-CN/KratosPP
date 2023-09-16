@@ -1,5 +1,6 @@
 ﻿#include "TechnoExt.h"
 
+#include <Ext/AttachEffect.h>
 #include <Ext/TechnoStatus.h>
 #include <Ext/LaserTrail.h>
 
@@ -26,6 +27,15 @@ void TechnoExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* 
 	Debug::Log("Component LaserTrail %s created \n", laser_Id.c_str());
 #endif // DEBUG
 	globalScripts.emplace_back(laserTrail);
+
+	AttachEffect* attachEffect = new AttachEffect(ext);
+#ifdef DEBUG
+	char ae_this[1024];
+	sprintf_s(ae_this, "%p", attachEffect);
+	std::string ae_Id = { ae_this };
+	Debug::Log("Component AttachEffect %s created \n", ae_Id.c_str());
+#endif // DEBUG
+	globalScripts.emplace_back(attachEffect);
 }
 
 TechnoExt::ExtContainer TechnoExt::ExtMap{};

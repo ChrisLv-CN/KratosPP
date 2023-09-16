@@ -113,7 +113,7 @@ DEFINE_HOOK(0x6F9E50, TechnoClass_Update, 0x5)
 	// Do not search this up again in any functions called here because it is costly for performance - Starkku
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component *c)
-							   { if (c)c->OnUpdate(); });
+							   { c->OnUpdate(); });
 
 	return 0;
 }
@@ -125,7 +125,7 @@ DEFINE_HOOK(0x6FAF7A, TechnoClass_UpdateEnd, 0x7)
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component *c)
-							   { if (c)c->OnUpdateEnd(); });
+							   { c->OnUpdateEnd(); });
 
 	return 0;
 }
@@ -140,7 +140,7 @@ DEFINE_HOOK(0x414CF2, TechnoClass_WarpUpdate, 0x6)		 // Aircraft
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component *c)
-							   { if (c)c->OnWarpUpdate(); });
+							   { c->OnWarpUpdate(); });
 
 	return 0;
 }

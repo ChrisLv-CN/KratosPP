@@ -31,8 +31,6 @@ public:
 
 	virtual void Awake() override;
 
-	virtual void OnUpdate() override;
-
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
@@ -57,10 +55,7 @@ public:
 
 	GameObject* GetAwaked();
 
-	void AddComponentNotAwake(Component& component);
-
 	CMultiDelegate<void> _OnAwake;
 
 private:
-	std::vector<Component*> _unstartedComponents{};
 };

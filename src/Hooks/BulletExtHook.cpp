@@ -104,7 +104,7 @@ DEFINE_HOOK(0x4666F7, BulletClass_Update, 0x6)
 
 	auto pExt = BulletExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component *c)
-							   { if (c)c->OnUpdate(); });
+							   { c->OnUpdate(); });
 
 	return 0;
 }
@@ -116,7 +116,7 @@ DEFINE_HOOK(0x466781, BulletClass_UpdateEnd, 0x6)
 
 	auto pExt = BulletExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component *c)
-							   { if (c)c->OnUpdateEnd(); });
+							   { c->OnUpdateEnd(); });
 
 	return 0;
 }
