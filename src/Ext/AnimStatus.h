@@ -25,10 +25,6 @@ public:
 		this->Name = typeid(this).name();
 	}
 
-	virtual void Awake() override
-	{
-	}
-
 	/// @brief 接管伤害制造
 	/// @param isBounce 是否流星、碎片类
 	/// @param bright 弹头闪光

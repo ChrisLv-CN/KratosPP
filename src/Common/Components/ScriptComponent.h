@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "GameObject.h"
+#include "Scriptable.h"
 
 #include <Utilities/Container.h>
 
@@ -49,24 +50,7 @@ public:
 	__declspec(property(get = GetGameObject)) GameObject* _gameObject;
 };
 
-class AbstractScript
-{
-public:
-	virtual void OnInit() {};
-	virtual void OnUnInit() {};
-};
-
-class ObjectScript : public AbstractScript
-{
-public:
-	virtual void OnPut(CoordStruct* location, DirType faceDir) {};
-	virtual void OnRemove() {};
-	virtual void OnReceiveDamage(args_ReceiveDamage* args) {};
-	virtual void OnReceiveDamageEnd(int* realDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
-	virtual void OnReceiveDamageDestroy() {};
-};
-
-class TechnoScript : public ScriptComponent<TechnoClass>, public ObjectScript
+class TechnoScript : public ScriptComponent<TechnoClass>, public ITechnoScript
 {
 public:
 	TechnoScript(TechnoExt::ExtData* ext) : ScriptComponent(ext) {}
@@ -76,22 +60,9 @@ public:
 		return ((TechnoExt::ExtData*)ExtData)->_GameObject;
 	}
 
-	virtual void OnTemporalUpdate(TemporalClass* pTemporal) {};
-	virtual void OnTemporalEliminate(TemporalClass* pTemporal) {};
-
-	virtual void OnRegisterDestruction(TechnoClass* pKiller, int cost, bool& skip) {};
-
-	virtual void CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, bool& ceaseFire) {};
-	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) {};
-
-	virtual void DrawHealthBar(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding) {};
-	virtual void OnSelect(bool& selectable) {};
-
-	virtual void OnGuardCommand() {};
-	virtual void OnStopCommand() {};
 };
 
-class BulletScript : public ScriptComponent<BulletClass>, public ObjectScript
+class BulletScript : public ScriptComponent<BulletClass>, public IBulletScript
 {
 public:
 	BulletScript(BulletExt::ExtData* ext) : ScriptComponent(ext) {}
@@ -101,10 +72,9 @@ public:
 		return ((BulletExt::ExtData*)ExtData)->_GameObject;
 	}
 
-	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) {};
 };
 
-class AnimScript : public ScriptComponent<AnimClass>, public AbstractScript
+class AnimScript : public ScriptComponent<AnimClass>, public IAnimScript
 {
 public:
 	AnimScript(AnimExt::ExtData* ext) : ScriptComponent(ext) {}
@@ -114,12 +84,9 @@ public:
 		return ((AnimExt::ExtData*)ExtData)->_GameObject;
 	}
 
-	virtual void OnLoop() {};
-	virtual void OnDone() {};
-	virtual void OnNext(AnimTypeClass* next) {};
 };
 
-class SuperWeaponScript : public ScriptComponent<SuperClass>, public AbstractScript
+class SuperWeaponScript : public ScriptComponent<SuperClass>, public ISuperScript
 {
 public:
 	SuperWeaponScript(SuperWeaponExt::ExtData* ext) : ScriptComponent(ext) {}
@@ -129,5 +96,4 @@ public:
 		return ((SuperWeaponExt::ExtData*)ExtData)->_GameObject;
 	}
 
-	virtual void OnLaunch(CellStruct cell, bool isPlayer) {};
 };

@@ -18,7 +18,6 @@
     <ClCompile Include="src\Common\Components\GameObject.cpp" />
     <ClCompile Include="src\Common.cpp" />
     <ClCompile Include="src\Common\Components\Component.cpp" />
-    <ClCompile Include="src\Common\Components\ScriptComponent.cpp" />
     <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
     <ClCompile Include="src\Common\INI\INIBuffer.cpp" />
     <ClCompile Include="src\Common\INI\INIConfig.cpp" />
@@ -100,6 +99,7 @@
     <ClInclude Include="src\Common\Components\GameObject.h" />
     <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\Common\Components\Component.h" />
+    <ClInclude Include="src\Common\Components\Scriptable.h" />
     <ClInclude Include="src\Common\Components\ScriptComponent.h" />
     <ClInclude Include="src\Common\EventSystems\EventSystem.h" />
     <ClInclude Include="src\Common\INI\INIBuffer.h" />
