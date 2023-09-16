@@ -62,15 +62,15 @@ public:
 	std::string baseName{};
 #endif // DEBUG
 
+#ifdef DEBUG_COMPONENT
 	virtual ~Component() override
 	{
-#ifdef DEBUG_COMPONENT
 		char t_this[1024];
 		sprintf_s(t_this, "%p", this);
 		std::string thisId2 = { t_this };
 		Debug::Log("Component [%s]%s - %s is release.\n\n", thisName.c_str(), thisId.c_str(), thisId2.c_str());
-#endif // DEBUG
 	}
+#endif // DEBUG
 
 	virtual void OnUpdate() override;
 
@@ -180,30 +180,31 @@ public:
 		{
 			// 从存档读取需要被移除的Component的名单
 			stream.Process(this->_disableComponents);
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 			Debug::Log("Component [%s]%s is loading, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
 #endif //DEBUG
 			// 读入存档后，清理失效的Component
 			ClearDisableComponent();
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 			Debug::Log("Component [%s]%s is loading, clear disable done, has %d disable components, children has %d\n\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
 #endif //DEBUG
 		}
 		else
 		{
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 			Debug::Log("Component [%s]%s is saveing, has %d disable components, children has %d\n\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
 #endif //DEBUG
 			// 需要被移除的Component的名单先写入存档
 			stream.Process(this->_disableComponents);
 		}
-		return stream
+		// 储存Component的控制参数
+		stream
 			.Process(this->Name)
 			// 每次读档之后，所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
 			.Process(this->_awaked)
 			.Process(this->_started)
-			.Process(this->_children)
-			.Success();
+			.Process(this->_disable);
+		return stream.Success();
 	}
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{

@@ -22,12 +22,12 @@ public:
 #endif // DEBUG
 	}
 
+#ifdef DEBUG_COMPONENT
 	virtual ~GameObject() override
 	{
-#ifdef DEBUG
 		Debug::Log("GameObject [%s]%s is release.\n", this->thisName.c_str(), this->thisId.c_str());
-#endif // DEBUG
 	}
+#endif // DEBUG
 
 	virtual void Awake() override;
 

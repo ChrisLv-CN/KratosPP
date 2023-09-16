@@ -55,10 +55,12 @@ public:
 
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
+		Component::Load(stream, registerForChange);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
+		Component::Save(stream);
 		return const_cast<AnimStatus*>(this)->Serialize(stream);
 	}
 #pragma endregion

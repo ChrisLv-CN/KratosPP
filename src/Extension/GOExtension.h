@@ -49,7 +49,7 @@ public:
 
 		~ExtData() override
 		{
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 			Debug::Log("[%s]%s [%s]%s  calling GameObject [%s]%s destroy all component.\n",  this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
 #endif // DEBUG
 			// delete *m_GameObject;
