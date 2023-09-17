@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <typeinfo>
 #include <stack>
@@ -69,4 +69,10 @@ public:
 		ExtContainer() : Container<TExt>(typeid(TExt).name()){};
 		~ExtContainer() = default;
 	};
+
+	template<typename TypeData>
+	static TypeData* GetData(TBase* base)
+	{
+		return GetTypeData<TExt, TypeData>(base);
+	}
 };
