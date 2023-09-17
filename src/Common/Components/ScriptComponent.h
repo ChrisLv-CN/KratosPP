@@ -48,6 +48,12 @@ public:
 
 	virtual GameObject* GetGameObject() = 0;
 	__declspec(property(get = GetGameObject)) GameObject* _gameObject;
+
+	Randomizer GetRandom()
+	{
+		return ScenarioClass::Instance->Random;
+	}
+	__declspec(property(get = GetRandom)) Randomizer _random;
 };
 
 class TechnoScript : public ScriptComponent<TechnoClass>, public ITechnoScript
@@ -60,6 +66,7 @@ public:
 		return ((TechnoExt::ExtData*)ExtData)->_GameObject;
 	}
 
+	__declspec(property(get = GetOwner)) TechnoClass* pTechno;
 };
 
 class BulletScript : public ScriptComponent<BulletClass>, public IBulletScript
@@ -72,6 +79,7 @@ public:
 		return ((BulletExt::ExtData*)ExtData)->_GameObject;
 	}
 
+	__declspec(property(get = GetOwner)) BulletClass* pBullet;
 };
 
 class AnimScript : public ScriptComponent<AnimClass>, public IAnimScript
@@ -84,6 +92,7 @@ public:
 		return ((AnimExt::ExtData*)ExtData)->_GameObject;
 	}
 
+	__declspec(property(get = GetOwner)) AnimClass* pAnim;
 };
 
 class SuperWeaponScript : public ScriptComponent<SuperClass>, public ISuperScript
@@ -96,4 +105,5 @@ public:
 		return ((SuperWeaponExt::ExtData*)ExtData)->_GameObject;
 	}
 
+	__declspec(property(get = GetOwner)) SuperClass* pSuper;
 };
