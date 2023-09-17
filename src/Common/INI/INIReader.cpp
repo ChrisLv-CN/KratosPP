@@ -2,15 +2,15 @@
 
 INIReader::INIReader(std::vector<std::string> dependency, const char *section)
 {
-	this->m_Dependency = dependency;
-	this->m_Section = section;
+	this->Dependency = dependency;
+	this->Section = section;
 }
 
 INILinkedBuffer *INIReader::GetLinkedBuffer()
 {
 	if (!m_LinkedBuffer || m_LinkedBuffer->IsExpired())
 	{
-		m_LinkedBuffer = INIBufferManager::FindLinkedBuffer(m_Dependency, m_Section);
+		m_LinkedBuffer = INIBufferManager::FindLinkedBuffer(Dependency, Section);
 	}
 	return m_LinkedBuffer;
 }

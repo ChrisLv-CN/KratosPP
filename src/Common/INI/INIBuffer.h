@@ -100,6 +100,12 @@ public:
 		return Parser<int, 2>::Parse(value, (int *)outValue);
 	}
 
+	template <>
+	inline size_t Parse<Vector2D<double>>(const char *value, Vector2D<double> *outValue)
+	{
+		return Parser<double, 2>::Parse(value, (double *)outValue);
+	}
+
 	/*
 	template<>
 	inline size_t Parse<CellStruct>(const char* value, CellStruct* outValue)

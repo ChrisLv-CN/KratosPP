@@ -1,6 +1,6 @@
 #include "INIReaderManager.h"
 
-void INIReaderManager::ClearBuffer(EventSystem *sender, Event e, void *args)
+void INIReaderManager::ClearBuffer(EventSystem* sender, Event e, void* args)
 {
 	// 释放ConfigReader
 	for (auto configReader : s_ConfigReader)
@@ -19,19 +19,19 @@ void INIReaderManager::ClearBuffer(EventSystem *sender, Event e, void *args)
 	INIBufferManager::ClearBuffer(sender, e, args);
 }
 
-INIBufferReader *INIReaderManager::FindBufferReader(std::vector<std::string> dependency, const char *section)
+INIBufferReader* INIReaderManager::FindBufferReader(std::vector<std::string> dependency, const char* section)
 {
-	const INIReaderKey key{dependency, section};
+	const INIReaderKey key{ dependency, section };
 	auto it = s_BufferReader.find(key);
 	if (it != s_BufferReader.end())
 	{
 		return it->second;
 	}
-	INIBufferReader *reader = GameCreate<INIBufferReader>(dependency, section);
+	INIBufferReader* reader = GameCreate<INIBufferReader>(dependency, section);
 	s_BufferReader[key] = reader;
 
 	return reader;
 }
 
-std::map<INIReaderManager::INIReaderKey, INIBufferReader *> INIReaderManager::s_BufferReader = {};
-std::map<INIReaderManager::INIReaderKey, void *> INIReaderManager::s_ConfigReader = {};
+std::map<INIReaderManager::INIReaderKey, INIBufferReader*> INIReaderManager::s_BufferReader = {};
+std::map<INIReaderManager::INIConfigKey, INIReader*> INIReaderManager::s_ConfigReader = {};

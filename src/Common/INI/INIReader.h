@@ -9,16 +9,16 @@
 class INIReader
 {
 public:
-	INIReader(std::vector<std::string> dependency, const char *section);
+	INIReader(std::vector<std::string> dependency, const char* section);
 
-	bool HasSection(const char *section);
+	bool HasSection(const char* section);
 
-	INILinkedBuffer *GetLinkedBuffer();
+	INILinkedBuffer* GetLinkedBuffer();
 
+	std::vector<std::string> Dependency{};
+	std::string Section{};
 protected:
-	std::vector<std::string> m_Dependency{};
-	std::string m_Section{};
-	INILinkedBuffer *m_LinkedBuffer = nullptr;
+	INILinkedBuffer* m_LinkedBuffer = nullptr;
 };
 
 /// <summary>
@@ -27,14 +27,14 @@ protected:
 class INIBufferReader : public INIReader
 {
 public:
-	INIBufferReader(std::vector<std::string> dependency, const char *section) : INIReader(dependency, section){};
-	INIBufferReader(std::vector<std::string> dependency, const char *section, INILinkedBuffer *linkedBuffer) : INIReader(dependency, section)
+	INIBufferReader(std::vector<std::string> dependency, const char* section) : INIReader(dependency, section) {};
+	INIBufferReader(std::vector<std::string> dependency, const char* section, INILinkedBuffer* linkedBuffer) : INIReader(dependency, section)
 	{
 		this->m_LinkedBuffer = linkedBuffer;
 	}
 
 	template <typename OutType>
-	OutType Get(const char *key, const OutType def)
+	OutType Get(const char* key, const OutType def)
 	{
 		OutType val{};
 		if (TryGet(key, val))
@@ -45,13 +45,25 @@ public:
 	}
 
 	template <typename OutType>
-	bool TryGet(const char *key, OutType &outValue)
+	bool TryGet(const char* key, OutType& outValue)
 	{
 		return GetLinkedBuffer()->GetParsed(key, outValue);
 	}
 
 	template <typename OutType>
-	std::vector<OutType> GetList(const char *key, std::vector<OutType> def)
+	OutType Get(std::string key, const OutType def)
+	{
+		return Get(key.c_str(), def);
+	}
+
+	template <typename OutType>
+	bool TryGet(std::string key, OutType& outValue)
+	{
+		return TryGet(key.c_str(), outValue);
+	}
+
+	template <typename OutType>
+	std::vector<OutType> GetList(const char* key, std::vector<OutType> def)
 	{
 		std::vector<OutType> vals{};
 		if (TryGetList(key, vals))
@@ -62,8 +74,20 @@ public:
 	}
 
 	template <typename OutType>
-	bool TryGetList(const char *key, std::vector<OutType> &outValues)
+	bool TryGetList(const char* key, std::vector<OutType>& outValues)
 	{
 		return GetLinkedBuffer()->GetParsedList(key, outValues);
+	}
+
+	template <typename OutType>
+	std::vector<OutType> GetList(std::string key, std::vector<OutType> def)
+	{
+		return GetList(key.c_str(), def);
+	}
+
+	template <typename OutType>
+	bool TryGetList(std::string key, std::vector<OutType>& outValues)
+	{
+		return TryGetList(key.c_str(), outValues);
 	}
 };
