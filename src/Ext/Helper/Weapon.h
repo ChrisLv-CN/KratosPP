@@ -8,6 +8,12 @@
 #pragma region Advanced Ballistics
 BulletVelocity GetBulletVelocity(CoordStruct source, CoordStruct target);
 
+BulletVelocity RecalculateBulletVelocity(BulletClass* pBullet, CoordStruct source, CoordStruct target);
+
+BulletVelocity RecalculateBulletVelocity(BulletClass* pBullet, CoordStruct target);
+
+BulletVelocity RecalculateBulletVelocity(BulletClass* pBullet);
+
 /// @brief 获取不精确落点的散布偏移值.
 /// @param scatterMin 最小散布范围，单位格
 /// @param scatterMax 最大散布范围，单位格

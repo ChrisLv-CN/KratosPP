@@ -29,14 +29,14 @@ static TStatus* GetStatus(TBase* p)
 template <typename TypeExt, typename TypeData, typename TBase>
 static bool TryGetTypeData(TBase* p, TypeData*& data)
 {
-	auto* ext = TypeExt::ExtMap.Find(p);
-	if (ext)
+	auto* typeExt = TypeExt::ExtMap.Find(p);
+	if (typeExt)
 	{
-		INIConfigReader<TypeData>* pTypeData = static_cast<INIConfigReader<TypeData>*>(ext->pTypeData);
+		INIConfigReader<TypeData>* pTypeData = static_cast<INIConfigReader<TypeData>*>(typeExt->pTypeData);
 		if (!pTypeData)
 		{
 			pTypeData = INI::GetConfig<TypeData>(INI::Rules, p->ID);
-			ext->pTypeData = pTypeData;
+			typeExt->pTypeData = pTypeData;
 		}
 		data = pTypeData->Data;
 		return data != nullptr;

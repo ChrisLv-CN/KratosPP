@@ -28,25 +28,8 @@ public:
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::DrawINFO);
 	}
 
-	virtual void Awake() override
-	{
-#ifdef DEBUG
-		Debug::Log("Component [%s]%s calling Awake.\n", thisName.c_str(), thisId.c_str());
-#endif // DEBUG
-	}
-
-	virtual void Start() override
-	{
-#ifdef DEBUG
-		Debug::Log("Component [%s]%s calling Start.\n", thisName.c_str(), thisId.c_str());
-#endif // DEBUG
-	}
-
 	virtual void Destroy() override
 	{
-#ifdef DEBUG
-		Debug::Log("Component [%s]%s calling Destroy.\n", thisName.c_str(), thisId.c_str());
-#endif // DEBUG
 		EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::DrawINFO);
 	}
 

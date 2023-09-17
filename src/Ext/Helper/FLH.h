@@ -5,8 +5,7 @@
 
 #include <YRPP.h>
 
-
-//--------------------------------------------------------------------------
+// ----------------
 // symmetric round up
 // Bias: away from zero
 template <typename FloatType>
@@ -42,15 +41,25 @@ CoordStruct GetFLHAbsoluteCoords(CoordStruct source, CoordStruct flh, DirStruct 
 CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isOnTurret, int flipY, CoordStruct turretOffset = CoordStruct::Empty);
 #pragma endregion
 
-#pragma region Random offset
+#pragma region ForwardFLH
+/// @brief 获取向量上指定距离的坐标
+/// @param sourceV 起始位置
+/// @param targetV 结束位置
+/// @param speed 速度
+/// @param dist 距离
+/// @return CoordStruct
+CoordStruct GetForwardCoords(Vector3D<double> sourceV, Vector3D<double> targetV, double speed, double dist = 0);
 
+CoordStruct GetForwardCoords(CoordStruct sourcePos, CoordStruct targetPos, double speed, double dist = 0);
+#pragma endregion
+
+#pragma region Random offset
 CoordStruct RandomOffset(int min, int max);
 /// @brief 最小1格范围内的随机坐标偏移
 /// @param maxSpread 最大半径
 /// @param minSpread 最小半径
 /// @return offset
 CoordStruct RandomOffset(double maxSpread, double minSpread = 0);
-
 #pragma endregion
 
 #pragma region Dir

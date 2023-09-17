@@ -17,7 +17,8 @@
 #include <Common/INI/INIConfig.h>
 #include <Common/INI/INIReader.h>
 
-#include "BulletType/Trajectory.h"
+#include "BulletType/ProximityData.h"
+#include "BulletType/TrajectoryData.h"
 
 enum class BulletType
 {
@@ -97,8 +98,6 @@ public:
 		this->Name = typeid(this).name();
 	}
 
-	TrajectoryData* GetTrajectoryData();
-
 	BulletType GetBulletType();
 
 	bool IsArcing();
@@ -115,7 +114,21 @@ public:
 
 	void ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos);
 
+	/**
+	 *@brief 重新计算Arcing抛射体的出膛向量，精确命中目标位置
+	 *
+	 * @param speedMultiple 速度倍率，主要用于弹跳
+	 * @param force 强制重新计算
+	 */
 	void ResetArcingVelocity(float speedMultiple = 1.0f, bool force = false);
+
+	/**
+	 *@brief 获取一个移动方向上的随机倍率
+	 *
+	 */
+	void ShakeVelocity();
+
+	void ActiveProximity();
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dir) override;
 
@@ -164,9 +177,12 @@ public:
 	BulletLife life = {};
 	BulletDamage damage = {};
 
+	// 碰触地面会炸
 	bool SubjectToGround = false;
-
+	// 是弹跳抛射体分裂的子抛射体
 	bool IsBounceSplit = false;
+	// 正在被黑洞吸引
+	bool CaptureByBlackHole = false;
 
 	static std::vector<BulletClass*> TargetAircraftBullets;
 
@@ -191,7 +207,14 @@ public:
 			.Process(this->pFakeTarget)
 			.Process(this->TargetAircraftBullets)
 			.Process(this->_initFlag)
+			// 弹道控制
 			.Process(this->_arcingTrajectoryInitFlag)
+			// 直线
+			.Process(this->straightBullet)
+			.Process(this->_resetTargetFlag)
+			// 碰撞引信
+			.Process(this->proximity)
+			.Process(this->_activeProximity)
 			.Success();
 	};
 
@@ -208,21 +231,41 @@ public:
 #pragma endregion
 
 private:
-	/// @brief 获取抛射体的轨迹类型.
-	///
-	/// Inviso优先级最高；\n
-	/// Arcing 和 ROT>0 一起写，无法发射；\n
-	/// Arcing 和 ROT=0 一起写，是抛物线；\n
-	/// Arcing 和 Vertical 一起写，无法发射；\n
-	/// ROT>0 和 Vertical 一起写，是导弹；\n
-	/// ROT=0 和 Vertical 一起写，是垂直，SHP会变直线导弹，VXL会垂直下掉。\n
+	/** @brief 获取抛射体的轨迹类型.
+	 *
+	 * Inviso优先级最高；\n
+	 * Arcing 和 ROT>0 一起写，无法发射；\n
+	 * Arcing 和 ROT=0 一起写，是抛物线；\n
+	 * Arcing 和 Vertical 一起写，无法发射；\n
+	 * ROT>0 和 Vertical 一起写，是导弹；\n
+	 * ROT=0 和 Vertical 一起写，是垂直，SHP会变直线导弹，VXL会垂直下掉。\n
+	 */
 	BulletType WhatTypeAmI(BulletClass* pBullet);
 
 	// 抛射体类型
 	BulletType _bulletType = BulletType::UNKNOWN;
 	// 弹道配置
 	TrajectoryData* _trajectoryData = nullptr;
+	TrajectoryData* GetTrajectoryData();
+	__declspec(property(get = GetTrajectoryData)) TrajectoryData* trajectoryData;
 
 	bool _initFlag = false;
+
+	// 弹道控制
 	bool _arcingTrajectoryInitFlag = false;
+	bool _missileShakeVelocityFlag = false;
+
+	// 直线
+	StraightBullet straightBullet{};
+	bool _resetTargetFlag = false;
+
+	// 碰撞引信配置
+	ProximityData* _proximityData = nullptr;
+	ProximityData* GetProximityData();
+	__declspec(property(get = GetProximityData)) ProximityData* proximityData;
+	// 碰撞引信
+	Proximity proximity{};
+	bool _activeProximity = false;
+	// 近炸引信
+	int _proximityRange = -1;
 };

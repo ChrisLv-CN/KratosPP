@@ -20,12 +20,33 @@ BulletVelocity GetBulletVelocity(CoordStruct source, CoordStruct target)
 	return ToVelocity(v);
 }
 
+BulletVelocity RecalculateBulletVelocity(BulletClass* pBullet, CoordStruct source, CoordStruct target)
+{
+	CoordStruct vector = target - source;
+	BulletVelocity v = ToVelocity(vector);
+	double dist = target.DistanceFrom(source);
+	v *= isnan(dist) || dist <= 0 ? 0 : (pBullet->Speed / dist);
+	pBullet->Velocity = v;
+	pBullet->SourceCoords = source;
+	pBullet->TargetCoords = target;
+	return v;
+}
+
+BulletVelocity RecalculateBulletVelocity(BulletClass* pBullet, CoordStruct target)
+{
+	return RecalculateBulletVelocity(pBullet, pBullet->GetCoords(), target);
+}
+
+BulletVelocity RecalculateBulletVelocity(BulletClass* pBullet)
+{
+	return RecalculateBulletVelocity(pBullet, pBullet->GetCoords(), pBullet->GetTargetCoords());
+}
+
 CoordStruct GetInaccurateOffset(float scatterMin, float scatterMax)
 {
 	// 不精确, 需要修改目标坐标
 	int min = (int)(scatterMin * 256);
 	int max = scatterMax > 0 ? (int)(scatterMax * 256) : RulesClass::Instance->BallisticScatter;
-	// Logger.Log("炮弹[{0}]不精确, 需要重新计算目标位置, 散布范围=[{1}, {2}]", pBullet.Ref.Type.Convert<AbstractTypeClass>().Ref.ID, min, max);
 	if (min > max)
 	{
 		int temp = min;
@@ -51,7 +72,6 @@ BulletVelocity GetBulletArcingVelocity(CoordStruct sourcePos, CoordStruct target
 	tempTargetPos.Z = 0;
 	tempSourcePos.Z = 0;
 	straightDistance = tempTargetPos.DistanceFrom(tempSourcePos);
-	// Logger.Log("位置和目标的水平距离{0}", straightDistance);
 	realSpeed = speed;
 	if (straightDistance == 0 || std::isnan(straightDistance))
 	{
@@ -62,17 +82,13 @@ BulletVelocity GetBulletArcingVelocity(CoordStruct sourcePos, CoordStruct target
 	{
 		// realSpeed = WeaponTypeClass.GetSpeed((int)straightDistance, gravity);
 		realSpeed = Math::sqrt(straightDistance * gravity * 1.2);
-		// Logger.Log($"YR计算的速度{realSpeed}, 距离 {(int)straightDistance}, 重力 {gravity}");
 	}
 	// 高抛弹道
 	if (lobber)
 	{
 		realSpeed = (int)(realSpeed * 0.5);
-		// Logger.Log("高抛弹道, 削减速度{0}", realSpeed);
 	}
-	// Logger.Log("重新计算初速度, 当前速度{0}", realSpeed);
 	double vZ = (zDiff * realSpeed) / straightDistance + 0.5 * gravity * straightDistance / realSpeed;
-	// Logger.Log("计算Z方向的初始速度{0}", vZ);
 	BulletVelocity v(tempTargetPos.X - tempSourcePos.X, tempTargetPos.Y - tempSourcePos.Y, 0.0);
 	v *= realSpeed / straightDistance;
 	v.Z = vZ;

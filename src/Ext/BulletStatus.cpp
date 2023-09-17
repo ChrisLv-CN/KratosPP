@@ -5,21 +5,12 @@
 
 std::vector<BulletClass*> BulletStatus::TargetAircraftBullets = {};
 
-TrajectoryData* BulletStatus::GetTrajectoryData()
-{
-	if (!_trajectoryData)
-	{
-		_trajectoryData = INI::GetConfig<TrajectoryData>(INI::Rules, _owner->GetType()->ID)->Data;
-	}
-	return _trajectoryData;
-}
-
 BulletType BulletStatus::GetBulletType()
 {
 	if (_bulletType == BulletType::UNKNOWN)
 	{
-		_bulletType = WhatTypeAmI(_owner);
-		if (_bulletType != BulletType::ROCKET && GetTrajectoryData()->IsStraight())
+		_bulletType = WhatTypeAmI(pBullet);
+		if (_bulletType != BulletType::ROCKET && trajectoryData->IsStraight())
 		{
 			_bulletType = BulletType::ROCKET;
 		}
@@ -49,13 +40,13 @@ bool BulletStatus::IsBomb()
 
 void BulletStatus::Awake()
 {
-	pSource = _owner->Owner;
+	pSource = pBullet->Owner;
 	if (pSource)
 	{
 		pSourceHouse = pSource->Owner;
 	}
 	// 读取生命值
-	int health = _owner->Health;
+	int health = pBullet->Health;
 	// 抛射体武器伤害为复述或者零时需要处理
 	if (health < 0)
 	{
@@ -66,14 +57,14 @@ void BulletStatus::Awake()
 		health = 1; // 武器伤害为0，如[NukeCarrier]
 	}
 
-	INIBufferReader* reader = INI::GetSection(INI::Rules, _owner->GetType()->ID);
+	INIBufferReader* reader = INI::GetSection(INI::Rules, pBullet->GetType()->ID);
 	// 初始化生命
 	this->life.Health = health;
 	this->life.Read(reader);
 	// 初始化伤害
 	this->damage.Damage = health;
 	// 初始化地面碰撞属性
-	switch (GetTrajectoryData()->SubjectToGround)
+	switch (trajectoryData->SubjectToGround)
 	{
 	case SubjectToGroundType::YES:
 		this->SubjectToGround = true;
@@ -82,14 +73,14 @@ void BulletStatus::Awake()
 		this->SubjectToGround = false;
 		break;
 	default:
-		this->SubjectToGround = !IsArcing() && !IsRocket() && !GetTrajectoryData()->IsStraight();
+		this->SubjectToGround = !IsArcing() && !IsRocket() && !trajectoryData->IsStraight();
 		break;
 	}
 }
 
 void BulletStatus::Destroy()
 {
-	auto it = std::find(TargetAircraftBullets.begin(), TargetAircraftBullets.end(), _owner);
+	auto it = std::find(TargetAircraftBullets.begin(), TargetAircraftBullets.end(), pBullet);
 	if (it != TargetAircraftBullets.end())
 	{
 		TargetAircraftBullets.erase(it);
@@ -118,23 +109,23 @@ void BulletStatus::TakeDamage(BulletDamage damageData, bool checkInterceptable)
 
 void BulletStatus::ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos)
 {
-	_owner->SetTarget(pNewTarget);
+	pBullet->SetTarget(pNewTarget);
 	if (targetPos == CoordStruct::Empty && pNewTarget)
 	{
 		targetPos = pNewTarget->GetCoords();
 	}
-	_owner->TargetCoords = targetPos;
+	pBullet->TargetCoords = targetPos;
 	// 重设弹道
 	if (IsArcing())
 	{
-		CoordStruct sourcePos = _owner->GetCoords();
-		_owner->SourceCoords = sourcePos;
+		CoordStruct sourcePos = pBullet->GetCoords();
+		pBullet->SourceCoords = sourcePos;
 		ResetArcingVelocity(1.0f, true);
 	}
 	else if (IsRocket())
 	{
-		CoordStruct sourcePos = _owner->GetCoords();
-		_owner->SourceCoords = sourcePos;
+		CoordStruct sourcePos = pBullet->GetCoords();
+		pBullet->SourceCoords = sourcePos;
 		InitState_Trajectory_Straight();
 	}
 }
@@ -162,20 +153,18 @@ void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 		}
 	}
 	// 是否是对飞行器攻击
-	AbstractClass *pTarget = nullptr;
-	if (IsMissile() && (pTarget = _owner->Target) != nullptr && (pTarget->What_Am_I() == AbstractType::Aircraft || pTarget->IsInAir()))
+	AbstractClass* pTarget = nullptr;
+	if (IsMissile() && (pTarget = pBullet->Target) != nullptr && (pTarget->What_Am_I() == AbstractType::Aircraft || pTarget->IsInAir()))
 	{
-		TargetAircraftBullets.push_back(_owner);
+		TargetAircraftBullets.push_back(pBullet);
 	}
 }
 
 void BulletStatus::InitState_BlackHole() {};
-void BulletStatus::InitState_Bounce() {};
 void BulletStatus::InitState_DestroySelf() {};
 void BulletStatus::InitState_ECM() {};
 void BulletStatus::InitState_GiftBox() {};
 void BulletStatus::InitState_Paintball() {};
-void BulletStatus::InitState_Proximity() {};
 
 void BulletStatus::OnUpdate()
 {
@@ -195,30 +184,30 @@ void BulletStatus::OnUpdate()
 	// 自毁
 	OnUpdate_DestroySelf();
 
-	CoordStruct location = _owner->GetCoords();
+	CoordStruct location = pBullet->GetCoords();
 	// 潜地
-	if (!life.IsDetonate && !HasPreImpactAnim(_owner->WH))
+	if (!life.IsDetonate && !HasPreImpactAnim(pBullet->WH))
 	{
-		if ((SubjectToGround || IsBounceSplit) && _owner->GetHeight() < 0)
+		if ((SubjectToGround || IsBounceSplit) && pBullet->GetHeight() < 0)
 		{
 			// 抛射体潜入地下，重新设置目标参数，并手动引爆
 			CoordStruct targetPos = location;
 			if (CellClass* pTargetCell = MapClass::Instance->TryGetCellAt(location))
 			{
 				targetPos.Z = pTargetCell->GetCoordsWithBridge().Z;
-				_owner->SetTarget(pTargetCell);
+				pBullet->SetTarget(pTargetCell);
 			}
-			_owner->TargetCoords = targetPos;
+			pBullet->TargetCoords = targetPos;
 			life.Detonate();
 		}
-		if (!life.IsDetonate && IsArcing() && _owner->GetHeight() <= 8)
+		if (!life.IsDetonate && IsArcing() && pBullet->GetHeight() <= 8)
 		{
 			// Arcing 近炸
 			CoordStruct tempSoucePos = location;
 			tempSoucePos.Z = 0;
-			CoordStruct tempTargetPos = _owner->TargetCoords;
+			CoordStruct tempTargetPos = pBullet->TargetCoords;
 			tempTargetPos.Z = 0;
-			if (tempSoucePos.DistanceFrom(tempTargetPos) <= static_cast<double>(256 + _owner->Type->Acceleration))
+			if (tempSoucePos.DistanceFrom(tempTargetPos) <= static_cast<double>(256 + pBullet->Type->Acceleration))
 			{
 				// 距离目标太近，强制爆炸
 				life.Detonate();
@@ -231,9 +220,9 @@ void BulletStatus::OnUpdate()
 	{
 		if (!life.IsHarmless)
 		{
-			_owner->Detonate(location);
+			pBullet->Detonate(location);
 		}
-		_owner->UnInit();
+		pBullet->UnInit();
 		return;
 	}
 	if (life.Health <= 0)
@@ -241,7 +230,7 @@ void BulletStatus::OnUpdate()
 		life.IsDetonate = true;
 	}
 	// 其他逻辑
-	if (!IsDeadOrInvisible(_owner) && !life.IsDetonate)
+	if (!IsDeadOrInvisible(pBullet) && !life.IsDetonate)
 	{
 		OnUpdate_BlackHole();
 		OnUpdate_ECM();
@@ -261,16 +250,15 @@ void BulletStatus::OnUpdate_SelfLaunchOrPumpAction() {};
 
 void BulletStatus::OnUpdateEnd()
 {
-	if (!IsDeadOrInvisible(_owner) && !life.IsDetonate)
+	if (!IsDeadOrInvisible(pBullet) && !life.IsDetonate)
 	{
-		CoordStruct location = _owner->GetCoords();
+		CoordStruct location = pBullet->GetCoords();
 		OnUpdateEnd_BlackHole(location); // 黑洞会更新位置，要第一个执行
 		OnUpdateEnd_Proximity(location);
 	}
 };
 
 void BulletStatus::OnUpdateEnd_BlackHole(CoordStruct& sourcePos) {};
-void BulletStatus::OnUpdateEnd_Proximity(CoordStruct& sourcePos) {};
 
 void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 {
@@ -295,10 +283,18 @@ void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 	}
 };
 
-bool BulletStatus::OnDetonate_Bounce(CoordStruct* pCoords) { return false; };
 bool BulletStatus::OnDetonate_GiftBox(CoordStruct* pCoords) { return false; };
 bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords) { return false; };
 
+
+TrajectoryData* BulletStatus::GetTrajectoryData()
+{
+	if (!_trajectoryData)
+	{
+		_trajectoryData = INI::GetConfig<TrajectoryData>(INI::Rules, pBullet->GetType()->ID)->Data;
+	}
+	return _trajectoryData;
+}
 
 
 // ----------------

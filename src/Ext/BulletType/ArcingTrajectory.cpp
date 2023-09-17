@@ -8,45 +8,53 @@ void BulletStatus::OnUpdate_Trajectory_Arcing()
 
 void BulletStatus::ResetArcingVelocity(float speedMultiple, bool force)
 {
-	if (force || !_arcingTrajectoryInitFlag && GetTrajectoryData()->AdvancedBallistics)
+	if (force || !_arcingTrajectoryInitFlag && trajectoryData->AdvancedBallistics)
 	{
 		_arcingTrajectoryInitFlag = true;
-		CoordStruct sourcePos = _owner->GetCoords();
-		CoordStruct targetPos = _owner->TargetCoords;
+		CoordStruct sourcePos = pBullet->GetCoords();
+		CoordStruct targetPos = pBullet->TargetCoords;
 
-		if (GetTrajectoryData()->ArcingFixedSpeed > 0)
+		if (trajectoryData->ArcingFixedSpeed > 0)
 		{
-			_owner->Speed = GetTrajectoryData()->ArcingFixedSpeed;
+			pBullet->Speed = trajectoryData->ArcingFixedSpeed;
 		}
 		else
 		{
-			_owner->Speed += _owner->Type->Acceleration;
+			pBullet->Speed += pBullet->Type->Acceleration;
 		}
 
-		int speed = (int)(_owner->Speed * speedMultiple);
+		int speed = (int)(pBullet->Speed * speedMultiple);
 		int gravity = RulesClass::Instance->Gravity;
-		if (GetTrajectoryData()->Gravity > 0)
+		if (trajectoryData->Gravity > 0)
 		{
-			gravity = GetTrajectoryData()->Gravity;
+			gravity = trajectoryData->Gravity;
 		}
-		bool lobber = _owner->WeaponType ? _owner->WeaponType->Lobber : false;
-		bool inaccurate = GetTrajectoryData()->Inaccurate;
-		float min = GetTrajectoryData()->BallisticScatterMin;
-		float max = GetTrajectoryData()->BallisticScatterMax;
+		bool lobber = pBullet->WeaponType ? pBullet->WeaponType->Lobber : false;
+		bool inaccurate = trajectoryData->Inaccurate;
+		float min = trajectoryData->BallisticScatterMin;
+		float max = trajectoryData->BallisticScatterMax;
 
 		double straightDistance = 0;
 		double realSpeed = 0;
 		CellClass* pTargetCell = nullptr;
 		BulletVelocity velocity = GetBulletArcingVelocity(sourcePos, targetPos,
 			speed, gravity, lobber, inaccurate, min, max,
-			ToCoordStruct(_owner->Velocity).Z, straightDistance, realSpeed, pTargetCell);
-		_owner->Speed = (int)realSpeed;
-		_owner->Velocity = velocity;
-		_owner->TargetCoords = targetPos;
+			ToCoordStruct(pBullet->Velocity).Z, straightDistance, realSpeed, pTargetCell);
+		pBullet->Speed = (int)realSpeed;
+		pBullet->Velocity = velocity;
+		pBullet->TargetCoords = targetPos;
 		if (inaccurate && pTargetCell)
 		{
-			_owner->Target = pTargetCell;
+			pBullet->Target = pTargetCell;
 		}
 
 	}
 }
+
+#pragma region Bounce Arcing
+void BulletStatus::InitState_Bounce() {};
+
+void BulletStatus::OnUpdate_Trajectory_Bounce() {};
+
+bool BulletStatus::OnDetonate_Bounce(CoordStruct* pCoords) { return false; };
+#pragma endregion

@@ -4,6 +4,10 @@
 #include <Common/INI/INIConfig.h>
 #include <Common/INI/INIReader.h>
 
+#include <Ext/Helper.h>
+
+#include <YRPP.h>
+
 enum class SubjectToGroundType
 {
 	AUTO = 0,
@@ -12,7 +16,7 @@ enum class SubjectToGroundType
 };
 
 template <>
-inline bool Parser<SubjectToGroundType>::TryParse(const char *pValue, SubjectToGroundType *outValue)
+inline bool Parser<SubjectToGroundType>::TryParse(const char* pValue, SubjectToGroundType* outValue)
 {
 	switch (toupper(static_cast<unsigned char>(*pValue)))
 	{
@@ -39,7 +43,28 @@ inline bool Parser<SubjectToGroundType>::TryParse(const char *pValue, SubjectToG
 class TrajectoryData : public INIConfig
 {
 public:
-	virtual void Read(INIBufferReader *ini) override
+	bool AdvancedBallistics = true;
+
+	// Arcing
+	int ArcingFixedSpeed = 0; // 恒定速度飞行，近距离高抛，远距离平抛
+	bool Inaccurate = false; // 不精确散布
+	float BallisticScatterMin = 0; // 最小散布距离
+	float BallisticScatterMax = 0; // 最大散布距离
+	int Gravity = RulesClass::Instance->Gravity; // 自定义重力
+
+	// Straight
+	bool Straight = false; // 直线飞行
+	bool AbsolutelyStraight = false; // 朝向正面的直线飞行
+
+	// Missile
+	bool ReverseVelocity = false; // 反转出膛飞行方向
+	bool ReverseVelocityZ = false; // 反转出膛飞行方向
+	float ShakeVelocity = 0; // 出膛方向随机抖动
+
+	// Status
+	SubjectToGroundType SubjectToGround = SubjectToGroundType::AUTO;
+
+	virtual void Read(INIBufferReader* ini) override
 	{
 		this->AdvancedBallistics = ini->Get("AdvancedBallistics", AdvancedBallistics);
 
@@ -63,29 +88,22 @@ public:
 		this->SubjectToGround = ini->Get("SubjectToGround", SubjectToGround);
 	}
 
-	bool AdvancedBallistics = true;
-
-	// Arcing
-	int ArcingFixedSpeed = 0; // 恒定速度飞行，近距离高抛，远距离平抛
-	bool Inaccurate = false; // 不精确散布
-	float BallisticScatterMin = 0; // 最小散布距离
-	float BallisticScatterMax = 0; // 最大散布距离
-	int Gravity = RulesClass::Instance->Gravity; // 自定义重力
-
-	// Straight
-	bool Straight = false; // 直线飞行
-	bool AbsolutelyStraight = false; // 朝向正面的直线飞行
-
-	// Missile
-	bool ReverseVelocity = false; // 反转出膛飞行方向
-	bool ReverseVelocityZ = false; // 反转出膛飞行方向
-	float ShakeVelocity = 0; // 出膛方向随机抖动
-
-	// Status
-	SubjectToGroundType SubjectToGround = SubjectToGroundType::AUTO;
-
 	bool IsStraight()
 	{
 		return Straight || AbsolutelyStraight;
+	}
+};
+
+/// @brief 直线导弹的状态数据
+struct StraightBullet
+{
+public:
+	CoordStruct sourcePos;
+	CoordStruct targetPos;
+	BulletVelocity Velocity;
+
+	void ResetVelocity(BulletClass* pBullet)
+	{
+		this->Velocity = RecalculateBulletVelocity(pBullet, sourcePos, targetPos);
 	}
 };

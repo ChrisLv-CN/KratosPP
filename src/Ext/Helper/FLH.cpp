@@ -169,6 +169,65 @@ CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isO
 }
 #pragma endregion
 
+#pragma region ForwardFLH
+/// @brief 获取向量上指定距离的坐标
+/// @param sourceV 起始位置
+/// @param targetV 结束位置
+/// @param speed 速度
+/// @param dist 距离
+/// @return CoordStruct
+CoordStruct GetForwardCoords(Vector3D<double> sourceV, Vector3D<double> targetV, double speed, double dist)
+{
+	if (dist <= 0)
+	{
+		dist = targetV.DistanceFrom(sourceV);
+	}
+	// 计算下一个坐标
+	double d = speed / dist;
+	double absX = abs(sourceV.X - targetV.X) * d;
+	double x = sourceV.X;
+	if (sourceV.X < targetV.X)
+	{
+		// Xa < Xb => Xa < Xc
+		// Xc - Xa = absX
+		x = absX + sourceV.X;
+	}
+	else if (sourceV.X > targetV.X)
+	{
+		// Xa > Xb => Xa > Xc
+		// Xa - Xc = absX
+		x = sourceV.X - absX;
+	}
+	double absY = abs(sourceV.Y - targetV.Y) * d;
+	double y = sourceV.Y;
+	if (sourceV.Y < targetV.Y)
+	{
+		y = absY + sourceV.Y;
+	}
+	else if (sourceV.Y > targetV.Y)
+	{
+		y = sourceV.Y - absY;
+	}
+	double absZ = abs(sourceV.Z - targetV.Z) * d;
+	double z = sourceV.Z;
+	if (sourceV.Z < targetV.Z)
+	{
+		z = absZ + sourceV.Z;
+	}
+	else if (sourceV.Z > targetV.Z)
+	{
+		z = sourceV.Z - absZ;
+	}
+	Vector3D<double> v{ x, y, z };
+	return ToCoordStruct(v);
+}
+
+CoordStruct GetForwardCoords(CoordStruct sourcePos, CoordStruct targetPos, double speed, double dist)
+{
+	return GetForwardCoords(ToVelocity(sourcePos), ToVelocity(targetPos), speed, dist);
+}
+#pragma endregion
+
 #pragma region Random offset
 CoordStruct RandomOffset(int min, int max)
 {
