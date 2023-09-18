@@ -8,10 +8,71 @@
 
 #include <YRPP.h>
 
+
+static std::map<std::string, LandType> LandTypeStrings
+{
+	{ "Clear", LandType::Clear },
+	{ "Road", LandType::Road },
+	{ "Water", LandType::Water },
+	{ "Rock", LandType::Rock },
+	{ "Wall", LandType::Wall },
+	{ "Tiberium", LandType::Tiberium },
+	{ "Beach", LandType::Beach },
+	{ "Rough", LandType::Rough },
+	{ "Ice", LandType::Ice },
+	{ "Railroad", LandType::Railroad },
+	{ "Tunnel", LandType::Tunnel },
+	{ "Weeds", LandType::Weeds }
+};
+
 template <>
 inline bool Parser<LandType>::TryParse(const char* pValue, LandType* outValue)
 {
-	return true;
+	std::string key = pValue;
+	auto it = LandTypeStrings.find(key);
+	if (it != LandTypeStrings.end())
+	{
+		outValue = &it->second;
+		return true;
+	}
+	return false;
+}
+
+static std::map<std::string, TileType> TileTypeStrings
+{
+	{ "Tunnel", TileType::Tunnel },
+	{ "Water", TileType::Water },
+	{ "Blank", TileType::Blank },
+	{ "Ramp", TileType::Ramp },
+	{ "Cliff", TileType::Cliff },
+	{ "Shore", TileType::Shore },
+	{ "Wet", TileType::Wet },
+	{ "MiscPave", TileType::MiscPave },
+	{ "Pave", TileType::Pave },
+	{ "DirtRoad", TileType::DirtRoad },
+	{ "PavedRoad", TileType::PavedRoad },
+	{ "PavedRoadEnd", TileType::PavedRoadEnd },
+	{ "PavedRoadSlope", TileType::PavedRoadSlope },
+	{ "Median", TileType::Median },
+	{ "Bridge", TileType::Bridge },
+	{ "WoodBridge", TileType::WoodBridge },
+	{ "ClearToSandLAT", TileType::ClearToSandLAT },
+	{ "Green", TileType::Green },
+	{ "NotWater", TileType::NotWater },
+	{ "DestroyableCliff", TileType::DestroyableCliff }
+};
+
+template <>
+inline bool Parser<TileType>::TryParse(const char* pValue, TileType* outValue)
+{
+	std::string key = pValue;
+	auto it = TileTypeStrings.find(key);
+	if (it != TileTypeStrings.end())
+	{
+		outValue = &it->second;
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -26,7 +87,7 @@ public:
 
 	bool CellLimit;
 	std::vector<LandType> OnLandTypes;
-	// TileType[] OnTileTypes;
+	std::vector<TileType> OnTileTypes;
 
 	virtual void Read(INIBufferReader* reader) override
 	{ }
@@ -37,8 +98,7 @@ public:
 		IsOnTurret = reader->Get(title + "IsOn", IsOnTurret);
 
 		OnLandTypes = reader->GetList<LandType>(title + "OnLands", OnLandTypes);
-		// OnTileTypes = reader->GetList<TileType>(title + "OnTiles", OnTileTypes);
-		// CellLimit = (OnLandTypes.size() > 0) || (null != OnTileTypes && OnTileTypes.Any());
-		CellLimit = (!OnLandTypes.empty());
+		OnTileTypes = reader->GetList<TileType>(title + "OnTiles", OnTileTypes);
+		CellLimit = (!OnLandTypes.empty()) || (!OnTileTypes.empty());
 	}
 };

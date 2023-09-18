@@ -85,9 +85,10 @@ bool Trail::IsOnLand(CoordStruct sourcePos)
 				}
 				canDraw = std::find(OnLandTypes.begin(), OnLandTypes.end(), landType) != OnLandTypes.end();
 			}
-			//TODO 检查地块
-			if (!canDraw)
+			// 检查地块
+			if (!canDraw && !OnTileTypes.empty())
 			{
+				canDraw = std::find(OnTileTypes.begin(), OnTileTypes.end(), pCell->GetTileType()) != OnTileTypes.end();
 			}
 		}
 	}
