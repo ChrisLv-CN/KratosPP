@@ -15,17 +15,3 @@ INILinkedBuffer *INIReader::GetLinkedBuffer()
 	return m_LinkedBuffer;
 }
 
-bool INIReader::HasSection(const char *section)
-{
-	if (GetLinkedBuffer())
-	{
-		for (std::string fileName : GetLinkedBuffer()->GetDependency())
-		{
-			if (INIBufferManager::FindFile(fileName)->HasSection(section))
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}

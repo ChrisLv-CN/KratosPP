@@ -69,6 +69,36 @@ public:
 	__declspec(property(get = GetOwner)) TechnoClass* pTechno;
 };
 
+class TransformScript : public TechnoScript
+{
+public:
+	TransformScript(TechnoExt::ExtData* ext) : TechnoScript(ext) {}
+
+	virtual void Awake() override
+	{
+		if (!OnAwake())
+		{
+			_gameObject->RemoveComponent(this);
+			return;
+		}
+		EventSystems::Logic.AddHandler(Events::TypeChangeEvent, this, &TransformScript::Transform);
+	}
+
+	virtual bool OnAwake() { return true; }
+
+	virtual void Destroy() override
+	{
+		EventSystems::Logic.RemoveHandler(Events::TypeChangeEvent, this, &TransformScript::Transform);
+	}
+
+	void Transform(EventSystem* sender, Event e, void* args)
+	{
+		this->OnTransform((TypeChangeEventArgs*)args);
+	}
+
+	virtual void OnTransform(TypeChangeEventArgs* args) = 0;
+};
+
 class BulletScript : public ScriptComponent<BulletClass>, public IBulletScript
 {
 public:

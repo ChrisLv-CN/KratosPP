@@ -128,11 +128,11 @@ public:
 	{
 		Component* c = nullptr;
 		// find first level
-		for (Component& children : _children)
+		for (Component* children : _children)
 		{
-			if (typeid(children) == TComponent)
+			if (typeid(*children) == typeid(TComponent))
 			{
-				c = &children;
+				c = (TComponent*)children;
 				break;
 			}
 		}
@@ -150,7 +150,7 @@ public:
 		// find first level
 		for (Component* children : _children)
 		{
-			if (typeid(children) == typeid(TComponent))
+			if (typeid(*children) == typeid(TComponent))
 			{
 				c = (TComponent*)children;
 				break;
@@ -218,7 +218,7 @@ public:
 		bool saved = pThis->Serialize(stream, false);
 		pThis->ForeachChild([&stream](Component* c) {
 			c->Save(stream);
-		});
+			});
 		return saved;
 	}
 #pragma endregion

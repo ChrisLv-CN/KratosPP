@@ -19,6 +19,9 @@ AnimClass* SetAnimCreater(AnimClass* pAnim, BulletClass* pBullet);
 bool IsDead(TechnoClass* pTechno);
 bool IsDeadOrInvisible(TechnoClass* pTechno);
 
+bool IsCloaked(TechnoClass* pTechno, bool includeCloaking = true);
+bool IsDeadOrInvisibleOrCloaked(TechnoClass* pTechno, bool includeCloaking = true);
+
 double GetROFMulti(TechnoClass* pTechno);
 double GetDamageMulti(TechnoClass* pTechno);
 #pragma endregion

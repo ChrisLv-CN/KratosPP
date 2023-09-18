@@ -11,8 +11,6 @@ class INIReader
 public:
 	INIReader(std::vector<std::string> dependency, const char* section);
 
-	bool HasSection(const char* section);
-
 	INILinkedBuffer* GetLinkedBuffer();
 
 	std::vector<std::string> Dependency{};

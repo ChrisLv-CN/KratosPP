@@ -160,9 +160,9 @@ CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isO
 			CoordStruct tempFLH = flh;
 			tempFLH.Y *= flipY;
 			Vector3D<float> offset = GetFLHOffset(mtx, tempFLH);
-			source.X = std::lround(offset.X);
-			source.Y = std::lround(offset.Y);
-			source.Z = std::lround(offset.Z);
+			source.X += std::lround(offset.X);
+			source.Y += std::lround(offset.Y);
+			source.Z += std::lround(offset.Z);
 		}
 	}
 	return source;

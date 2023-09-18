@@ -38,7 +38,7 @@ CoordStruct GetFLHAbsoluteOffset(CoordStruct flh, DirStruct dir, CoordStruct tur
 CoordStruct GetFLHAbsoluteCoords(CoordStruct source, CoordStruct flh, DirStruct dir, CoordStruct turretOffset = CoordStruct::Empty);
 
 // reversed from 6F3D60
-CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isOnTurret, int flipY, CoordStruct turretOffset = CoordStruct::Empty);
+CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isOnTurret, int flipY = 1, CoordStruct turretOffset = CoordStruct::Empty);
 #pragma endregion
 
 #pragma region ForwardFLH

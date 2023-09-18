@@ -10,12 +10,12 @@ template <typename TConfig>
 class INIConfigReader : public INIReader
 {
 public:
-	INIConfigReader(std::vector<std::string> dependency, const char *section, INIBufferReader *reader) : INIReader(dependency, section)
+	INIConfigReader(std::vector<std::string> dependency, const char* section, INIBufferReader* reader) : INIReader(dependency, section)
 	{
 		this->m_BufferReader = reader;
 	};
 
-	TConfig *GetData()
+	TConfig* GetData()
 	{
 		if (!m_Config)
 		{
@@ -29,9 +29,9 @@ public:
 		}
 		return m_Config;
 	}
-	__declspec(property(get = GetData)) TConfig *Data;
+	__declspec(property(get = GetData)) TConfig* Data;
 
 private:
-	TConfig *m_Config = nullptr;
-	INIBufferReader *m_BufferReader = nullptr;
+	TConfig* m_Config = nullptr;
+	INIBufferReader* m_BufferReader = nullptr;
 };

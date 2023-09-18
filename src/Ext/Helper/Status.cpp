@@ -63,6 +63,16 @@ bool IsDeadOrInvisible(TechnoClass* pTechno)
 	return IsDead(pTechno) || pTechno->InLimbo;
 }
 
+bool IsCloaked(TechnoClass* pTechno, bool includeCloaking)
+{
+	return !pTechno || pTechno->CloakState == CloakState::Cloaked || !includeCloaking || pTechno->CloakState == CloakState::Cloaking;
+}
+
+bool IsDeadOrInvisibleOrCloaked(TechnoClass* pTechno, bool includeCloaking)
+{
+	return IsDeadOrInvisible(pTechno) || IsCloaked(pTechno, includeCloaking);
+}
+
 double GetROFMulti(TechnoClass* pTechno)
 {
 	if (IsDead(pTechno))

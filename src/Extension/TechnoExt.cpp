@@ -2,7 +2,7 @@
 
 #include <Ext/AttachEffect.h>
 #include <Ext/TechnoStatus.h>
-#include <Ext/LaserTrail.h>
+#include <Ext/TechnoTrail.h>
 
 void TechnoExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* ext)
 {
@@ -13,8 +13,8 @@ void TechnoExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* 
 	globalScripts.emplace_back(status);
 
 	// Other Components
-	LaserTrail* laserTrail = new LaserTrail(ext);
-	globalScripts.emplace_back(laserTrail);
+	TechnoTrail* trail = new TechnoTrail(ext);
+	globalScripts.emplace_back(trail);
 
 	AttachEffect* attachEffect = new AttachEffect(ext);
 	globalScripts.emplace_back(attachEffect);

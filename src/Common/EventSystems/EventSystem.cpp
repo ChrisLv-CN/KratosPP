@@ -55,6 +55,7 @@ Event Events::GScreenRenderEvent = Event("GScreenClass_Render", "Raised when GSc
 Event Events::SidebarRenderEvent = Event("SidebarClass_Draw_It", "Raised when Sidebar is Render");
 // 逻辑事件
 Event Events::LogicUpdateEvent = Event("LogicClassUpdate", "Raised when LogicClass update");
+Event Events::TypeChangeEvent = Event("TechnoClass_TypeChange", "Raised when Techno's type is changed");
 // 存档事件
 Event Events::SaveGameEvent = Event("SaveGame", "Raised when saving game");
 Event Events::LoadGameEvent = Event("LoadGame", "Raised when loading game");

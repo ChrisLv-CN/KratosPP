@@ -8,7 +8,7 @@
 #include <Common/EventSystems/EventSystem.h>
 
 using Dependency = std::vector<std::string>;
-using GetDependency = Dependency (*)();
+using GetDependency = Dependency(*)();
 
 /// <summary>
 /// INI操作类，读取配置信息
@@ -17,7 +17,7 @@ using GetDependency = Dependency (*)();
 class INI
 {
 public:
-	static void ClearBuffer(EventSystem *sender, Event e, void *args)
+	static void ClearBuffer(EventSystem* sender, Event e, void* args)
 	{
 		s_Rules.clear();
 		s_Art.clear();
@@ -26,29 +26,36 @@ public:
 		INIReaderManager::ClearBuffer(sender, e, args);
 	}
 
-	static bool HasSection(Dependency dependency, const char *section)
-	{
-		return (new INIBufferReader(dependency, section))->HasSection(section);
-	}
-
-	static INIBufferReader *GetSection(GetDependency dependency, const char *section)
+	static INIBufferReader* GetSection(GetDependency dependency, const char* section)
 	{
 		return INIReaderManager::FindBufferReader(dependency(), section);
 	}
 
 	template <typename TConfig>
-	static INIConfigReader<TConfig> *GetConfig(GetDependency dependency, const char *section)
+	static INIConfigReader<TConfig>* GetConfig(GetDependency dependency, const char* section)
 	{
 		return INIReaderManager::FindConfigReader<TConfig>(dependency(), section);
+	}
+
+	static bool HasSection(GetDependency dependency, const char* section)
+	{
+		for (std::string fileName : dependency())
+		{
+			if (INIBufferManager::FindFile(fileName)->HasSection(section))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static GetDependency Rules;
 	static GetDependency Art;
 	static GetDependency AI;
 
-	static const char *SectionGeneral;
-    static const char *SectionCombatDamage;
-	static const char *SectionAudioVisual;
+	static const char* SectionGeneral;
+	static const char* SectionCombatDamage;
+	static const char* SectionAudioVisual;
 
 private:
 	static bool ICaseCompare(std::string_view a, std::string_view b)
@@ -56,8 +63,8 @@ private:
 		if (a.length() == b.length())
 		{
 			return std::equal(a.begin(), a.end(), b.begin(),
-							  [](char a, char b)
-							  { return tolower(a) == tolower(b); });
+				[](char a, char b)
+				{ return tolower(a) == tolower(b); });
 		}
 		return false;
 	}
@@ -85,12 +92,12 @@ private:
 			if (SessionClass::Instance->GameMode == GameMode::Campaign)
 			{
 				// Map.ini, rulesmd.ini
-				const std::vector<std::string> d{INIConstant::GetMapName().data(), rulesName};
+				const std::vector<std::string> d{ INIConstant::GetMapName().data(), rulesName };
 				s_Dependency[rulesName] = d;
 				return d;
 			}
 			// Map.ini, GameMode.ini, rulesmd.ini
-			const std::vector<std::string> d{INIConstant::GetMapName().data(), INIConstant::GetGameModeName().data(), rulesName};
+			const std::vector<std::string> d{ INIConstant::GetMapName().data(), INIConstant::GetGameModeName().data(), rulesName };
 			s_Dependency[rulesName] = d;
 			return d;
 		}
@@ -98,7 +105,7 @@ private:
 		if (ICaseCompare(fileName, artName))
 		{
 			// artmd.ini
-			const std::vector<std::string> d{artName};
+			const std::vector<std::string> d{ artName };
 			s_Dependency[artName] = d;
 			return d;
 		}
@@ -106,11 +113,11 @@ private:
 		if (ICaseCompare(fileName, aiName))
 		{
 			// Map.ini, aimd.ini
-			const std::vector<std::string> d{INIConstant::GetMapName().data(), aiName};
+			const std::vector<std::string> d{ INIConstant::GetMapName().data(), aiName };
 			s_Dependency[aiName] = d;
 			return d;
 		}
-		const std::vector<std::string> d{fileName};
+		const std::vector<std::string> d{ fileName };
 		return d;
 	}
 

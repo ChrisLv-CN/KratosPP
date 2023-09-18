@@ -49,6 +49,7 @@
     <ClCompile Include="src\Ext\AnimStatus.cpp" />
     <ClCompile Include="src\Ext\AttachEffect.cpp" />
     <ClCompile Include="src\Ext\BulletStatus.cpp" />
+    <ClCompile Include="src\Ext\BulletTrail.cpp" />
     <ClCompile Include="src\Ext\BulletType\ArcingTrajectory.cpp" />
     <ClCompile Include="src\Ext\BulletType\MissileTrajectory.cpp" />
     <ClCompile Include="src\Ext\BulletType\Proximity.cpp" />
@@ -59,11 +60,13 @@
     <ClCompile Include="src\Ext\Helper\Effect.cpp" />
     <ClCompile Include="src\Ext\LaserTrail.cpp" />
     <ClCompile Include="src\Ext\TechnoStatus.cpp" />
+    <ClCompile Include="src\Ext\TechnoTrail.cpp" />
     <ClCompile Include="src\Ext\Helper\CastEx.cpp" />
     <ClCompile Include="src\Ext\Helper\Component.cpp" />
     <ClCompile Include="src\Ext\Helper\FLH.cpp" />
     <ClCompile Include="src\Ext\Helper\Status.cpp" />
     <ClCompile Include="src\Ext\Helper\Weapon.cpp" />
+    <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
     <ClCompile Include="src\Hooks\AnimExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimTypeExtHook.cpp" />
     <ClCompile Include="src\Hooks\BulletExtHook.cpp" />
@@ -135,6 +138,7 @@
     <ClInclude Include="src\Ext\AnimStatus.h" />
     <ClInclude Include="src\Ext\AttachEffect.h" />
     <ClInclude Include="src\Ext\BulletStatus.h" />
+    <ClInclude Include="src\Ext\BulletTrail.h" />
     <ClInclude Include="src\Ext\CommonStatus.h" />
     <ClInclude Include="src\Ext\Data\FilterData.h" />
     <ClInclude Include="src\Ext\EBoltStatus.h" />
@@ -142,6 +146,7 @@
     <ClInclude Include="src\Ext\Helper\Effect.h" />
     <ClInclude Include="src\Ext\LaserTrail.h" />
     <ClInclude Include="src\Ext\TechnoStatus.h" />
+    <ClInclude Include="src\Ext\TechnoTrail.h" />
     <ClInclude Include="src\Ext\BulletType\ProximityData.h" />
     <ClInclude Include="src\Ext\BulletType\TrajectoryData.h" />
     <ClInclude Include="src\Ext\Helper\CastEx.h" />
@@ -149,6 +154,9 @@
     <ClInclude Include="src\Ext\Helper\FLH.h" />
     <ClInclude Include="src\Ext\Helper\Status.h" />
     <ClInclude Include="src\Ext\Helper\Weapon.h" />
+    <ClInclude Include="src\Ext\TrailType\Trail.h" />
+    <ClInclude Include="src\Ext\TrailType\TrailData.h" />
+    <ClInclude Include="src\Ext\TrailType\TrailTypeData.h" />
     <ClInclude Include="src\Ext\WeaponType\AttachFireData.h" />
     <ClInclude Include="src\Ext\WeaponType\ProximityRangeData.h" />
     <ClInclude Include="src\Kratos.h" />

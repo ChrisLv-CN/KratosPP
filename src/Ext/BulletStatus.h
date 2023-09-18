@@ -12,10 +12,10 @@
 
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
-#include <Extension/BulletExt.h>
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
 #include <Common/INI/INIReader.h>
+#include <Extension/BulletExt.h>
 
 #include "BulletType/ProximityData.h"
 #include "BulletType/TrajectoryData.h"
@@ -215,6 +215,7 @@ public:
 			// 碰撞引信
 			.Process(this->proximity)
 			.Process(this->_activeProximity)
+			.Process(this->_proximityRange)
 			.Success();
 	};
 

@@ -17,6 +17,11 @@
 #include <Common/INI/INIConfig.h>
 #include <Common/INI/INIReader.h>
 
+enum class DrivingState
+{
+	Moving = 0, Stand = 1, Start = 2, Stop = 3
+};
+
 /// @brief base compoment, save the Techno status
 class TechnoStatus : public TechnoScript
 {
@@ -48,6 +53,12 @@ public:
 		}
 	}
 
+	virtual void OnUpdate() override;
+
+	virtual void OnUpdateEnd() override;
+
+	DrivingState drivingState = DrivingState::Moving;
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
@@ -69,4 +80,5 @@ public:
 #pragma endregion
 
 private:
+	Mission _lastMission = Mission::Guard;
 };
