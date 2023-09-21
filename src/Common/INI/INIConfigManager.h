@@ -9,10 +9,25 @@
 class INIBufferReader;
 class INIConfig;
 
-class INIConfigManager
+namespace INIConfigManager
 {
-public:
-	static void ClearBuffer(EventSystem *sender, Event e, void *args);
+	// INILinkedBuffer里的未转换的kv对转换成对象后，用类名存储
+	static std::map<INILinkedBuffer, std::map<std::string, INIConfig*>> s_Configs{};
+
+	static void ClearBuffer(EventSystem *sender, Event e, void *args)
+	{
+		// 释放Config
+		for (auto configMap : s_Configs)
+		{
+			for (auto config : configMap.second)
+			{
+				// 释放config对象
+				GameDelete(config.second);
+			}
+			configMap.second.clear();
+		}
+		s_Configs.clear();
+	}
 
 	template <typename TConfig>
 	static TConfig *FindConfig(INILinkedBuffer &buffer, INIBufferReader *reader)
@@ -36,8 +51,4 @@ public:
 		s_Configs[buffer] = configs;
 		return config;
 	}
-
-private:
-	// INILinkedBuffer里的未转换的kv对转换成对象后，用类名存储
-	static std::map<INILinkedBuffer, std::map<std::string, INIConfig *>> s_Configs;
 };

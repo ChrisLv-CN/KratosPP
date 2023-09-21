@@ -9,48 +9,19 @@
 #include <Utilities/Debug.h>
 #include <Utilities/Stream.h>
 #include <Utilities/SavegameDef.h>
+
 #include <Common/EventSystems/EventSystem.h>
 
-class INIConstant
+namespace INIConstant
 {
-public:
-	static void SetGameModeName(EventSystem *sender, Event e, void *args)
-	{
-		_gameModeName = SessionClass::Instance->MPGameMode->INIFilename.Buffer;
-#ifdef DEBUG
-		Debug::Log("Config file info:\n  Rules = \"%s\"\n  Art = \"%s\"\n  Ai = \"%s\"\n  MapName = \"%s\"\n  GameMode = \"%s\"\n",
-				   GetRulesName().data(),
-				   GetArtName().data(),
-				   GetAIName().data(),
-				   GetMapName().data(),
-				   GetGameModeName().data());
-#endif // DEBUG
-	}
+	static std::string _rulesName{}; // rulesmd.ini
+	static std::string _artName{};   // artmd.ini
+	static std::string _aiName{};	 // aimd.ini
 
-#pragma region Save/Load
-	static void SaveGameModeName(EventSystem *sender, Event e, void *args)
-	{
-		SaveGameEventArgs *arg = (SaveGameEventArgs *)args;
-		if (arg->IsStartInStream())
-		{
-			ExByteStream saver(_gameModeName.size());
-			ExStreamWriter writer(saver);
-			writer.Process(_gameModeName, false);
-			saver.WriteBlockToStream(arg->Stream);
-		}
-	}
-	static void LoadGameModeName(EventSystem *sender, Event e, void *args)
-	{
-		LoadGameEventArgs *arg = (LoadGameEventArgs *)args;
-		if (arg->IsStartInStream())
-		{
-			ExByteStream loader(0);
-			loader.ReadBlockFromStream(arg->Stream);
-			ExStreamReader reader(loader);
-			reader.Process(_gameModeName, false);
-		}
-	}
-#pragma endregion
+	static std::string _ra2md = "ra2md.ini"; // ra2md.ini
+
+	static std::string _gameModeName{};
+	static std::string _mapName{};
 
 	static std::string_view GetRulesName()
 	{
@@ -98,13 +69,42 @@ public:
 		return _mapName;
 	}
 
-private:
-	static std::string _rulesName; // rulesmd.ini
-	static std::string _artName;   // artmd.ini
-	static std::string _aiName;	   // aimd.ini
+	static void SetGameModeName(EventSystem* sender, Event e, void* args)
+	{
+		_gameModeName = SessionClass::Instance->MPGameMode->INIFilename.Buffer;
+#ifdef DEBUG
+		Debug::Log("Config file info:\n  Rules = \"%s\"\n  Art = \"%s\"\n  Ai = \"%s\"\n  MapName = \"%s\"\n  GameMode = \"%s\"\n",
+			GetRulesName().data(),
+			GetArtName().data(),
+			GetAIName().data(),
+			GetMapName().data(),
+			GetGameModeName().data());
+#endif // DEBUG
+	}
 
-	static std::string _ra2md; // ra2md.ini
+#pragma region Save/Load
+	static void SaveGameModeName(EventSystem* sender, Event e, void* args)
+	{
+		SaveGameEventArgs* arg = (SaveGameEventArgs*)args;
+		if (arg->IsStartInStream())
+		{
+			ExByteStream saver(_gameModeName.size());
+			ExStreamWriter writer(saver);
+			writer.Process(_gameModeName, false);
+			saver.WriteBlockToStream(arg->Stream);
+		}
+	}
+	static void LoadGameModeName(EventSystem* sender, Event e, void* args)
+	{
+		LoadGameEventArgs* arg = (LoadGameEventArgs*)args;
+		if (arg->IsStartInStream())
+		{
+			ExByteStream loader(0);
+			loader.ReadBlockFromStream(arg->Stream);
+			ExStreamReader reader(loader);
+			reader.Process(_gameModeName, false);
+		}
+	}
+#pragma endregion
 
-	static std::string _gameModeName;
-	static std::string _mapName;
 };

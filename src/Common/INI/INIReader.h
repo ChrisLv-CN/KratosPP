@@ -1,20 +1,31 @@
 ﻿#pragma once
+#include <string>
+#include <vector>
 
 #include "INIBuffer.h"
 #include "INIBufferManager.h"
-#include "INIConfigManager.h"
-
-#include <CCINIClass.h>
 
 class INIReader
 {
 public:
-	INIReader(std::vector<std::string> dependency, const char* section);
-
-	INILinkedBuffer* GetLinkedBuffer();
-
 	std::vector<std::string> Dependency{};
 	std::string Section{};
+
+	INIReader(std::vector<std::string> dependency, const char* section)
+	{
+		this->Dependency = dependency;
+		this->Section = section;
+	}
+
+	INILinkedBuffer* GetLinkedBuffer()
+	{
+		if (!m_LinkedBuffer || m_LinkedBuffer->IsExpired())
+		{
+			m_LinkedBuffer = INIBufferManager::FindLinkedBuffer(Dependency, Section);
+		}
+		return m_LinkedBuffer;
+	}
+
 protected:
 	INILinkedBuffer* m_LinkedBuffer = nullptr;
 };

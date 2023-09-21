@@ -85,7 +85,12 @@
 			"xlocmes": "cpp",
 			"xlocmon": "cpp",
 			"xlocnum": "cpp",
-			"xloctime": "cpp"
+			"xloctime": "cpp",
+			"fstream": "cpp",
+			"ios": "cpp",
+			"iostream": "cpp",
+			"istream": "cpp",
+			"ostream": "cpp"
 		},
 		"C_Cpp.formatting": "vcFormat",
 		"files.encoding": "utf8bom"

@@ -4,9 +4,6 @@
 
 #include "INIReader.h"
 
-#include <Utilities/INIParser.h>
-#include <Utilities/TemplateDef.h>
-
 class INIBufferReader;
 
 class INIConfig

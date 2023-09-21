@@ -7,10 +7,8 @@
 
 #include <Common/Components/GameObject.h>
 
-#include <Helpers/Macro.h>
 #include <Utilities/Container.h>
 #include <Utilities/Debug.h>
-#include <Utilities/TemplateDef.h>
 
 template <typename TBase, typename TExt>
 class GOExtension

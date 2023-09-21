@@ -4,7 +4,6 @@ void TechnoStatus::OnUpdate()
 {
 	if (!IsDead(pTechno))
 	{
-		Mission mission = pTechno->CurrentMission;
 		switch (pTechno->CurrentMission)
 		{
 		case Mission::Move:
@@ -31,6 +30,8 @@ void TechnoStatus::OnUpdate()
 			}
 			break;
 		}
+
+		OnUpdate_DamageText();
 	}
 }
 
@@ -41,3 +42,20 @@ void TechnoStatus::OnUpdateEnd()
 		this->_lastMission = pTechno->CurrentMission;
 	}
 }
+
+void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+{
+	if (damageState == DamageState::NowDead)
+	{
+		// 被打死时读取弹头设置
+		OnReceiveDamageEnd_DestroyAnim(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
+	}
+	OnReceiveDamageEnd_BlackHole(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
+	OnReceiveDamageEnd_DamageText(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
+	OnReceiveDamageEnd_GiftBox(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
+}
+
+void TechnoStatus::OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
+void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
+void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
+

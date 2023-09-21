@@ -686,6 +686,7 @@ public:
 	TheaterSpecificSHP& operator = (SHPStruct* pSHP)
 	{
 		this->value = pSHP;
+		return *this;
 	}
 
 	operator SHPStruct* ()

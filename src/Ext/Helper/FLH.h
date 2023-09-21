@@ -3,7 +3,9 @@
 #include <cmath>
 #include <string>
 
-#include <YRPP.h>
+#include <GeneralStructures.h>
+#include <Matrix3D.h>
+#include <TechnoClass.h>
 
 // ----------------
 // symmetric round up
@@ -86,3 +88,5 @@ int Dir2FrameIndex(DirStruct dir, int facing);
 DirStruct Radians2Dir(double radians);
 DirStruct Point2Dir(CoordStruct source, CoordStruct target);
 #pragma endregion
+
+double DistanceFrom(CoordStruct sourcePos, CoordStruct targetPos, bool fullAirspace);

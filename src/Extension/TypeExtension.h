@@ -9,7 +9,7 @@
 
 #include <Helpers/Macro.h>
 #include <Utilities/Container.h>
-#include <Utilities/TemplateDef.h>
+#include <Utilities/Debug.h>
 
 template <typename TBase, typename TExt>
 class TypeExtension

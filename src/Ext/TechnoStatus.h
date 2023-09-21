@@ -1,21 +1,19 @@
 ﻿#pragma once
 
-#include <Windows.h>
 #include <string>
 #include <format>
 #include <codecvt>
+#include <vector>
+#include <map>
 
-#include <Extension.h>
 #include <TechnoClass.h>
-#include <Matrix3D.h>
 
 #include <Utilities/Debug.h>
 
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
-#include <Common/INI/INI.h>
-#include <Common/INI/INIConfig.h>
-#include <Common/INI/INIReader.h>
+
+#include <Ext/TechnoType/DamageTextData.h>
 
 enum class DrivingState
 {
@@ -43,8 +41,7 @@ public:
 		if (args)
 		{
 #ifdef DEBUG
-			std::wstring_convert<std::codecvt_utf8<wchar_t>> conver;
-			std::wstring text = std::format(L"{} {} {}", conver.from_bytes(extId), conver.from_bytes(thisId), conver.from_bytes(baseId));
+			std::wstring text = std::format(L"{} {} {}", String2WString(extId), String2WString(thisId), String2WString(baseId));
 			Point2D pos{};
 			CoordStruct location = _owner->GetCoords();
 			TacticalClass::Instance->CoordsToClient(location, &pos);
@@ -53,9 +50,21 @@ public:
 		}
 	}
 
+	bool SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData* &damageTextType);
+	void OrderDamageText(std::string text, CoordStruct location, DamageText* &data);
+
 	virtual void OnUpdate() override;
 
+	void OnUpdate_DamageText();
+
 	virtual void OnUpdateEnd() override;
+
+	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
+
+	void OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
+	void OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
+	void OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
+	void OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 
 	DrivingState drivingState = DrivingState::Moving;
 
@@ -64,6 +73,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->_skipDamageText)
 			.Success();
 	};
 
@@ -81,4 +91,9 @@ public:
 
 private:
 	Mission _lastMission = Mission::Guard;
+
+	// 伤害数字
+	bool _skipDamageText = false;
+	std::map<DamageText*, DamageTextCache> _damageCache{};
+	std::map<DamageText*, DamageTextCache> _repairCache{};
 };

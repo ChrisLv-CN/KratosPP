@@ -14,50 +14,12 @@ using GetDependency = Dependency(*)();
 /// INI操作类，读取配置信息
 /// INI.GetConfig<T>(INI.Rules, section);
 /// </summary>
-class INI
+namespace INI
 {
-public:
-	static void ClearBuffer(EventSystem* sender, Event e, void* args)
-	{
-		s_Rules.clear();
-		s_Art.clear();
-		s_AI.clear();
+#pragma region MakeDependency
+	// ini文件名，文件名列表
+	static std::map<std::string, Dependency> s_Dependency{};
 
-		INIReaderManager::ClearBuffer(sender, e, args);
-	}
-
-	static INIBufferReader* GetSection(GetDependency dependency, const char* section)
-	{
-		return INIReaderManager::FindBufferReader(dependency(), section);
-	}
-
-	template <typename TConfig>
-	static INIConfigReader<TConfig>* GetConfig(GetDependency dependency, const char* section)
-	{
-		return INIReaderManager::FindConfigReader<TConfig>(dependency(), section);
-	}
-
-	static bool HasSection(GetDependency dependency, const char* section)
-	{
-		for (std::string fileName : dependency())
-		{
-			if (INIBufferManager::FindFile(fileName)->HasSection(section))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	static GetDependency Rules;
-	static GetDependency Art;
-	static GetDependency AI;
-
-	static const char* SectionGeneral;
-	static const char* SectionCombatDamage;
-	static const char* SectionAudioVisual;
-
-private:
 	static bool ICaseCompare(std::string_view a, std::string_view b)
 	{
 		if (a.length() == b.length())
@@ -77,9 +39,8 @@ private:
 	/// </summary>
 	/// <param name="iniName"></param>
 	/// <returns></returns>
-	static Dependency GetDependency(std::string_view iniFileName)
+	static Dependency MakeDependency(std::string_view iniFileName)
 	{
-
 		std::string fileName = iniFileName.data();
 		auto it = s_Dependency.find(fileName);
 		if (it != s_Dependency.end())
@@ -120,16 +81,18 @@ private:
 		const std::vector<std::string> d{ fileName };
 		return d;
 	}
+#pragma endregion
 
-	// ini文件名，文件名列表
-	static std::map<std::string, Dependency> s_Dependency;
+#pragma region GetDependency
+	static Dependency s_Rules{};
+	static Dependency s_Art{};
+	static Dependency s_AI{};
 
 	static Dependency GetRules()
 	{
-
 		if (s_Rules.empty())
 		{
-			s_Rules = GetDependency(INIConstant::GetRulesName());
+			s_Rules = MakeDependency(INIConstant::GetRulesName());
 		}
 		return s_Rules;
 	}
@@ -138,7 +101,7 @@ private:
 	{
 		if (s_Art.empty())
 		{
-			s_Art = GetDependency(INIConstant::GetArtName());
+			s_Art = MakeDependency(INIConstant::GetArtName());
 		}
 		return s_Art;
 	}
@@ -147,12 +110,52 @@ private:
 	{
 		if (s_AI.empty())
 		{
-			s_AI = GetDependency(INIConstant::GetAIName());
+			s_AI = MakeDependency(INIConstant::GetAIName());
 		}
 		return s_AI;
 	}
+#pragma endregion
 
-	static Dependency s_Rules;
-	static Dependency s_Art;
-	static Dependency s_AI;
+#pragma region Read INI
+	static void ClearBuffer(EventSystem* sender, Event e, void* args)
+	{
+		s_Rules.clear();
+		s_Art.clear();
+		s_AI.clear();
+
+		INIReaderManager::ClearBuffer(sender, e, args);
+	}
+
+	static INIBufferReader* GetSection(GetDependency dependency, const char* section)
+	{
+		return INIReaderManager::FindBufferReader(dependency(), section);
+	}
+
+	template <typename TConfig>
+	static INIConfigReader<TConfig>* GetConfig(GetDependency dependency, const char* section)
+	{
+		return INIReaderManager::FindConfigReader<TConfig>(dependency(), section);
+	}
+
+	static bool HasSection(GetDependency dependency, const char* section)
+	{
+		for (std::string fileName : dependency())
+		{
+			if (INIBufferManager::FindFile(fileName)->HasSection(section))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+#pragma endregion
+
+	static GetDependency Rules = GetRules;
+	static GetDependency Art = GetArt;
+	static GetDependency AI = GetAI;
+
+	static const char* SectionGeneral = "General";
+	static const char* SectionCombatDamage = "CombatDamage";
+	static const char* SectionAudioVisual = "AudioVisual";
+
 };

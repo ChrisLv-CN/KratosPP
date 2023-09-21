@@ -291,3 +291,16 @@ DirStruct Point2Dir(CoordStruct source, CoordStruct target)
 	return Radians2Dir(radians);
 }
 #pragma endregion
+
+double DistanceFrom(CoordStruct sourcePos, CoordStruct targetPos, bool fullAirspace)
+{
+	if (fullAirspace)
+	{
+		CoordStruct tempSource = sourcePos;
+		CoordStruct tempTarget = targetPos;
+		tempSource.Z = 0;
+		tempTarget.Z = 0;
+		return tempSource.DistanceFrom(tempTarget);
+	}
+	return sourcePos.DistanceFrom(targetPos);
+}

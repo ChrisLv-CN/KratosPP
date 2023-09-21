@@ -29,7 +29,19 @@ public:
 	}
 #endif // DEBUG
 
-	virtual void Awake() override;
+	virtual void Awake() override
+	{
+		this->Component::Awake();
+		_OnAwake();
+	}
+
+	GameObject* GetAwaked()
+	{
+		EnsureAwaked();
+		return this;
+	}
+
+	CMultiDelegate<void> _OnAwake{};
 
 #pragma region save/load
 	template <typename T>
@@ -52,10 +64,6 @@ public:
 		return const_cast<GameObject*>(this)->Serialize(stream);
 	}
 #pragma endregion
-
-	GameObject* GetAwaked();
-
-	CMultiDelegate<void> _OnAwake;
 
 private:
 };

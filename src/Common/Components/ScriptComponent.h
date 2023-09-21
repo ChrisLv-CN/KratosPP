@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <YRPP.h>
+#include <SpecificStructures.h>
+
 #include "Component.h"
 #include "GameObject.h"
 #include "Scriptable.h"
@@ -12,9 +15,6 @@
 #include <Extension/SuperWeaponExt.h>
 
 #include <Ext/Helper.h>
-
-#include <YRPP.h>
-#include <SpecificStructures.h>
 
 template <typename TBase>
 class ScriptComponent : public Component

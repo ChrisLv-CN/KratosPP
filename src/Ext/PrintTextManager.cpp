@@ -1,0 +1,262 @@
+﻿#include "PrintTextManager.h"
+
+Point2D PrintTextManager::_fontSize{ 0, 0 };
+
+Point2D PrintTextManager::GetFontSize()
+{
+	if (_fontSize.IsEmpty())
+	{
+		const wchar_t* temp = L"0123456789+-*/%";
+		RectangleStruct fontRect = Drawing::GetTextDimensions(temp, Point2D::Empty, 0, 0, 0);
+		int x = fontRect.Width / 15;
+		_fontSize.X = x % 2 == 0 ? x : x + 1;
+		_fontSize.Y = fontRect.Height;
+	}
+	return _fontSize;
+}
+
+/**
+ *@brief 在指定位置打印一个文字
+ *
+ * @param text 内容
+ * @param houseColor 颜色
+ * @param data 格式
+ * @param pos 位置
+ * @param pBound 范围
+ * @param pSurface 渲染器
+ * @param isBuilding 是否是建筑
+ */
+void PrintTextManager::Print(std::string text, ColorStruct houseColor, PrintTextData data, Point2D pos, RectangleStruct* pBound, DSurface* pSurface, bool isBuilding)
+{
+	bool noNumbers = data.NoNumbers || data.SHPDrawStyle != SHPDrawStyle::NUMBER;
+	LongText longText = LongText::NONE;
+	auto it = LongTextStrings.find(uppercase(text));
+	if (it != LongTextStrings.end())
+	{
+		longText = it->second;
+		noNumbers = true;
+	}
+	// 渲染
+	if (data.UseSHP)
+	{
+		// 使用Shp显示数字
+		int zeroFrameIndex = data.ZeroFrameIndex; // shp时的起始帧序号
+		Point2D imageSize = data.ImageSize; // shp时的图案大小
+		// 获取字体横向位移值，即图像宽度，同时计算阶梯高度偏移
+		int x = imageSize.X % 2 == 0 ? imageSize.X : imageSize.X + 1;
+		int y = isBuilding ? x / 2 : 0;
+
+		if (noNumbers)
+		{
+			// 使用长字符不使用数字
+			std::string file{};
+			int idx = 0;
+			if (data.SHPDrawStyle == SHPDrawStyle::TEXT)
+			{
+				file = data.SHPFileName;
+				idx = data.ZeroFrameIndex;
+			}
+			else
+			{
+				switch (longText)
+				{
+				case LongText::HIT:
+					file = data.HitSHP;
+					idx = data.HitIndex;
+					break;
+				case LongText::MISS:
+					file = data.MissSHP;
+					idx = data.MissIndex;
+					break;
+				case LongText::CRIT:
+					file = data.CritSHP;
+					idx = data.CritIndex;
+					break;
+				case LongText::GLANCING:
+					file = data.GlancingSHP;
+					idx = data.GlancingIndex;
+					break;
+				case LongText::BLOCK:
+					file = data.BlockSHP;
+					idx = data.BlockIndex;
+					break;
+				default:
+					return;
+				}
+			}
+			if (IsNotNone(file))
+			{
+				if (SHPStruct* pCustomSHP = FileSystem::LoadSHPFile(file.c_str()))
+				{
+					// 显示对应的帧
+					pSurface->DrawSHP(FileSystem::PALETTE_PAL.get(), pCustomSHP, idx, &pos, pBound);
+				}
+
+			}
+		}
+		else
+		{
+			// 拆成单个字符
+			std::vector<char> t{ text.begin(), text.end() };
+			for (char c : t)
+			{
+				int frameIndex = zeroFrameIndex;
+				int frameOffset = 0;
+				// 找到数字或者字符对应的图像帧
+				switch (c)
+				{
+				case '0':
+					frameOffset = 0;
+					break;
+				case '1':
+					frameOffset = 1;
+					break;
+				case '2':
+					frameOffset = 2;
+					break;
+				case '3':
+					frameOffset = 3;
+					break;
+				case '4':
+					frameOffset = 4;
+					break;
+				case '5':
+					frameOffset = 5;
+					break;
+				case '6':
+					frameOffset = 6;
+					break;
+				case '7':
+					frameOffset = 7;
+					break;
+				case '8':
+					frameOffset = 8;
+					break;
+				case '9':
+					frameOffset = 9;
+					break;
+				case '+':
+					frameOffset = 10;
+					break;
+				case '-':
+					frameOffset = 11;
+					break;
+				case '*':
+					frameOffset = 12;
+					break;
+				case '/':
+				case '|':
+					frameOffset = 13;
+					break;
+				case '%':
+					frameOffset = 14;
+					break;
+				}
+				// Logger.Log("{0} - frameIdx = {1}, frameOffset = {2}", Game.CurrentFrame, frameIndex, frameOffset);
+				// 找到对应的帧序号
+				frameIndex += frameOffset;
+				if (IsNotNone(data.SHPFileName))
+				{
+					if (SHPStruct* pCustomSHP = FileSystem::LoadSHPFile(data.SHPFileName.c_str()))
+					{
+						// 显示对应的帧
+						pSurface->DrawSHP(FileSystem::PALETTE_PAL.get(), pCustomSHP, frameIndex, &pos, pBound);
+					}
+				}
+				// 调整下一个字符锚点
+				pos.X += x;
+				pos.Y -= y;
+			}
+		}
+	}
+	else
+	{
+		if (noNumbers && longText == LongText::NONE)
+		{
+			return;
+		}
+		// 使用文字显示数字
+		ColorStruct textColor = data.Color; // 文字时渲染颜色
+		if (data.IsHouseColor && !houseColor == Colors::Empty)
+		{
+			textColor = houseColor;
+		}
+		int x = GetFontSize().X;
+		int y = isBuilding ? GetFontSize().X / 2 : 0;
+		// 拆成单个字符
+		std::vector<char> t{ text.begin(), text.end() };
+		for (char c : t)
+		{
+			std::string cs{ c };
+			// 画阴影
+			if (!data.ShadowOffset.IsEmpty())
+			{
+				Point2D shadow = pos + data.ShadowOffset;
+				pSurface->DrawText(String2WString(cs).c_str(), pBound, &shadow, Drawing::RGB_To_Int(data.ShadowColor));
+			}
+			pSurface->DrawText(String2WString(cs).c_str(), pBound, &pos, Drawing::RGB_To_Int(textColor));
+			// 获取字体横向位移值，即图像宽度，同时计算阶梯高度偏移
+			pos.X += x;
+			pos.Y -= y;
+		}
+	}
+}
+
+void PrintTextManager::Print(std::string text, ColorStruct houseColor, PrintTextData data, Point2D pos, DSurface* pSurface, bool isBuilding)
+{
+	RectangleStruct bound = pSurface->GetRect();
+	Print(text, houseColor, data, pos, &bound, pSurface, isBuilding);
+}
+
+#pragma region Rolling Text
+std::queue<RollingText> PrintTextManager::_rollingTextQueue{};
+
+void PrintTextManager::Clear(EventSystem* sender, Event e, void* args)
+{
+	std::queue<RollingText> empty{};
+	std::swap(empty, _rollingTextQueue);
+}
+
+/**
+ *@brief 添加一条待打印的漂浮文字
+ *
+ * @param text 内容
+ * @param location 起始位置
+ * @param offset 位置偏移
+ * @param rollSpeed 滚动速度
+ * @param duration 持续时间
+ * @param data 格式
+ */
+void PrintTextManager::AddRollingText(std::string text, CoordStruct location, Point2D offset, int rollSpeed, int duration, PrintTextData data)
+{
+	RollingText rollingText{ text, location, offset, rollSpeed, duration, data };
+	_rollingTextQueue.push(rollingText);
+}
+
+void PrintTextManager::PrintRollingText(EventSystem* sender, Event e, void* args)
+{
+	if (args) // RenderLate
+	{
+		DSurface* pSurface = DSurface::Temp;
+		RectangleStruct bound = pSurface->GetRect();
+		bound.Height -= 34;
+		// 打印滚动文字
+		int size = _rollingTextQueue.size();
+		for (int i = 0; i < size; i++)
+		{
+			RollingText rollingText = _rollingTextQueue.front();
+			_rollingTextQueue.pop();
+			// 检查存活以及是否在视野内且没有被黑幕遮挡，然后渲染
+			Point2D pos;
+			if (rollingText.CanPrintAndGetPos(bound, pos))
+			{
+				// 获得锚点位置
+				Point2D pos2 = pos + rollingText.Offset;
+				Print(rollingText.Text, Colors::Empty, rollingText.Data, pos2, &bound, pSurface, false);
+				_rollingTextQueue.push(rollingText);
+			}
+		}
+	}
+}
+#pragma endregion
+

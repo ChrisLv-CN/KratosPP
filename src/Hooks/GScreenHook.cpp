@@ -3,12 +3,14 @@
 #include <exception>
 
 #include <Common/EventSystems/EventSystem.h>
+#include <Ext/PrintTextManager.h>
 
 class GScreenHook
 {
 public:
 	GScreenHook()
 	{
+		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, PrintTextManager::PrintRollingText);
 	}
 };
 
