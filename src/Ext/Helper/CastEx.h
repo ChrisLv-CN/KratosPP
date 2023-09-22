@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include <YRPP.h>
+#include <GeneralStructures.h>
+#include <TacticalClass.h>
 
 template<typename T, typename T2>
 static Vector3D<T> ToVector3D(Vector3D<T2>& vector)
@@ -15,7 +16,21 @@ static CoordStruct ToCoordStruct(Vector3D<T>& vector)
 }
 
 template<typename T>
-static BulletVelocity ToVelocity(Vector3D<T>& vector)
+static Vector3D<double> ToVelocity(Vector3D<T>& vector)
 {
 	return ToVector3D<double>(vector);
+}
+
+static Point2D ToClientPos(CoordStruct& coords)
+{
+	Point2D pos{ 0, 0 };
+	TacticalClass::Instance->CoordsToClient(coords, &pos);
+	return pos;
+}
+
+static Point2D CoordsToScreen(CoordStruct coords)
+{
+	Point2D pos{ 0, 0 };
+	TacticalClass::Instance->CoordsToScreen(&pos, &coords);
+	return pos;
 }

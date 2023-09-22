@@ -122,52 +122,14 @@ public:
 	 */
 	void ResetArcingVelocity(float speedMultiple = 1.0f, bool force = false);
 
-	/**
-	 *@brief 获取一个移动方向上的随机倍率
-	 *
-	 */
-	void ShakeVelocity();
-
-	void ActiveProximity();
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dir) override;
 
-	void InitState_Trajectory_Missile();
-	void InitState_Trajectory_Straight();
-
-	void InitState_BlackHole();
-	void InitState_Bounce();
-	void InitState_DestroySelf();
-	void InitState_ECM();
-	void InitState_GiftBox();
-	void InitState_Paintball();
-	void InitState_Proximity();
-
 	virtual void OnUpdate() override;
-
-	void OnUpdate_Trajectory_Arcing();
-	void OnUpdate_Trajectory_Bounce();
-	void OnUpdate_Trajectory_Straight();
-	void OnUpdate_Trajectory_Decroy();
-
-	void OnUpdate_DestroySelf();
-
-	void OnUpdate_BlackHole();
-	void OnUpdate_ECM();
-	void OnUpdate_GiftBox();
-	void OnUpdate_RecalculateStatus();
-	void OnUpdate_SelfLaunchOrPumpAction();
 
 	virtual void OnUpdateEnd() override;
 
-	void OnUpdateEnd_BlackHole(CoordStruct& sourcePos);
-	void OnUpdateEnd_Proximity(CoordStruct& sourcePos);
-
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
-
-	bool OnDetonate_Bounce(CoordStruct* pCoords);
-	bool OnDetonate_GiftBox(CoordStruct* pCoords);
-	bool OnDetonate_SelfLaunch(CoordStruct* pCoords);
 
 	TechnoClass* pSource = nullptr;
 	HouseClass* pSourceHouse = nullptr;
@@ -242,6 +204,44 @@ private:
 	 * ROT=0 和 Vertical 一起写，是垂直，SHP会变直线导弹，VXL会垂直下掉。\n
 	 */
 	BulletType WhatTypeAmI(BulletClass* pBullet);
+
+	/**
+	 *@brief 获取一个移动方向上的随机倍率
+	 *
+	 */
+	void ShakeVelocity();
+	void ActiveProximity();
+
+	void InitState_Trajectory_Missile();
+	void InitState_Trajectory_Straight();
+
+	void InitState_BlackHole();
+	void InitState_Bounce();
+	void InitState_DestroySelf();
+	void InitState_ECM();
+	void InitState_GiftBox();
+	void InitState_Paintball();
+	void InitState_Proximity();
+
+	void OnUpdate_Trajectory_Arcing();
+	void OnUpdate_Trajectory_Bounce();
+	void OnUpdate_Trajectory_Straight();
+	void OnUpdate_Trajectory_Decroy();
+
+	void OnUpdate_DestroySelf();
+
+	void OnUpdate_BlackHole();
+	void OnUpdate_ECM();
+	void OnUpdate_GiftBox();
+	void OnUpdate_RecalculateStatus();
+	void OnUpdate_SelfLaunchOrPumpAction();
+
+	void OnUpdateEnd_BlackHole(CoordStruct& sourcePos);
+	void OnUpdateEnd_Proximity(CoordStruct& sourcePos);
+
+	bool OnDetonate_Bounce(CoordStruct* pCoords);
+	bool OnDetonate_GiftBox(CoordStruct* pCoords);
+	bool OnDetonate_SelfLaunch(CoordStruct* pCoords);
 
 	// 抛射体类型
 	BulletType _bulletType = BulletType::UNKNOWN;

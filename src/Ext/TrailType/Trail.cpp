@@ -142,7 +142,6 @@ void Trail::RealDrawTrail(CoordStruct currentPos, CoordStruct behindPos, HouseCl
 			// 随机
 			laserColorIndex = type.LaserType.ColorListRandom ? ScenarioClass::Instance->Random.RandomRanged(0, count) : laserColorIndex;
 			ColorStruct color = type.LaserType.ColorList[laserColorIndex];
-			// Logger.Log($"{Game.CurrentFrame} 颜色列表有{count}种颜色，取第{laserColorIndex}个，{color}");
 			if (++laserColorIndex >= count)
 			{
 				laserColorIndex = 0;

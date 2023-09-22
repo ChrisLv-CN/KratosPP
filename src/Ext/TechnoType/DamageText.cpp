@@ -14,7 +14,7 @@ bool TechnoStatus::SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& da
 	return true;
 }
 
-void TechnoStatus::OrderDamageText(std::string text, CoordStruct location, DamageText*& data)
+void TechnoStatus::OrderDamageText(std::wstring text, CoordStruct location, DamageText*& data)
 {
 	int x = _random.RandomRanged(data->XOffset.X, data->XOffset.Y);
 	int y = _random.RandomRanged(data->YOffset.X, data->YOffset.Y) - 15; // 离地高度
@@ -41,7 +41,7 @@ void TechnoStatus::OnUpdate_DamageText()
 	{
 		if (frame - it->second.StartFrame >= it->first->Rate)
 		{
-			std::string text = "-" + std::to_string(it->second.Value);
+			std::wstring text = L"-" + std::to_wstring(it->second.Value);
 			DamageText* data = it->first;
 			OrderDamageText(text, location, data);
 			it = _damageCache.erase(it);
@@ -56,7 +56,7 @@ void TechnoStatus::OnUpdate_DamageText()
 	{
 		if (frame - it->second.StartFrame >= it->first->Rate)
 		{
-			std::string text = "+" + std::to_string(it->second.Value);
+			std::wstring text = L"+" + std::to_wstring(it->second.Value);
 			DamageText* data = it->first;
 			OrderDamageText(text, location, data);
 			it = _repairCache.erase(it);
@@ -79,7 +79,7 @@ void TechnoStatus::OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeCl
 	{
 		_skipDamageText = false;
 	}
-	std::string text{};
+	std::wstring text{};
 	DamageText* data = nullptr;
 	int damage = *pRealDamage;
 	int damageValue = 0;
@@ -90,7 +90,7 @@ void TechnoStatus::OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeCl
 		if (!data->Hidden)
 		{
 			damageValue += damage;
-			text = "-" + std::to_string(damage);
+			text = L"-" + std::to_wstring(damage);
 		}
 	}
 	else if (damage < 0)
@@ -99,7 +99,7 @@ void TechnoStatus::OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeCl
 		if (!data->Hidden)
 		{
 			repairValue += damage;
-			text = "-" + std::to_string(-damage);
+			text = L"-" + std::to_wstring(-damage);
 		}
 	}
 	if (text.empty() || !data || data->Hidden)

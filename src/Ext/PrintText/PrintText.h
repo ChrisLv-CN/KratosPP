@@ -15,26 +15,26 @@ enum class LongText
 	NONE = 0, HIT = 1, MISS = 2, CRIT = 3, GLANCING = 4, BLOCK = 5
 };
 
-static std::map<std::string, LongText> LongTextStrings
+static std::map<std::wstring, LongText> LongTextStrings
 {
-	{ "NONE", LongText::NONE },
-	{ "HIT", LongText::HIT },
-	{ "MISS", LongText::MISS },
-	{ "CRIT", LongText::CRIT },
-	{ "GLANCING", LongText::GLANCING },
-	{ "BLOCK", LongText::BLOCK }
+	{ L"NONE", LongText::NONE },
+	{ L"HIT", LongText::HIT },
+	{ L"MISS", LongText::MISS },
+	{ L"CRIT", LongText::CRIT },
+	{ L"GLANCING", LongText::GLANCING },
+	{ L"BLOCK", LongText::BLOCK }
 };
 
 struct PrintText
 {
 public:
-	std::string Text;
-	CoordStruct Location;
-	Point2D Offset;
-	int Duration;
-	PrintTextData Data;
+	std::wstring Text{};
+	CoordStruct Location = CoordStruct::Empty;
+	Point2D Offset = Point2D::Empty;
+	int Duration = 15;
+	PrintTextData Data{};
 
-	PrintText(std::string text, CoordStruct location, Point2D offset, int duration, PrintTextData data)
+	PrintText(std::wstring text, CoordStruct location, Point2D offset, int duration, PrintTextData data)
 	{
 		this->Text = text;
 		this->Location = location;
@@ -46,7 +46,7 @@ public:
 
 	virtual bool CanPrintAndGetPos(RectangleStruct bound, Point2D& pos)
 	{
-		TacticalClass::Instance->CoordsToClient(Location, &pos);
+		pos = ToClientPos(Location);
 		// 视野内且不在迷雾下
 		return _lifeTimer.InProgress() && InRect(pos, bound) && !InFog(Location);
 	}
@@ -59,7 +59,7 @@ struct RollingText : public PrintText
 public:
 	int RollSpeed;
 
-	RollingText(std::string text, CoordStruct location, Point2D offset, int rollSpeed, int duration, PrintTextData data) : PrintText(text, location, offset, duration, data)
+	RollingText(std::wstring text, CoordStruct location, Point2D offset, int rollSpeed, int duration, PrintTextData data) : PrintText(text, location, offset, duration, data)
 	{
 		this->RollSpeed = rollSpeed;
 	}

@@ -59,6 +59,7 @@
     <ClCompile Include="src\Ext\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoTrail.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
     <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
     <ClCompile Include="src\Hooks\AnimExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimTypeExtHook.cpp" />
@@ -153,6 +154,8 @@
     <ClInclude Include="src\Ext\Helper\StringEx.h" />
     <ClInclude Include="src\Ext\Helper\SurfaceEx.h" />
     <ClInclude Include="src\Ext\Helper\Weapon.h" />
+    <ClInclude Include="src\Ext\TechnoType\DamageTextData.h" />
+    <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />
     <ClInclude Include="src\Ext\TrailType\Trail.h" />
     <ClInclude Include="src\Ext\TrailType\TrailData.h" />
     <ClInclude Include="src\Ext\TrailType\TrailTypeData.h" />

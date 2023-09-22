@@ -26,7 +26,7 @@ Point2D PrintTextManager::GetFontSize()
  * @param pSurface 渲染器
  * @param isBuilding 是否是建筑
  */
-void PrintTextManager::Print(std::string text, ColorStruct houseColor, PrintTextData data, Point2D pos, RectangleStruct* pBound, DSurface* pSurface, bool isBuilding)
+void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTextData data, Point2D pos, RectangleStruct* pBound, DSurface* pSurface, bool isBuilding)
 {
 	bool noNumbers = data.NoNumbers || data.SHPDrawStyle != SHPDrawStyle::NUMBER;
 	LongText longText = LongText::NONE;
@@ -97,62 +97,60 @@ void PrintTextManager::Print(std::string text, ColorStruct houseColor, PrintText
 		else
 		{
 			// 拆成单个字符
-			std::vector<char> t{ text.begin(), text.end() };
-			for (char c : t)
+			for (wchar_t& t : text)
 			{
 				int frameIndex = zeroFrameIndex;
 				int frameOffset = 0;
 				// 找到数字或者字符对应的图像帧
-				switch (c)
+				switch (t)
 				{
-				case '0':
+				case L'0':
 					frameOffset = 0;
 					break;
-				case '1':
+				case L'1':
 					frameOffset = 1;
 					break;
-				case '2':
+				case L'2':
 					frameOffset = 2;
 					break;
-				case '3':
+				case L'3':
 					frameOffset = 3;
 					break;
-				case '4':
+				case L'4':
 					frameOffset = 4;
 					break;
-				case '5':
+				case L'5':
 					frameOffset = 5;
 					break;
-				case '6':
+				case L'6':
 					frameOffset = 6;
 					break;
-				case '7':
+				case L'7':
 					frameOffset = 7;
 					break;
-				case '8':
+				case L'8':
 					frameOffset = 8;
 					break;
-				case '9':
+				case L'9':
 					frameOffset = 9;
 					break;
-				case '+':
+				case L'+':
 					frameOffset = 10;
 					break;
-				case '-':
+				case L'-':
 					frameOffset = 11;
 					break;
-				case '*':
+				case L'*':
 					frameOffset = 12;
 					break;
-				case '/':
-				case '|':
+				case L'/':
+				case L'|':
 					frameOffset = 13;
 					break;
-				case '%':
+				case L'%':
 					frameOffset = 14;
 					break;
 				}
-				// Logger.Log("{0} - frameIdx = {1}, frameOffset = {2}", Game.CurrentFrame, frameIndex, frameOffset);
 				// 找到对应的帧序号
 				frameIndex += frameOffset;
 				if (IsNotNone(data.SHPFileName))
@@ -184,17 +182,16 @@ void PrintTextManager::Print(std::string text, ColorStruct houseColor, PrintText
 		int x = GetFontSize().X;
 		int y = isBuilding ? GetFontSize().X / 2 : 0;
 		// 拆成单个字符
-		std::vector<char> t{ text.begin(), text.end() };
-		for (char c : t)
+		for (wchar_t& t : text)
 		{
-			std::string cs{ c };
+			std::wstring tt{ t }; // 补末尾\0
 			// 画阴影
 			if (!data.ShadowOffset.IsEmpty())
 			{
 				Point2D shadow = pos + data.ShadowOffset;
-				pSurface->DrawText(String2WString(cs).c_str(), pBound, &shadow, Drawing::RGB_To_Int(data.ShadowColor));
+				pSurface->DrawText(tt.c_str(), pBound, &shadow, Drawing::RGB_To_Int(data.ShadowColor));
 			}
-			pSurface->DrawText(String2WString(cs).c_str(), pBound, &pos, Drawing::RGB_To_Int(textColor));
+			pSurface->DrawText(tt.c_str(), pBound, &pos, Drawing::RGB_To_Int(textColor));
 			// 获取字体横向位移值，即图像宽度，同时计算阶梯高度偏移
 			pos.X += x;
 			pos.Y -= y;
@@ -202,7 +199,7 @@ void PrintTextManager::Print(std::string text, ColorStruct houseColor, PrintText
 	}
 }
 
-void PrintTextManager::Print(std::string text, ColorStruct houseColor, PrintTextData data, Point2D pos, DSurface* pSurface, bool isBuilding)
+void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTextData data, Point2D pos, DSurface* pSurface, bool isBuilding)
 {
 	RectangleStruct bound = pSurface->GetRect();
 	Print(text, houseColor, data, pos, &bound, pSurface, isBuilding);
@@ -227,10 +224,13 @@ void PrintTextManager::Clear(EventSystem* sender, Event e, void* args)
  * @param duration 持续时间
  * @param data 格式
  */
-void PrintTextManager::AddRollingText(std::string text, CoordStruct location, Point2D offset, int rollSpeed, int duration, PrintTextData data)
+void PrintTextManager::AddRollingText(std::wstring text, CoordStruct location, Point2D offset, int rollSpeed, int duration, PrintTextData data)
 {
-	RollingText rollingText{ text, location, offset, rollSpeed, duration, data };
-	_rollingTextQueue.push(rollingText);
+	if (!text.empty())
+	{
+		RollingText rollingText{ text, location, offset, rollSpeed, duration, data };
+		_rollingTextQueue.push(rollingText);
+	}
 }
 
 void PrintTextManager::PrintRollingText(EventSystem* sender, Event e, void* args)

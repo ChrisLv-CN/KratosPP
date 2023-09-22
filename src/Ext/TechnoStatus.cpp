@@ -1,5 +1,101 @@
 ﻿#include "TechnoStatus.h"
 
+AbstractType TechnoStatus::GetAbsType()
+{
+	if (_absType == AbstractType::None)
+	{
+		_absType = pTechno->What_Am_I();
+	}
+	return _absType;
+}
+
+
+bool TechnoStatus::IsBuilding()
+{
+	return GetAbsType() == AbstractType::Building;
+}
+bool TechnoStatus::IsInfantry()
+{
+	return GetAbsType() == AbstractType::Infantry;
+}
+bool TechnoStatus::IsUnit()
+{
+	return GetAbsType() == AbstractType::Unit;
+}
+bool TechnoStatus::IsAircraft()
+{
+	return GetAbsType() == AbstractType::Aircraft;
+}
+
+LocoType TechnoStatus::GetLocoType()
+{
+	if (!IsBuilding())
+	{
+		if (_locoType == LocoType::None)
+		{
+			GUID locoId = pTechno->GetTechnoType()->Locomotor;
+			if (locoId == LocomotionClass::CLSIDs::Drive)
+			{
+				return LocoType::Drive;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Hover)
+			{
+				return LocoType::Hover;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Tunnel)
+			{
+				return LocoType::Tunnel;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Walk)
+			{
+				return LocoType::Walk;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Droppod)
+			{
+				return LocoType::Droppod;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Fly)
+			{
+				return LocoType::Fly;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Teleport)
+			{
+				return LocoType::Teleport;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Mech)
+			{
+				return LocoType::Mech;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Ship)
+			{
+				return LocoType::Ship;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Jumpjet)
+			{
+				return LocoType::Jumpjet;
+			}
+			else if (locoId == LocomotionClass::CLSIDs::Rocket)
+			{
+				return LocoType::Rocket;
+			}
+		}
+	}
+	return _locoType;
+}
+
+bool TechnoStatus::IsFly()
+{
+	return GetLocoType() == LocoType::Fly;
+}
+bool TechnoStatus::IsJumpjet()
+{
+	return GetLocoType() == LocoType::Jumpjet;
+}
+bool TechnoStatus::IsShip()
+{
+	return GetLocoType() == LocoType::Ship;
+}
+
 void TechnoStatus::OnUpdate()
 {
 	if (!IsDead(pTechno))
@@ -30,6 +126,11 @@ void TechnoStatus::OnUpdate()
 			}
 			break;
 		}
+		if (!IsBuilding())
+		{
+			FootClass* pFoot = static_cast<FootClass*>(pTechno);
+			_isMoving = pFoot->GetCurrentSpeed() > 0 && pFoot->Locomotor.get()->Is_Moving();
+		}
 
 		OnUpdate_DamageText();
 	}
@@ -40,6 +141,20 @@ void TechnoStatus::OnUpdateEnd()
 	if (!IsDeadOrInvisible(pTechno))
 	{
 		this->_lastMission = pTechno->CurrentMission;
+	}
+}
+
+void TechnoStatus::OnTemporalUpdate(TemporalClass* pTemporal)
+{
+	// for Stand
+	if (pTemporal && pTemporal->Owner)
+	{
+		TechnoClass* pAttacker = pTemporal->Owner;
+		int weaponIdx = pAttacker->SelectWeapon(pTechno);
+		if (weaponIdx < 0 || !pAttacker->IsCloseEnough(pTechno, weaponIdx))
+		{
+			pTemporal->LetGo();
+		}
 	}
 }
 

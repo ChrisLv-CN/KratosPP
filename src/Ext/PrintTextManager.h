@@ -23,9 +23,9 @@ public:
 	 * @param pSurface 渲染器
 	 * @param isBuilding 是否是建筑
 	 */
-	static void Print(std::string text, ColorStruct houseColor, PrintTextData data, Point2D pos, RectangleStruct* pBound, DSurface* pSurface, bool isBuilding = false);
+	static void Print(std::wstring text, ColorStruct houseColor, PrintTextData data, Point2D pos, RectangleStruct* pBound, DSurface* pSurface, bool isBuilding = false);
 
-	static void Print(std::string text, ColorStruct houseColor, PrintTextData data, Point2D pos, DSurface* pSurface, bool isBuilding = false);
+	static void Print(std::wstring text, ColorStruct houseColor, PrintTextData data, Point2D pos, DSurface* pSurface, bool isBuilding = false);
 
 #pragma region Rolling Text
 	static void Clear(EventSystem* sender, Event e, void* args);
@@ -40,7 +40,7 @@ public:
 	 * @param duration 持续时间
 	 * @param data 格式
 	 */
-	static void AddRollingText(std::string text, CoordStruct location, Point2D offset, int rollSpeed, int duration, PrintTextData data);
+	static void AddRollingText(std::wstring text, CoordStruct location, Point2D offset, int rollSpeed, int duration, PrintTextData data);
 
 	static void PrintRollingText(EventSystem* sender, Event e, void* args);
 #pragma endregion
