@@ -1,5 +1,15 @@
 ﻿#include "TechnoStatus.h"
 
+void TechnoStatus::Awake()
+{
+	VoxelShadowScaleInAir = INI::GetSection(INI::Rules, INI::SectionAudioVisual)->Get("VoxelShadowScaleInAir", VoxelShadowScaleInAir);
+	if (IsInfantry())
+	{
+		_isFearless = static_cast<InfantryClass*>(pTechno)->Type->Fearless;
+	}
+	_isVoxel = pTechno->IsVoxel();
+}
+
 AbstractType TechnoStatus::GetAbsType()
 {
 	if (_absType == AbstractType::None)

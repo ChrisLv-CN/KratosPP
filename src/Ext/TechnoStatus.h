@@ -46,6 +46,8 @@ public:
 		this->Name = typeid(this).name();
 	}
 
+	virtual void Awake() override;
+
 	AbstractType GetAbsType();
 
 	bool IsBuilding();
@@ -71,12 +73,18 @@ public:
 
 	DrivingState drivingState = DrivingState::Moving;
 
+	bool DisableVoxelCache = false;
+	float VoxelShadowScaleInAir = 2.0f;
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->VoxelShadowScaleInAir)
 			.Process(this->_skipDamageText)
+			.Process(this->_isVoxel)
+			.Process(this->_isFearless)
 			.Success();
 	};
 

@@ -24,7 +24,7 @@ DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 	// when is loading a save game.
 	if (!IsLoadGame)
 	{
-		GET(TechnoClass *, pItem, ESI);
+		GET(TechnoClass*, pItem, ESI);
 
 		TechnoExt::ExtMap.TryAllocate(pItem);
 	}
@@ -33,7 +33,7 @@ DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 
 DEFINE_HOOK(0x6F4500, TechnoClass_DTOR, 0x5)
 {
-	GET(TechnoClass *, pItem, ECX);
+	GET(TechnoClass*, pItem, ECX);
 
 	TechnoExt::ExtMap.Remove(pItem);
 
@@ -43,8 +43,8 @@ DEFINE_HOOK(0x6F4500, TechnoClass_DTOR, 0x5)
 DEFINE_HOOK_AGAIN(0x70C250, TechnoClass_SaveLoad_Prefix, 0x8)
 DEFINE_HOOK(0x70BF50, TechnoClass_SaveLoad_Prefix, 0x5)
 {
-	GET_STACK(TechnoClass *, pItem, 0x4);
-	GET_STACK(IStream *, pStm, 0x8);
+	GET_STACK(TechnoClass*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8);
 
 	TechnoExt::ExtMap.PrepareStream(pItem, pStm);
 
@@ -71,24 +71,24 @@ DEFINE_HOOK(0x70C264, TechnoClass_Save_Suffix, 0x5)
 
 DEFINE_HOOK(0x6F42ED, TechnoClass_Init, 0xA)
 {
-	GET(TechnoClass *, pThis, ESI);
+	GET(TechnoClass*, pThis, ESI);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component *c)
-							   {if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnInit(); } });
+	pExt->_GameObject->Foreach([](Component* c)
+		{if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnInit(); } });
 
 	return 0;
 }
 
 DEFINE_HOOK(0x6F6CA0, TechnoClass_Put, 0x7)
 {
-	GET(TechnoClass *, pThis, ECX);
-	GET_STACK(CoordStruct *, pCoord, 0x4);
+	GET(TechnoClass*, pThis, ECX);
+	GET_STACK(CoordStruct*, pCoord, 0x4);
 	GET_STACK(DirType, faceDir, 0x8);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([pCoord, faceDir](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnPut(pCoord, faceDir); } });
+	pExt->_GameObject->Foreach([pCoord, faceDir](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnPut(pCoord, faceDir); } });
 
 	return 0;
 }
@@ -97,23 +97,23 @@ DEFINE_HOOK(0x6F6CA0, TechnoClass_Put, 0x7)
 //[Hook(HookType.AresHook, Address = 0x6F6AC0, Size = 5)]
 DEFINE_HOOK(0x6F6AC4, TechnoClass_Remove, 0x5)
 {
-	GET(TechnoClass *, pThis, ECX);
+	GET(TechnoClass*, pThis, ECX);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnRemove(); } });
+	pExt->_GameObject->Foreach([](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnRemove(); } });
 
 	return 0;
 }
 
 DEFINE_HOOK(0x6F9E50, TechnoClass_Update, 0x5)
 {
-	GET(TechnoClass *, pThis, ECX);
+	GET(TechnoClass*, pThis, ECX);
 
 	// Do not search this up again in any functions called here because it is costly for performance - Starkku
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component *c)
-							   { c->OnUpdate(); });
+	pExt->_GameObject->Foreach([](Component* c)
+		{ c->OnUpdate(); });
 
 	return 0;
 }
@@ -121,11 +121,11 @@ DEFINE_HOOK(0x6F9E50, TechnoClass_Update, 0x5)
 DEFINE_HOOK_AGAIN(0x6FAFFD, TechnoClass_UpdateEnd, 0x7)
 DEFINE_HOOK(0x6FAF7A, TechnoClass_UpdateEnd, 0x7)
 {
-	GET(TechnoClass *, pThis, ESI);
+	GET(TechnoClass*, pThis, ESI);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component *c)
-							   { c->OnUpdateEnd(); });
+	pExt->_GameObject->Foreach([](Component* c)
+		{ c->OnUpdateEnd(); });
 
 	return 0;
 }
@@ -136,23 +136,23 @@ DEFINE_HOOK_AGAIN(0x51BBDF, TechnoClass_WarpUpdate, 0x6) // Infantry
 DEFINE_HOOK_AGAIN(0x736321, TechnoClass_WarpUpdate, 0x6) // Unit
 DEFINE_HOOK(0x414CF2, TechnoClass_WarpUpdate, 0x6)		 // Aircraft
 {
-	GET(TechnoClass *, pThis, ESI);
+	GET(TechnoClass*, pThis, ESI);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component *c)
-							   { c->OnWarpUpdate(); });
+	pExt->_GameObject->Foreach([](Component* c)
+		{ c->OnWarpUpdate(); });
 
 	return 0;
 }
 
 DEFINE_HOOK(0x71A88D, TemporalClass_Update, 0x0)
 {
-	GET(TemporalClass *, pTemporal, ESI);
+	GET(TemporalClass*, pTemporal, ESI);
 
-	TechnoClass *pThis = pTemporal->Target;
+	TechnoClass* pThis = pTemporal->Target;
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([pTemporal](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnTemporalUpdate(pTemporal); } });
+	pExt->_GameObject->Foreach([pTemporal](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnTemporalUpdate(pTemporal); } });
 
 	GET(int, eax, EAX);
 	GET(int, ebx, EBX);
@@ -165,12 +165,12 @@ DEFINE_HOOK(0x71A88D, TemporalClass_Update, 0x0)
 
 DEFINE_HOOK(0x71A917, TemporalClass_Update_Eliminate, 0x5)
 {
-	GET(TemporalClass *, pTemporal, ESI);
+	GET(TemporalClass*, pTemporal, ESI);
 
-	TechnoClass *pThis = pTemporal->Target;
+	TechnoClass* pThis = pTemporal->Target;
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([pTemporal](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnTemporalEliminate(pTemporal); } });
+	pExt->_GameObject->Foreach([pTemporal](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnTemporalEliminate(pTemporal); } });
 
 	return 0;
 }
@@ -179,12 +179,12 @@ bool DamageByToyWH = false;
 
 DEFINE_HOOK(0x701900, TechnoClass_ReceiveDamage, 0x6)
 {
-	GET(TechnoClass *, pThis, ECX);
-	LEA_STACK(args_ReceiveDamage *, args, 0x4);
+	GET(TechnoClass*, pThis, ECX);
+	LEA_STACK(args_ReceiveDamage*, args, 0x4);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([args](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnReceiveDamage(args); } });
+	pExt->_GameObject->Foreach([args](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnReceiveDamage(args); } });
 
 	// Toy warhead
 	WarheadTypeExt::TypeData* whData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(args->WH);
@@ -212,41 +212,41 @@ DEFINE_HOOK(0x701F9A, TechnoClass_ReceiveDamage_SkipAllReaction, 0x6)
 
 DEFINE_HOOK(0x701DFF, TechnoClass_ReceiveDamageEnd, 0x7)
 {
-	GET(TechnoClass *, pThis, ESI);
-	GET(int *, pRealDamage, EBX);
-	GET(WarheadTypeClass *, pWH, EBP);
+	GET(TechnoClass*, pThis, ESI);
+	GET(int*, pRealDamage, EBX);
+	GET(WarheadTypeClass*, pWH, EBP);
 	GET(DamageState, damageState, EDI);
-	GET_STACK(ObjectClass *, pAttacker, 0xD4);
-	GET_STACK(HouseClass *, pAttackingHouse, 0xE0);
+	GET_STACK(ObjectClass*, pAttacker, 0xD4);
+	GET_STACK(HouseClass*, pAttackingHouse, 0xE0);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([&](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnReceiveDamageEnd(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse); } });
+	pExt->_GameObject->Foreach([&](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnReceiveDamageEnd(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse); } });
 
 	return 0;
 }
 
 DEFINE_HOOK(0x702050, TechnoClass_ReceiveDamage_Destroy, 0x6)
 {
-	GET(TechnoClass *, pThis, ESI);
+	GET(TechnoClass*, pThis, ESI);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnReceiveDamageDestroy(); } });
+	pExt->_GameObject->Foreach([](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnReceiveDamageDestroy(); } });
 
 	return 0;
 }
 
 DEFINE_HOOK(0x702E9D, TechnoClass_RegisterDestruction, 0x6)
 {
-	GET(TechnoClass *, pThis, ESI);
-	GET(TechnoClass *, pKiller, EDI);
+	GET(TechnoClass*, pThis, ESI);
+	GET(TechnoClass*, pKiller, EDI);
 	GET(int, cost, EBP);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	bool skip = false;
-	pExt->_GameObject->Foreach([&](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnRegisterDestruction(pKiller, cost, skip); } });
+	pExt->_GameObject->Foreach([&](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnRegisterDestruction(pKiller, cost, skip); } });
 
 	// skip the entire veterancy
 	if (skip)
@@ -258,14 +258,14 @@ DEFINE_HOOK(0x702E9D, TechnoClass_RegisterDestruction, 0x6)
 
 DEFINE_HOOK(0x6FC339, TechnoClass_CanFire, 0x6)
 {
-	GET(TechnoClass *, pThis, ESI);
-	GET(WeaponTypeClass *, pWeapon, EDI);
-	GET_STACK(AbstractClass *, pTarget, 0x20 - (-0x4));
+	GET(TechnoClass*, pThis, ESI);
+	GET(WeaponTypeClass*, pWeapon, EDI);
+	GET_STACK(AbstractClass*, pTarget, 0x20 - (-0x4));
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	bool ceaseFire = false;
-	pExt->_GameObject->Foreach([&](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->CanFire(pTarget, pWeapon, ceaseFire); } });
+	pExt->_GameObject->Foreach([&](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->CanFire(pTarget, pWeapon, ceaseFire); } });
 
 	// return FireError::ILLEGAL
 	if (ceaseFire)
@@ -277,53 +277,53 @@ DEFINE_HOOK(0x6FC339, TechnoClass_CanFire, 0x6)
 
 DEFINE_HOOK(0x6FDD50, TechnoClass_Fire, 0x6)
 {
-	GET(TechnoClass *, pThis, ECX);
-	GET_STACK(AbstractClass *, pTarget, 0x4);
+	GET(TechnoClass*, pThis, ECX);
+	GET_STACK(AbstractClass*, pTarget, 0x4);
 	GET_STACK(int, weaponIdx, 0x8);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([&](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnFire(pTarget, weaponIdx); } });
+	pExt->_GameObject->Foreach([&](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnFire(pTarget, weaponIdx); } });
 
 	return 0;
 }
 
 DEFINE_HOOK(0x6F65D1, TechnoClass_DrawHealthBar_Building, 0x6)
 {
-	GET(TechnoClass *, pThis, ESI);
+	GET(TechnoClass*, pThis, ESI);
 	GET(int, barLength, EBX);
-	GET_STACK(Point2D *, pPos, 0x4C - (-0x4));
-	GET_STACK(RectangleStruct *, pBound, 0x4C - (-0x8));
+	GET_STACK(Point2D*, pPos, 0x4C - (-0x4));
+	GET_STACK(RectangleStruct*, pBound, 0x4C - (-0x8));
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([&](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->DrawHealthBar(barLength, pPos, pBound, true); } });
+	pExt->_GameObject->Foreach([&](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->DrawHealthBar(barLength, pPos, pBound, true); } });
 
 	return 0;
 }
 
 DEFINE_HOOK(0x6F683C, TechnoClass_DrawHealthBar_Other, 0x7)
 {
-	GET(TechnoClass *, pThis, ESI);
+	GET(TechnoClass*, pThis, ESI);
 	int barLength = pThis->What_Am_I() == AbstractType::Infantry ? 8 : 17;
-	GET_STACK(Point2D *, pPos, 0x4C - (-0x4));
-	GET_STACK(RectangleStruct *, pBound, 0x4C - (-0x8));
+	GET_STACK(Point2D*, pPos, 0x4C - (-0x4));
+	GET_STACK(RectangleStruct*, pBound, 0x4C - (-0x8));
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([&](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->DrawHealthBar(barLength, pPos, pBound, false); } });
+	pExt->_GameObject->Foreach([&](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->DrawHealthBar(barLength, pPos, pBound, false); } });
 
 	return 0;
 }
 
 DEFINE_HOOK(0x5F45A0, TechnoClass_Select, 0x5)
 {
-	GET(TechnoClass *, pThis, EDI);
+	GET(TechnoClass*, pThis, EDI);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	bool selectable = true;
-	pExt->_GameObject->Foreach([&](Component *c)
-							   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnSelect(selectable); } });
+	pExt->_GameObject->Foreach([&](Component* c)
+		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnSelect(selectable); } });
 
 	if (!selectable)
 	{
@@ -335,26 +335,65 @@ DEFINE_HOOK(0x5F45A0, TechnoClass_Select, 0x5)
 DEFINE_HOOK_AGAIN(0x730DEB, ObjectClass_GuardCommand, 0x6) // Building
 DEFINE_HOOK(0x730E56, ObjectClass_GuardCommand, 0x6)
 {
-	GET(ObjectClass *, pThis, ESI);
+	GET(ObjectClass*, pThis, ESI);
 
 	if (pThis->AbstractFlags == AbstractFlags::Techno)
 	{
-		auto pExt = TechnoExt::ExtMap.Find((TechnoClass *)pThis);
-		pExt->_GameObject->Foreach([](Component *c)
-								   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnGuardCommand(); } });
+		auto pExt = TechnoExt::ExtMap.Find((TechnoClass*)pThis);
+		pExt->_GameObject->Foreach([](Component* c)
+			{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnGuardCommand(); } });
 	}
 	return 0;
 }
 
 DEFINE_HOOK(0x730EEB, ObjectClass_StopCommand, 0x6)
 {
-	GET(ObjectClass *, pThis, ESI);
+	GET(ObjectClass*, pThis, ESI);
 
 	if (pThis->AbstractFlags == AbstractFlags::Techno)
 	{
-		auto pExt = TechnoExt::ExtMap.Find((TechnoClass *)pThis);
-		pExt->_GameObject->Foreach([](Component *c)
-								   { if (auto cc = dynamic_cast<TechnoScript*>(c)) {cc->OnStopCommand(); } });
+		auto pExt = TechnoExt::ExtMap.Find((TechnoClass*)pThis);
+		pExt->_GameObject->Foreach([](Component* c)
+			{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnStopCommand(); } });
 	}
 	return 0;
 }
+
+DEFINE_HOOK(0x6F9039, TechnoClass_Greatest_Threat_HealWeaponRange, 0x5)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	int guardRange = pTechno->GetTechnoType()->GuardRange;
+	WeaponStruct* pirmary = pTechno->GetTurretWeapon();
+	if (pirmary && pirmary->WeaponType)
+	{
+		int range = pirmary->WeaponType->Range;
+		if (range > guardRange)
+		{
+			guardRange = range;
+		}
+	}
+	WeaponStruct* secondary = pTechno->GetWeapon(1);
+	if (secondary && secondary->WeaponType)
+	{
+		int range = secondary->WeaponType->Range;
+		if (range > guardRange)
+		{
+			guardRange = range;
+		}
+	}
+	R->EDI((unsigned int)guardRange);
+	return 0x6F903E;
+}
+
+// Can not shoot to water when NavalTargeting = 6
+DEFINE_HOOK(0x6FC833, TechnoClass_NavalTargeting, 0x7)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	GET(CellClass*, pTarget, EAX);
+	if (pTarget->LandType == LandType::Water && pTechno->GetTechnoType()->NavalTargeting == NavalTargetingType::Naval_None)
+	{
+		return 0x6FC86A;
+	}
+	return 0;
+}
+

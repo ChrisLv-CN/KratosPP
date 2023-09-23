@@ -61,6 +61,7 @@
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
     <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
+    <ClCompile Include="src\Hooks\AircraftExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimTypeExtHook.cpp" />
     <ClCompile Include="src\Hooks\BulletExtHook.cpp" />
@@ -77,6 +78,7 @@
     <ClCompile Include="src\Hooks\TechnoExtHook.cpp" />
     <ClCompile Include="src\Hooks\TechnoTypeExtHook.cpp" />
     <ClCompile Include="src\Hooks\TerrainTypeExtHook.cpp" />
+    <ClCompile Include="src\Hooks\UnitExtHook.cpp" />
     <ClCompile Include="src\Hooks\VoxelAnimExtHook.cpp" />
     <ClCompile Include="src\Hooks\VoxelAnimTypeExtHook.cpp" />
     <ClCompile Include="src\Hooks\WarheadTypeExtHook.cpp" />
