@@ -35,8 +35,9 @@ DEFINE_HOOK(0x7067F1, TechnoClass_DrawVxl_DisableCache, 0x6)
 }
 
 #pragma region DrawShadow
-DEFINE_HOOK_AGAIN(0x73C4FF, TechnoClass_DrawShadow, 0x5) // InAir
-DEFINE_HOOK_AGAIN(0x73C595, TechnoClass_DrawShadow, 0x5) // OnGround
+// TODO can't use those Address for Jumpjet's shadow
+// DEFINE_HOOK_AGAIN(0x73C4FF, TechnoClass_DrawShadow, 0x5) // InAir
+// DEFINE_HOOK_AGAIN(0x73C595, TechnoClass_DrawShadow, 0x5) // OnGround
 DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 {
 	GET(TechnoClass*, pTechno, EBP);
