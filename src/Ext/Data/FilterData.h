@@ -1,13 +1,9 @@
 ﻿#pragma once
 
-#include <Ext/Data/FilterData.h>
+#include <string>
+#include <vector>
 
-#include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
-#include <Common/INI/INIreader.h>
-
-#include <YRPP.h>
-
 
 class FilterData : public INIConfig
 {

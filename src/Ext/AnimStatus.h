@@ -15,6 +15,7 @@
 #include <Extension/AnimExt.h>
 #include <Ext/BulletStatus.h>
 #include <Ext/TechnoStatus.h>
+#include <Ext/Data/OffsetData.h>
 
 /// @brief base compoment, save the Techno status
 class AnimStatus : public AnimScript
@@ -25,6 +26,8 @@ public:
 		this->Name = typeid(this).name();
 	}
 
+	void SetOffset(OffsetData data);
+
 	/// @brief 接管伤害制造
 	/// @param isBounce 是否流星、碎片类
 	/// @param bright 弹头闪光
@@ -34,7 +37,27 @@ public:
 	/// @return true=替换成其他的动画
 	bool OverrideExpireAnimOnWater() { return false; };
 
-	TechnoClass* pCreater;
+	virtual void OnUpdate() override;
+
+	void OnUpdate_Visibility();
+	void OnUpdate_Damage();
+	void OnUpdate_SpawnAnims();
+
+	virtual void OnLoop() override;
+
+	void OnLoop_SpawnAnims();
+
+	virtual void OnDone() override;
+
+	void OnDone_SpawnAnims();
+
+	virtual void OnNext(AnimTypeClass* pNext) override;
+
+	void OnNext_SpawnAnims(AnimTypeClass* pNext);
+
+	TechnoClass* pCreater = nullptr;
+	TechnoClass* pAttachOwner = nullptr; // 动画附着的对象
+	CoordStruct Offset = CoordStruct::Empty; // 附着的偏移位置
 
 	virtual void InvalidatePointer(void* ptr) override
 	{
@@ -46,6 +69,9 @@ public:
 	{
 		return stream
 			.Process(this->pCreater)
+			.Process(this->pAttachOwner)
+			.Process(this->Offset)
+			.Process(this->_offsetData)
 			.Success();
 	};
 
@@ -62,4 +88,5 @@ public:
 #pragma endregion
 
 private:
+	OffsetData _offsetData{};
 };

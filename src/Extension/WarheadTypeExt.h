@@ -11,18 +11,18 @@ public:
 	class TypeData : public INIConfig
 	{
 	public:
+		// Ares
+
+		// Kratos
+		bool IsToy = false;
+		bool Lueluelue = false;
+
 		virtual void Read(INIBufferReader* ini) override
 		{
 
 			IsToy = ini->Get("IsToy", IsToy);
 			Lueluelue = ini->Get("Lueluelue", Lueluelue);
 		}
-
-		// Ares
-
-		// Kratos
-		bool IsToy = false;
-		bool Lueluelue = false;
 	};
 
 	static constexpr DWORD Canary = 0x22222222;

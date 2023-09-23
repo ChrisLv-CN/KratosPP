@@ -1,13 +1,21 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
+#include <regex>
 
 #include "INIBuffer.h"
 #include "INIBufferManager.h"
 
+#include <Ext/Helper/StringEx.h>
+
 class INIReader
 {
 public:
+	inline static std::regex Number{ "^\\d+$" };
+	// inline static std::regex PercentFloat{ "^\\d?\\.\\d+$" };
+	// inline static std::regex PercentNumber{ "^\\d+$" };
+	// inline static std::regex Brackets{ "(?is)(?<=\\()[^\\)]+(?=\\))" };
+
 	std::vector<std::string> Dependency{};
 	std::string Section{};
 
@@ -99,4 +107,69 @@ public:
 	{
 		return TryGetList(key.c_str(), outValues);
 	}
+
+#pragma region Special types
+	int GetDir16(std::string key, const int def)
+	{
+		std::string tempDef{ "" };
+		std::string v = Get<std::string>(key, tempDef);
+		if (!IsNotNone(v))
+		{
+			int value = 0;
+			// 是数字格式
+			if (std::regex_match(v, Number))
+			{
+				int buffer = 0;
+				const char* pFmt = "%d";
+				if (sscanf_s(v.c_str(), pFmt, &value) == 1)
+				{
+					value = buffer;
+				}
+				if (value > 15)
+				{
+					return value % 16;
+				}
+			}
+			else
+			{
+				std::string dirStr = uppercase(v);
+				if (dirStr == "N" || dirStr == "NORTH")
+				{
+					value = 0;
+				}
+				else if (dirStr == "NE" || dirStr == "NORTHEAST")
+				{
+					value = 2;
+				}
+				else if (dirStr == "E" || dirStr == "EAST")
+				{
+					value = 4;
+				}
+				else if (dirStr == "SE" || dirStr == "SOUTHEAST")
+				{
+					value = 6;
+				}
+				else if (dirStr == "S" || dirStr == "SOUTH")
+				{
+					value = 8;
+				}
+				else if (dirStr == "SW" || dirStr == "SOUTHWEST")
+				{
+					value = 10;
+				}
+				else if (dirStr == "W" || dirStr == "WEST")
+				{
+					value = 12;
+				}
+				else if (dirStr == "NW" || dirStr == "NORTHWEST")
+				{
+					value = 14;
+				}
+			}
+			return value;
+		}
+		return def;
+	}
+#pragma endregion
+
 };

@@ -9,6 +9,6 @@ class INIBufferReader;
 class INIConfig
 {
 public:
-	virtual void Read(INIBufferReader *ini) = 0;
+	virtual void Read(INIBufferReader* ini) = 0;
 
 };

@@ -6,7 +6,7 @@
 class CombatDamageData : public INIConfig
 {
 public:
-	virtual void Read(INIBufferReader *ini) override
+	virtual void Read(INIBufferReader* ini) override
 	{
 		this->AllowAnimDamageTakeOverByKratos = ini->Get("AllowAnimDamageTakeOverByKratos", AllowAnimDamageTakeOverByKratos);
 		this->AllowDamageIfDebrisHitWater = ini->Get("AllowDamageIfDebrisHitWater", AllowDamageIfDebrisHitWater);
@@ -35,7 +35,7 @@ public:
 class CombatDamage
 {
 public:
-	static CombatDamageData *Data()
+	static CombatDamageData* Data()
 	{
 		if (!_data)
 		{
@@ -45,13 +45,13 @@ public:
 	};
 
 private:
-	static CombatDamageData *_data;
+	static CombatDamageData* _data;
 };
 
 class AudioVisualData : public INIConfig
 {
 public:
-	virtual void Read(INIBufferReader *ini) override
+	virtual void Read(INIBufferReader* ini) override
 	{
 		this->AllowMakeVoxelDebrisByKratos = ini->Get("AllowMakeVoxelDebrisByKratos", AllowMakeVoxelDebrisByKratos);
 	}
@@ -62,7 +62,7 @@ public:
 class AudioVisual
 {
 public:
-	static AudioVisualData *Data()
+	static AudioVisualData* Data()
 	{
 		if (!_data)
 		{
@@ -72,5 +72,5 @@ public:
 	};
 
 private:
-	static AudioVisualData *_data;
+	static AudioVisualData* _data;
 };

@@ -1,6 +1,9 @@
 ﻿#include "FLH.h"
-#include <Ext/Helper/CastEx.h>
 
+#include <LocomotionClass.h>
+#include <JumpjetLocomotionClass.h>
+
+#include <Ext/Helper/CastEx.h>
 #include <Common/INI/INI.h>
 
 // ----------------
@@ -166,6 +169,94 @@ CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isO
 		}
 	}
 	return source;
+}
+#pragma endregion
+
+#pragma region RelativeLocation
+DirStruct GetRelativeDir(TechnoClass* pMaster, int dir, bool isOnTurret)
+{
+	// turn offset
+	DirStruct targetDir = DirNormalized(dir, 16);
+	FootClass* pFoot = nullptr;
+	if (CastToFoot(pMaster, pFoot))
+	{
+		double targetRad = targetDir.GetRadian();
+		DirStruct sourceDir = pMaster->PrimaryFacing.Current();
+		GUID locoId = pMaster->GetTechnoType()->Locomotor;
+		if (locoId == LocomotionClass::CLSIDs::Jumpjet)
+		{
+			sourceDir = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get())->LocomotionFacing.Current();
+		}
+		if (isOnTurret || pFoot->What_Am_I() == AbstractType::Aircraft) // WWSB Aircraft is a turret!!!
+		{
+			sourceDir = pMaster->GetRealFacing().Current();
+		}
+		double sourceRad = sourceDir.GetRadian();
+		float angle = static_cast<float>(sourceRad - targetRad);
+		targetDir = Radians2Dir(angle);
+	}
+	return targetDir;
+}
+
+LocationMark GetRelativeLocation(ObjectClass* pOwner, OffsetData data, CoordStruct offset)
+{
+	if (offset.IsEmpty())
+	{
+		offset = data.Offset;
+	}
+	CoordStruct sourcePos = pOwner->Location;
+
+	CoordStruct targetPos = sourcePos;
+	DirStruct targetDir{};
+	if (data.IsOnWorld)
+	{
+		// 绑定世界坐标，朝向固定北向
+		targetPos = GetFLHAbsoluteCoords(sourcePos, offset, targetDir);
+	}
+	else
+	{
+		// 绑定单体坐标
+		TechnoClass* pTechno = nullptr;
+		BulletClass* pBullet = nullptr;
+		if (CastToTechno(pOwner, pTechno))
+		{
+			targetDir = GetRelativeDir(pTechno, data.Direction, data.IsOnTurret);
+			targetPos = GetFLHAbsoluteCoords(pTechno, offset, data.IsOnTurret);
+		}
+		else if (CastToBullet(pOwner, pBullet))
+		{
+			// 增加抛射体偏移值取下一帧所在实际位置
+			sourcePos += ToCoordStruct(pBullet->Velocity);
+			// 获取面向
+			targetDir = Point2Dir(sourcePos, pBullet->TargetCoords);
+			targetPos = GetFLHAbsoluteCoords(sourcePos, offset, targetDir);
+		}
+	}
+	return LocationMark{ targetPos, targetDir };
+}
+
+DirStruct GetRelativeDirection(ObjectClass* pOwner, int dir, bool isOnTurret, bool isOnWorld)
+{
+	DirStruct targetDir{};
+	if (!isOnWorld)
+	{
+		// 绑定单体坐标
+		TechnoClass* pTechno = nullptr;
+		BulletClass* pBullet = nullptr;
+		if (CastToTechno(pOwner, pTechno))
+		{
+			targetDir = GetRelativeDir(pTechno, dir, isOnTurret);
+		}
+		else if (CastToBullet(pOwner, pBullet))
+		{
+			// 增加抛射体偏移值取下一帧所在实际位置
+			CoordStruct sourcePos = pBullet->Location;
+			sourcePos += ToCoordStruct(pBullet->Velocity);
+			// 获取面向
+			targetDir = Point2Dir(sourcePos, pBullet->TargetCoords);
+		}
+	}
+	return targetDir;
 }
 #pragma endregion
 

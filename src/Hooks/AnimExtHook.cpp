@@ -1,4 +1,4 @@
-#include <exception>
+﻿#include <exception>
 #include <Windows.h>
 
 #include <Extension.h>
@@ -215,6 +215,25 @@ DEFINE_HOOK(0x4242E1, AnimClass_Trailer_Remap, 0x5)
 	return 0;
 }
 
+DEFINE_HOOK(0x45197B, BuildingClass_UpdateAnim_SetOwner, 0x6)
+{
+	GET(AnimClass *, pThis, EBP);
+	if (pThis)
+	{
+		GET(TechnoClass*, pBuilding, ESI);
+		SetAnimOwner(pThis, pBuilding);
+		// Building Anim is not attach to the building
+		AnimStatus* status = nullptr;
+		if (TryGetStatus<AnimExt>(pThis, status))
+		{
+			GET(CoordStruct*, pOffset, EBX);
+			status->Offset = *pOffset;
+			status->pAttachOwner = pBuilding;
+			status->pCreater = pBuilding;
+		}
+	}
+	return 0;
+}
 #pragma endregion
 
 #pragma region AnimType Damage

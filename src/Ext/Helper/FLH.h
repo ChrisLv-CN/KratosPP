@@ -5,7 +5,18 @@
 
 #include <GeneralStructures.h>
 #include <Matrix3D.h>
+#include <ObjectClass.h>
+#include <BulletClass.h>
 #include <TechnoClass.h>
+
+#include <Ext/Data/OffsetData.h>
+
+struct LocationMark
+{
+public:
+	CoordStruct Location;
+	DirStruct Dir;
+};
 
 // ----------------
 // symmetric round up
@@ -41,6 +52,13 @@ CoordStruct GetFLHAbsoluteCoords(CoordStruct source, CoordStruct flh, DirStruct 
 
 // reversed from 6F3D60
 CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isOnTurret, int flipY = 1, CoordStruct turretOffset = CoordStruct::Empty);
+#pragma endregion
+
+#pragma region RelativeLocation
+DirStruct GetRelativeDir(TechnoClass* pMaster, int dir, bool isOnTurret);
+
+LocationMark GetRelativeLocation(ObjectClass* pOwner, OffsetData data, CoordStruct offset = CoordStruct::Empty);
+DirStruct GetRelativeDirection(ObjectClass* pOwner, int dir = 0, bool isOnTurret = false, bool isOnWorld = false);
 #pragma endregion
 
 #pragma region ForwardFLH
