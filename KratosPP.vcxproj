@@ -69,6 +69,7 @@
     <ClCompile Include="src\Hooks\EBoltExtHook.cpp" />
     <ClCompile Include="src\Hooks\GeneralHook.cpp" />
     <ClCompile Include="src\Hooks\GScreenHook.cpp" />
+    <ClCompile Include="src\Hooks\InfantryExtHook.cpp" />
     <ClCompile Include="src\Hooks\KratosHook.cpp" />
     <ClCompile Include="src\Hooks\LaserDrawHook.cpp" />
     <ClCompile Include="src\Hooks\MapExtHook.cpp" />

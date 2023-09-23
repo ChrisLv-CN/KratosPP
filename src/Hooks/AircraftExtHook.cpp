@@ -15,23 +15,21 @@
 #include <Common/Components/Component.h>
 #include <Common/Components/ScriptComponent.h>
 
-DEFINE_HOOK(0x7067F1, TechnoClass_DrawVxl_DisableCache, 0x6)
+DEFINE_HOOK(0x639DD8, PlanningManager_AllowAircraftsWaypoint, 0x5)
 {
-	GET(unsigned int, esi, ESI);
-	GET(unsigned int, eax, EAX);
-
-	if (esi != eax)
+	GET(TechnoClass*, pTechno, ESI);
+	switch (pTechno->What_Am_I())
 	{
-		GET(TechnoClass*, pTechno, ECX);
-		TechnoStatus* status = nullptr;
-		if (TryGetStatus<TechnoExt>(pTechno, status) && status->DisableVoxelCache)
+	case AbstractType::Infantry:
+	case AbstractType::Unit:
+		return 0x639DDD;
+	case AbstractType::Aircraft:
+		if (!pTechno->GetTechnoType()->Spawned)
 		{
-			// 强制禁用缓存
-			return 0x706875;
+			return 0x639DDD;
 		}
-		return 0x7067F7;
 	}
-	return 0x706879;
+	return 0x639E03;
 }
 
 #pragma region DrawShadow
@@ -55,6 +53,31 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 		Matrix3D matrix = pFoot->Locomotor->Draw_Matrix(nullptr);
 		double scale = Math::cos(abs(matrix.GetYRotation()));
 		pMatrix->ScaleX(static_cast<float>(scale));
+	}
+	return 0;
+}
+#pragma endregion
+
+
+#pragma region Aircraft Attitude
+DEFINE_HOOK(0x4CF3CB, FlyLocomotionClass_4CEFB0, 0x5)
+{
+	// 调整飞机的朝向，有目标时获取目标的朝向，没有目标时获得默认朝向，此时EAX为0
+	// EAX是目标DirStruct的指针
+	// ECX是当前Facing的指针
+	// ESI是飞机的指针的指针
+	GET(DirStruct*, pDirEAX, EAX);
+	if (!pDirEAX)
+	{
+		GET(DirStruct*, pDir, EDX);
+		GET(TechnoClass*, pTechno, ESI);
+		// 如果是Spawnd就全程强制执行
+		// Mission是Enter的普通飞机就不管
+		if (pTechno->IsInAir()
+			&& (pTechno->GetTechnoType()->Spawned || pTechno->CurrentMission != Mission::Enter))
+		{
+			pDir->SetValue(pTechno->SecondaryFacing.Current().GetValue());
+		}
 	}
 	return 0;
 }
