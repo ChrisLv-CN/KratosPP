@@ -70,6 +70,7 @@
     <ClCompile Include="src\Hooks\GScreenHook.cpp" />
     <ClCompile Include="src\Hooks\KratosHook.cpp" />
     <ClCompile Include="src\Hooks\LaserDrawHook.cpp" />
+    <ClCompile Include="src\Hooks\MapExtHook.cpp" />
     <ClCompile Include="src\Hooks\PointerExpireHook.cpp" />
     <ClCompile Include="src\Hooks\SaveGameHook.cpp" />
     <ClCompile Include="src\Hooks\SuperWeaponTypeHook.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="src\Ext\Helper\StringEx.h" />
     <ClInclude Include="src\Ext\Helper\SurfaceEx.h" />
     <ClInclude Include="src\Ext\Helper\Weapon.h" />
+    <ClInclude Include="src\Ext\TechnoType\BuildingRangeData.h" />
     <ClInclude Include="src\Ext\TechnoType\DamageTextData.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />
     <ClInclude Include="src\Ext\TrailType\Trail.h" />
