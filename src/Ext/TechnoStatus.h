@@ -71,8 +71,11 @@ public:
 
 	virtual void DrawHealthBar(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding) override;
 
-	DrivingState drivingState = DrivingState::Moving;
+	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
+	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
+
+	DrivingState drivingState = DrivingState::Moving;
 	bool DisableVoxelCache = false;
 	float VoxelShadowScaleInAir = 2.0f;
 

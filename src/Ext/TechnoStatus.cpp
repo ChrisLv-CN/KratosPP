@@ -1,5 +1,7 @@
 ﻿#include "TechnoStatus.h"
 
+#include <Ext/FireSuperManager.h>
+
 void TechnoStatus::Awake()
 {
 	VoxelShadowScaleInAir = INI::GetSection(INI::Rules, INI::SectionAudioVisual)->Get("VoxelShadowScaleInAir", VoxelShadowScaleInAir);
@@ -184,3 +186,7 @@ void TechnoStatus::OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeC
 void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
 void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
 
+void TechnoStatus::OnFire(AbstractClass* pTarget, int weaponIdx)
+{
+	OnFire_FireSuper(pTarget, weaponIdx);
+}

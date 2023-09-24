@@ -34,4 +34,34 @@ public:
 
 		Direction = reader->GetDir16(title + "Direction", Direction);
 	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->Offset)
+
+			.Process(this->StackOffset)
+			.Process(this->StackGroup)
+			.Process(this->StackGroupOffset)
+
+			.Process(this->IsOnTurret)
+			.Process(this->IsOnWorld)
+
+			.Process(this->Direction)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
+	{
+		INIConfig::Load(stream, registerForChange);
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const override
+	{
+		INIConfig::Save(stream);
+		return const_cast<OffsetData*>(this)->Serialize(stream);
+	}
+#pragma endregion
 };

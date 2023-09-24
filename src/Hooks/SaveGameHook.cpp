@@ -8,6 +8,8 @@
 #include <Common/EventSystems/EventSystem.h>
 #include <Common/INI/INIConstant.h>
 
+#include <Ext/FireSuperManager.h>
+
 class SaveGameHook
 {
 public:
@@ -15,6 +17,8 @@ public:
 	{
 		EventSystems::SaveLoad.AddHandler(Events::SaveGameEvent, INIConstant::SaveGameModeName);
 		EventSystems::SaveLoad.AddHandler(Events::LoadGameEvent, INIConstant::LoadGameModeName);
+		EventSystems::SaveLoad.AddHandler(Events::SaveGameEvent, FireSuperManager::SaveSuperQueue);
+		EventSystems::SaveLoad.AddHandler(Events::LoadGameEvent, FireSuperManager::LoadSuperQueue);
 	}
 };
 

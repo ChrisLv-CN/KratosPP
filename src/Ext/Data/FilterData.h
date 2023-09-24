@@ -83,4 +83,49 @@ public:
 		AffectsEnemies = reader->Get(title + "AffectsEnemies", AffectsEnemies);
 		AffectsCivilian = reader->Get(title + "AffectsCivilian", AffectsCivilian);
 	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->AffectTypes)
+			.Process(this->NotAffectTypes)
+
+			.Process(this->AffectTechno)
+			.Process(this->AffectBuilding)
+			.Process(this->AffectInfantry)
+			.Process(this->AffectUnit)
+			.Process(this->AffectAircraft)
+
+			.Process(this->AffectBullet)
+			.Process(this->AffectMissile)
+			.Process(this->AffectTorpedo)
+			.Process(this->AffectCannon)
+			.Process(this->AffectBomb)
+
+			.Process(this->AffectStand)
+			.Process(this->AffectSelf)
+			.Process(this->AffectInAir)
+			.Process(this->NotAffectMarks)
+			.Process(this->OnlyAffectMarks)
+
+			.Process(this->AffectsOwner)
+			.Process(this->AffectsAllies)
+			.Process(this->AffectsEnemies)
+			.Process(this->AffectsCivilian)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
+	{
+		INIConfig::Load(stream, registerForChange);
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const override
+	{
+		INIConfig::Save(stream);
+		return const_cast<FilterData*>(this)->Serialize(stream);
+	}
+#pragma endregion
 };
