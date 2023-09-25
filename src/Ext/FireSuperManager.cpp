@@ -1,5 +1,7 @@
 ﻿#include "FireSuperManager.h"
 
+#include <Ext/TechnoStatus.h>
+
 void FireSuperManager::Order(HouseClass* pHouse, CoordStruct location, FireSuperEntity data)
 {
 	CellStruct targetPos = CellClass::Coord2Cell(location);

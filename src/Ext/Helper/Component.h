@@ -6,13 +6,17 @@
 #include <Common/INI/INIConfig.h>
 #include <Common/INI/INIReader.h>
 
+#include <Extension/GOExtension.h>
+
+
+
 template <typename TExt, typename TStatus, typename TBase>
 static bool TryGetStatus(TBase* p, TStatus*& status)
 {
 	auto* ext = TExt::ExtMap.Find(p);
 	if (ext)
 	{
-		status = ext->_GameObject->GetComponent<TStatus>();
+		status = ext->GetExtStatus<TStatus>();
 		return status != nullptr;
 	}
 	return false;

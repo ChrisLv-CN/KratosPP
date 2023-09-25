@@ -7,6 +7,7 @@
 #include <Ext/Helper/CastEx.h>
 #include <Ext/Helper/Component.h>
 #include <Ext/Helper/Effect.h>
+#include <Ext/Helper/Finder.h>
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Status.h>

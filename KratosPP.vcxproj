@@ -49,6 +49,7 @@
     <ClCompile Include="src\Ext\Helper\CastEx.cpp" />
     <ClCompile Include="src\Ext\Helper\Component.cpp" />
     <ClCompile Include="src\Ext\Helper\Effect.cpp" />
+    <ClCompile Include="src\Ext\Helper\Finder.cpp" />
     <ClCompile Include="src\Ext\Helper\FLH.cpp" />
     <ClCompile Include="src\Ext\Helper\MathEx.cpp" />
     <ClCompile Include="src\Ext\Helper\Status.cpp" />
@@ -62,6 +63,7 @@
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
     <ClCompile Include="src\Ext\TechnoType\FireSuper.cpp" />
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Paintball.cpp" />
     <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
     <ClCompile Include="src\Hooks\AircraftExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimExtHook.cpp" />
@@ -153,6 +155,7 @@
     <ClInclude Include="src\Ext\Helper\CastEx.h" />
     <ClInclude Include="src\Ext\Helper\Component.h" />
     <ClInclude Include="src\Ext\Helper\Effect.h" />
+    <ClInclude Include="src\Ext\Helper\Finder.h" />
     <ClInclude Include="src\Ext\Helper\FLH.h" />
     <ClInclude Include="src\Ext\Helper\MathEx.h" />
     <ClInclude Include="src\Ext\Helper\Status.h" />

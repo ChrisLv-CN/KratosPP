@@ -24,6 +24,8 @@ bool IsDeadOrInvisibleOrCloaked(TechnoClass* pTechno, bool includeCloaking = tru
 
 double GetROFMulti(TechnoClass* pTechno);
 double GetDamageMulti(TechnoClass* pTechno);
+
+void SetExtraSparkleAnim(TechnoClass* pTechno, AnimClass*& pAnim);
 #pragma endregion
 
 #pragma region BulletClass

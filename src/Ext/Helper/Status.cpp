@@ -108,6 +108,17 @@ double GetDamageMulti(TechnoClass* pTechno)
 	}
 	return (!firepower ? 1.0 : RulesClass::Instance->VeteranCombat) * pTechno->FirepowerMultiplier * ((!pTechno->Owner || !pTechno->Owner->Type) ? 1.0 : pTechno->Owner->Type->FirepowerMult);
 }
+
+void SetExtraSparkleAnim(TechnoClass* pTechno, AnimClass*& pAnim)
+{
+	if (!IsDeadOrInvisible(pTechno) && pAnim)
+	{
+		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+		{
+			status->SetExtraSparkleAnim(pAnim);
+		}
+	}
+}
 #pragma endregion
 
 #pragma endregion BulletClass

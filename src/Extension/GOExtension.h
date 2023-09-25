@@ -97,11 +97,28 @@ public:
 		};
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
+		template <typename TStatus>
+		TStatus* GetExtStatus()
+		{
+			if (_status == nullptr)
+			{
+				_status = m_GameObject.GetComponentInChildren<TStatus>();
+			}
+			return static_cast<TStatus*>(_status);
+		}
+
+		void SetExtStatus(Component* pStatus)
+		{
+			_status = pStatus;
+		}
 	private:
 		//----------------------
 		// GameObject
 		// GO作为实例进行储存
 		GameObject m_GameObject{};
+
+		// Status Component
+		Component* _status = nullptr;
 
 		//----------------------
 		// Scripts

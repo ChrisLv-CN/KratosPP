@@ -12,6 +12,11 @@ void TechnoStatus::Awake()
 	_isVoxel = pTechno->IsVoxel();
 }
 
+void TechnoStatus::Destroy()
+{
+	((TechnoExt::ExtData*)ExtData)->SetExtStatus(nullptr);
+}
+
 AbstractType TechnoStatus::GetAbsType()
 {
 	if (_absType == AbstractType::None)
@@ -108,6 +113,11 @@ bool TechnoStatus::IsShip()
 	return GetLocoType() == LocoType::Ship;
 }
 
+bool TechnoStatus::AmIStand()
+{
+	return false;
+}
+
 void TechnoStatus::OnUpdate()
 {
 	if (!IsDead(pTechno))
@@ -145,6 +155,7 @@ void TechnoStatus::OnUpdate()
 		}
 
 		OnUpdate_DamageText();
+		OnUpdate_Paintball();
 	}
 }
 

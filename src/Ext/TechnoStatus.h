@@ -48,6 +48,8 @@ public:
 
 	virtual void Awake() override;
 
+	virtual void Destroy() override;
+
 	AbstractType GetAbsType();
 
 	bool IsBuilding();
@@ -61,7 +63,13 @@ public:
 	bool IsJumpjet();
 	bool IsShip();
 
+	bool AmIStand();
+
+	void SetExtraSparkleAnim(AnimClass* pAnim);
+
 	virtual void OnUpdate() override;
+
+	void OnUpdate_Paintball();
 
 	virtual void OnUpdateEnd() override;
 
@@ -88,6 +96,10 @@ public:
 			.Process(this->_skipDamageText)
 			.Process(this->_isVoxel)
 			.Process(this->_isFearless)
+
+			.Process(this->_buildingWasBerzerk)
+			.Process(this->_buildingWasEMP)
+			.Process(this->pExtraSparkleAnim)
 			.Success();
 	};
 
@@ -143,4 +155,11 @@ private:
 	// 血条数字
 	inline static HealthTextControlData _healthControlData{}; // 全局默认设置
 	HealthTextData _healthTextData{}; // 个体设置
+
+	// 染色状态
+	bool _buildingWasBerzerk = false;
+	bool _buildingWasEMP = false;
+	bool _buildingWasColor = false;
+	// EMP动画
+	AnimClass* pExtraSparkleAnim = nullptr;
 };
