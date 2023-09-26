@@ -8,10 +8,13 @@
 
 #include <TechnoClass.h>
 
+#include <Utilities/Macro.h>
 #include <Utilities/Debug.h>
 
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
+
+#include <Ext/State/PaintballState.h>
 
 #include <Ext/TechnoType/DamageTextData.h>
 #include <Ext/TechnoType/HealthTextData.h>
@@ -65,7 +68,17 @@ public:
 
 	bool AmIStand();
 
+	unsigned int GetBerserkColor2();
 	void SetExtraSparkleAnim(AnimClass* pAnim);
+
+	void DrawSHP_Paintball(REGISTERS* R);
+	void DrawSHP_Paintball_BuildingAnim(REGISTERS* R);
+	void DrawSHP_Colour(REGISTERS* R);
+	void DrawVXL_Paintball(REGISTERS* R, bool isBuilding);
+
+	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
+
+	void InitState_Paintball();
 
 	virtual void OnUpdate() override;
 
@@ -83,20 +96,37 @@ public:
 
 	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
+	PaintballState PaintballState{};
+
 	DrivingState drivingState = DrivingState::Moving;
 	bool DisableVoxelCache = false;
 	float VoxelShadowScaleInAir = 2.0f;
+
+	bool DisableSelectVoice = false;
+
+	bool Freezing = false;
 
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->PaintballState)
+			.Process(this->_initStateFlag)
+
+			.Process(this->DisableVoxelCache)
 			.Process(this->VoxelShadowScaleInAir)
+
+			.Process(this->DisableSelectVoice)
+
+			.Process(this->Freezing)
+
 			.Process(this->_skipDamageText)
-			.Process(this->_isVoxel)
 			.Process(this->_isFearless)
 
+			.Process(this->_deactivateDimEMP)
+			.Process(this->_deactivateDimPowered)
+			.Process(this->_berserkColor2)
 			.Process(this->_buildingWasBerzerk)
 			.Process(this->_buildingWasEMP)
 			.Process(this->pExtraSparkleAnim)
@@ -126,6 +156,8 @@ private:
 	void PrintHealthText(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding);
 	void OffsetPosAlign(Point2D& pos, int textWidth, int barWidth, PrintTextAlign align, bool isBuilding, bool useSHP);
 
+	void InitState();
+
 	void OnUpdate_DamageText();
 
 	void OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
@@ -137,9 +169,8 @@ private:
 	AbstractType _absType = AbstractType::None;
 	LocoType _locoType = LocoType::None;
 
-	bool _initFlag = false;
+	bool _initStateFlag = false;
 
-	bool _isVoxel = true;
 	bool _isFearless = false;
 
 	Mission _lastMission = Mission::Guard;
@@ -157,6 +188,9 @@ private:
 	HealthTextData _healthTextData{}; // 个体设置
 
 	// 染色状态
+	float _deactivateDimEMP = 0.8f;
+	float _deactivateDimPowered = 0.5f;
+	unsigned int _berserkColor2 = 0;
 	bool _buildingWasBerzerk = false;
 	bool _buildingWasEMP = false;
 	bool _buildingWasColor = false;

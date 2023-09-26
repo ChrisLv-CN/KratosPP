@@ -166,6 +166,9 @@
     <ClInclude Include="src\Ext\PrintTextManager.h" />
     <ClInclude Include="src\Ext\PrintText\PrintText.h" />
     <ClInclude Include="src\Ext\PrintText\PrintTextData.h" />
+    <ClInclude Include="src\Ext\State\PaintballData.h" />
+    <ClInclude Include="src\Ext\State\PaintballState.h" />
+    <ClInclude Include="src\Ext\State\State.h" />
     <ClInclude Include="src\Ext\TechnoStatus.h" />
     <ClInclude Include="src\Ext\TechnoTrail.h" />
     <ClInclude Include="src\Ext\TechnoType\BuildingRangeData.h" />

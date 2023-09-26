@@ -51,8 +51,6 @@ public:
 	std::string SHPFileName = "placerange.shp"; // shp文件名
 	int ZeroFrameIndex = 0; // 平面的起始帧序号
 
-	inline static std::string TITLE = "BuildingRange.";
-
 	virtual void Read(INIBufferReader* reader) override
 	{
 		// 读全局
@@ -70,4 +68,6 @@ public:
 		SHPFileName = reader->Get(TITLE + "SHP", SHPFileName);
 		ZeroFrameIndex = reader->Get(TITLE + "ZeroFrameIndex", ZeroFrameIndex);
 	}
+private:
+	inline static std::string TITLE = "BuildingRange.";
 };

@@ -26,6 +26,7 @@ double GetROFMulti(TechnoClass* pTechno);
 double GetDamageMulti(TechnoClass* pTechno);
 
 void SetExtraSparkleAnim(TechnoClass* pTechno, AnimClass*& pAnim);
+void ActiveRGBMode(TechnoClass* pTechno);
 #pragma endregion
 
 #pragma region BulletClass

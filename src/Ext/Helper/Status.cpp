@@ -119,6 +119,17 @@ void SetExtraSparkleAnim(TechnoClass* pTechno, AnimClass*& pAnim)
 		}
 	}
 }
+
+void ActiveRGBMode(TechnoClass* pTechno)
+{
+	if (!IsDeadOrInvisible(pTechno))
+	{
+		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+		{
+			status->PaintballState.RGBIsPower();
+		}
+	}
+}
 #pragma endregion
 
 #pragma endregion BulletClass

@@ -60,6 +60,7 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 
 
 #pragma region Aircraft Attitude
+/* TODO Can't hook this address
 DEFINE_HOOK(0x4CF3CB, FlyLocomotionClass_4CEFB0, 0x5)
 {
 	// 调整飞机的朝向，有目标时获取目标的朝向，没有目标时获得默认朝向，此时EAX为0
@@ -80,5 +81,5 @@ DEFINE_HOOK(0x4CF3CB, FlyLocomotionClass_4CEFB0, 0x5)
 		}
 	}
 	return 0;
-}
+}*/
 #pragma endregion

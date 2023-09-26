@@ -417,3 +417,66 @@ DEFINE_HOOK(0x7067F1, TechnoClass_DrawVxl_DisableCache, 0x6)
 	}
 	return 0x706879;
 }
+
+DEFINE_HOOK(0x6FC018, TechnoClass_Select_SkipVoice, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->DisableSelectVoice)
+	{
+		return 0x6FC01E;
+	}
+	return 0;
+}
+
+// Can't do anything, like EMP impact
+DEFINE_HOOK(0x70EFD0, TechnoClass_IsUnderEMP_CantMove, 0x6)
+{
+	GET(TechnoClass*, pTechno, ECX);
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->Freezing)
+	{
+		R->AL(true);
+		return 0x70EFDA;
+	}
+	return 0;
+}
+
+#pragma region Draw Colour
+DEFINE_HOOK(0x7063FF, TechnoClass_DrawSHP_Colour, 0x7)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status))
+	{
+		status->DrawSHP_Paintball(R);
+		status->DrawSHP_Colour(R);
+	}
+	return 0;
+}
+
+// vxl turret of building
+DEFINE_HOOK(0x706640, TechnoClass_DrawVXL_Colour_BuildingTurret, 0x5)
+{
+	GET(TechnoClass*, pTechno, ECX);
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->IsBuilding())
+	{
+		status->DrawVXL_Paintball(R, true);
+	}
+	return 0;
+}
+
+// after Techno_DrawVXL change berzerk color
+DEFINE_HOOK(0x73C15F, UnitClass_DrawVXL_Colour, 0x7)
+{
+	GET(TechnoClass*, pTechno, EBP);
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status))
+	{
+		status->DrawVXL_Paintball(R, false);
+	}
+	return 0;
+}
+#pragma endregion
+

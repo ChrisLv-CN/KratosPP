@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <bitset>
+
 #include <GeneralStructures.h>
 #include <TacticalClass.h>
 #include <ObjectClass.h>
@@ -43,11 +45,11 @@ static bool CastToBullet(ObjectClass* pObject, BulletClass*& pBullet)
 {
 	switch (pObject->What_Am_I())
 	{
-		case AbstractType::Bullet:
-			pBullet = dynamic_cast<BulletClass*>(pObject);
-			return pBullet != nullptr;
-		default:
-			return false;
+	case AbstractType::Bullet:
+		pBullet = dynamic_cast<BulletClass*>(pObject);
+		return pBullet != nullptr;
+	default:
+		return false;
 	}
 }
 
@@ -55,14 +57,14 @@ static bool CastToTechno(ObjectClass* pObject, TechnoClass*& pTechno)
 {
 	switch (pObject->What_Am_I())
 	{
-		case AbstractType::Building:
-		case AbstractType::Unit:
-		case AbstractType::Infantry:
-		case AbstractType::Aircraft:
-			pTechno = dynamic_cast<TechnoClass*>(pObject);
-			return pTechno != nullptr;
-		default:
-			return false;
+	case AbstractType::Building:
+	case AbstractType::Unit:
+	case AbstractType::Infantry:
+	case AbstractType::Aircraft:
+		pTechno = dynamic_cast<TechnoClass*>(pObject);
+		return pTechno != nullptr;
+	default:
+		return false;
 	}
 }
 
@@ -76,3 +78,42 @@ static bool CastToFoot(TechnoClass* pTechno, FootClass*& pFoot)
 	return false;
 }
 
+static ColorStruct ToColorAdd(ColorStruct color)
+{
+	BYTE B = color.B >> 3;
+	BYTE G = color.G >> 2;
+	BYTE R = color.R >> 3;
+	return ColorStruct{ R, G, B };
+}
+
+static unsigned int Add2RGB565(ColorStruct colorAdd)
+{
+	// 转2进制字符串
+	std::bitset<5> R2(colorAdd.R);
+	std::bitset<6> G2(colorAdd.G);
+	std::bitset<5> B2(colorAdd.B);
+	// 拼接字符串
+	std::string C = R2.to_string();
+	C += G2.to_string();
+	C += B2.to_string();
+	std::bitset<16> C2(C);
+	return static_cast<unsigned int>(C2.to_ulong());
+}
+
+static unsigned int GetBright(unsigned int bright, float multi)
+{
+	double b = bright;
+	if (multi != 1.0f)
+	{
+		b *= multi;
+		if (b < 0)
+		{
+			b = 0;
+		}
+		else if (b > 2000)
+		{
+			b = 2000;
+		}
+	}
+	return static_cast<unsigned int>(b);
+}

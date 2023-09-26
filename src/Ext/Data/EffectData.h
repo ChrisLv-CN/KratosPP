@@ -22,7 +22,6 @@ inline bool Parser<AffectWho>::TryParse(const char* pValue, AffectWho* outValue)
 		*outValue = AffectWho::ALL;
 		return true;
 	}
-	return false;
 }
 
 class EffectData : public FilterData

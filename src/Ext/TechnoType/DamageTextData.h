@@ -80,7 +80,7 @@ public:
 		Repair.Read(reader, title + "Repair.");
 	}
 private:
-	const std::string TITLE = "DamageText.";
+	inline static std::string TITLE = "DamageText.";
 };
 
 struct DamageTextCache

@@ -90,7 +90,8 @@
 			"ios": "cpp",
 			"iostream": "cpp",
 			"istream": "cpp",
-			"ostream": "cpp"
+			"ostream": "cpp",
+			"regex": "cpp"
 		},
 		"C_Cpp.formatting": "vcFormat",
 		"files.encoding": "utf8bom"

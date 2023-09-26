@@ -9,7 +9,6 @@ void TechnoStatus::Awake()
 	{
 		_isFearless = static_cast<InfantryClass*>(pTechno)->Type->Fearless;
 	}
-	_isVoxel = pTechno->IsVoxel();
 }
 
 void TechnoStatus::Destroy()
@@ -116,6 +115,20 @@ bool TechnoStatus::IsShip()
 bool TechnoStatus::AmIStand()
 {
 	return false;
+}
+
+void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
+{
+	if (!_initStateFlag)
+	{
+		_initStateFlag = true;
+		InitState();
+	}
+}
+
+void TechnoStatus::InitState()
+{
+	InitState_Paintball();
 }
 
 void TechnoStatus::OnUpdate()

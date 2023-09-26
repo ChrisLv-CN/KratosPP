@@ -11,5 +11,10 @@ void TechnoStatus::OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx)
 	fireData.LaunchCount = 10;
 	CoordStruct targetPos = pTarget->GetCoords();
 	FireSuperManager::Order(pTechno->Owner, targetPos, fireData);*/
+	if (pTarget->AbstractFlags & AbstractFlags::Techno)
+	{
+		//TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(dynamic_cast<TechnoClass*>(pTarget));
+		//status->PaintballState.RGBIsPower();
+	}
 }
 

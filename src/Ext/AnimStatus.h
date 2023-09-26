@@ -16,8 +16,8 @@
 #include <Ext/BulletStatus.h>
 #include <Ext/TechnoStatus.h>
 #include <Ext/Data/OffsetData.h>
+#include <Ext/State/PaintballData.h>
 
-/// @brief base compoment, save the Techno status
 class AnimStatus : public AnimScript
 {
 public:
@@ -26,16 +26,31 @@ public:
 		this->Name = typeid(this).name();
 	}
 
+	bool TryGetCreater(TechnoClass*& pTechno);
+
 	void SetOffset(OffsetData data);
 
-	/// @brief 接管伤害制造
-	/// @param isBounce 是否流星、碎片类
-	/// @param bright 弹头闪光
+	/**
+	 *@brief 接管伤害制造
+	 * @param isBounce 是否流星，碎片
+	 * @param bright 弹头闪光
+	*/
 	void Explosion_Damage(bool isBounce = false, bool bright = false) {};
 
-	/// @brief 替换流星、碎片击中水中的动画
-	/// @return true=替换成其他的动画
+	/**
+	 * @brief 替换流星、碎片击中水中的动画
+	 *
+	 * @return true
+	 * @return false
+	 */
 	bool OverrideExpireAnimOnWater() { return false; };
+
+	/**
+	 *@brief 染色
+	 *
+	 * @param R
+	 */
+	void DrawSHP_Paintball(REGISTERS* R);
 
 	virtual void OnUpdate() override;
 
@@ -63,6 +78,7 @@ public:
 	{
 		AnnounceInvalidPointer(this->pCreater, ptr);
 	};
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream)
@@ -89,4 +105,7 @@ public:
 
 private:
 	OffsetData _offsetData{};
+
+	PaintballData* _paintballData = nullptr;
+	PaintballData* GetPaintballData();
 };

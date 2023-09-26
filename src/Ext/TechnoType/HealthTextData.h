@@ -88,8 +88,6 @@ public:
 struct HealthTextData
 {
 public:
-	inline static std::string TITLE = "DamageText.";
-
 	bool IsRead = false;
 
 	bool Hidden = false;
@@ -97,6 +95,8 @@ public:
 	HealthTextEntity Green{ HealthState::Green };
 	HealthTextEntity Yellow{ HealthState::Yellow };
 	HealthTextEntity Red{ HealthState::Red };
+
+	inline static std::string TITLE = "HealthText.";
 
 	HealthTextData()
 	{ }
@@ -144,6 +144,7 @@ public:
 
 		IsRead = true;
 	}
+
 };
 
 struct HealthTextControlData

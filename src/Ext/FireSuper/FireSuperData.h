@@ -78,8 +78,6 @@ public:
 class FireSuperData : public EffectData
 {
 public:
-	inline static std::string TITLE = "FireSuperWeapon.";
-
 	FireSuperEntity Data;
 	FireSuperEntity EliteData;
 
@@ -126,4 +124,7 @@ public:
 		return const_cast<FireSuperData*>(this)->Serialize(stream);
 	}
 #pragma endregion
+
+private:
+	inline static std::string TITLE = "FireSuperWeapon.";
 };
