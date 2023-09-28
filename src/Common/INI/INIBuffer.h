@@ -7,19 +7,21 @@
 #include <typeinfo>
 #include <type_traits>
 
+#include <GeneralDefinitions.h>
 #include <GeneralStructures.h>
 
+#include <Ext/Helper/StringEx.h>
 #include <Utilities/Parser.h>
 
 template <>
-__forceinline bool Parser<std::string>::TryParse(const char* pValue, std::string* outValue)
+inline bool Parser<std::string>::TryParse(const char* pValue, std::string* outValue)
 {
 	outValue->assign(pValue);
 	return true;
 };
 
 template <>
-__forceinline bool Parser<short>::TryParse(const char* pValue, short* outValue)
+inline bool Parser<short>::TryParse(const char* pValue, short* outValue)
 {
 	const char* pFmt = nullptr;
 	if (*pValue == '$') {
@@ -41,6 +43,94 @@ __forceinline bool Parser<short>::TryParse(const char* pValue, short* outValue)
 	}
 	return false;
 };
+
+/*
+enum class Mission : int
+{
+	None = -1,
+	Sleep = 0,
+	Attack = 1,
+	Move = 2,
+	QMove = 3,
+	Retreat = 4,
+	Guard = 5,
+	Sticky = 6,
+	Enter = 7,
+	Capture = 8,
+	Eaten = 9,
+	Harvest = 10,
+	Area_Guard = 11,
+	Return = 12,
+	Stop = 13,
+	Ambush = 14,
+	Hunt = 15,
+	Unload = 16,
+	Sabotage = 17,
+	Construction = 18,
+	Selling = 19,
+	Repair = 20,
+	Rescue = 21,
+	Missile = 22,
+	Harmless = 23,
+	Open = 24,
+	Patrol = 25,
+	ParadropApproach = 26,
+	ParadropOverfly = 27,
+	Wait = 28,
+	AttackMove = 29,
+	SpyplaneApproach = 30,
+	SpyplaneOverfly = 31
+};*/
+
+static std::map<std::string, Mission> MissionTypeStrings
+{
+	{ "none", Mission::None },
+	{ "sleep", Mission::Sleep },
+	{ "attack", Mission::Attack },
+	{ "move", Mission::Move },
+	{ "qmove", Mission::QMove },
+	{ "retreat", Mission::Retreat },
+	{ "sticky", Mission::Sticky },
+	{ "enter", Mission::Enter },
+	{ "capture", Mission::Capture },
+	{ "eaten", Mission::Eaten },
+	{ "harvest", Mission::Harvest },
+	{ "area_guard", Mission::Area_Guard },
+	{ "return", Mission::Return },
+	{ "stop", Mission::Stop },
+	{ "ambush", Mission::Ambush },
+	{ "hunt", Mission::Hunt },
+	{ "unload", Mission::Unload },
+	{ "sabotage", Mission::Sabotage },
+	{ "construction", Mission::Construction },
+	{ "selling", Mission::Selling },
+	{ "repair", Mission::Repair },
+	{ "rescue", Mission::Rescue },
+	{ "missile", Mission::Missile },
+	{ "harmless", Mission::Harmless },
+	{ "open", Mission::Open },
+	{ "patrol", Mission::Patrol },
+	{ "paradropApproach", Mission::ParadropApproach },
+	{ "paradropOverfly", Mission::ParadropOverfly },
+	{ "wait", Mission::Wait },
+	{ "attackMove", Mission::AttackMove },
+	{ "spyplaneApproach", Mission::SpyplaneApproach },
+	{ "spyplaneOverfly", Mission::SpyplaneOverfly }
+};
+
+template <>
+inline bool Parser<Mission>::TryParse(const char* pValue, Mission* outValue)
+{
+	std::string key = lowercase(std::string(pValue));
+	auto it = MissionTypeStrings.find(key);
+	if (it != MissionTypeStrings.end())
+	{
+		outValue = &it->second;
+		return true;
+	}
+	return false;
+}
+
 
 /// <summary>
 /// 储存一个Section在一个ini文件中的全部KV对
