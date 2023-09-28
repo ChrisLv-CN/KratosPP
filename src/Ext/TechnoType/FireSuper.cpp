@@ -1,6 +1,7 @@
 ﻿#include "../TechnoStatus.h"
 
 #include <Ext/FireSuperManager.h>
+#include <Ext/AttachFire.h>
 
 void TechnoStatus::OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx)
 {
@@ -11,10 +12,11 @@ void TechnoStatus::OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx)
 	fireData.LaunchCount = 10;
 	CoordStruct targetPos = pTarget->GetCoords();
 	FireSuperManager::Order(pTechno->Owner, targetPos, fireData);*/
-	if (pTarget->AbstractFlags & AbstractFlags::Techno)
+	AttachFire<TechnoClass, TechnoExt>* attachFire = _gameObject->GetComponent<AttachFire<TechnoClass, TechnoExt>>();
+	if (attachFire)
 	{
-		//TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(dynamic_cast<TechnoClass*>(pTarget));
-		//status->PaintballState.RGBIsPower();
+		attachFire->FireCustomWeapon(pTechno, pTarget, pTechno->Owner, "AngelMissile", { -150, 0, 0 });
 	}
+
 }
 

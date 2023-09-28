@@ -14,41 +14,53 @@ AnimClass* SetAnimOwner(AnimClass* pAnim, HouseClass* pHouse)
 	return pAnim;
 }
 
-AnimClass *SetAnimOwner(AnimClass *pAnim, TechnoClass *pTechno)
+AnimClass* SetAnimOwner(AnimClass* pAnim, TechnoClass* pTechno)
 {
 	pAnim->Owner = pTechno->Owner;
 	return pAnim;
 }
 
-AnimClass *SetAnimOwner(AnimClass *pAnim, BulletClass *pBullet)
+AnimClass* SetAnimOwner(AnimClass* pAnim, BulletClass* pBullet)
 {
-	if (BulletStatus *status = GetStatus<BulletExt, BulletStatus>(pBullet))
+	if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pBullet))
 	{
 		pAnim->Owner = status->pSourceHouse;
 	}
 	return pAnim;
 }
 
-AnimClass *SetAnimCreater(AnimClass *pAnim, TechnoClass *pTechno)
+AnimClass* SetAnimCreater(AnimClass* pAnim, TechnoClass* pTechno)
 {
-	if (AnimStatus *status = GetStatus<AnimExt, AnimStatus>(pAnim))
+	if (AnimStatus* status = GetStatus<AnimExt, AnimStatus>(pAnim))
 	{
 		status->pCreater = pTechno;
 	}
 	return pAnim;
 }
 
-AnimClass *SetAnimCreater(AnimClass *pAnim, BulletClass *pBullet)
+AnimClass* SetAnimCreater(AnimClass* pAnim, BulletClass* pBullet)
 {
-	TechnoClass *Source = pBullet->Owner;
+	TechnoClass* Source = pBullet->Owner;
 	if (!IsDead(Source))
 	{
-		if (AnimStatus *status = GetStatus<AnimExt, AnimStatus>(pAnim))
+		if (AnimStatus* status = GetStatus<AnimExt, AnimStatus>(pAnim))
 		{
 			status->pCreater = Source;
 		}
 	}
 	return pAnim;
+}
+#pragma endregion
+
+#pragma region ObjectClass
+bool IsDead(ObjectClass* pObject)
+{
+	// if pObject is a bullet, the Health maybe < 0
+	return !pObject || !pObject->GetType() || pObject->Health == 0 || !pObject->IsAlive;
+}
+bool IsDeadOrInvisible(ObjectClass* pObject)
+{
+	return IsDead(pObject) || pObject->InLimbo;
 }
 #pragma endregion
 
@@ -133,10 +145,49 @@ void ActiveRGBMode(TechnoClass* pTechno)
 #pragma endregion
 
 #pragma endregion BulletClass
+
+BulletType WhatAmI(BulletClass* pBullet)
+{
+	BulletTypeClass* pType = nullptr;
+	if (pBullet && (pType = pBullet->Type) != nullptr)
+	{
+		if (pType->Inviso)
+		{
+			// Inviso 优先级最高
+			return BulletType::INVISO;
+		}
+		else if (pType->ROT > 0)
+		{
+			// 导弹类型
+			if (pType->ROT == 1)
+			{
+				return BulletType::ROCKET;
+			}
+			return BulletType::MISSILE;
+		}
+		else if (pType->Vertical)
+		{
+			// 炸弹
+			return BulletType::BOMB;
+		}
+		else if (pType->Arcing)
+		{
+			// 最后是Arcing
+			return BulletType::ARCING;
+		}
+		else if (pType->ROT == 0)
+		{
+			// 再然后还有一个ROT=0的抛物线，但不是Arcing
+			return BulletType::NOROT;
+		}
+	}
+	return BulletType::UNKNOWN;
+}
+
 bool IsDead(BulletClass* pBullet)
 {
 	BulletStatus* status = nullptr;
-	return !pBullet || !pBullet->Type || pBullet->Health <= 0 || !pBullet->IsAlive || !TryGetStatus<BulletExt>(pBullet, status) || !status || status->life.IsDetonate;
+	return !pBullet || !pBullet->Type || pBullet->Health == 0 || !pBullet->IsAlive || !TryGetStatus<BulletExt>(pBullet, status) || !status || status->life.IsDetonate;
 }
 
 bool IsDeadOrInvisible(BulletClass* pBullet)
@@ -163,4 +214,15 @@ DirStruct Facing(BulletClass* pBullet, CoordStruct location)
 	return Point2Dir(source, forward);
 }
 
+#pragma endregion
+
+#pragma region HouseClass
+bool IsCivilian(HouseClass* pHouse)
+{
+	return !pHouse || pHouse->Defeated || !pHouse->Type
+		|| pHouse->Type->MultiplayPassive;
+	// || HouseClass.NEUTRAL == pHouse->Type->Base.ID // 自然也算平民吗？
+	// || HouseClass.CIVILIAN == pHouse->Type->Base.ID
+	// || HouseClass.SPECIAL == pHouse->Type->Base.ID; // 被狙掉驾驶员的阵营是Special
+}
 #pragma endregion

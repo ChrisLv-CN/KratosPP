@@ -7,7 +7,7 @@ void FireSuperManager::Order(HouseClass* pHouse, CoordStruct location, FireSuper
 	CellStruct targetPos = CellClass::Coord2Cell(location);
 	HouseClass* house = pHouse == nullptr ? HouseClass::FindSpecial() : pHouse;
 	FireSuper fireSuper{ house, targetPos, data };
-	_superWeaponQueue.push(fireSuper);
+	_superWeapons.emplace_back(fireSuper);
 }
 
 void FireSuperManager::Launch(HouseClass* pHouse, CoordStruct location, FireSuperEntity data)
@@ -18,19 +18,19 @@ void FireSuperManager::Launch(HouseClass* pHouse, CoordStruct location, FireSupe
 
 void FireSuperManager::Clear(EventSystem* sender, Event e, void* args)
 {
-	std::queue<FireSuper> empty{};
-	std::swap(empty, _superWeaponQueue);
+	_superWeapons.clear();
 }
 
 void FireSuperManager::Update(EventSystem* sender, Event e, void* args)
 {
 	if (args == nullptr) // update begin
 	{
-		int size = _superWeaponQueue.size();
+		int size = _superWeapons.size();
 		for (int i = 0; i < size; i++)
 		{
-			FireSuper super = _superWeaponQueue.front();
-			_superWeaponQueue.pop();
+			auto it = _superWeapons.begin();
+			FireSuper super = *it;
+			_superWeapons.erase(it);
 			// 发射武器
 			if (super.CanLaunch())
 			{
@@ -39,7 +39,7 @@ void FireSuperManager::Update(EventSystem* sender, Event e, void* args)
 			}
 			if (!super.IsDone())
 			{
-				_superWeaponQueue.push(super);
+				_superWeapons.emplace_back(super);
 			}
 		}
 	}

@@ -22,7 +22,7 @@ class ScriptComponent : public Component
 public:
 	ScriptComponent(Extension<TBase>* ext)
 	{
-		this->ExtData = ext;
+		this->extData = ext;
 #ifdef DEBUG
 		char t_this[1024];
 		sprintf_s(t_this, "%p", this);
@@ -38,11 +38,11 @@ public:
 #endif // DEBUG
 	}
 
-	Extension<TBase>* ExtData;
+	Extension<TBase>* extData;
 
 	TBase* GetOwner()
 	{
-		return ExtData->OwnerObject();
+		return extData->OwnerObject();
 	}
 	__declspec(property(get = GetOwner)) TBase* _owner;
 
@@ -56,6 +56,20 @@ public:
 	__declspec(property(get = GetRandom)) Randomizer _random;
 };
 
+template <typename TBase, typename TExt>
+class ObjectScript : public ScriptComponent<TBase>, public ITechnoScript, public IBulletScript
+{
+public:
+	ObjectScript(GOExtension<TBase, TExt>::ExtData* ext) : ScriptComponent<TBase>(ext) {}
+
+	virtual GameObject* GetGameObject() override
+	{
+		return ((typename GOExtension<TBase, TExt>::ExtData*)this->extData)->_GameObject;
+	}
+
+	__declspec(property(get = GetOwner)) TBase* pObject;
+};
+
 class TechnoScript : public ScriptComponent<TechnoClass>, public ITechnoScript
 {
 public:
@@ -63,7 +77,7 @@ public:
 
 	virtual GameObject* GetGameObject() override
 	{
-		return ((TechnoExt::ExtData*)ExtData)->_GameObject;
+		return ((TechnoExt::ExtData*)extData)->_GameObject;
 	}
 
 	__declspec(property(get = GetOwner)) TechnoClass* pTechno;
@@ -72,7 +86,10 @@ public:
 class TransformScript : public TechnoScript
 {
 public:
-	TransformScript(TechnoExt::ExtData* ext) : TechnoScript(ext) {}
+	TransformScript(TechnoExt::ExtData* ext) : TechnoScript(ext)
+	{
+		EventSystems::Logic.AddHandler(Events::TypeChangeEvent, this, &TransformScript::Transform);
+	}
 
 	virtual void Awake() override
 	{
@@ -81,7 +98,6 @@ public:
 			_gameObject->RemoveComponent(this);
 			return;
 		}
-		EventSystems::Logic.AddHandler(Events::TypeChangeEvent, this, &TransformScript::Transform);
 	}
 
 	virtual bool OnAwake() { return true; }
@@ -106,7 +122,7 @@ public:
 
 	virtual GameObject* GetGameObject() override
 	{
-		return ((BulletExt::ExtData*)ExtData)->_GameObject;
+		return ((BulletExt::ExtData*)extData)->_GameObject;
 	}
 
 	__declspec(property(get = GetOwner)) BulletClass* pBullet;
@@ -119,7 +135,7 @@ public:
 
 	virtual GameObject* GetGameObject() override
 	{
-		return ((AnimExt::ExtData*)ExtData)->_GameObject;
+		return ((AnimExt::ExtData*)extData)->_GameObject;
 	}
 
 	__declspec(property(get = GetOwner)) AnimClass* pAnim;
@@ -132,7 +148,7 @@ public:
 
 	virtual GameObject* GetGameObject() override
 	{
-		return ((SuperWeaponExt::ExtData*)ExtData)->_GameObject;
+		return ((SuperWeaponExt::ExtData*)extData)->_GameObject;
 	}
 
 	__declspec(property(get = GetOwner)) SuperClass* pSuper;

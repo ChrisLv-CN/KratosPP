@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <string>
-#include <queue>
+#include <vector>
 
 #include <GeneralStructures.h>
 #include <SuperWeaponTypeClass.h>
@@ -45,18 +45,15 @@ public:
 		SaveGameEventArgs* arg = (SaveGameEventArgs*)args;
 		if (arg->IsStartInStream())
 		{
-			int size = _superWeaponQueue.size();
-			ExByteStream saver(sizeof(_superWeaponQueue) + (size * sizeof(FireSuper)));
+			int size = _superWeapons.size();
+			ExByteStream saver(sizeof(_superWeapons) + (size * sizeof(FireSuper)));
 			ExStreamWriter writer(saver);
 			// 写入容器
-			writer.Process(_superWeaponQueue, false);
+			writer.Process(_superWeapons, false);
 			// 写入元素
-			for (int i = 0; i < size; i++)
+			for (FireSuper super : _superWeapons)
 			{
-				FireSuper super = _superWeaponQueue.front();
-				writer.Process(super, false);
-				_superWeaponQueue.pop();
-				_superWeaponQueue.push(super);
+				writer.Process(super);
 			}
 			saver.WriteBlockToStream(arg->Stream);
 		}
@@ -70,18 +67,18 @@ public:
 			loader.ReadBlockFromStream(arg->Stream);
 			ExStreamReader reader(loader);
 			// 写入容器
-			reader.Process(_superWeaponQueue, false);
+			reader.Process(_superWeapons, false);
 			// 写入元素
-			int size = _superWeaponQueue.size();
+			int size = _superWeapons.size();
 			// 清空容器，重新填入
-			std::queue<FireSuper> empty{};
+			std::vector<FireSuper> empty{};
 			for (int i = 0; i < size; i++)
 			{
 				FireSuper super{};
 				reader.Process(super);
-				empty.push(super);
+				empty.emplace_back(super);
 			}
-			std::swap(empty, _superWeaponQueue);
+			std::swap(empty, _superWeapons);
 		}
 	}
 #pragma endregion
@@ -89,5 +86,5 @@ public:
 private:
 	static void RealLaunch(HouseClass* pHouse, CellStruct targetPos, FireSuperEntity data);
 
-	inline static std::queue<FireSuper> _superWeaponQueue{};
+	inline static std::vector<FireSuper> _superWeapons{};
 };

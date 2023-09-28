@@ -20,7 +20,6 @@ public:
 
 	bool RadialFire = false;
 	int RadialAngle = 180;
-
 	bool RadialZ = true;
 
 	bool SimulateBurst = false;
@@ -101,4 +100,147 @@ public:
 		AffectsCivilian = reader->Get(title + "AffectsCivilian", AffectsCivilian);
 	}
 
+	bool CanFireToTarget(AbstractClass* pTarget, ObjectClass* pShooter, TechnoClass* pAttacker, HouseClass* pAttackingHouse,
+		WeaponTypeClass* pWeapon)
+	{
+		bool canFire = true;
+		// 检查发射者的血量
+		if (CheckShooterHP)
+		{
+			double hp = 1;
+			if (pAttacker)
+			{
+				hp = pAttacker->GetHealthPercentage();
+			}
+			else
+			{
+				hp = pShooter->GetHealthPercentage();
+			}
+			if (hp < OnlyFireWhenHP.X || hp > OnlyFireWhenHP.Y)
+			{
+				canFire = false;
+			}
+		}
+		// 检查目标类型
+		if (canFire)
+		{
+			AbstractType targetAbsType = pTarget->What_Am_I();
+			switch (targetAbsType)
+			{
+			case AbstractType::Terrain:
+				// 检查伐木
+				if (!AffectTerrain)
+				{
+					canFire = false;
+				}
+				break;
+			case AbstractType::Cell:
+				// 检查A地板
+				if (CheckAG && !pWeapon->Projectile->AG)
+				{
+					canFire = false;
+				}
+				break;
+			case AbstractType::Building:
+			case AbstractType::Infantry:
+			case AbstractType::Unit:
+			case AbstractType::Aircraft:
+				// 检查类型
+				if (!CanAffectType(targetAbsType))
+				{
+					canFire = false;
+					break;
+				}
+				TechnoClass* pTargetTechno = dynamic_cast<TechnoClass*>(pTarget);
+				// 检查目标血量
+				if (CheckTargetHP)
+				{
+					double hp = pTargetTechno->GetHealthPercentage();
+					if (hp < OnlyFireWhenTargetHP.X || hp > OnlyFireWhenTargetHP.Y)
+					{
+						canFire = false;
+						break;
+					}
+				}
+				// 检查标记
+				/* TODO
+				if (!IsOnMark(pTargetTechno))
+				{
+					canFire = false;
+					break;
+				}*/
+				// 检查名单
+				if (!CanAffectType(pTargetTechno->GetTechnoType()->ID))
+				{
+					canFire = false;
+					break;
+				}
+				// 检查护甲
+				/* TODO
+				if (CheckVersus && pWeapon->Warhead
+					&& (GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWeapon->Warhead)->GetVersus(pTargetTechno->GetTechnoType()->Armor, out bool forceFire, out bool retaliate, out bool passiveAcquire) == 0.0 || !forceFire)
+				)
+				{
+					// 护甲为零，终止发射
+					canFire = false;
+					break;
+				}*/
+				// 检查所属
+				/* TODO
+				HouseClass* pTargetHouse = pTargetTechno->Owner;
+				if (!pAttackingHouse.CanAffectHouse(pTargetHouse, AffectsOwner, AffectsAllies, AffectsEnemies, AffectsCivilian))
+				{
+					// 不可对该所属攻击，终止发射
+					canFire = false;
+				}*/
+				break;
+			}
+		}
+		return canFire;
+	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->UseROF)
+			.Process(this->CheckRange)
+			.Process(this->CheckAA)
+			.Process(this->CheckAG)
+			.Process(this->CheckVersus)
+
+			.Process(this->RadialFire)
+			.Process(this->RadialAngle)
+			.Process(this->RadialZ)
+
+			.Process(this->SimulateBurst)
+			.Process(this->SimulateBurstDelay)
+			.Process(this->SimulateBurstMode)
+
+			.Process(this->Feedback)
+
+			.Process(this->OnlyFireInTransport)
+			.Process(this->UseAlternateFLH)
+
+			.Process(this->CheckShooterHP)
+			.Process(this->OnlyFireWhenHP)
+			.Process(this->CheckTargetHP)
+			.Process(this->OnlyFireWhenTargetHP)
+
+			.Process(this->AffectTerrain)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
+	{
+		FilterData::Load(stream, registerForChange);
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const override
+	{
+		FilterData::Save(stream);
+		return const_cast<AttachFireData*>(this)->Serialize(stream);
+	}
+#pragma endregion
 };

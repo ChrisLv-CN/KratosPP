@@ -107,7 +107,7 @@ void Trail::DrawTrail(CoordStruct currentPos, HouseClass* pHouse, TechnoClass* p
 		{
 			CoordStruct behindPos = lastLocation;
 			double dist = currentPos.DistanceFrom(behindPos);
-			if (dist > type.Distance || forceDraw)
+			if (!isnan(dist) && dist > type.Distance || forceDraw)
 			{
 				if ((CanDraw() && CheckVertical(currentPos, behindPos)) || forceDraw)
 				{

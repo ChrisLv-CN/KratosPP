@@ -37,6 +37,7 @@
     <ClCompile Include="src\Extension\WeaponTypeExt.cpp" />
     <ClCompile Include="src\Ext\AnimStatus.cpp" />
     <ClCompile Include="src\Ext\AttachEffect.cpp" />
+    <ClCompile Include="src\Ext\AttachFire.cpp" />
     <ClCompile Include="src\Ext\BulletStatus.cpp" />
     <ClCompile Include="src\Ext\BulletTrail.cpp" />
     <ClCompile Include="src\Ext\BulletType\ArcingTrajectory.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="src\Extension\WeaponTypeExt.h" />
     <ClInclude Include="src\Ext\AnimStatus.h" />
     <ClInclude Include="src\Ext\AttachEffect.h" />
+    <ClInclude Include="src\Ext\AttachFire.h" />
     <ClInclude Include="src\Ext\BulletStatus.h" />
     <ClInclude Include="src\Ext\BulletTrail.h" />
     <ClInclude Include="src\Ext\BulletType\ProximityData.h" />

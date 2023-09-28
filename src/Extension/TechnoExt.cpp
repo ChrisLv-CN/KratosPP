@@ -1,6 +1,7 @@
 ﻿#include "TechnoExt.h"
 
 #include <Ext/AttachEffect.h>
+#include <Ext/AttachFire.h>
 #include <Ext/TechnoStatus.h>
 #include <Ext/TechnoTrail.h>
 
@@ -13,6 +14,9 @@ void TechnoExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* 
 	globalScripts.emplace_back(status);
 
 	// Other Components
+	AttachFire<TechnoClass, TechnoExt>* attachFire = new AttachFire<TechnoClass, TechnoExt>(ext);
+	globalScripts.emplace_back(attachFire);
+
 	TechnoTrail* trail = new TechnoTrail(ext);
 	globalScripts.emplace_back(trail);
 

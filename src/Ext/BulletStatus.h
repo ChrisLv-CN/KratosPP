@@ -15,21 +15,11 @@
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
 #include <Common/INI/INIReader.h>
+#include <Ext/Helper/CastEx.h>
 #include <Extension/BulletExt.h>
 
 #include "BulletType/ProximityData.h"
 #include "BulletType/TrajectoryData.h"
-
-enum class BulletType
-{
-	UNKNOWN = 0,
-	INVISO = 1,
-	ARCING = 2,
-	MISSILE = 3,
-	ROCKET = 4,
-	NOROT = 5,
-	BOMB = 6
-};
 
 /// @brief 抛射体的生存属性
 struct BulletLife
@@ -194,17 +184,6 @@ public:
 #pragma endregion
 
 private:
-	/** @brief 获取抛射体的轨迹类型.
-	 *
-	 * Inviso优先级最高；\n
-	 * Arcing 和 ROT>0 一起写，无法发射；\n
-	 * Arcing 和 ROT=0 一起写，是抛物线；\n
-	 * Arcing 和 Vertical 一起写，无法发射；\n
-	 * ROT>0 和 Vertical 一起写，是导弹；\n
-	 * ROT=0 和 Vertical 一起写，是垂直，SHP会变直线导弹，VXL会垂直下掉。\n
-	 */
-	BulletType WhatTypeAmI(BulletClass* pBullet);
-
 	/**
 	 *@brief 获取一个移动方向上的随机倍率
 	 *

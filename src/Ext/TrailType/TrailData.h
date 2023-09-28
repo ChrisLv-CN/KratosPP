@@ -82,12 +82,12 @@ inline bool Parser<TileType>::TryParse(const char* pValue, TileType* outValue)
 class TrailData : public INIConfig
 {
 public:
-	CoordStruct FLH;
-	bool IsOnTurret;
+	CoordStruct FLH = CoordStruct::Empty;
+	bool IsOnTurret = false;
 
-	bool CellLimit;
-	std::vector<LandType> OnLandTypes;
-	std::vector<TileType> OnTileTypes;
+	bool CellLimit = false;
+	std::vector<LandType> OnLandTypes{};
+	std::vector<TileType> OnTileTypes{};
 
 	virtual void Read(INIBufferReader* reader) override
 	{ }

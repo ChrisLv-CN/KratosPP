@@ -41,31 +41,48 @@ static Point2D CoordsToScreen(CoordStruct coords)
 	return pos;
 }
 
-static bool CastToBullet(ObjectClass* pObject, BulletClass*& pBullet)
+static bool CastToBullet(AbstractClass* pTarget, BulletClass*& pBullet)
 {
-	switch (pObject->What_Am_I())
+	if (pTarget)
 	{
-	case AbstractType::Bullet:
-		pBullet = dynamic_cast<BulletClass*>(pObject);
-		return pBullet != nullptr;
-	default:
-		return false;
+		switch (pTarget->What_Am_I())
+		{
+		case AbstractType::Bullet:
+			pBullet = dynamic_cast<BulletClass*>(pTarget);
+			return pBullet != nullptr;
+		default:
+			return false;
+		}
 	}
+	return false;
 }
 
+static bool CastToBullet(ObjectClass* pObject, BulletClass*& pBullet)
+{
+	return CastToBullet(dynamic_cast<AbstractClass*>(pObject), pBullet);
+}
+
+static bool CastToTechno(AbstractClass* pTarget, TechnoClass*& pTechno)
+{
+	if (pTarget)
+	{
+		switch (pTarget->What_Am_I())
+		{
+		case AbstractType::Building:
+		case AbstractType::Unit:
+		case AbstractType::Infantry:
+		case AbstractType::Aircraft:
+			pTechno = dynamic_cast<TechnoClass*>(pTarget);
+			return pTechno != nullptr;
+		default:
+			return false;
+		}
+	}
+	return false;
+}
 static bool CastToTechno(ObjectClass* pObject, TechnoClass*& pTechno)
 {
-	switch (pObject->What_Am_I())
-	{
-	case AbstractType::Building:
-	case AbstractType::Unit:
-	case AbstractType::Infantry:
-	case AbstractType::Aircraft:
-		pTechno = dynamic_cast<TechnoClass*>(pObject);
-		return pTechno != nullptr;
-	default:
-		return false;
-	}
+	return CastToTechno(dynamic_cast<AbstractClass*>(pObject), pTechno);
 }
 
 static bool CastToFoot(TechnoClass* pTechno, FootClass*& pFoot)

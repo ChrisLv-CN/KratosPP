@@ -206,12 +206,11 @@ void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTex
 }
 
 #pragma region Rolling Text
-std::queue<RollingText> PrintTextManager::_rollingTextQueue{};
+std::vector<RollingText> PrintTextManager::_rollingTexts{};
 
 void PrintTextManager::Clear(EventSystem* sender, Event e, void* args)
 {
-	std::queue<RollingText> empty{};
-	std::swap(empty, _rollingTextQueue);
+	_rollingTexts.clear();
 }
 
 /**
@@ -229,7 +228,7 @@ void PrintTextManager::AddRollingText(std::wstring text, CoordStruct location, P
 	if (!text.empty())
 	{
 		RollingText rollingText{ text, location, offset, rollSpeed, duration, data };
-		_rollingTextQueue.push(rollingText);
+		_rollingTexts.emplace_back(rollingText);
 	}
 }
 
@@ -241,11 +240,12 @@ void PrintTextManager::PrintRollingText(EventSystem* sender, Event e, void* args
 		RectangleStruct bound = pSurface->GetRect();
 		bound.Height -= 34;
 		// 打印滚动文字
-		int size = _rollingTextQueue.size();
+		int size = _rollingTexts.size();
 		for (int i = 0; i < size; i++)
 		{
-			RollingText rollingText = _rollingTextQueue.front();
-			_rollingTextQueue.pop();
+			auto it = _rollingTexts.begin();
+			RollingText rollingText = *it;
+			_rollingTexts.erase(it);
 			// 检查存活以及是否在视野内且没有被黑幕遮挡，然后渲染
 			Point2D pos;
 			if (rollingText.CanPrintAndGetPos(bound, pos))
@@ -253,7 +253,7 @@ void PrintTextManager::PrintRollingText(EventSystem* sender, Event e, void* args
 				// 获得锚点位置
 				Point2D pos2 = pos + rollingText.Offset;
 				Print(rollingText.Text, Colors::Empty, rollingText.Data, pos2, &bound, pSurface, false);
-				_rollingTextQueue.push(rollingText);
+				_rollingTexts.emplace_back(rollingText);
 			}
 		}
 	}

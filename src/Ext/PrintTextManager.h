@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <string>
-#include <queue>
+#include <vector>
 
 #include <Common/EventSystems/EventSystem.h>
 
@@ -47,5 +47,5 @@ public:
 private:
 	static Point2D _fontSize;
 
-	static std::queue<RollingText> _rollingTextQueue;
+	static std::vector<RollingText> _rollingTexts;
 };

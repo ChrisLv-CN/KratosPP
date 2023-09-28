@@ -85,7 +85,7 @@ void FireWeaponTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* 
 	FireBulletToTarget callback = nullptr, CoordStruct bulletSourcePos = CoordStruct::Empty,
 	bool radialFire = false, int splitAngle = 180, bool radialZ = true);
 
-BulletClass* FireBulletTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
+BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
 	WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos, BulletVelocity velocity = BulletVelocity::Empty);
 
 BulletClass* FireBullet(TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,

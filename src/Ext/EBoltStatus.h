@@ -22,7 +22,7 @@ public:
 
 	virtual GameObject* GetGameObject() override
 	{
-		return ((EBoltExt::ExtData*)ExtData)->_GameObject;
+		return ((EBoltExt::ExtData*)extData)->_GameObject;
 	}
 
 	ColorStruct Color1 = Colors::Empty;

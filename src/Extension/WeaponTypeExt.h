@@ -41,6 +41,35 @@ public:
 			HumanCannon = ini->Get("HumanCannon", HumanCannon);
 		}
 
+#pragma region save/load
+		template <typename T>
+		bool Serialize(T& stream)
+		{
+			return stream
+				.Process(this->Ammo)
+
+				.Process(this->LaserThickness)
+				.Process(this->LaserFade)
+				.Process(this->IsSupported)
+
+				.Process(this->RockerPitch)
+				.Process(this->SelfLaunch)
+				.Process(this->PumpAction)
+				.Process(this->HumanCannon)
+				.Success();
+		};
+
+		virtual bool Load(ExStreamReader& stream, bool registerForChange) override
+		{
+			AttachFireData::Load(stream, registerForChange);
+			return this->Serialize(stream);
+		}
+		virtual bool Save(ExStreamWriter& stream) const override
+		{
+			AttachFireData::Save(stream);
+			return const_cast<TypeData*>(this)->Serialize(stream);
+		}
+#pragma endregion
 	};
 
 	static constexpr DWORD Canary = 0x22222222;

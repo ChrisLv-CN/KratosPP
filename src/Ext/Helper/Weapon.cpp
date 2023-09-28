@@ -224,10 +224,11 @@ void FireWeaponTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* 
 	}
 }
 
-BulletClass* FireBulletTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
+BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
 	WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos, BulletVelocity velocity)
 {
-	if (!pTarget || IsDead(abstract_cast<TechnoClass*>(pTarget)))
+	TechnoClass* pTargetTechno = nullptr;
+	if (!pTarget || (CastToTechno(pTarget, pTargetTechno) && IsDeadOrInvisible(pTargetTechno)))
 	{
 		return nullptr;
 	}

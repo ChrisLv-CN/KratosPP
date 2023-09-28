@@ -3,7 +3,15 @@
 #include <string>
 #include <vector>
 
+#include <GeneralStructures.h>
+#include <HouseClass.h>
+#include <ObjectClass.h>
+#include <TechnoClass.h>
+#include <BulletClass.h>
+
 #include <Common/INI/INIConfig.h>
+#include <Ext/Helper/CastEx.h>
+#include <Ext/Helper/Status.h>
 
 class FilterData : public INIConfig
 {
@@ -83,6 +91,122 @@ public:
 		AffectsEnemies = reader->Get(title + "AffectsEnemies", AffectsEnemies);
 		AffectsCivilian = reader->Get(title + "AffectsCivilian", AffectsCivilian);
 	}
+
+	bool CanAffectHouse(HouseClass* pHouse, HouseClass* pTargetHouse)
+	{
+		return !pHouse || !pTargetHouse || (pTargetHouse == pHouse ? AffectsOwner : (IsCivilian(pTargetHouse) ? AffectsCivilian : pTargetHouse->IsAlliedWith(pHouse) ? AffectsAllies : AffectsEnemies));
+	}
+
+	bool CanAffectType(const char* ID)
+	{
+		if (!NotAffectTypes.empty() && std::find(NotAffectTypes.begin(), NotAffectTypes.end(), ID) != NotAffectTypes.end())
+		{
+			return false;
+		}
+		bool can = AffectTypes.empty();
+		if (!can)
+		{
+			can = std::find(AffectTypes.begin(), AffectTypes.end(), ID) != AffectTypes.end();
+		}
+		return can;
+	}
+
+	bool CanAffectType(AbstractType absType)
+	{
+		switch (absType)
+		{
+		case AbstractType::Building:
+			return AffectBuilding;
+		case AbstractType::Infantry:
+			return AffectInfantry;
+		case AbstractType::Unit:
+			return AffectUnit;
+		case AbstractType::Aircraft:
+			return AffectAircraft;
+		}
+		return false;
+	}
+
+	bool CanAffectType(BulletType bulletType, bool isLevel)
+	{
+		switch (bulletType)
+		{
+		case BulletType::INVISO:
+			return true;
+		case BulletType::ARCING:
+			return AffectCannon;
+		case BulletType::BOMB:
+			return AffectBomb;
+		case BulletType::ROCKET:
+		case BulletType::MISSILE:
+			// 导弹和直线导弹都算Missile
+			if (isLevel)
+			{
+				return AffectTorpedo;
+			}
+			return AffectMissile;
+		}
+		return false;
+	}
+
+	bool CanAffectType(BulletClass* pBullet)
+	{
+		return CanAffectType(pBullet->Type->ID) && CanAffectType(WhatAmI(pBullet), pBullet->Type->Level);
+	}
+
+	bool CanAffectType(TechnoClass* pTechno)
+	{
+		return CanAffectType(pTechno->GetTechnoType()->ID) && CanAffectType(pTechno->What_Am_I());
+	}
+
+	bool CanAffectType(ObjectClass* pObject)
+	{
+		TechnoClass* pTechno = nullptr;
+		BulletClass* pBullet = nullptr;
+		if (CastToTechno(pObject, pTechno))
+		{
+			return CanAffectType(pTechno);
+		}
+		else if (CastToBullet(pObject, pBullet))
+		{
+			return CanAffectType(pBullet);
+		}
+		return false;
+	}
+/* TODO AE标记
+	bool IsOnMark(Pointer<ObjectClass> pObject)
+	{
+		return (null == OnlyAffectMarks || !OnlyAffectMarks.Any())
+			&& (null == NotAffectMarks || !NotAffectMarks.Any())
+			|| (pObject.TryGetAEManager(out AttachEffectScript aeManager) && IsOnMark(aeManager));
+	}
+
+	bool IsOnMark(Pointer<BulletClass> pBullet)
+	{
+		return (null == OnlyAffectMarks || !OnlyAffectMarks.Any())
+			&& (null == NotAffectMarks || !NotAffectMarks.Any())
+			|| (pBullet.TryGetAEManager(out AttachEffectScript aeManager) && IsOnMark(aeManager));
+	}
+
+	bool IsOnMark(Pointer<TechnoClass> pTechno)
+	{
+		return (null == OnlyAffectMarks || !OnlyAffectMarks.Any())
+			&& (null == NotAffectMarks || !NotAffectMarks.Any())
+			|| (pTechno.TryGetAEManager(out AttachEffectScript aeManager) && IsOnMark(aeManager));
+	}
+
+	bool IsOnMark(AttachEffectScript aeManager)
+	{
+		bool hasWhiteList = null != OnlyAffectMarks && OnlyAffectMarks.Any();
+		bool hasBlackList = null != NotAffectMarks && NotAffectMarks.Any();
+		HashSet<string> marks = null;
+		return (!hasWhiteList && !hasBlackList)
+			|| aeManager.TryGetMarks(out marks) ? (
+				(!hasWhiteList || OnlyAffectMarks.Intersect(marks).Count() > 0)
+				&& (!hasBlackList || NotAffectMarks.Intersect(marks).Count() <= 0)
+				) : !hasWhiteList;
+	}
+*/
 
 #pragma region save/load
 	template <typename T>

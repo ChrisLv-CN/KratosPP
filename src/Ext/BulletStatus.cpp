@@ -9,7 +9,7 @@ BulletType BulletStatus::GetBulletType()
 {
 	if (_bulletType == BulletType::UNKNOWN)
 	{
-		_bulletType = WhatTypeAmI(pBullet);
+		_bulletType = WhatAmI(pBullet);
 		if (_bulletType != BulletType::ROCKET && trajectoryData->IsStraight())
 		{
 			_bulletType = BulletType::ROCKET;
@@ -296,46 +296,4 @@ TrajectoryData* BulletStatus::GetTrajectoryData()
 	return _trajectoryData;
 }
 
-
-// ----------------
-// Helper
-// ----------------
-
-BulletType BulletStatus::WhatTypeAmI(BulletClass* pBullet)
-{
-	BulletTypeClass* pType = nullptr;
-	if (pBullet && (pType = pBullet->Type) != nullptr)
-	{
-		if (pType->Inviso)
-		{
-			// Inviso 优先级最高
-			return BulletType::INVISO;
-		}
-		else if (pType->ROT > 0)
-		{
-			// 导弹类型
-			if (pType->ROT == 1)
-			{
-				return BulletType::ROCKET;
-			}
-			return BulletType::MISSILE;
-		}
-		else if (pType->Vertical)
-		{
-			// 炸弹
-			return BulletType::BOMB;
-		}
-		else if (pType->Arcing)
-		{
-			// 最后是Arcing
-			return BulletType::ARCING;
-		}
-		else if (pType->ROT == 0)
-		{
-			// 再然后还有一个ROT=0的抛物线，但不是Arcing
-			return BulletType::NOROT;
-		}
-	}
-	return BulletType::UNKNOWN;
-}
 

@@ -13,7 +13,7 @@ void TechnoStatus::Awake()
 
 void TechnoStatus::Destroy()
 {
-	((TechnoExt::ExtData*)ExtData)->SetExtStatus(nullptr);
+	((TechnoExt::ExtData*)extData)->SetExtStatus(nullptr);
 }
 
 AbstractType TechnoStatus::GetAbsType()
