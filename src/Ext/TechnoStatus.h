@@ -2,13 +2,11 @@
 
 #include <string>
 #include <format>
-#include <codecvt>
 #include <vector>
 #include <map>
 
 #include <TechnoClass.h>
 
-#include <Utilities/Macro.h>
 #include <Utilities/Debug.h>
 
 #include <Common/Components/ScriptComponent.h>

@@ -41,7 +41,9 @@
     <ClCompile Include="src\Ext\BulletStatus.cpp" />
     <ClCompile Include="src\Ext\BulletTrail.cpp" />
     <ClCompile Include="src\Ext\BulletType\ArcingTrajectory.cpp" />
+    <ClCompile Include="src\Ext\BulletType\GiftBox.cpp" />
     <ClCompile Include="src\Ext\BulletType\MissileTrajectory.cpp" />
+    <ClCompile Include="src\Ext\BulletType\Proximity.cpp" />
     <ClCompile Include="src\Ext\BulletType\Proximity.cpp" />
     <ClCompile Include="src\Ext\BulletType\StraightTrajectory.cpp" />
     <ClCompile Include="src\Ext\CommonStatus.cpp" />

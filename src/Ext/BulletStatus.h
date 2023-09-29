@@ -2,24 +2,26 @@
 
 #include <string>
 #include <format>
-#include <codecvt>
+#include <vector>
+#include <map>
 
-#include <Extension.h>
+#include <BulletClass.h>
 #include <TechnoClass.h>
 
 #include <Utilities/Debug.h>
-#include <Utilities/Swizzle.h>
 
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
 #include <Common/INI/INIReader.h>
-#include <Ext/Helper/CastEx.h>
-#include <Extension/BulletExt.h>
 
-#include "BulletType/ProximityData.h"
-#include "BulletType/TrajectoryData.h"
+#include <Ext/Helper/CastEx.h>
+
+#include <Ext/State/GiftBoxState.h>
+
+#include <Ext/BulletType/ProximityData.h>
+#include <Ext/BulletType/TrajectoryData.h>
 
 /// @brief 抛射体的生存属性
 struct BulletLife
@@ -121,6 +123,8 @@ public:
 
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
+	GiftBoxState GiftBoxState{};
+
 	TechnoClass* pSource = nullptr;
 	HouseClass* pSourceHouse = nullptr;
 
@@ -150,10 +154,13 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->GiftBoxState)
+
 			.Process(this->pSource)
 			.Process(this->pSourceHouse)
 			.Process(this->life)
 			.Process(this->damage)
+
 			.Process(this->SubjectToGround)
 			.Process(this->IsBounceSplit)
 			.Process(this->pFakeTarget)
@@ -190,6 +197,10 @@ private:
 	 */
 	void ShakeVelocity();
 	void ActiveProximity();
+
+	// 礼物盒
+	bool IsOnMark_GiftBox();
+	void ReleaseGift(std::vector<std::string> gifts, GiftBoxData data);
 
 	void InitState_Trajectory_Missile();
 	void InitState_Trajectory_Straight();
