@@ -89,7 +89,7 @@ static bool CastToFoot(TechnoClass* pTechno, FootClass*& pFoot)
 {
 	if (pTechno->AbstractFlags & AbstractFlags::Foot)
 	{
-		pFoot = dynamic_cast<FootClass*>(pTechno);
+		pFoot = static_cast<FootClass*>(pTechno);
 		return pFoot != nullptr;
 	}
 	return false;

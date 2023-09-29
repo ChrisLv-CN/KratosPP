@@ -9,6 +9,7 @@
 #include <Ext/Helper/Effect.h>
 #include <Ext/Helper/Finder.h>
 #include <Ext/Helper/FLH.h>
+#include <Ext/Helper/Gift.h>
 #include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Status.h>
 #include <Ext/Helper/StringEx.h>

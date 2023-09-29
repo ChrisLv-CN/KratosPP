@@ -170,6 +170,40 @@ public:
 		}
 		return def;
 	}
+
+	double GetChance(std::string key, const double def)
+	{
+		double v = Get(key, def);
+		if (v < 0)
+		{
+			v = 0;
+		}
+		else if (v > 1)
+		{
+			v = 1;
+		}
+		return v;
+	}
+
+	std::vector<double> GetChanceList(std::string key, std::vector<double> def)
+	{
+		std::vector<double> v = GetList(key.c_str(), def);
+		if (!v.empty())
+		{
+			for (double& vv : v)
+			{
+				if (vv < 0)
+				{
+					vv = 0;
+				}
+				else if (vv > 1)
+				{
+					vv = 1;
+				}
+			}
+		}
+		return v;
+	}
 #pragma endregion
 
 };

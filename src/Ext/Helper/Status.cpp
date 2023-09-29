@@ -5,6 +5,7 @@
 #include <Ext/AnimStatus.h>
 #include <Ext/BulletStatus.h>
 #include <Ext/TechnoStatus.h>
+#include <Extension/WarheadTypeExt.h>
 
 
 #pragma endregion AnimClass
@@ -141,6 +142,55 @@ void ActiveRGBMode(TechnoClass* pTechno)
 			status->PaintballState.RGBIsPower();
 		}
 	}
+}
+
+bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, bool isPassiveAcquire)
+{
+	bool canAttack = false;
+	int weaponIdx = pAttacker->SelectWeapon(pTarget);
+	WeaponStruct* pWeaponStruct = pAttacker->GetWeapon(weaponIdx);
+	WeaponTypeClass* pWeapon = nullptr;
+	if (pWeaponStruct && (pWeapon = pWeaponStruct->WeaponType) != nullptr)
+	{
+		double versus = 1;
+		bool forceFire = true;
+		bool retaliate = true;
+		bool passiveAcquire = true;
+		TechnoClass* pTargetTechno = nullptr;
+		if (CastToTechno(pTarget, pTargetTechno))
+		{
+			// 检查护甲
+			versus = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWeapon->Warhead)->GetVersus(pTargetTechno->GetTechnoType()->Armor, forceFire, retaliate, passiveAcquire);
+		}
+
+		if (isPassiveAcquire)
+		{
+			// 是否可以主动攻击
+			canAttack = versus > 0.2 || passiveAcquire;
+		}
+		else
+		{
+			canAttack = versus != 0.0;
+		}
+		// 检查是否可以攻击
+		if (canAttack)
+		{
+			FireError fireError = pAttacker->GetFireError(pTarget, weaponIdx, true);
+			switch (fireError)
+			{
+			case FireError::ILLEGAL:
+			case FireError::CANT:
+				canAttack = false;
+				break;
+			}
+		}
+	}
+	else
+	{
+		// 没有可以用的武器
+		canAttack = false;
+	}
+	return canAttack;
 }
 #pragma endregion
 

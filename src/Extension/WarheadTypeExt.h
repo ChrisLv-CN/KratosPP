@@ -185,6 +185,40 @@ public:
 			// }
 			IgnoreStandShareDamage = reader->Get("IgnoreStandShareDamage", IgnoreStandShareDamage);
 		}
+
+		double GetVersus(Armor armor, bool& forceFire, bool& retaliate, bool& passiveAcquire)
+		{
+			double versus = 1;
+            forceFire = true;
+            retaliate = true;
+            passiveAcquire = true;
+
+            int index = static_cast<int>(armor);
+            if (index >= 0)
+			{
+				int size = AresVersusArray.size();
+				if (index < 11)
+                {
+                    // 原始护甲
+                    versus = Versus[index];
+                    forceFire = versus > 0.0;
+                    retaliate = versus > 0.1;
+                    passiveAcquire = versus > 0.2;
+                }
+                else if (index < size)
+                {
+                    index -= 11;
+                    // 扩展护甲
+                    AresVersus aresVersus = AresVersusArray[index];
+                    versus = aresVersus.Versus;
+                    forceFire = aresVersus.ForceFire;
+                    retaliate = aresVersus.Retaliate;
+                    passiveAcquire = aresVersus.PassiveAcquire;
+                }
+            }
+            return versus;
+		}
+
 	private:
 		/**
 		 *@brief 读取弹头上的自定义护甲的设置

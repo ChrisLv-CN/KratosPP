@@ -3,8 +3,6 @@
 #include "State.h"
 #include "PaintballData.h"
 
-#include <Common/EventSystems/EventSystem.h>
-
 class PaintballState : public State<PaintballData>
 {
 public:
@@ -27,7 +25,7 @@ public:
 
 	void Update()
 	{
-		if (rgbMode)
+		if (_rgbMode)
 		{
 			RGBIsPower();
 		}
@@ -35,9 +33,9 @@ public:
 
 	void RGBIsPower()
 	{
-		if (!rgbMode)
+		if (!_rgbMode)
 		{
-			rgbMode = true;
+			_rgbMode = true;
 		}
 		if (!IsActive())
 		{
@@ -45,9 +43,9 @@ public:
 			rgb.SetColor(Colors::Red);
 			Enable(rgb);
 		}
-		if (rgbTimer.Expired())
+		if (_rgbTimer.Expired())
 		{
-			switch (rgbIdx)
+			switch (_rgbIdx)
 			{
 			case 0:
 				Data.SetColor(Colors::Red);
@@ -59,20 +57,43 @@ public:
 				Data.SetColor(Colors::Blue);
 				break;
 			}
-			rgbIdx++;
-			if (rgbIdx > 2)
+			_rgbIdx++;
+			if (_rgbIdx > 2)
 			{
-				rgbIdx = 0;
+				_rgbIdx = 0;
 			}
-			rgbTimer.Start(15);
+			_rgbTimer.Start(15);
 		}
 		// 不灵不灵
 		Data.BrightMultiplier = static_cast<float>(GetRandom().RandomRanged(5, 15) / 10);
 		Data.ChangeBright = Data.BrightMultiplier != 1.0f;
 		Reset();
 	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->_rgbMode)
+			.Process(this->_rgbIdx)
+			.Process(this->_rgbTimer)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange)
+	{
+		State<PaintballData>::Load(stream, registerForChange);
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const
+	{
+		State<PaintballData>::Save(stream);
+		return const_cast<PaintballState*>(this)->Serialize(stream);
+	}
+#pragma endregion
 private:
-	bool rgbMode = false;
-	int rgbIdx = 0;
-	CDTimerClass rgbTimer;
+	bool _rgbMode = false;
+	int _rgbIdx = 0;
+	CDTimerClass _rgbTimer;
 };

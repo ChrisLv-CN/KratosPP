@@ -32,6 +32,8 @@ double GetDamageMulti(TechnoClass* pTechno);
 
 void SetExtraSparkleAnim(TechnoClass* pTechno, AnimClass*& pAnim);
 void ActiveRGBMode(TechnoClass* pTechno);
+
+bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, bool isPassiveAcquire = false);
 #pragma endregion
 
 enum class BulletType

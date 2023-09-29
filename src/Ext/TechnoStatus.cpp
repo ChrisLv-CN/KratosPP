@@ -2,12 +2,21 @@
 
 #include <Ext/FireSuperManager.h>
 
-void TechnoStatus::Awake()
+bool TechnoStatus::OnAwake()
 {
 	VoxelShadowScaleInAir = INI::GetSection(INI::Rules, INI::SectionAudioVisual)->Get("VoxelShadowScaleInAir", VoxelShadowScaleInAir);
-	if (IsInfantry())
+	return true;
+}
+
+void TechnoStatus::OnTransform(TypeChangeEventArgs* args)
+{
+	TechnoClass* pTarget = args->pTechno;
+	if (pTarget && pTarget == pTechno)
 	{
-		_isFearless = static_cast<InfantryClass*>(pTechno)->Type->Fearless;
+		_absType = AbstractType::None;
+		_locoType = LocoType::None;
+		_crawlingFLHData = nullptr;
+		_transformData = nullptr;
 	}
 }
 
@@ -166,8 +175,10 @@ void TechnoStatus::OnUpdate()
 			FootClass* pFoot = static_cast<FootClass*>(pTechno);
 			_isMoving = pFoot->GetCurrentSpeed() > 0 && pFoot->Locomotor.get()->Is_Moving();
 		}
-
+		OnUpdate_CrawlingFLH();
 		OnUpdate_DamageText();
+		OnUpdate_DeployToTransform();
+		OnUpdate_GiftBox();
 		OnUpdate_Paintball();
 	}
 }
@@ -208,7 +219,11 @@ void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, D
 
 void TechnoStatus::OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
 void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
-void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
+
+void TechnoStatus::OnReceiveDamageDestroy()
+{
+	OnReceiveDamageDestroy_GiftBox();
+}
 
 void TechnoStatus::OnFire(AbstractClass* pTarget, int weaponIdx)
 {

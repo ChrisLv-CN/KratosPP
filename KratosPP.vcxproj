@@ -52,6 +52,7 @@
     <ClCompile Include="src\Ext\Helper\Effect.cpp" />
     <ClCompile Include="src\Ext\Helper\Finder.cpp" />
     <ClCompile Include="src\Ext\Helper\FLH.cpp" />
+    <ClCompile Include="src\Ext\Helper\Gift.cpp" />
     <ClCompile Include="src\Ext\Helper\MathEx.cpp" />
     <ClCompile Include="src\Ext\Helper\Status.cpp" />
     <ClCompile Include="src\Ext\Helper\StringEx.cpp" />
@@ -61,8 +62,10 @@
     <ClCompile Include="src\Ext\PrintTextManager.cpp" />
     <ClCompile Include="src\Ext\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoTrail.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\CrawlingFLH.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
     <ClCompile Include="src\Ext\TechnoType\FireSuper.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Paintball.cpp" />
     <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
@@ -141,6 +144,8 @@
     <ClInclude Include="src\Ext\AnimStatus.h" />
     <ClInclude Include="src\Ext\AttachEffect.h" />
     <ClInclude Include="src\Ext\AttachFire.h" />
+    <ClInclude Include="src\Ext\AttachFire\DelayFire.h" />
+    <ClInclude Include="src\Ext\AttachFire\SimulateBurst.h" />
     <ClInclude Include="src\Ext\BulletStatus.h" />
     <ClInclude Include="src\Ext\BulletTrail.h" />
     <ClInclude Include="src\Ext\BulletType\ProximityData.h" />
@@ -159,6 +164,7 @@
     <ClInclude Include="src\Ext\Helper\Effect.h" />
     <ClInclude Include="src\Ext\Helper\Finder.h" />
     <ClInclude Include="src\Ext\Helper\FLH.h" />
+    <ClInclude Include="src\Ext\Helper\Gift.h" />
     <ClInclude Include="src\Ext\Helper\MathEx.h" />
     <ClInclude Include="src\Ext\Helper\Status.h" />
     <ClInclude Include="src\Ext\Helper\StringEx.h" />
@@ -168,12 +174,15 @@
     <ClInclude Include="src\Ext\PrintTextManager.h" />
     <ClInclude Include="src\Ext\PrintText\PrintText.h" />
     <ClInclude Include="src\Ext\PrintText\PrintTextData.h" />
+    <ClInclude Include="src\Ext\State\GiftBoxData.h" />
+    <ClInclude Include="src\Ext\State\GiftBoxState.h" />
     <ClInclude Include="src\Ext\State\PaintballData.h" />
     <ClInclude Include="src\Ext\State\PaintballState.h" />
     <ClInclude Include="src\Ext\State\State.h" />
     <ClInclude Include="src\Ext\TechnoStatus.h" />
     <ClInclude Include="src\Ext\TechnoTrail.h" />
     <ClInclude Include="src\Ext\TechnoType\BuildingRangeData.h" />
+    <ClInclude Include="src\Ext\TechnoType\CrawlingFLHData.h" />
     <ClInclude Include="src\Ext\TechnoType\DamageTextData.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />
     <ClInclude Include="src\Ext\TrailType\Trail.h" />

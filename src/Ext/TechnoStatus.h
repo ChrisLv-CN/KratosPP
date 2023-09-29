@@ -14,8 +14,10 @@
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
 
+#include <Ext/State/GiftBoxState.h>
 #include <Ext/State/PaintballState.h>
 
+#include <Ext/TechnoType/CrawlingFLHData.h>
 #include <Ext/TechnoType/DamageTextData.h>
 #include <Ext/TechnoType/HealthTextData.h>
 
@@ -41,15 +43,17 @@ enum class LocoType
 };
 
 /// @brief base compoment, save the Techno status
-class TechnoStatus : public TechnoScript
+class TechnoStatus : public TransformScript
 {
 public:
-	TechnoStatus(TechnoExt::ExtData* ext) : TechnoScript(ext)
+	TechnoStatus(TechnoExt::ExtData* ext) : TransformScript(ext)
 	{
 		this->Name = typeid(this).name();
 	}
 
-	virtual void Awake() override;
+	virtual bool OnAwake() override;
+
+	virtual void OnTransform(TypeChangeEventArgs* args) override;
 
 	virtual void Destroy() override;
 
@@ -78,10 +82,14 @@ public:
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
 
+	void InitState_GiftBox();
 	void InitState_Paintball();
 
 	virtual void OnUpdate() override;
 
+	void OnUpdate_CrawlingFLH();
+	void OnUpdate_DeployToTransform();
+	void OnUpdate_GiftBox();
 	void OnUpdate_Paintball();
 
 	virtual void OnUpdateEnd() override;
@@ -90,12 +98,15 @@ public:
 
 	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
 
+	virtual void OnReceiveDamageDestroy() override;
+
 	virtual void DrawHealthBar(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding) override;
 
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
 	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
+	GiftBoxState GiftBoxState{};
 	PaintballState PaintballState{};
 
 	DrivingState drivingState = DrivingState::Moving;
@@ -111,6 +122,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->GiftBoxState)
 			.Process(this->PaintballState)
 			.Process(this->_initStateFlag)
 
@@ -122,7 +134,6 @@ public:
 			.Process(this->Freezing)
 
 			.Process(this->_skipDamageText)
-			.Process(this->_isFearless)
 
 			.Process(this->_deactivateDimEMP)
 			.Process(this->_deactivateDimPowered)
@@ -156,6 +167,10 @@ private:
 	void PrintHealthText(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding);
 	void OffsetPosAlign(Point2D& pos, int textWidth, int barWidth, PrintTextAlign align, bool isBuilding, bool useSHP);
 
+	// 礼物盒
+	bool IsOnMark_GiftBox();
+	void ReleaseGift(std::vector<std::string> gifts, GiftBoxData data);
+
 	void InitState();
 
 	void OnUpdate_DamageText();
@@ -165,13 +180,13 @@ private:
 	void OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 
+	void OnReceiveDamageDestroy_GiftBox();
+
 	// 单位类型
 	AbstractType _absType = AbstractType::None;
 	LocoType _locoType = LocoType::None;
 
 	bool _initStateFlag = false;
-
-	bool _isFearless = false;
 
 	Mission _lastMission = Mission::Guard;
 
@@ -186,6 +201,14 @@ private:
 	// 血条数字
 	inline static HealthTextControlData _healthControlData{}; // 全局默认设置
 	HealthTextData _healthTextData{}; // 个体设置
+
+	// 卧倒FLH
+	CrawlingFLHData* _crawlingFLHData = nullptr;
+	CrawlingFLHData* GetCrawlingFLHData();
+
+	// 部署变形
+	DeployToTransformData* _transformData = nullptr;
+	DeployToTransformData* GetTransformData();
 
 	// 染色状态
 	float _deactivateDimEMP = 0.8f;
