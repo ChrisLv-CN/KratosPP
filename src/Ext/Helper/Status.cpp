@@ -253,6 +253,28 @@ void SetSourceHouse(BulletClass* pBullet, HouseClass* pHouse)
 	}
 }
 
+HouseClass* GetHouse(BulletClass* pBullet)
+{
+	if (pBullet->Owner)
+	{
+		return pBullet->Owner->Owner;
+	}
+	return GetSourceHouse(pBullet);
+}
+
+HouseClass* GetSourceHouse(BulletClass* pBullet)
+{
+	if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pBullet))
+	{
+		return status->pSourceHouse;
+	}
+	if (pBullet->Owner)
+	{
+		return pBullet->Owner->Owner;
+	}
+	return nullptr;
+}
+
 DirStruct Facing(BulletClass* pBullet, CoordStruct location)
 {
 	CoordStruct source = location;

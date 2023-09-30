@@ -64,6 +64,9 @@ BulletType WhatAmI(BulletClass* pBullet);
 bool IsDead(BulletClass* pBullet);
 bool IsDeadOrInvisible(BulletClass* pBullet);
 void SetSourceHouse(BulletClass* pBullet, HouseClass* pHouse);
+HouseClass* GetHouse(BulletClass* pBullet);
+HouseClass* GetSourceHouse(BulletClass* pBullet);
+
 
 DirStruct Facing(BulletClass* pBullet, CoordStruct location = CoordStruct::Empty);
 #pragma endregion
