@@ -383,7 +383,7 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 			}
 			else
 			{
-				Debug::Log("Warning: Gift box release gift failed, unknown TechnoType [%s]\n", id);
+				Debug::Log("Warning: Gift box release gift failed, unknown TechnoType [%s]\n", id.c_str());
 			}
 		}
 	}

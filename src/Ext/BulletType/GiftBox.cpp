@@ -9,7 +9,7 @@
 void BulletStatus::InitState_GiftBox()
 {
 	// 读取单位身上的礼盒设置
-	GiftBoxData* data = INI::GetConfig<GiftBoxData>(INI::Rules, pBullet->GetTechnoType()->ID)->Data;
+	GiftBoxData* data = INI::GetConfig<GiftBoxData>(INI::Rules, pBullet->Type->ID)->Data;
 	if (data->Enable)
 	{
 		GiftBoxState.Enable(*data);
@@ -106,8 +106,8 @@ void BulletStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 			targetLocation = pTarget->GetCoords();
 		}
 		// 取目标位置所在的格子作为移动目的地
-		CellClass* pTargetLocationCell = nullptr;
-		if (pTargetLocationCell = MapClass::Instance->TryGetCellAt(targetLocation))
+		CellClass* pTargetLocationCell = MapClass::Instance->TryGetCellAt(targetLocation);
+		if (pTargetLocationCell)
 		{
 			pFocus = pTargetLocationCell; // 步兵的移动目的地
 		}
@@ -231,7 +231,7 @@ void BulletStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 			}
 			else
 			{
-				Debug::Log("Warning: Gift box release gift failed, unknown TechnoType [%s]\n", id);
+				Debug::Log("Warning: Gift box release gift failed, unknown TechnoType [%s]\n", id.c_str());
 			}
 		}
 	}

@@ -74,12 +74,12 @@ CoordStruct GetForwardCoords(CoordStruct sourcePos, CoordStruct targetPos, doubl
 #pragma endregion
 
 #pragma region Random offset
-CoordStruct RandomOffset(int min, int max);
+CoordStruct GetRandomOffset(int min, int max);
 /// @brief 最小1格范围内的随机坐标偏移
 /// @param maxSpread 最大半径
 /// @param minSpread 最小半径
 /// @return offset
-CoordStruct RandomOffset(double maxSpread, double minSpread = 0);
+CoordStruct GetRandomOffset(double maxSpread, double minSpread = 0);
 #pragma endregion
 
 #pragma region Dir

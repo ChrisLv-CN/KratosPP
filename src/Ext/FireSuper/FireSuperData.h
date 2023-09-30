@@ -125,6 +125,6 @@ public:
 	}
 #pragma endregion
 
-private:
+protected:
 	inline static std::string TITLE = "FireSuperWeapon.";
 };

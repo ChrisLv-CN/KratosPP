@@ -204,6 +204,23 @@ public:
 		}
 		return v;
 	}
+
+	Point2D GetRange(std::string key, Point2D def)
+	{
+		Point2D v = Get(key, def);
+		if (!v.IsEmpty())
+		{
+			int min = v.X;
+            int max = v.Y;
+            if (min > max)
+            {
+                int temp = min;
+                v.Y = max;
+                v.X = temp;
+            }
+		}
+		return v;
+	}
 #pragma endregion
 
 };

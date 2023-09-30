@@ -320,7 +320,7 @@ CoordStruct GetForwardCoords(CoordStruct sourcePos, CoordStruct targetPos, doubl
 #pragma endregion
 
 #pragma region Random offset
-CoordStruct RandomOffset(int min, int max)
+CoordStruct GetRandomOffset(int min, int max)
 {
 	double r = ScenarioClass::Instance->Random.RandomRanged(min, max);
 	if (r > 0)
@@ -332,11 +332,11 @@ CoordStruct RandomOffset(int min, int max)
 	return CoordStruct::Empty;
 }
 
-CoordStruct RandomOffset(double maxSpread, double minSpread)
+CoordStruct GetRandomOffset(double maxSpread, double minSpread)
 {
 	int min = static_cast<int>((minSpread <= 0 ? 0 : minSpread) * 256);
 	int max = static_cast<int>((maxSpread > 0 ? maxSpread : 1) * 256);
-	return RandomOffset(min, max);
+	return GetRandomOffset(min, max);
 }
 #pragma endregion
 

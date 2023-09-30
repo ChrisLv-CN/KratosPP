@@ -275,4 +275,22 @@ bool IsCivilian(HouseClass* pHouse)
 	// || HouseClass.CIVILIAN == pHouse->Type->Base.ID
 	// || HouseClass.SPECIAL == pHouse->Type->Base.ID; // 被狙掉驾驶员的阵营是Special
 }
+
+Relation GetRelation(HouseClass* pHosue, HouseClass* pTargetHouse)
+{
+	if (pHosue == pTargetHouse)
+	{
+		return Relation::OWNER;
+	}
+	if (pHosue->IsAlliedWith(pTargetHouse))
+	{
+		return Relation::ALLIES;
+	}
+	return Relation::ENEMIES;
+}
+
+Relation GetRelationWithPlayer(HouseClass* pHouse)
+{
+	return GetRelation(pHouse, HouseClass::CurrentPlayer);
+}
 #pragma endregion

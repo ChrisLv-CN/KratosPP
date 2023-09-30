@@ -6,6 +6,8 @@
 #include <HouseClass.h>
 #include <TechnoClass.h>
 
+#include <Ext/Data/RelationData.h>
+
 #pragma region AnimClass
 AnimClass* SetAnimOwner(AnimClass* pAnim, HouseClass* pHouse);
 AnimClass* SetAnimOwner(AnimClass* pAnim, TechnoClass* pTechno);
@@ -68,4 +70,7 @@ DirStruct Facing(BulletClass* pBullet, CoordStruct location = CoordStruct::Empty
 
 #pragma region HouseClass
 bool IsCivilian(HouseClass* pHouse);
+
+Relation GetRelation(HouseClass* pHosue, HouseClass* pTargetHouse);
+Relation GetRelationWithPlayer(HouseClass* pHouse);
 #pragma endregion

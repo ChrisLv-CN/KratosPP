@@ -54,7 +54,7 @@ CoordStruct GetInaccurateOffset(float scatterMin, float scatterMax)
 		max = temp;
 	}
 	// 随机偏移
-	return RandomOffset(min, max);
+	return GetRandomOffset(min, max);
 }
 
 BulletVelocity GetBulletArcingVelocity(CoordStruct sourcePos, CoordStruct targetPos,

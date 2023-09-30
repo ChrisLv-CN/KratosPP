@@ -162,6 +162,11 @@ void TechnoStatus::InitState_Paintball()
 	_deactivateDimEMP = AudioVisual::Data()->DeactivateDimEMP;
 	_deactivateDimPowered = AudioVisual::Data()->DeactivateDimPowered;
 	// 读取单位身上的染色设置
+	PaintballData* data = INI::GetConfig<PaintballData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+	if (data->Enable)
+	{
+		PaintballState.Enable(*data);
+	}
 }
 
 void TechnoStatus::OnUpdate_Paintball()

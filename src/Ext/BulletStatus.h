@@ -8,6 +8,7 @@
 #include <BulletClass.h>
 #include <TechnoClass.h>
 
+#include <Utilities/Macro.h>
 #include <Utilities/Debug.h>
 
 #include <Common/Components/ScriptComponent.h>
@@ -19,6 +20,7 @@
 #include <Ext/Helper/CastEx.h>
 
 #include <Ext/State/GiftBoxState.h>
+#include <Ext/State/PaintballState.h>
 
 #include <Ext/BulletType/ProximityData.h>
 #include <Ext/BulletType/TrajectoryData.h>
@@ -114,6 +116,7 @@ public:
 	 */
 	void ResetArcingVelocity(float speedMultiple = 1.0f, bool force = false);
 
+	void DrawVXL_Paintball(REGISTERS* R);
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dir) override;
 
@@ -124,6 +127,7 @@ public:
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
 	GiftBoxState GiftBoxState{};
+	PaintballState PaintballState{};
 
 	TechnoClass* pSource = nullptr;
 	HouseClass* pSourceHouse = nullptr;

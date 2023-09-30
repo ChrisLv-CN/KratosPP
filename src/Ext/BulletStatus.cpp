@@ -163,8 +163,6 @@ void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 void BulletStatus::InitState_BlackHole() {};
 void BulletStatus::InitState_DestroySelf() {};
 void BulletStatus::InitState_ECM() {};
-void BulletStatus::InitState_GiftBox() {};
-void BulletStatus::InitState_Paintball() {};
 
 void BulletStatus::OnUpdate()
 {
@@ -244,7 +242,6 @@ void BulletStatus::OnUpdate_DestroySelf() {};
 
 void BulletStatus::OnUpdate_BlackHole() {};
 void BulletStatus::OnUpdate_ECM() {};
-void BulletStatus::OnUpdate_GiftBox() {};
 void BulletStatus::OnUpdate_RecalculateStatus() {};
 void BulletStatus::OnUpdate_SelfLaunchOrPumpAction() {};
 
@@ -283,7 +280,6 @@ void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 	}
 };
 
-bool BulletStatus::OnDetonate_GiftBox(CoordStruct* pCoords) { return false; };
 bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords) { return false; };
 
 
