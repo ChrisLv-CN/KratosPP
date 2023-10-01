@@ -9,6 +9,28 @@
 #include <Extension/GOExtension.h>
 
 
+template <typename TExt, typename TComponent, typename TBase>
+static bool TryGetComponent(TBase* p, TComponent*& pComponent)
+{
+	if (p != nullptr)
+	{
+		auto* ext = TExt::ExtMap.Find(p);
+		if (ext)
+		{
+			pComponent = ext->GetComponent<TComponent>();
+			return pComponent != nullptr;
+		}
+	}
+	return false;
+}
+
+template <typename TExt, typename TComponent, typename TBase>
+static TComponent* GetComponent(TBase* p)
+{
+	TComponent* pComponent = nullptr;
+	TryGetComponent<TExt>(p, pComponent);
+	return pComponent;
+}
 
 template <typename TExt, typename TStatus, typename TBase>
 static bool TryGetStatus(TBase* p, TStatus*& status)

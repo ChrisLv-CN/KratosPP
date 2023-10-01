@@ -19,6 +19,8 @@
 #include <Ext/TechnoType/CrawlingFLHData.h>
 #include <Ext/TechnoType/DamageTextData.h>
 #include <Ext/TechnoType/HealthTextData.h>
+#include <Ext/TechnoType/MissileHomingData.h>
+#include <Ext/TechnoType/SpawnData.h>
 
 enum class DrivingState
 {
@@ -69,6 +71,8 @@ public:
 	bool IsJumpjet();
 	bool IsShip();
 
+	bool IsRocket();
+
 	bool AmIStand();
 
 	unsigned int GetBerserkColor2();
@@ -78,6 +82,9 @@ public:
 	void DrawSHP_Paintball_BuildingAnim(REGISTERS* R);
 	void DrawSHP_Colour(REGISTERS* R);
 	void DrawVXL_Paintball(REGISTERS* R, bool isBuilding);
+
+	SpawnData* GetSpawnData();
+	bool TryGetSpawnType(int i, std::string& newId);
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
 
@@ -116,6 +123,10 @@ public:
 
 	bool Freezing = false;
 
+	// 子机导弹跟踪
+	bool IsHoming = false;
+	CoordStruct HomingTargetLocation = CoordStruct::Empty;
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
@@ -131,6 +142,10 @@ public:
 			.Process(this->DisableSelectVoice)
 
 			.Process(this->Freezing)
+
+			.Process(this->IsHoming)
+			.Process(this->HomingTargetLocation)
+			.Process(this->_initHomingFlag)
 
 			.Process(this->_skipDamageText)
 
@@ -173,6 +188,7 @@ private:
 	void InitState();
 
 	void OnUpdate_DamageText();
+	void OnUpdate_MissileHoming();
 
 	void OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
@@ -208,6 +224,14 @@ private:
 	// 部署变形
 	DeployToTransformData* _transformData = nullptr;
 	DeployToTransformData* GetTransformData();
+
+	// 子机管理器
+	SpawnData* _spawnData = nullptr;
+
+	// 子机导弹
+	MissileHomingData* _homingData = nullptr;
+	MissileHomingData* GetHomingData();
+	bool _initHomingFlag = false;
 
 	// 染色状态
 	float _deactivateDimEMP = 0.8f;

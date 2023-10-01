@@ -5,6 +5,7 @@
 bool TechnoStatus::OnAwake()
 {
 	VoxelShadowScaleInAir = INI::GetSection(INI::Rules, INI::SectionAudioVisual)->Get("VoxelShadowScaleInAir", VoxelShadowScaleInAir);
+	IsHoming = GetHomingData()->Homing;
 	return true;
 }
 
@@ -121,6 +122,11 @@ bool TechnoStatus::IsShip()
 	return GetLocoType() == LocoType::Ship;
 }
 
+bool TechnoStatus::IsRocket()
+{
+	return IsAircraft() && GetLocoType() == LocoType::Rocket;
+}
+
 bool TechnoStatus::AmIStand()
 {
 	return false;
@@ -179,6 +185,7 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_DamageText();
 		OnUpdate_DeployToTransform();
 		OnUpdate_GiftBox();
+		OnUpdate_MissileHoming();
 		OnUpdate_Paintball();
 	}
 }

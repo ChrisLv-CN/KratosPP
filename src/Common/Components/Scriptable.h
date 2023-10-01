@@ -50,6 +50,8 @@ public:
 
 	virtual void OnGuardCommand() {};
 	virtual void OnStopCommand() {};
+
+	virtual void OnRocketExplosion() {};
 };
 
 class IBulletScript : public IObjectScript

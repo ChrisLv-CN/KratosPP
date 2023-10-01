@@ -70,7 +70,9 @@
     <ClCompile Include="src\Ext\TechnoType\FireSuper.cpp" />
     <ClCompile Include="src\Ext\TechnoType\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\MissileHoming.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Paintball.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\SpawnManager.cpp" />
     <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
     <ClCompile Include="src\Hooks\AircraftExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimExtHook.cpp" />
@@ -84,8 +86,10 @@
     <ClCompile Include="src\Hooks\KratosHook.cpp" />
     <ClCompile Include="src\Hooks\LaserDrawHook.cpp" />
     <ClCompile Include="src\Hooks\MapExtHook.cpp" />
+    <ClCompile Include="src\Hooks\ParasiteExtHooks.cpp" />
     <ClCompile Include="src\Hooks\PointerExpireHook.cpp" />
     <ClCompile Include="src\Hooks\SaveGameHook.cpp" />
+    <ClCompile Include="src\Hooks\SpawnManagerExtHooks.cpp" />
     <ClCompile Include="src\Hooks\SuperWeaponTypeHook.cpp" />
     <ClCompile Include="src\Hooks\TechnoExtHook.cpp" />
     <ClCompile Include="src\Hooks\TechnoTypeExtHook.cpp" />
@@ -196,6 +200,8 @@
     <ClInclude Include="src\Ext\TechnoType\CrawlingFLHData.h" />
     <ClInclude Include="src\Ext\TechnoType\DamageTextData.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />
+    <ClInclude Include="src\Ext\TechnoType\MissileHomingData.h" />
+    <ClInclude Include="src\Ext\TechnoType\SpawnData.h" />
     <ClInclude Include="src\Ext\TrailType\Trail.h" />
     <ClInclude Include="src\Ext\TrailType\TrailData.h" />
     <ClInclude Include="src\Ext\TrailType\TrailTypeData.h" />

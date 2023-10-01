@@ -97,6 +97,12 @@ public:
 		};
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
+		template <typename TComponent>
+		TComponent* GetComponent()
+		{
+			return m_GameObject.GetComponentInChildren<TComponent>();
+		}
+
 		template <typename TStatus>
 		TStatus* GetExtStatus()
 		{
