@@ -67,6 +67,7 @@
     <ClCompile Include="src\Ext\TechnoTrail.cpp" />
     <ClCompile Include="src\Ext\TechnoType\CrawlingFLH.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\DestroyAnim.cpp" />
     <ClCompile Include="src\Ext\TechnoType\FireSuper.cpp" />
     <ClCompile Include="src\Ext\TechnoType\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
@@ -77,6 +78,7 @@
     <ClCompile Include="src\Hooks\AircraftExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimTypeExtHook.cpp" />
+    <ClCompile Include="src\Hooks\BuildingExtHook.cpp" />
     <ClCompile Include="src\Hooks\BulletExtHook.cpp" />
     <ClCompile Include="src\Hooks\BulletTypeExtHook.cpp" />
     <ClCompile Include="src\Hooks\EBoltExtHook.cpp" />
@@ -189,6 +191,7 @@
     <ClInclude Include="src\Ext\PrintTextManager.h" />
     <ClInclude Include="src\Ext\PrintText\PrintText.h" />
     <ClInclude Include="src\Ext\PrintText\PrintTextData.h" />
+    <ClInclude Include="src\Ext\State\DestroyAnimData.h" />
     <ClInclude Include="src\Ext\State\GiftBoxData.h" />
     <ClInclude Include="src\Ext\State\GiftBoxState.h" />
     <ClInclude Include="src\Ext\State\PaintballData.h" />

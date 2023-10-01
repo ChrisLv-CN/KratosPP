@@ -13,7 +13,7 @@
 
 TechnoClass* CreateAndPutTechno(TechnoTypeClass* pType, HouseClass* pHouse, CoordStruct location, CellClass* pCell = nullptr);
 
-TechnoClass* CreateAndPutTechno(const char* id, HouseClass* pHouse, CoordStruct location, CellClass* pCell = nullptr);
+TechnoClass* CreateAndPutTechno(std::string id, HouseClass* pHouse, CoordStruct location, CellClass* pCell = nullptr);
 
 bool RealReleaseGift(std::string id, HouseClass* pHouse,
 	CoordStruct location, // 预订投放位置

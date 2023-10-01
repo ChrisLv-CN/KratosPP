@@ -25,3 +25,34 @@ DEFINE_HOOK(0x5194EF, InfantryClass_DrawIt_InAir_Shadow_Skip, 0x5)
 	return 0;
 }
 
+#pragma region Infantry death anims
+// NotHutman and not set DeathAnims
+DEFINE_HOOK(0x518505, Infantry_ReceiveDamage_NotHuman_DeathAnim_Remap, 0x6)
+{
+	GET(InfantryClass*, pInf, ESI);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pInf))
+	{
+		if (status->PlayDestroyAnims())
+		{
+			pInf->UnInit();
+			return 0x5185E5;
+		}
+	}
+	return 0;
+}
+
+// IsHutman and not set DeathAnims
+DEFINE_HOOK(0x5185C8, Infantry_ReceiveDamage_DeathAnim_Remap, 0x6)
+{
+	GET(InfantryClass*, pInf, ESI);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pInf))
+	{
+		if (status->PlayDestroyAnims())
+		{
+			return 0x5185F1;
+		}
+	}
+	return 0;
+}
+
+#pragma endregion

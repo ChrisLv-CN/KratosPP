@@ -4,15 +4,18 @@
 #include <GeneralStructures.h>
 #include <SpecificStructures.h>
 #include <TechnoClass.h>
+#include <VoxelAnimTypeClass.h>
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
+#include <Common/Components/Component.h>
+#include <Common/Components/ScriptComponent.h>
+#include <Ext/CommonStatus.h>
+#include <Ext/ExpandAnimsManager.h>
 #include <Ext/Helper.h>
 #include <Ext/TechnoStatus.h>
 #include <Extension/TechnoExt.h>
 #include <Extension/WarheadTypeExt.h>
-#include <Common/Components/Component.h>
-#include <Common/Components/ScriptComponent.h>
 
 // ----------------
 // Extension
@@ -475,6 +478,64 @@ DEFINE_HOOK(0x73C15F, UnitClass_DrawVXL_Colour, 0x7)
 	if (TryGetStatus<TechnoExt>(pTechno, status))
 	{
 		status->DrawVXL_Paintball(R, false);
+	}
+	return 0;
+}
+#pragma endregion
+
+#pragma region Techno Destroy Debris
+// Take over to make vxl debirs
+DEFINE_HOOK(0x702299, TechnoClass_Destroy_VxlDebris_Remap, 0xA)
+{
+	if (AudioVisual::Data()->AllowMakeVoxelDebrisByKratos)
+	{
+		GET(TechnoClass*, pTechno, ESI);
+		TechnoTypeClass* pType = pTechno->GetTechnoType();
+		// Phobos hook 这个地址，要自己算随机数
+		int max = pType->MaxDebris;
+		int min = pType->MinDebris;
+		int times = GetRandom().RandomRanged(min, max);
+		DynamicVectorClass<VoxelAnimTypeClass*> debrisTypes = pType->DebrisTypes;
+		if (debrisTypes.Count > 0)
+		{
+			HouseClass* pHouse = pTechno->Owner;
+			CoordStruct location = pTechno->GetCoords();
+			ExpandAnimsManager::PlayExpandDebirs(debrisTypes, pType->DebrisMaximums, times, location, pHouse, pTechno);
+		}
+		R->EBX(times);
+		return 0x7023E5;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x70256C, TechnoClass_Destroy_Debris_Remap, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	GET(AnimClass*, pAnim, EDI);
+	if (pAnim)
+	{
+		pAnim->Owner = pTechno->Owner;
+	}
+	GET(int, i, EBX);
+	if (i > 0)
+	{
+		return 0x7024E0;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x7024B0, TechnoClass_Destroy_Debris_Remap2, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	GET(AnimClass*, pAnim, EBX);
+	if (pAnim)
+	{
+		pAnim->Owner = pTechno->Owner;
+	}
+	GET(int, i, EBP);
+	if (i > 0)
+	{
+		return 0x70240C;
 	}
 	return 0;
 }

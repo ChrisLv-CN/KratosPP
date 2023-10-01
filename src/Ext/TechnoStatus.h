@@ -13,6 +13,7 @@
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
 
+#include <Ext/State/DestroyAnimData.h>
 #include <Ext/State/GiftBoxState.h>
 #include <Ext/State/PaintballState.h>
 
@@ -75,6 +76,8 @@ public:
 
 	bool AmIStand();
 
+	bool PlayDestroyAnims();
+
 	unsigned int GetBerserkColor2();
 	void SetExtraSparkleAnim(AnimClass* pAnim);
 
@@ -112,6 +115,8 @@ public:
 
 	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
+	// 状态机
+	State<DestroyAnimData> DestroyAnimState{};
 	GiftBoxState GiftBoxState{};
 	PaintballState PaintballState{};
 
@@ -132,9 +137,12 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->DestroyAnimState)
 			.Process(this->GiftBoxState)
 			.Process(this->PaintballState)
 			.Process(this->_initStateFlag)
+
+			.Process(this->pKillerHouse)
 
 			.Process(this->DisableVoxelCache)
 			.Process(this->VoxelShadowScaleInAir)
@@ -207,6 +215,11 @@ private:
 
 	CoordStruct _location{};
 	bool _isMoving = false;
+
+	// 死亡动画
+	DestroyAnimData* _destroyAnimData;
+	DestroyAnimData* GetDestroyAnimData();
+	HouseClass* pKillerHouse = nullptr;
 
 	// 伤害数字
 	bool _skipDamageText = false;

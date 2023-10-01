@@ -13,13 +13,22 @@ inline bool Parser<AffectWho>::TryParse(const char* pValue, AffectWho* outValue)
 	switch (toupper(static_cast<unsigned char>(*pValue)))
 	{
 	case 'M':
-		*outValue = AffectWho::MASTER;
+		if (outValue)
+		{
+			*outValue = AffectWho::MASTER;
+		}
 		return true;
 	case 'S':
-		*outValue = AffectWho::STAND;
+		if (outValue)
+		{
+			*outValue = AffectWho::STAND;
+		}
 		return true;
 	default:
-		*outValue = AffectWho::ALL;
+		if (outValue)
+		{
+			*outValue = AffectWho::ALL;
+		}
 		return true;
 	}
 }
