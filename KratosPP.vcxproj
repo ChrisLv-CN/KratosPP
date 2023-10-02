@@ -65,12 +65,14 @@
     <ClCompile Include="src\Ext\PrintTextManager.cpp" />
     <ClCompile Include="src\Ext\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoTrail.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\CrateBuff.cpp" />
     <ClCompile Include="src\Ext\TechnoType\CrawlingFLH.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DestroyAnim.cpp" />
     <ClCompile Include="src\Ext\TechnoType\FireSuper.cpp" />
     <ClCompile Include="src\Ext\TechnoType\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\JumpjetFacing.cpp" />
     <ClCompile Include="src\Ext\TechnoType\MissileHoming.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Paintball.cpp" />
     <ClCompile Include="src\Ext\TechnoType\SpawnManager.cpp" />
@@ -191,6 +193,7 @@
     <ClInclude Include="src\Ext\PrintTextManager.h" />
     <ClInclude Include="src\Ext\PrintText\PrintText.h" />
     <ClInclude Include="src\Ext\PrintText\PrintTextData.h" />
+    <ClInclude Include="src\Ext\State\CrateBuffData.h" />
     <ClInclude Include="src\Ext\State\DestroyAnimData.h" />
     <ClInclude Include="src\Ext\State\GiftBoxData.h" />
     <ClInclude Include="src\Ext\State\GiftBoxState.h" />
@@ -203,6 +206,7 @@
     <ClInclude Include="src\Ext\TechnoType\CrawlingFLHData.h" />
     <ClInclude Include="src\Ext\TechnoType\DamageTextData.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />
+    <ClInclude Include="src\Ext\TechnoType\JumpjetFacingData.h" />
     <ClInclude Include="src\Ext\TechnoType\MissileHomingData.h" />
     <ClInclude Include="src\Ext\TechnoType\SpawnData.h" />
     <ClInclude Include="src\Ext\TrailType\Trail.h" />

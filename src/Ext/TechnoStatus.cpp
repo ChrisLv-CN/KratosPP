@@ -16,8 +16,16 @@ void TechnoStatus::OnTransform(TypeChangeEventArgs* args)
 	{
 		_absType = AbstractType::None;
 		_locoType = LocoType::None;
+
+		_destroyAnimData = nullptr;
+
 		_crawlingFLHData = nullptr;
 		_transformData = nullptr;
+
+		_spawnData = nullptr;
+		_homingData = nullptr;
+
+		_jjFacingData = nullptr;
 	}
 }
 
@@ -143,6 +151,8 @@ void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 
 void TechnoStatus::InitState()
 {
+	InitState_CrateBuff();
+	InitState_GiftBox();
 	InitState_Paintball();
 }
 
@@ -185,6 +195,7 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_DamageText();
 		OnUpdate_DeployToTransform();
 		OnUpdate_GiftBox();
+		OnUpdate_JJFacing();
 		OnUpdate_MissileHoming();
 		OnUpdate_Paintball();
 	}

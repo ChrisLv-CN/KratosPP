@@ -5,14 +5,184 @@
 #include <Extension.h>
 #include <Utilities/Macro.h>
 
-#include <BuildingClass.h>
-#include <DisplayClass.h>
+#include <TechnoClass.h>
+#include <HouseClass.h>
 
 #include <Ext/Helper.h>
+#include <Ext/TechnoStatus.h>
 #include <Ext/TechnoType/BuildingRangeData.h>
+#include <Extension/TechnoExt.h>
+#include <Extension/TechnoTypeExt.h>
 
+#pragma region Crate buff
 
+/*
+	generic crate-handler file
+	currently used only to shim crates into TechnoExt
+	since Techno fields are used by AttachEffect
 
+	Graion Dilach, 2013-05-31
+*/
+
+//overrides for crate checks
+//481D52 - pass
+//481C86 - override with Money
+
+DEFINE_HOOK(0x481D0E, CellClass_CrateBeingCollected_Firepower1, 0x6)
+{
+	GET(TechnoClass*, pTechno, EDI);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		if (status->CrateBuff.FirepowerMultiplier == 1.0)
+		{
+			return 0x481D52;
+		}
+		return 0x481C86;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x481C6C, CellClass_CrateBeingCollected_Armor1, 0x6)
+{
+	GET(TechnoClass*, pTechno, EDI);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		if (status->CrateBuff.ArmorMultiplier == 1.0)
+		{
+			return 0x481D52;
+		}
+		return 0x481C86;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x481CE1, CellClass_CrateBeingCollected_Speed1, 0x6)
+{
+	GET(TechnoClass*, pTechno, EDI);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		if (status->CrateBuff.SpeedMultiplier == 1.0)
+		{
+			return 0x481D52;
+		}
+		return 0x481C86;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x481D3D, CellClass_CrateBeingCollected_Cloak1, 0x6)
+{
+	GET(TechnoClass*, pTechno, EDI);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		if (status->CanICloakByDefault() || status->CrateBuff.Cloakable)
+		{
+			return 0x481C86;
+		}
+		// cloaking forbidden for type
+		if (!GetTypeData<TechnoTypeExt, TechnoTypeExt::TypeData>(pTechno->GetTechnoType())->AllowCloakable)
+		{
+			return 0x481C86;
+		}
+		return 0x481D52;
+	}
+	return 0;
+}
+
+//overrides on actual crate effect applications
+DEFINE_HOOK(0x483226, CellClass_CrateBeingCollected_Firepower2, 0x6)
+{
+	GET(TechnoClass*, pTechno, ECX);
+	GET_STACK(double, pow_FirepowerMultiplier, 0x20);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		if (status->CrateBuff.FirepowerMultiplier == 1.0)
+		{
+			status->CrateBuff.FirepowerMultiplier = pow_FirepowerMultiplier;
+			status->RecalculateStatus();
+			R->AL(pTechno->GetOwningHouse()->IsInPlayerControl);
+			return 0x483258;
+		}
+	}
+	return 0x483261;
+}
+
+DEFINE_HOOK(0x482E57, CellClass_CrateBeingCollected_Armor2, 0x6)
+{
+	GET(TechnoClass*, pTechno, ECX);
+	GET_STACK(double, pow_ArmorMultiplier, 0x20);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		if (status->CrateBuff.ArmorMultiplier == 1.0)
+		{
+			status->CrateBuff.ArmorMultiplier = pow_ArmorMultiplier;
+			status->RecalculateStatus();
+			R->AL(pTechno->GetOwningHouse()->IsInPlayerControl);
+			return 0x482E89;
+		}
+	}
+	return 0x482E92;
+}
+
+DEFINE_HOOK(0x48303A, CellClass_CrateBeingCollected_Speed2, 0x6)
+{
+	GET(TechnoClass*, pTechno, ECX);
+	GET_STACK(double, pow_SpeedMultiplier, 0x20);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		if (status->CrateBuff.SpeedMultiplier == 1.0)
+		{
+			status->CrateBuff.SpeedMultiplier = pow_SpeedMultiplier;
+			status->RecalculateStatus();
+			R->AL(pTechno->GetOwningHouse()->IsInPlayerControl);
+			return 0x483078;
+		}
+	}
+	return 0x483081;
+}
+
+DEFINE_HOOK(0x48294F, CellClass_CrateBeingCollected_Cloak2, 6)
+{
+	GET(TechnoClass*, pTechno, EDX);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		status->CrateBuff.Cloakable = true;
+		status->RecalculateStatus();
+		return 0x482956;
+	}
+	return 0;
+}
+#pragma endregion
+
+#pragma region Virtual Unit
+DEFINE_HOOK(0x69251A, ScrollClass_ProcessClickCoords_VirtualUnit, 0x6)
+{
+	GET(TechnoClass*, pTechno, EAX);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		if (status->VirtualUnit || status->Disappear)
+		{
+			// 虚单位不可选择
+			R->EAX(0);
+		}
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x6DA3FF, TacticalClass_SelectAt_VirtualUnit, 0x6)
+{
+	GET(TechnoClass*, pTechno, EAX);
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		if (status->VirtualUnit || status->Disappear)
+		{
+			// 虚单位不纳入可选择的范围
+			return 0x6DA440;
+		}
+	}
+	return 0;
+}
+#pragma endregion
 
 #pragma region Show Building Range
 DEFINE_HOOK(0x6D5116, TacticalClass_Draw_Placement_Recheck, 0x5)

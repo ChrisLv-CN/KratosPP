@@ -13,6 +13,7 @@
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
 
+#include <Ext/State/CrateBuffData.h>
 #include <Ext/State/DestroyAnimData.h>
 #include <Ext/State/GiftBoxState.h>
 #include <Ext/State/PaintballState.h>
@@ -20,6 +21,7 @@
 #include <Ext/TechnoType/CrawlingFLHData.h>
 #include <Ext/TechnoType/DamageTextData.h>
 #include <Ext/TechnoType/HealthTextData.h>
+#include <Ext/TechnoType/JumpjetFacingData.h>
 #include <Ext/TechnoType/MissileHomingData.h>
 #include <Ext/TechnoType/SpawnData.h>
 
@@ -76,6 +78,13 @@ public:
 
 	bool AmIStand();
 
+	/**
+	 *@brief 踩箱子获得的buff
+	 *
+	 */
+	void RecalculateStatus();
+	bool CanICloakByDefault();
+
 	bool PlayDestroyAnims();
 
 	unsigned int GetBerserkColor2();
@@ -91,6 +100,7 @@ public:
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
 
+	void InitState_CrateBuff();
 	void InitState_GiftBox();
 	void InitState_Paintball();
 
@@ -116,9 +126,13 @@ public:
 	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
 	// 状态机
+	State<CrateBuffData> CrateBuffState{};
 	State<DestroyAnimData> DestroyAnimState{};
 	GiftBoxState GiftBoxState{};
 	PaintballState PaintballState{};
+
+	// 踩箱子获得的buff
+	CrateBuffData CrateBuff{};
 
 	DrivingState drivingState = DrivingState::Moving;
 	bool DisableVoxelCache = false;
@@ -127,6 +141,10 @@ public:
 	bool DisableSelectVoice = false;
 
 	bool Freezing = false;
+
+	// 虚单位
+	bool VirtualUnit = false;
+	bool Disappear = false;
 
 	// 子机导弹跟踪
 	bool IsHoming = false;
@@ -137,10 +155,13 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->CrateBuffState)
 			.Process(this->DestroyAnimState)
 			.Process(this->GiftBoxState)
 			.Process(this->PaintballState)
 			.Process(this->_initStateFlag)
+
+			.Process(this->CrateBuff)
 
 			.Process(this->pKillerHouse)
 
@@ -150,6 +171,9 @@ public:
 			.Process(this->DisableSelectVoice)
 
 			.Process(this->Freezing)
+
+			.Process(this->VirtualUnit)
+			.Process(this->Disappear)
 
 			.Process(this->IsHoming)
 			.Process(this->HomingTargetLocation)
@@ -196,6 +220,7 @@ private:
 	void InitState();
 
 	void OnUpdate_DamageText();
+	void OnUpdate_JJFacing();
 	void OnUpdate_MissileHoming();
 
 	void OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
@@ -216,8 +241,12 @@ private:
 	CoordStruct _location{};
 	bool _isMoving = false;
 
+	// Buff
+	CrateBuffData* _crateBuffData = nullptr;
+	CrateBuffData* GetCrateBuffData();
+
 	// 死亡动画
-	DestroyAnimData* _destroyAnimData;
+	DestroyAnimData* _destroyAnimData = nullptr;
 	DestroyAnimData* GetDestroyAnimData();
 	HouseClass* pKillerHouse = nullptr;
 
@@ -245,6 +274,13 @@ private:
 	MissileHomingData* _homingData = nullptr;
 	MissileHomingData* GetHomingData();
 	bool _initHomingFlag = false;
+
+	// JJFacing
+	JumpjetFacingData* _jjFacingData = nullptr;
+	JumpjetFacingData* GetJJFacingData();
+	bool _JJNeedTurn = false;
+	DirStruct _JJTurnTo{};
+	int _JJFacing = -1;
 
 	// 染色状态
 	float _deactivateDimEMP = 0.8f;

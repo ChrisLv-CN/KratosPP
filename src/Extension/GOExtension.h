@@ -57,6 +57,11 @@ public:
 
 		virtual void InvalidatePointer(void* ptr, bool bRemoved) override
 		{
+			if (ptr == this->OwnerObject())
+			{
+				_ownerIsRelease = true;
+				_status = nullptr;
+			}
 			m_GameObject.Foreach([&ptr](Component* c)
 				{ c->InvalidatePointer(ptr); });
 		};
@@ -106,7 +111,7 @@ public:
 		template <typename TStatus>
 		TStatus* GetExtStatus()
 		{
-			if (_status == nullptr)
+			if (_status == nullptr && !_ownerIsRelease)
 			{
 				_status = m_GameObject.GetComponentInChildren<TStatus>();
 			}
@@ -125,6 +130,8 @@ public:
 
 		// Status Component
 		Component* _status = nullptr;
+
+		bool _ownerIsRelease = false;
 
 		//----------------------
 		// Scripts
