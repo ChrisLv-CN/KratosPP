@@ -14,6 +14,7 @@
 #include <Ext/ExpandAnimsManager.h>
 #include <Ext/Helper.h>
 #include <Ext/TechnoStatus.h>
+#include <Ext/TechnoType/SelectWeaponData.h>
 #include <Extension/TechnoExt.h>
 #include <Extension/WarheadTypeExt.h>
 
@@ -390,18 +391,6 @@ DEFINE_HOOK(0x6F9039, TechnoClass_Greatest_Threat_HealWeaponRange, 0x5)
 	return 0x6F903E;
 }
 
-// Can not shoot to water when NavalTargeting = 6
-DEFINE_HOOK(0x6FC833, TechnoClass_NavalTargeting, 0x7)
-{
-	GET(TechnoClass*, pTechno, ESI);
-	GET(CellClass*, pTarget, EAX);
-	if (pTarget->LandType == LandType::Water && pTechno->GetTechnoType()->NavalTargeting == NavalTargetingType::Naval_None)
-	{
-		return 0x6FC86A;
-	}
-	return 0;
-}
-
 DEFINE_HOOK(0x7067F1, TechnoClass_DrawVxl_DisableCache, 0x6)
 {
 	GET(unsigned int, esi, ESI);
@@ -538,6 +527,94 @@ DEFINE_HOOK(0x7024B0, TechnoClass_Destroy_Debris_Remap2, 0x6)
 		return 0x70240C;
 	}
 	return 0;
+}
+#pragma endregion
+
+#pragma region Select weapon
+// Can not shoot to water when NavalTargeting = 6
+DEFINE_HOOK(0x6FC833, TechnoClass_NavalTargeting, 0x7)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	GET(CellClass*, pTarget, EAX);
+	if (pTarget->LandType == LandType::Water && pTechno->GetTechnoType()->NavalTargeting == NavalTargetingType::Naval_None)
+	{
+		return 0x6FC86A;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon_AntiMissile, 0xA)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	GET_STACK(AbstractClass*, pTarget, 0x1C);
+	GET_STACK(WeaponTypeClass*, pPrimary, 0x14);
+	GET_STACK(WeaponTypeClass*, pSecondary, 0x10);
+	GET(unsigned int, ebp, EBP);
+	if (ebp != 0)
+	{
+		// 攻击的是单位
+		return 0x6F36E3; // 继续检查护甲
+	}
+	else
+	{
+		// 攻击的是没有护甲的玩意儿，格子，覆盖物，抛射体等等
+		AbstractType abstractType = pTarget->What_Am_I();
+		switch (abstractType)
+		{
+		case AbstractType::Bullet:
+			/* TODO AntiBullet
+			AntiBulletData antiBulletData = Ini.GetConfig<AntiBulletData>(Ini.RulesDependency, pTechno->Type->Base.Base.ID).Data;
+			if (antiBulletData.Enable && antiBulletData.Weapon >= 0)
+			{
+				// 自己捕获的目标，按设置选择武器
+				if (antiBulletData.Weapon == 1)
+				{
+					return 0x6F3807; // 返回副武器
+				}
+				else
+				{
+					return 0x6F37AD; // 返回主武器
+				}
+			}
+			// 自动选择可以使用的武器
+			if (pSecondary->Projectile->AA && (!pPrimary->Projectile->AA || pTechno->IsCloseEnough(pTarget, 1)))
+			{
+				return 0x6F3807; // 返回副武器
+			}*/
+			break;
+		case AbstractType::Terrain:
+		case AbstractType::Cell:
+			SelectWeaponData* data = INI::GetConfig<SelectWeaponData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+			if (pSecondary->Projectile->AG && data->UseSecondary(pTechno, pTarget, pPrimary, pSecondary))
+			{
+				return 0x6F3807; // 返回副武器
+			}
+			break;
+		}
+	}
+	return 0x6F37AD; // 返回主武器
+}
+
+DEFINE_HOOK(0x6F37E7, TechnoClass_SelectWeapon_SecondaryCheckAA_SwitchByRange, 0xA)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	GET_STACK(AbstractClass*, pTarget, 0x1C);
+	GET_STACK(WeaponTypeClass*, pPrimary, 0x14);
+	GET_STACK(WeaponTypeClass*, pSecondary, 0x10);
+	// check AA
+	if (pSecondary->Projectile->AA && pTarget->IsInAir())
+	{
+		return 0x6F3807; // 返回副武器
+	}
+	else
+	{
+		SelectWeaponData* data = INI::GetConfig<SelectWeaponData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+		if (data->UseSecondary(pTechno, pTarget, pPrimary, pSecondary))
+		{
+			return 0x6F3807; // 返回副武器
+		}
+	}
+	return 0x6F37AD; // 返回主武器
 }
 #pragma endregion
 

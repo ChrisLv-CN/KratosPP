@@ -157,13 +157,20 @@ DEFINE_HOOK(0x48294F, CellClass_CrateBeingCollected_Cloak2, 6)
 #pragma region Virtual Unit
 DEFINE_HOOK(0x69251A, ScrollClass_ProcessClickCoords_VirtualUnit, 0x6)
 {
-	GET(TechnoClass*, pTechno, EAX);
-	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	GET(AbstractClass*, pTarget, EAX);
+	if (pTarget)
 	{
-		if (status->VirtualUnit || status->Disappear)
+		TechnoClass* pTechno = nullptr;
+		if (CastToTechno(pTarget, pTechno))
 		{
-			// 虚单位不可选择
-			R->EAX(0);
+			if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+			{
+				if (status->VirtualUnit || status->Disappear)
+				{
+					// 虚单位不可选择
+					R->EAX(0);
+				}
+			}
 		}
 	}
 	return 0;
@@ -171,13 +178,20 @@ DEFINE_HOOK(0x69251A, ScrollClass_ProcessClickCoords_VirtualUnit, 0x6)
 
 DEFINE_HOOK(0x6DA3FF, TacticalClass_SelectAt_VirtualUnit, 0x6)
 {
-	GET(TechnoClass*, pTechno, EAX);
-	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	GET(AbstractClass*, pTarget, EAX);
+	if (pTarget)
 	{
-		if (status->VirtualUnit || status->Disappear)
+		TechnoClass* pTechno = nullptr;
+		if (CastToTechno(pTarget, pTechno))
 		{
-			// 虚单位不纳入可选择的范围
-			return 0x6DA440;
+			if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+			{
+				if (status->VirtualUnit || status->Disappear)
+				{
+					// 虚单位不纳入可选择的范围
+					return 0x6DA440;
+				}
+			}
 		}
 	}
 	return 0;
