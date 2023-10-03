@@ -153,6 +153,8 @@ void TechnoStatus::InitState()
 {
 	InitState_AntiBullet();
 	InitState_CrateBuff();
+	InitState_DestroyAnim();
+	InitState_DestroySelf();
 	InitState_GiftBox();
 	InitState_Paintball();
 }
@@ -209,6 +211,12 @@ void TechnoStatus::OnUpdateEnd()
 	{
 		this->_lastMission = pTechno->CurrentMission;
 	}
+}
+
+void TechnoStatus::OnWarpUpdate()
+{
+	// for Stand
+	OnWarpUpdate_DestroySelf_Stand();
 }
 
 void TechnoStatus::OnTemporalUpdate(TemporalClass* pTemporal)

@@ -171,7 +171,6 @@ void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 }
 
 void BulletStatus::InitState_BlackHole() {};
-void BulletStatus::InitState_DestroySelf() {};
 void BulletStatus::InitState_ECM() {};
 
 void BulletStatus::OnUpdate()
@@ -247,8 +246,6 @@ void BulletStatus::OnUpdate()
 		OnUpdate_SelfLaunchOrPumpAction();
 	}
 }
-
-void BulletStatus::OnUpdate_DestroySelf() {};
 
 void BulletStatus::OnUpdate_BlackHole() {};
 void BulletStatus::OnUpdate_ECM() {};

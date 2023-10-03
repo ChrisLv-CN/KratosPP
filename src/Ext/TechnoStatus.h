@@ -16,6 +16,7 @@
 #include <Ext/State/AntiBulletState.h>
 #include <Ext/State/CrateBuffData.h>
 #include <Ext/State/DestroyAnimData.h>
+#include <Ext/State/DestroySelfState.h>
 #include <Ext/State/GiftBoxState.h>
 #include <Ext/State/PaintballState.h>
 
@@ -107,6 +108,8 @@ public:
 
 	virtual void OnUpdateEnd() override;
 
+	virtual void OnWarpUpdate() override;
+
 	virtual void OnTemporalUpdate(TemporalClass* pTemporal) override;
 
 	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
@@ -122,6 +125,7 @@ public:
 	AntiBulletState AntiBulletState{};
 	State<CrateBuffData> CrateBuffState{};
 	State<DestroyAnimData> DestroyAnimState{};
+	DestroySelfState DestroySelfState{};
 	GiftBoxState GiftBoxState{};
 	PaintballState PaintballState{};
 
@@ -152,6 +156,7 @@ public:
 			.Process(this->AntiBulletState)
 			.Process(this->CrateBuffState)
 			.Process(this->DestroyAnimState)
+			.Process(this->DestroySelfState)
 			.Process(this->GiftBoxState)
 			.Process(this->PaintballState)
 			.Process(this->_initStateFlag)
@@ -219,16 +224,21 @@ private:
 
 	void InitState_AntiBullet();
 	void InitState_CrateBuff();
+	void InitState_DestroyAnim();
+	void InitState_DestroySelf();
 	void InitState_GiftBox();
 	void InitState_Paintball();
 
 	void OnUpdate_AntiBullet();
 	void OnUpdate_CrawlingFLH();
 	void OnUpdate_DamageText();
+	void OnUpdate_DestroySelf();
 	void OnUpdate_GiftBox();
 	void OnUpdate_JJFacing();
 	void OnUpdate_MissileHoming();
 	void OnUpdate_Paintball();
+
+	void OnWarpUpdate_DestroySelf_Stand();
 
 	void OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);

@@ -46,6 +46,6 @@ void BulletStatus::InitState_Trajectory_Missile()
 
 }
 
-// 热诱弹
+// TODO 热诱弹
 void BulletStatus::OnUpdate_Trajectory_Decroy() {};
 

@@ -151,7 +151,7 @@ public:
 		return const_cast<State<TData>*>(this)->Serialize(stream);
 	}
 #pragma endregion
-private:
+protected:
 	bool _active = false;
 	bool _infinite = false; // 无限时长
 	CDTimerClass _timer; // 持续时间

@@ -19,6 +19,7 @@
 
 #include <Ext/Helper/CastEx.h>
 
+#include <Ext/State/DestroySelfState.h>
 #include <Ext/State/GiftBoxState.h>
 #include <Ext/State/PaintballState.h>
 
@@ -102,7 +103,7 @@ public:
 	virtual void Awake() override;
 	virtual void Destroy() override;
 
-	void TakeDamage(int damage, bool eliminate, bool harmless, bool checkInterceptable = false);
+	void TakeDamage(int damage = 0, bool eliminate = true, bool harmless = false, bool checkInterceptable = false);
 
 	void TakeDamage(BulletDamage damageData, bool checkInterceptable = false);
 
@@ -126,6 +127,8 @@ public:
 
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
+	// 状态机
+	DestroySelfState DestroySelfState{};
 	GiftBoxState GiftBoxState{};
 	PaintballState PaintballState{};
 

@@ -10,6 +10,15 @@ DestroyAnimData* TechnoStatus::GetDestroyAnimData()
 	return _destroyAnimData;
 }
 
+void TechnoStatus::InitState_DestroyAnim()
+{
+	DestroyAnimData* data = GetDestroyAnimData();
+	if (data->Enable)
+	{
+		DestroyAnimState.Enable(*data);
+	}
+}
+
 void TechnoStatus::OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	// 记录下击杀方

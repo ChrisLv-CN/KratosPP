@@ -42,6 +42,7 @@
     <ClCompile Include="src\Ext\BulletTrail.cpp" />
     <ClCompile Include="src\Ext\BulletType\AntiBullet.cpp" />
     <ClCompile Include="src\Ext\BulletType\ArcingTrajectory.cpp" />
+    <ClCompile Include="src\Ext\BulletType\DestroySelf.cpp" />
     <ClCompile Include="src\Ext\BulletType\GiftBox.cpp" />
     <ClCompile Include="src\Ext\BulletType\MissileTrajectory.cpp" />
     <ClCompile Include="src\Ext\BulletType\Paintball.cpp" />
@@ -71,6 +72,7 @@
     <ClCompile Include="src\Ext\TechnoType\CrawlingFLH.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DestroyAnim.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\DestroySelf.cpp" />
     <ClCompile Include="src\Ext\TechnoType\FireSuper.cpp" />
     <ClCompile Include="src\Ext\TechnoType\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
@@ -199,6 +201,8 @@
     <ClInclude Include="src\Ext\State\AntiBulletState.h" />
     <ClInclude Include="src\Ext\State\CrateBuffData.h" />
     <ClInclude Include="src\Ext\State\DestroyAnimData.h" />
+    <ClInclude Include="src\Ext\State\DestroySelfData.h" />
+    <ClInclude Include="src\Ext\State\DestroySelfState.h" />
     <ClInclude Include="src\Ext\State\GiftBoxData.h" />
     <ClInclude Include="src\Ext\State\GiftBoxState.h" />
     <ClInclude Include="src\Ext\State\PaintballData.h" />
