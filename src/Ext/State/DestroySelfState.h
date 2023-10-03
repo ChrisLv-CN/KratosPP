@@ -66,6 +66,7 @@ private:
 	bool Timeup()
 	{
 		GoDie = _timeLeft <= 0 || _lifeTimer.Expired();
+		return GoDie;
 	}
 
 	bool GoDie = false;
