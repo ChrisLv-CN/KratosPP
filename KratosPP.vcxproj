@@ -68,6 +68,7 @@
     <ClCompile Include="src\Ext\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoTrail.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AntiBullet.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\AutoFireAreaWeapon.cpp" />
     <ClCompile Include="src\Ext\TechnoType\CrateBuff.cpp" />
     <ClCompile Include="src\Ext\TechnoType\CrawlingFLH.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="src\Ext\State\State.h" />
     <ClInclude Include="src\Ext\TechnoStatus.h" />
     <ClInclude Include="src\Ext\TechnoTrail.h" />
+    <ClInclude Include="src\Ext\TechnoType\AutoFireAreaWeaponData.h" />
     <ClInclude Include="src\Ext\TechnoType\BuildingRangeData.h" />
     <ClInclude Include="src\Ext\TechnoType\CrawlingFLHData.h" />
     <ClInclude Include="src\Ext\TechnoType\DamageTextData.h" />

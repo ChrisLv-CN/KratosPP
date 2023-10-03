@@ -17,13 +17,13 @@ EventSystem::EventSystem(const char* name)
 void EventSystem::AddHandler(Event e, HandleEvent func)
 {
     this->_handlers[e] += newDelegate(func);
-    Debug::Log("Event [%s]%s add handler: %s\n", this->Name, e.Name, typeid(&func).name());
+    // Debug::Log("Event [%s]%s add handler: %s\n", this->Name, e.Name, typeid(&func).name());
 }
 
 void EventSystem::RemoveHandler(Event e, HandleEvent func)
 {
     this->_handlers[e] -= newDelegate(func);
-    Debug::Log("Event [%s]%s remove handler: %s\n", this->Name, e.Name, typeid(&func).name());
+    // Debug::Log("Event [%s]%s remove handler: %s\n", this->Name, e.Name, typeid(&func).name());
 }
 
 void EventSystem::Broadcast(Event e, void* args)

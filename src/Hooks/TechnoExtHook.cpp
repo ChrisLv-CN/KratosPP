@@ -625,3 +625,27 @@ DEFINE_HOOK(0x6F37E7, TechnoClass_SelectWeapon_SecondaryCheckAA_SwitchByRange, 0
 }
 #pragma endregion
 
+
+DEFINE_HOOK(0x6FF28F, TechnoClass_Fire_ROFMultiplier, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+
+	// check skipRof
+	TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno);
+	if (status && status->SkipROF)
+	{
+		return 0x6FF2BE; // skip ROF
+	}
+	// 计算ROF
+	GET(WeaponTypeClass*, pWeapon, EBX);
+	/* TODO AE
+	if (pTechno.Ref.CurrentBurstIndex >= pWeapon.Ref.Burst && pTechno.TryGetAEManager(out AttachEffectScript aeManager))
+	{
+		int rof = (int)R->EAX;
+		double rofMult = aeManager.CountAttachStatusMultiplier().ROFMultiplier;
+		// Logger.Log($"{Game.CurrentFrame} Techno [{pTechno.Ref.Type.Ref.Base.Base.ID}]{pTechno} fire done, weapon [{pWeapon.Ref.Base.ID}], burst {pTechno.Ref.CurrentBurstIndex}, ROF {rof}, ROFMult {rofMult}");
+		R->EAX = (uint)(rof * rofMult);
+	}*/
+
+	return 0;
+}

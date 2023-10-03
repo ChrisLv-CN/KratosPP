@@ -21,6 +21,7 @@
 #include <Ext/State/GiftBoxState.h>
 #include <Ext/State/PaintballState.h>
 
+#include <Ext/TechnoType/AutoFireAreaWeaponData.h>
 #include <Ext/TechnoType/CrawlingFLHData.h>
 #include <Ext/TechnoType/DamageTextData.h>
 #include <Ext/TechnoType/HealthTextData.h>
@@ -142,6 +143,9 @@ public:
 
 	bool Freezing = false;
 
+	// 光环武器
+	bool SkipROF = false;
+
 	// 虚单位
 	bool VirtualUnit = false;
 	bool Disappear = false;
@@ -233,7 +237,10 @@ private:
 	void InitState_GiftBox();
 	void InitState_Paintball();
 
+	void OnPut_AutoArea(CoordStruct* pLocation, DirType dir);
+
 	void OnUpdate_AntiBullet();
+	void OnUpdate_AutoArea();
 	void OnUpdate_CrawlingFLH();
 	void OnUpdate_DamageText();
 	void OnUpdate_DestroySelf();
@@ -281,6 +288,12 @@ private:
 	// 血条数字
 	inline static HealthTextControlData _healthControlData{}; // 全局默认设置
 	HealthTextData _healthTextData{}; // 个体设置
+
+	// 光环武器
+	AutoFireAreaWeaponData* _autoAreaData = nullptr;
+	AutoFireAreaWeaponData* GetAutoAreaData();
+	CDTimerClass _areaInitDelayTimer{};
+	CDTimerClass _areaDelayTimer{};
 
 	// 卧倒FLH
 	CrawlingFLHData* _crawlingFLHData = nullptr;

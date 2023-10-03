@@ -281,22 +281,21 @@ DEFINE_HOOK(0x46745C, BulletClass_Update_ChangeVelocity, 0x7)
 
 // 除 ROT>0 和 Vertical 之外的抛射体会在Label_158根据速度向量获取坐标
 // Arcing抛射体即使向量非常小也会试图移动1点
-/* TODO Can't hook this address
-DEFINE_HOOK(0x4677C2, BulletClass_Update_ChangeVelocity_Locked, 0x5)
+DEFINE_HOOK(0x4677C7, BulletClass_Update_ChangeVelocity_Locked, 0x8)
 {
 	GET(BulletClass*, pBullet, EBP);
 	if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pBullet))
 	{
-		if (status->IsArcing() && status->SpeedChanged && status->LocationLocked)
+		if (status->IsArcing()&& status->SpeedChanged && status->LocationLocked)
 		{
 			CoordStruct location = pBullet->Location;
 			R->ESI(location.X);
 			R->EDI(location.Y);
-			R->EAX(location.Y); // 不要问为什么不是Z
+			R->EAX(location.Z);
 		}
 	}
 	return 0;
-}*/
+}
 
 // 导弹类抛射体当高度低于地面高度时强制引爆
 // 让直线导弹可以潜地

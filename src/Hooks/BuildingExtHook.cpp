@@ -12,8 +12,8 @@
 #include <Extension/TechnoExt.h>
 
 #pragma region Building explosion anims
-/* TODO Cann't hook this address
-DEFINE_HOOK(0x441A26, BuildingClass_Destroy_Explosion_Remap, 0x6)
+
+DEFINE_HOOK(0x441A26, BuildingClass_Destroy_Explosion_Remap, 0x5)
 {
 	GET(TechnoClass*, pTechno, ESI);
 	GET(AnimClass*, pAnim, EBP);
@@ -21,8 +21,8 @@ DEFINE_HOOK(0x441A26, BuildingClass_Destroy_Explosion_Remap, 0x6)
 	{
 		pAnim->Owner = pTechno->Owner;
 	}
-	return 0;
-}*/
+	return 0x4418EC;
+}
 
 DEFINE_HOOK(0x441B22, BuildingClass_Destroy_Exploding_Remap, 0x6)
 {
@@ -35,10 +35,10 @@ DEFINE_HOOK(0x441B22, BuildingClass_Destroy_Exploding_Remap, 0x6)
 	return 0;
 }
 
-DEFINE_HOOK(0x441D25, BuildingClass_Destroy_DestroyAnim_Remap, 0xA)
+DEFINE_HOOK(0x441D41, BuildingClass_Destroy_DestroyAnim_Remap, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
-	GET(AnimClass*, pAnim, EBP);
+	GET(AnimClass*, pAnim, EDI);
 	if (pAnim)
 	{
 		pAnim->Owner = pTechno->Owner;

@@ -17,6 +17,8 @@ void TechnoStatus::OnTransform(TypeChangeEventArgs* args)
 		_absType = AbstractType::None;
 		_locoType = LocoType::None;
 
+		_autoAreaData = nullptr;
+
 		_destroyAnimData = nullptr;
 
 		_crawlingFLHData = nullptr;
@@ -146,6 +148,7 @@ void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 	{
 		_initStateFlag = true;
 		InitState();
+		OnPut_AutoArea(pLocation, dirType);
 	}
 }
 
@@ -195,6 +198,7 @@ void TechnoStatus::OnUpdate()
 			FootClass* pFoot = static_cast<FootClass*>(pTechno);
 			_isMoving = pFoot->GetCurrentSpeed() > 0 && pFoot->Locomotor.get()->Is_Moving();
 		}
+		OnUpdate_AutoArea();
 		OnUpdate_AntiBullet();
 		OnUpdate_CrawlingFLH();
 		OnUpdate_DamageText();

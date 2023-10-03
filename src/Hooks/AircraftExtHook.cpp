@@ -33,9 +33,8 @@ DEFINE_HOOK(0x639DD8, PlanningManager_AllowAircraftsWaypoint, 0x5)
 }
 
 #pragma region DrawShadow
-// TODO can't use those Address for Jumpjet's shadow
-// DEFINE_HOOK_AGAIN(0x73C4FF, TechnoClass_DrawShadow, 0x5) // InAir
-// DEFINE_HOOK_AGAIN(0x73C595, TechnoClass_DrawShadow, 0x5) // OnGround
+DEFINE_HOOK_AGAIN(0x73C4F8, TechnoClass_DrawShadow, 0x7) // InAir
+DEFINE_HOOK_AGAIN(0x73C58E, TechnoClass_DrawShadow, 0x7) // OnGround
 DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 {
 	GET(TechnoClass*, pTechno, EBP);
@@ -60,8 +59,7 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 
 
 #pragma region Aircraft Attitude
-/* TODO Can't hook this address
-DEFINE_HOOK(0x4CF3CB, FlyLocomotionClass_4CEFB0, 0x5)
+DEFINE_HOOK(0x4CF3C5, FlyLocomotionClass_4CEFB0, 0x6)
 {
 	// 调整飞机的朝向，有目标时获取目标的朝向，没有目标时获得默认朝向，此时EAX为0
 	// EAX是目标DirStruct的指针
@@ -71,7 +69,8 @@ DEFINE_HOOK(0x4CF3CB, FlyLocomotionClass_4CEFB0, 0x5)
 	if (!pDirEAX)
 	{
 		GET(DirStruct*, pDir, EDX);
-		GET(TechnoClass*, pTechno, ESI);
+		GET(TechnoClass**, ppTechno, ESI);
+		TechnoClass* pTechno = *ppTechno;
 		// 如果是Spawnd就全程强制执行
 		// Mission是Enter的普通飞机就不管
 		if (pTechno->IsInAir()
@@ -81,5 +80,5 @@ DEFINE_HOOK(0x4CF3CB, FlyLocomotionClass_4CEFB0, 0x5)
 		}
 	}
 	return 0;
-}*/
+}
 #pragma endregion
