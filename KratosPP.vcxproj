@@ -102,6 +102,7 @@
     <ClCompile Include="src\Hooks\SuperWeaponTypeHook.cpp" />
     <ClCompile Include="src\Hooks\TechnoExtHook.cpp" />
     <ClCompile Include="src\Hooks\TechnoTypeExtHook.cpp" />
+    <ClCompile Include="src\Hooks\TerrainExtHook.cpp" />
     <ClCompile Include="src\Hooks\TerrainTypeExtHook.cpp" />
     <ClCompile Include="src\Hooks\UnitExtHook.cpp" />
     <ClCompile Include="src\Hooks\VoxelAnimExtHook.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="src\Ext\Data\FilterData.h" />
     <ClInclude Include="src\Ext\Data\OffsetData.h" />
     <ClInclude Include="src\Ext\Data\RelationData.h" />
+    <ClInclude Include="src\Ext\Data\TerrainDestroyAnimData.h" />
     <ClInclude Include="src\Ext\EBoltStatus.h" />
     <ClInclude Include="src\Ext\ExpandAnimsManager.h" />
     <ClInclude Include="src\Ext\ExpandAnims\ExpandAnimsData.h" />
@@ -220,6 +222,7 @@
     <ClInclude Include="src\Ext\TechnoType\MissileHomingData.h" />
     <ClInclude Include="src\Ext\TechnoType\SelectWeaponData.h" />
     <ClInclude Include="src\Ext\TechnoType\SpawnData.h" />
+    <ClInclude Include="src\Ext\TerrainDestroyAnim.h" />
     <ClInclude Include="src\Ext\TrailType\Trail.h" />
     <ClInclude Include="src\Ext\TrailType\TrailData.h" />
     <ClInclude Include="src\Ext\TrailType\TrailTypeData.h" />
