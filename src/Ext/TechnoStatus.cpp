@@ -155,6 +155,7 @@ void TechnoStatus::InitState()
 	InitState_CrateBuff();
 	InitState_DestroyAnim();
 	InitState_DestroySelf();
+	InitState_FireSuper();
 	InitState_GiftBox();
 	InitState_Paintball();
 }

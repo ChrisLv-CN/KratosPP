@@ -180,7 +180,6 @@
     <ClInclude Include="src\Ext\ExpandAnims\ExpandAnimsData.h" />
     <ClInclude Include="src\Ext\FireSuperManager.h" />
     <ClInclude Include="src\Ext\FireSuper\FireSuper.h" />
-    <ClInclude Include="src\Ext\FireSuper\FireSuperData.h" />
     <ClInclude Include="src\Ext\Helper.h" />
     <ClInclude Include="src\Ext\Helper\CastEx.h" />
     <ClInclude Include="src\Ext\Helper\Component.h" />
@@ -203,6 +202,7 @@
     <ClInclude Include="src\Ext\State\DestroyAnimData.h" />
     <ClInclude Include="src\Ext\State\DestroySelfData.h" />
     <ClInclude Include="src\Ext\State\DestroySelfState.h" />
+    <ClInclude Include="src\Ext\State\FireSuperData.h" />
     <ClInclude Include="src\Ext\State\GiftBoxData.h" />
     <ClInclude Include="src\Ext\State\GiftBoxState.h" />
     <ClInclude Include="src\Ext\State\PaintballData.h" />

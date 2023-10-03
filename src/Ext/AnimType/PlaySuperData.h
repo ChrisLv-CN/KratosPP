@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <Common/INI/INIConfig.h>
-#include <Ext/FireSuper/FireSuperData.h>
+#include <Ext/State/FireSuperData.h>
 
 enum class PlaySuperWeaponMode
 {

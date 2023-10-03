@@ -17,6 +17,7 @@
 #include <Ext/State/CrateBuffData.h>
 #include <Ext/State/DestroyAnimData.h>
 #include <Ext/State/DestroySelfState.h>
+#include <Ext/State/FireSuperData.h>
 #include <Ext/State/GiftBoxState.h>
 #include <Ext/State/PaintballState.h>
 
@@ -126,6 +127,7 @@ public:
 	State<CrateBuffData> CrateBuffState{};
 	State<DestroyAnimData> DestroyAnimState{};
 	DestroySelfState DestroySelfState{};
+	State<FireSuperData> FireSuperState{};
 	GiftBoxState GiftBoxState{};
 	PaintballState PaintballState{};
 
@@ -157,6 +159,7 @@ public:
 			.Process(this->CrateBuffState)
 			.Process(this->DestroyAnimState)
 			.Process(this->DestroySelfState)
+			.Process(this->FireSuperState)
 			.Process(this->GiftBoxState)
 			.Process(this->PaintballState)
 			.Process(this->_initStateFlag)
@@ -226,6 +229,7 @@ private:
 	void InitState_CrateBuff();
 	void InitState_DestroyAnim();
 	void InitState_DestroySelf();
+	void InitState_FireSuper();
 	void InitState_GiftBox();
 	void InitState_Paintball();
 

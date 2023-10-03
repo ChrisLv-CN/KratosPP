@@ -7,7 +7,7 @@
 
 #include <Common/INI/INIConfig.h>
 #include <Ext/Helper.h>
-#include "FireSuperData.h"
+#include <Ext/State/FireSuperData.h>
 
 struct FireSuper
 {
