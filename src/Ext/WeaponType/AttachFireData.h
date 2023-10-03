@@ -124,7 +124,7 @@ public:
 		// 检查目标类型
 		if (canFire)
 		{
-			AbstractType targetAbsType = pTarget->What_Am_I();
+			AbstractType targetAbsType = pTarget->WhatAmI();
 			switch (targetAbsType)
 			{
 			case AbstractType::Terrain:

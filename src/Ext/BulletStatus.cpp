@@ -2,6 +2,7 @@
 
 #include <Extension/WarheadTypeExt.h>
 #include <Ext/Helper.h>
+#include <Ext/TechnoStatus.h>
 
 std::vector<BulletClass*> BulletStatus::TargetAircraftBullets = {};
 
@@ -63,6 +64,15 @@ void BulletStatus::Awake()
 	this->life.Read(reader);
 	// 初始化伤害
 	this->damage.Damage = health;
+	if (TechnoStatus* sourceStatue = GetStatus<TechnoExt, TechnoStatus>(pSource))
+	{
+		if (sourceStatue->AntiBulletState.IsActive())
+		{
+			damage.Eliminate = sourceStatue->AntiBulletState.Data.OneShotOneKill;
+			damage.Harmless = sourceStatue->AntiBulletState.Data.Harmless;
+		}
+	}
+
 	// 初始化地面碰撞属性
 	switch (trajectoryData->SubjectToGround)
 	{
@@ -154,7 +164,7 @@ void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 	}
 	// 是否是对飞行器攻击
 	AbstractClass* pTarget = nullptr;
-	if (IsMissile() && (pTarget = pBullet->Target) != nullptr && (pTarget->What_Am_I() == AbstractType::Aircraft || pTarget->IsInAir()))
+	if (IsMissile() && (pTarget = pBullet->Target) != nullptr && (pTarget->WhatAmI() == AbstractType::Aircraft || pTarget->IsInAir()))
 	{
 		TargetAircraftBullets.push_back(pBullet);
 	}
@@ -265,6 +275,10 @@ void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 	}
 	if (!skip)
 	{
+		if ((skip = OnDetonate_AntiBullet(pCoords)) == true)
+		{
+			return;
+		}
 		if ((skip = OnDetonate_Bounce(pCoords)) == true)
 		{
 			return;

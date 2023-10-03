@@ -209,6 +209,9 @@ private:
 	bool IsOnMark_GiftBox();
 	void ReleaseGift(std::vector<std::string> gifts, GiftBoxData data);
 
+	// 反抛射体
+	void CanAffectAndDamageBullet(BulletClass* pTarget, WarheadTypeClass* pWH);
+
 	void InitState_Trajectory_Missile();
 	void InitState_Trajectory_Straight();
 
@@ -236,6 +239,7 @@ private:
 	void OnUpdateEnd_BlackHole(CoordStruct& sourcePos);
 	void OnUpdateEnd_Proximity(CoordStruct& sourcePos);
 
+	bool OnDetonate_AntiBullet(CoordStruct* pCoords);
 	bool OnDetonate_Bounce(CoordStruct* pCoords);
 	bool OnDetonate_GiftBox(CoordStruct* pCoords);
 	bool OnDetonate_SelfLaunch(CoordStruct* pCoords);

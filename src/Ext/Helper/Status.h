@@ -8,6 +8,11 @@
 
 #include <Ext/Data/RelationData.h>
 
+class AnimStatus;
+class BulletStatus;
+class CommonStatus;
+class TechnoStatus;
+
 #pragma region AnimClass
 AnimClass* SetAnimOwner(AnimClass* pAnim, HouseClass* pHouse);
 AnimClass* SetAnimOwner(AnimClass* pAnim, TechnoClass* pTechno);
@@ -61,13 +66,33 @@ enum class BulletType
  */
 BulletType WhatAmI(BulletClass* pBullet);
 
+bool IsDead(BulletClass* pBullet, BulletStatus*& status);
 bool IsDead(BulletClass* pBullet);
+bool IsDeadOrInvisible(BulletClass* pBullet, BulletStatus*& status);
 bool IsDeadOrInvisible(BulletClass* pBullet);
 void SetSourceHouse(BulletClass* pBullet, HouseClass* pHouse);
+/**
+ *@brief 获取抛射体的当前所属，如果没有，则试图读取原始所属
+ *
+ * @param pBullet
+ * @return HouseClass*
+ */
 HouseClass* GetHouse(BulletClass* pBullet);
+/**
+ * @brief 获取抛射体的原始所属，如果没有，则试图从发射者身上获取
+ *
+ * @param pBullet
+ * @return HouseClass*
+ */
 HouseClass* GetSourceHouse(BulletClass* pBullet);
 
-
+/**
+ *@brief 计算抛射体当前位置和下一帧位置获得抛射体的飞行朝向
+ *
+ * @param pBullet
+ * @param location
+ * @return DirStruct
+ */
 DirStruct Facing(BulletClass* pBullet, CoordStruct location = CoordStruct::Empty);
 #pragma endregion
 
@@ -76,4 +101,8 @@ bool IsCivilian(HouseClass* pHouse);
 
 Relation GetRelation(HouseClass* pHosue, HouseClass* pTargetHouse);
 Relation GetRelationWithPlayer(HouseClass* pHouse);
+
+bool AutoRepel(HouseClass* pHouse);
+
+bool CanAffectHouse(HouseClass* pHouse, HouseClass* pTargetHouse, bool owner = true, bool allied = true, bool enemies = true, bool civilian = true);
 #pragma endregion

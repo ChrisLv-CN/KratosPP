@@ -13,6 +13,7 @@
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
 
+#include <Ext/State/AntiBulletState.h>
 #include <Ext/State/CrateBuffData.h>
 #include <Ext/State/DestroyAnimData.h>
 #include <Ext/State/GiftBoxState.h>
@@ -100,16 +101,9 @@ public:
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
 
-	void InitState_CrateBuff();
-	void InitState_GiftBox();
-	void InitState_Paintball();
-
 	virtual void OnUpdate() override;
 
-	void OnUpdate_CrawlingFLH();
-	void OnUpdate_DeployToTransform();
-	void OnUpdate_GiftBox();
-	void OnUpdate_Paintball();
+	void OnUpdate_DeployToTransform(); // call by hook
 
 	virtual void OnUpdateEnd() override;
 
@@ -123,9 +117,9 @@ public:
 
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
-	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
 	// 状态机
+	AntiBulletState AntiBulletState{};
 	State<CrateBuffData> CrateBuffState{};
 	State<DestroyAnimData> DestroyAnimState{};
 	GiftBoxState GiftBoxState{};
@@ -155,6 +149,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->AntiBulletState)
 			.Process(this->CrateBuffState)
 			.Process(this->DestroyAnimState)
 			.Process(this->GiftBoxState)
@@ -217,11 +212,23 @@ private:
 	bool IsOnMark_GiftBox();
 	void ReleaseGift(std::vector<std::string> gifts, GiftBoxData data);
 
+	// 反抛射体
+	bool WeaponNoAA(int weaponIdx);
+
 	void InitState();
 
+	void InitState_AntiBullet();
+	void InitState_CrateBuff();
+	void InitState_GiftBox();
+	void InitState_Paintball();
+
+	void OnUpdate_AntiBullet();
+	void OnUpdate_CrawlingFLH();
 	void OnUpdate_DamageText();
+	void OnUpdate_GiftBox();
 	void OnUpdate_JJFacing();
 	void OnUpdate_MissileHoming();
+	void OnUpdate_Paintball();
 
 	void OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
@@ -229,6 +236,8 @@ private:
 	void OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 
 	void OnReceiveDamageDestroy_GiftBox();
+
+	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
 	// 单位类型
 	AbstractType _absType = AbstractType::None;

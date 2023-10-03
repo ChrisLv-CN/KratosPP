@@ -6,6 +6,10 @@
 class CombatDamageData : public INIConfig
 {
 public:
+	// Ares
+	bool AutoRepel = false;
+	bool PlayerAutoRepel = false;
+
 	// 动画
 	bool AllowAnimDamageTakeOverByKratos = true;
 	bool AllowDamageIfDebrisHitWater = true;
@@ -19,17 +23,20 @@ public:
 	// AI
 	bool AllowAIAttackFriendlies = false;
 
-	virtual void Read(INIBufferReader* ini) override
+	virtual void Read(INIBufferReader* reader) override
 	{
-		AllowAnimDamageTakeOverByKratos = ini->Get("AllowAnimDamageTakeOverByKratos", AllowAnimDamageTakeOverByKratos);
-		AllowDamageIfDebrisHitWater = ini->Get("AllowDamageIfDebrisHitWater", AllowDamageIfDebrisHitWater);
+		AutoRepel = reader->Get("AutoRepel", AutoRepel);
+		PlayerAutoRepel = reader->Get("PlayerAutoRepel", PlayerAutoRepel);
 
-		AllowAutoPickStandAsTarget = ini->Get("AllowAutoPickStandAsTarget", AllowAutoPickStandAsTarget);
-		AllowUnitAsBaseNormal = ini->Get("AllowUnitAsBaseNormal", AllowUnitAsBaseNormal);
-		AllowJumpjetAsBaseNormal = ini->Get("AllowJumpjetAsBaseNormal", AllowJumpjetAsBaseNormal);
-		AllowStandAsBaseNormal = ini->Get("AllowStandAsBaseNormal", AllowStandAsBaseNormal);
+		AllowAnimDamageTakeOverByKratos = reader->Get("AllowAnimDamageTakeOverByKratos", AllowAnimDamageTakeOverByKratos);
+		AllowDamageIfDebrisHitWater = reader->Get("AllowDamageIfDebrisHitWater", AllowDamageIfDebrisHitWater);
 
-		AllowAIAttackFriendlies = ini->Get("AllowAIAttackFriendlies", AllowAIAttackFriendlies);
+		AllowAutoPickStandAsTarget = reader->Get("AllowAutoPickStandAsTarget", AllowAutoPickStandAsTarget);
+		AllowUnitAsBaseNormal = reader->Get("AllowUnitAsBaseNormal", AllowUnitAsBaseNormal);
+		AllowJumpjetAsBaseNormal = reader->Get("AllowJumpjetAsBaseNormal", AllowJumpjetAsBaseNormal);
+		AllowStandAsBaseNormal = reader->Get("AllowStandAsBaseNormal", AllowStandAsBaseNormal);
+
+		AllowAIAttackFriendlies = reader->Get("AllowAIAttackFriendlies", AllowAIAttackFriendlies);
 	}
 };
 
@@ -54,17 +61,17 @@ class AudioVisualData : public INIConfig
 public:
 	// Ares
 	float DeactivateDimEMP = 0.8f;
-    float DeactivateDimPowered = 0.5f;
+	float DeactivateDimPowered = 0.5f;
 
 	// Kratos
 	bool AllowMakeVoxelDebrisByKratos = true;
 
-	virtual void Read(INIBufferReader* ini) override
+	virtual void Read(INIBufferReader* reader) override
 	{
-		DeactivateDimEMP = ini->Get("DeactivateDimEMP", DeactivateDimEMP);
-		DeactivateDimPowered = ini->Get("DeactivateDimPowered", DeactivateDimPowered);
+		DeactivateDimEMP = reader->Get("DeactivateDimEMP", DeactivateDimEMP);
+		DeactivateDimPowered = reader->Get("DeactivateDimPowered", DeactivateDimPowered);
 
-		AllowMakeVoxelDebrisByKratos = ini->Get("AllowMakeVoxelDebrisByKratos", AllowMakeVoxelDebrisByKratos);
+		AllowMakeVoxelDebrisByKratos = reader->Get("AllowMakeVoxelDebrisByKratos", AllowMakeVoxelDebrisByKratos);
 	}
 
 };

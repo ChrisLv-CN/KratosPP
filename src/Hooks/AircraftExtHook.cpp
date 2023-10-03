@@ -18,7 +18,7 @@
 DEFINE_HOOK(0x639DD8, PlanningManager_AllowAircraftsWaypoint, 0x5)
 {
 	GET(TechnoClass*, pTechno, ESI);
-	switch (pTechno->What_Am_I())
+	switch (pTechno->WhatAmI())
 	{
 	case AbstractType::Infantry:
 	case AbstractType::Unit:

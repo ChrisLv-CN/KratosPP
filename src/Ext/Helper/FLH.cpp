@@ -129,7 +129,7 @@ CoordStruct GetFLHAbsoluteCoords(CoordStruct source, CoordStruct flh, DirStruct 
 CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isOnTurret, int flipY, CoordStruct turretOffset)
 {
 	CoordStruct source = pTechno->GetCoords();
-	if (pTechno->What_Am_I() == AbstractType::Building)
+	if (pTechno->WhatAmI() == AbstractType::Building)
 	{
 		// Building can't use Matrix3D get FLH
 		CoordStruct tempFLH = flh;
@@ -187,7 +187,7 @@ DirStruct GetRelativeDir(TechnoClass* pMaster, int dir, bool isOnTurret)
 		{
 			sourceDir = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get())->LocomotionFacing.Current();
 		}
-		if (isOnTurret || pFoot->What_Am_I() == AbstractType::Aircraft) // WWSB Aircraft is a turret!!!
+		if (isOnTurret || pFoot->WhatAmI() == AbstractType::Aircraft) // WWSB Aircraft is a turret!!!
 		{
 			sourceDir = pMaster->GetRealFacing().Current();
 		}
@@ -382,16 +382,3 @@ DirStruct Point2Dir(CoordStruct source, CoordStruct target)
 	return Radians2Dir(radians);
 }
 #pragma endregion
-
-double DistanceFrom(CoordStruct sourcePos, CoordStruct targetPos, bool fullAirspace)
-{
-	if (fullAirspace)
-	{
-		CoordStruct tempSource = sourcePos;
-		CoordStruct tempTarget = targetPos;
-		tempSource.Z = 0;
-		tempTarget.Z = 0;
-		return tempSource.DistanceFrom(tempTarget);
-	}
-	return sourcePos.DistanceFrom(targetPos);
-}

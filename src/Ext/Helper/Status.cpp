@@ -4,7 +4,9 @@
 
 #include <Ext/AnimStatus.h>
 #include <Ext/BulletStatus.h>
+#include <Ext/CommonStatus.h>
 #include <Ext/TechnoStatus.h>
+
 #include <Extension/WarheadTypeExt.h>
 
 
@@ -234,15 +236,27 @@ BulletType WhatAmI(BulletClass* pBullet)
 	return BulletType::UNKNOWN;
 }
 
+bool IsDead(BulletClass* pBullet, BulletStatus*& status)
+{
+	status = nullptr;
+	return !pBullet || !pBullet->Type || pBullet->Health == 0 || !pBullet->IsAlive || !TryGetStatus<BulletExt>(pBullet, status) || !status || status->life.IsDetonate;
+}
+
 bool IsDead(BulletClass* pBullet)
 {
 	BulletStatus* status = nullptr;
-	return !pBullet || !pBullet->Type || pBullet->Health == 0 || !pBullet->IsAlive || !TryGetStatus<BulletExt>(pBullet, status) || !status || status->life.IsDetonate;
+	return IsDead(pBullet, status);
+}
+
+bool IsDeadOrInvisible(BulletClass* pBullet, BulletStatus*& status)
+{
+	return IsDead(pBullet, status) || pBullet->InLimbo;
 }
 
 bool IsDeadOrInvisible(BulletClass* pBullet)
 {
-	return IsDead(pBullet) || pBullet->InLimbo;
+	BulletStatus* status = nullptr;
+	return IsDeadOrInvisible(pBullet, status);
 }
 
 void SetSourceHouse(BulletClass* pBullet, HouseClass* pHouse)
@@ -314,5 +328,26 @@ Relation GetRelation(HouseClass* pHosue, HouseClass* pTargetHouse)
 Relation GetRelationWithPlayer(HouseClass* pHouse)
 {
 	return GetRelation(pHouse, HouseClass::CurrentPlayer);
+}
+
+bool AutoRepel(HouseClass* pHouse)
+{
+	if (pHouse->CurrentPlayer)
+	{
+		return CombatDamage::Data()->PlayerAutoRepel;
+	}
+	return CombatDamage::Data()->AutoRepel;
+}
+
+bool CanAffectHouse(HouseClass* pHouse, HouseClass* pTargetHouse, bool owner, bool allied, bool enemies, bool civilian)
+{
+	if (pHouse && pTargetHouse
+		&& ((IsCivilian(pTargetHouse) && !civilian)
+			|| (pTargetHouse == pHouse ? !owner : (pTargetHouse->IsAlliedWith(pHouse) ? !allied : !enemies))
+			))
+	{
+		return false;
+	}
+	return true;
 }
 #pragma endregion

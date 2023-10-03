@@ -45,7 +45,7 @@ static bool CastToBullet(AbstractClass* pTarget, BulletClass*& pBullet)
 {
 	if (pTarget)
 	{
-		switch (pTarget->What_Am_I())
+		switch (pTarget->WhatAmI())
 		{
 		case AbstractType::Bullet:
 			pBullet = dynamic_cast<BulletClass*>(pTarget);
@@ -66,7 +66,7 @@ static bool CastToTechno(AbstractClass* pTarget, TechnoClass*& pTechno)
 {
 	if (pTarget)
 	{
-		switch (pTarget->What_Am_I())
+		switch (pTarget->WhatAmI())
 		{
 		case AbstractType::Building:
 		case AbstractType::Unit:

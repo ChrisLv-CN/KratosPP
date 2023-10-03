@@ -38,7 +38,7 @@ AbstractType TechnoStatus::GetAbsType()
 {
 	if (_absType == AbstractType::None)
 	{
-		_absType = pTechno->What_Am_I();
+		_absType = pTechno->WhatAmI();
 	}
 	return _absType;
 }
@@ -151,6 +151,7 @@ void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 
 void TechnoStatus::InitState()
 {
+	InitState_AntiBullet();
 	InitState_CrateBuff();
 	InitState_GiftBox();
 	InitState_Paintball();
@@ -191,6 +192,7 @@ void TechnoStatus::OnUpdate()
 			FootClass* pFoot = static_cast<FootClass*>(pTechno);
 			_isMoving = pFoot->GetCurrentSpeed() > 0 && pFoot->Locomotor.get()->Is_Moving();
 		}
+		OnUpdate_AntiBullet();
 		OnUpdate_CrawlingFLH();
 		OnUpdate_DamageText();
 		OnUpdate_DeployToTransform();

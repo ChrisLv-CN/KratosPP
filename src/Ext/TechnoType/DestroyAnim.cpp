@@ -28,7 +28,8 @@ bool TechnoStatus::PlayDestroyAnims()
 	DestroyAnimData* data = GetDestroyAnimData();
 	if (DestroyAnimState.IsActive())
 	{
-		data = &DestroyAnimState.Data;
+		DestroyAnimData stateData = DestroyAnimState.Data;
+		data = &stateData;
 	}
 	if (data->Enable && data->CanAffectType(pTechno))
 	{

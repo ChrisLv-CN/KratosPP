@@ -14,6 +14,7 @@
 #include <Ext/ExpandAnimsManager.h>
 #include <Ext/Helper.h>
 #include <Ext/TechnoStatus.h>
+#include <Ext/State/AntiBulletData.h>
 #include <Ext/TechnoType/SelectWeaponData.h>
 #include <Extension/TechnoExt.h>
 #include <Extension/WarheadTypeExt.h>
@@ -311,7 +312,7 @@ DEFINE_HOOK(0x6F65D1, TechnoClass_DrawHealthBar_Building, 0x6)
 DEFINE_HOOK(0x6F683C, TechnoClass_DrawHealthBar_Other, 0x7)
 {
 	GET(TechnoClass*, pThis, ESI);
-	int barLength = pThis->What_Am_I() == AbstractType::Infantry ? 8 : 17;
+	int barLength = pThis->WhatAmI() == AbstractType::Infantry ? 8 : 17;
 	GET_STACK(Point2D*, pPos, 0x4C - (-0x4));
 	GET_STACK(RectangleStruct*, pBound, 0x4C - (-0x8));
 
@@ -558,29 +559,35 @@ DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon_AntiMissile, 0xA)
 	else
 	{
 		// 攻击的是没有护甲的玩意儿，格子，覆盖物，抛射体等等
-		AbstractType abstractType = pTarget->What_Am_I();
+		AbstractType abstractType = pTarget->WhatAmI();
 		switch (abstractType)
 		{
 		case AbstractType::Bullet:
-			/* TODO AntiBullet
-			AntiBulletData antiBulletData = Ini.GetConfig<AntiBulletData>(Ini.RulesDependency, pTechno->Type->Base.Base.ID).Data;
-			if (antiBulletData.Enable && antiBulletData.Weapon >= 0)
+			// AntiBullet
+			// 检查是自己捕获的目标还是由载具传递给乘客的
+			if (!pTechno->Transporter)
 			{
-				// 自己捕获的目标，按设置选择武器
-				if (antiBulletData.Weapon == 1)
+				if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
 				{
-					return 0x6F3807; // 返回副武器
-				}
-				else
-				{
-					return 0x6F37AD; // 返回主武器
+					if (status->AntiBulletState.IsActive())
+					{
+						// 自己捕获的目标，按设置选择武器
+						if (status->AntiBulletState.Data.Weapon == 1)
+						{
+							return 0x6F3807; // 返回副武器
+						}
+						else
+						{
+							return 0x6F37AD; // 返回主武器
+						}
+					}
 				}
 			}
 			// 自动选择可以使用的武器
 			if (pSecondary->Projectile->AA && (!pPrimary->Projectile->AA || pTechno->IsCloseEnough(pTarget, 1)))
 			{
 				return 0x6F3807; // 返回副武器
-			}*/
+			}
 			break;
 		case AbstractType::Terrain:
 		case AbstractType::Cell:

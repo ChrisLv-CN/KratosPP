@@ -361,7 +361,7 @@ private:
 	bool InRange(AbstractClass* pTarget, WeaponTypeClass* pWeapon, int minRange, int maxRange)
 	{
 		CoordStruct location = this->pObject->GetCoords();
-		switch (this->pObject->What_Am_I())
+		switch (this->pObject->WhatAmI())
 		{
 		case AbstractType::Building:
 		case AbstractType::Infantry:

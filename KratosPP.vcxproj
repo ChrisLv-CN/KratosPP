@@ -40,6 +40,7 @@
     <ClCompile Include="src\Ext\AttachFire.cpp" />
     <ClCompile Include="src\Ext\BulletStatus.cpp" />
     <ClCompile Include="src\Ext\BulletTrail.cpp" />
+    <ClCompile Include="src\Ext\BulletType\AntiBullet.cpp" />
     <ClCompile Include="src\Ext\BulletType\ArcingTrajectory.cpp" />
     <ClCompile Include="src\Ext\BulletType\GiftBox.cpp" />
     <ClCompile Include="src\Ext\BulletType\MissileTrajectory.cpp" />
@@ -65,6 +66,7 @@
     <ClCompile Include="src\Ext\PrintTextManager.cpp" />
     <ClCompile Include="src\Ext\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoTrail.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\AntiBullet.cpp" />
     <ClCompile Include="src\Ext\TechnoType\CrateBuff.cpp" />
     <ClCompile Include="src\Ext\TechnoType\CrawlingFLH.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
@@ -193,6 +195,8 @@
     <ClInclude Include="src\Ext\PrintTextManager.h" />
     <ClInclude Include="src\Ext\PrintText\PrintText.h" />
     <ClInclude Include="src\Ext\PrintText\PrintTextData.h" />
+    <ClInclude Include="src\Ext\State\AntiBulletData.h" />
+    <ClInclude Include="src\Ext\State\AntiBulletState.h" />
     <ClInclude Include="src\Ext\State\CrateBuffData.h" />
     <ClInclude Include="src\Ext\State\DestroyAnimData.h" />
     <ClInclude Include="src\Ext\State\GiftBoxData.h" />

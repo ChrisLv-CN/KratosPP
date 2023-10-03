@@ -107,4 +107,3 @@ DirStruct Radians2Dir(double radians);
 DirStruct Point2Dir(CoordStruct source, CoordStruct target);
 #pragma endregion
 
-double DistanceFrom(CoordStruct sourcePos, CoordStruct targetPos, bool fullAirspace);

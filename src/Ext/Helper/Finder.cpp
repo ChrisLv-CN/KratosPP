@@ -58,3 +58,69 @@ TechnoClass* FindRandomTechno(HouseClass* pHouse)
 	}
 	return nullptr;
 }
+
+double Finder::DistanceFrom(CoordStruct sourcePos, CoordStruct targetPos, bool fullAirspace)
+{
+	if (fullAirspace)
+	{
+		CoordStruct tempSource = sourcePos;
+		CoordStruct tempTarget = targetPos;
+		tempSource.Z = 0;
+		tempTarget.Z = 0;
+		return tempSource.DistanceFrom(tempTarget);
+	}
+	return sourcePos.DistanceFrom(targetPos);
+}
+
+bool Finder::InRange(CoordStruct location, CoordStruct targetLocation,
+	double maxRange, double minRange, bool fullAirspace,
+	bool isInAir, AbstractType abstractType)
+{
+	double distance = DistanceFrom(location, targetLocation, fullAirspace);
+	if (!fullAirspace && isInAir && abstractType == AbstractType::Aircraft)
+	{
+		distance *= 0.5;
+	}
+	return distance >= minRange && distance <= maxRange;
+}
+
+bool Finder::Hit(ObjectClass* pObject,
+	CoordStruct location, double maxRange, double minRange, bool fullAirspace,
+	HouseClass* pHouse,
+	bool owner, bool allied, bool enemies, bool civilian)
+{
+	bool inRange = maxRange == 0 || location.IsEmpty();
+	CoordStruct targetLocation = inRange ? CoordStruct::Empty : pObject->GetCoords(); // 不检查距离就不用算
+	bool isInAir = false; // 全空域就不用算
+	AbstractType abstractType = AbstractType::None; // 全空域就不用算
+	if (!fullAirspace)
+	{
+		isInAir = pObject->IsInAir();
+		abstractType = pObject->WhatAmI();
+	}
+	if (inRange || InRange(location, targetLocation, maxRange, minRange, fullAirspace, isInAir, abstractType))
+	{
+		TechnoClass* pTechno = nullptr;
+		BulletClass* pBullet = nullptr;
+		if (CastToTechno(pObject, pTechno))
+		{
+			HouseClass* pTargetHouse = pTechno->Owner;
+			return CanAffectHouse(pHouse, pTargetHouse, owner, allied, enemies, civilian);
+		}
+		else if (CastToBullet(pObject, pBullet) && !IsDeadOrInvisible(pBullet))
+		{
+			HouseClass* pTargetHouse = GetHouse(pBullet);
+			if (pHouse && pTargetHouse)
+			{
+				// 检查原始所属
+				return CanAffectHouse(pHouse, pTargetHouse, owner, allied, enemies, civilian);
+			}
+		}
+		else
+		{
+			return false;
+		}
+		return true;
+	}
+	return false;
+}

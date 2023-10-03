@@ -26,6 +26,14 @@ public:
 		Enable = ChangeColor || ChangeBright;
 	}
 
+	void SetBrightMultiplier(float brightMultiplier)
+	{
+		BrightMultiplier = brightMultiplier;
+		ChangeBright = BrightMultiplier != 1.0f;
+
+		Enable = ChangeColor || ChangeBright;
+	}
+
 	virtual void Read(INIBufferReader* reader) override
 	{
 		EffectData::Read(reader, TITLE);

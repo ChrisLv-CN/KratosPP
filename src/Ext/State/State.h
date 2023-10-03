@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <string>
+#include <any>
 
 #include <GeneralStructures.h>
 
@@ -10,7 +11,7 @@ template <typename TData>
 class State
 {
 public:
-	TData Data;
+	TData Data{};
 	std::string Token{};
 
 	/**
@@ -20,7 +21,7 @@ public:
 	 * @param duration 持续时间
 	 * @param token 令牌
 	 */
-	void EnableAndReplace(TData data, int duration, std::string token)
+	void EnableAndReplace(TData& data, int duration, std::string token)
 	{
 		// 强制关闭原有的
 		Disable();
@@ -33,7 +34,7 @@ public:
 	 *
 	 * @param data 配置
 	 */
-	void Enable(TData data)
+	void Enable(TData& data)
 	{
 		Enable(data, -1);
 	}
@@ -45,7 +46,7 @@ public:
 	 * @param duration 持续时间
 	 * @param token 令牌
 	 */
-	void Enable(TData data, int duration, std::string token = "")
+	void Enable(TData& data, int duration, std::string token = "")
 	{
 		Data = data;
 		Token = token;

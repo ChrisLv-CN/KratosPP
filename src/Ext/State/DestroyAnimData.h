@@ -65,7 +65,7 @@ public:
 
 		Owner = reader->Get(TITLE + "Owner", Owner);
 
-		Enable = !Anims.empty() || !IsNotNone(WreckType);
+		Enable = !Anims.empty() || IsNotNone(WreckType);
 
 		Wreck = reader->Get(TITLE + "Wreck", Wreck);
 	}

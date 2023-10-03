@@ -156,7 +156,7 @@ public:
 
 	bool CanAffectType(TechnoClass* pTechno)
 	{
-		return CanAffectType(pTechno->GetTechnoType()->ID) && CanAffectType(pTechno->What_Am_I());
+		return CanAffectType(pTechno->GetTechnoType()->ID) && CanAffectType(pTechno->WhatAmI());
 	}
 
 	bool CanAffectType(ObjectClass* pObject)

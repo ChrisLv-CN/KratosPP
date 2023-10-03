@@ -202,7 +202,7 @@ DEFINE_HOOK(0x6DA3FF, TacticalClass_SelectAt_VirtualUnit, 0x6)
 DEFINE_HOOK(0x6D5116, TacticalClass_Draw_Placement_Recheck, 0x5)
 {
 	BuildingTypeClass* pBuildingType = DisplayClass::Display_PendingObject.get();
-	if (pBuildingType->What_Am_I() == AbstractType::BuildingType)
+	if (pBuildingType->WhatAmI() == AbstractType::BuildingType)
 	{
 		BuildingRangeData* data = INI::GetConfig<BuildingRangeData>(INI::Rules, pBuildingType->ID)->Data;
 		if (data->Mode != BuildingRangeMode::NONE)
