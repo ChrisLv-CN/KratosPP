@@ -48,12 +48,6 @@ public:
 
 	virtual GameObject* GetGameObject() = 0;
 	__declspec(property(get = GetGameObject)) GameObject* _gameObject;
-
-	Randomizer GetRandom()
-	{
-		return ScenarioClass::Instance->Random;
-	}
-	__declspec(property(get = GetRandom)) Randomizer _random;
 };
 
 template <typename TBase, typename TExt>

@@ -3,14 +3,43 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <random>
 
 #include <ScenarioClass.h>
 #include <YRMathVector.h>
 
-static Randomizer GetRandom()
+/**
+ *@brief ScenarioClass::Instance->Random Only get the Same number in One frame
+ *
+ */
+class Random
 {
-	return ScenarioClass::Instance->Random;
-}
+public:
+	static void SetRandomSeed(int seed)
+	{
+		_engine.seed(seed);
+	}
+
+	/**
+	 *@brief Include maximum value
+	 *
+	 * @param min
+	 * @param max
+	 * @return int
+	 */
+	static int RandomRanged(int min, int max)
+	{
+		std::uniform_int_distribution<int> dis(min, max);
+		return dis(_engine);
+	}
+
+	static double RandomDouble()
+	{
+		return RandomRanged(1, INT_MAX) / (double)((unsigned int)INT_MAX + 1);
+	}
+private:
+	inline static std::minstd_rand _engine{};
+};
 
 template<typename T>
 static int GetRandomValue(Vector2D<T> range, int defVal)
@@ -25,7 +54,7 @@ static int GetRandomValue(Vector2D<T> range, int defVal)
 	}
 	if (max > 0)
 	{
-		return GetRandom().RandomRanged(min, max);
+		return Random::RandomRanged(min, max);
 	}
 	return defVal;
 }
@@ -60,7 +89,7 @@ static std::map<Point2D, int> MakeTargetPad(std::vector<int> weights, int count,
 static int Hit(std::map<Point2D, int> targetPad, int maxValue)
 {
 	int index = 0;
-	int p = GetRandom().RandomRanged(0, maxValue);
+	int p = Random::RandomRanged(0, maxValue);
 	for (auto it : targetPad)
 	{
 		Point2D tKey = it.first;
@@ -77,7 +106,7 @@ static bool Bingo(double chance)
 {
 	if (chance > 0)
 	{
-		return chance >= 1 || chance >= GetRandom().RandomDouble();
+		return chance >= 1 || chance >= Random::RandomDouble();
 	}
 	return false;
 }

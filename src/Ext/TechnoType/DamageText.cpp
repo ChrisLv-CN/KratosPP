@@ -16,8 +16,8 @@ bool TechnoStatus::SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& da
 
 void TechnoStatus::OrderDamageText(std::wstring text, CoordStruct location, DamageText*& data)
 {
-	int x = _random.RandomRanged(data->XOffset.X, data->XOffset.Y);
-	int y = _random.RandomRanged(data->YOffset.X, data->YOffset.Y) - 15; // 离地高度
+	int x = Random::RandomRanged(data->XOffset.X, data->XOffset.Y);
+	int y = Random::RandomRanged(data->YOffset.X, data->YOffset.Y) - 15; // 离地高度
 	Point2D offset{ x, y };
 	// 横向锚点修正
 	int length = text.size() / 2;

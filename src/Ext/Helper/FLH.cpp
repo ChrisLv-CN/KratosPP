@@ -4,6 +4,7 @@
 #include <JumpjetLocomotionClass.h>
 
 #include <Ext/Helper/CastEx.h>
+#include <Ext/Helper/MathEx.h>
 #include <Common/INI/INI.h>
 
 // ----------------
@@ -322,10 +323,10 @@ CoordStruct GetForwardCoords(CoordStruct sourcePos, CoordStruct targetPos, doubl
 #pragma region Random offset
 CoordStruct GetRandomOffset(int min, int max)
 {
-	double r = ScenarioClass::Instance->Random.RandomRanged(min, max);
+	double r = Random::RandomRanged(min, max);
 	if (r > 0)
 	{
-		double theta = ScenarioClass::Instance->Random.RandomDouble() * Math::TwoPi;
+		double theta = Random::RandomDouble() * Math::TwoPi;
 		CoordStruct offset{ static_cast<int>(r * Math::cos(theta)), static_cast<int>(r * Math::sin(theta)), 0 };
 		return offset;
 	}

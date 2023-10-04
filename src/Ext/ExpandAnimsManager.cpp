@@ -125,7 +125,7 @@ void ExpandAnimsManager::PlayExpandDebirs(DynamicVectorClass<VoxelAnimTypeClass*
 			{
 				for (int i = 0; i < lastTimes; i++)
 				{
-					int index = GetRandom().RandomRanged(0, count - 1);
+					int index = Random::RandomRanged(0, count - 1);
 					AnimTypeClass* pAnimType = debirs[index];
 					AnimClass* pNewAnim = GameCreate<AnimClass>(pAnimType, location);
 					pNewAnim->Owner = pHouse;

@@ -10,9 +10,9 @@ void BulletStatus::ShakeVelocity()
 		if (trajectoryData->ShakeVelocity != 0)
 		{
 			BulletVelocity velocity = pBullet->Velocity;
-			double shakeX = _random.RandomDouble() * trajectoryData->ShakeVelocity;
-			double shakeY = _random.RandomDouble() * trajectoryData->ShakeVelocity;
-			double shakeZ = _random.RandomDouble();
+			double shakeX = Random::RandomDouble() * trajectoryData->ShakeVelocity;
+			double shakeY = Random::RandomDouble() * trajectoryData->ShakeVelocity;
+			double shakeZ = Random::RandomDouble();
 			pBullet->Velocity.X *= shakeX;
 			pBullet->Velocity.Y *= shakeY;
 			pBullet->Velocity.Z *= shakeZ;

@@ -24,7 +24,7 @@ TechnoClass* FindRandomTechno(HouseClass* pHouse)
 	int size = pTechnoArray.size();
 	if (size > 0)
 	{
-		int targetIdx = GetRandom().RandomRanged(0, size - 1); // 同一帧的随机值永远都是同一个，容易造成死循环
+		int targetIdx = Random::RandomRanged(0, size - 1); // 同一帧的随机值永远都是同一个，容易造成死循环
 		bool forward = true;
 		for (int i = 0; i < size; i++)
 		{

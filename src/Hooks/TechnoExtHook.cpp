@@ -484,7 +484,7 @@ DEFINE_HOOK(0x702299, TechnoClass_Destroy_VxlDebris_Remap, 0xA)
 		// Phobos hook 这个地址，要自己算随机数
 		int max = pType->MaxDebris;
 		int min = pType->MinDebris;
-		int times = GetRandom().RandomRanged(min, max);
+		int times = Random::RandomRanged(min, max);
 		DynamicVectorClass<VoxelAnimTypeClass*> debrisTypes = pType->DebrisTypes;
 		if (debrisTypes.Count > 0)
 		{

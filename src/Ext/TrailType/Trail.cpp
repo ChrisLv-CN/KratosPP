@@ -140,7 +140,7 @@ void Trail::RealDrawTrail(CoordStruct currentPos, CoordStruct behindPos, HouseCl
 		if (count > 0)
 		{
 			// 随机
-			laserColorIndex = type.LaserType.ColorListRandom ? ScenarioClass::Instance->Random.RandomRanged(0, count) : laserColorIndex;
+			laserColorIndex = type.LaserType.ColorListRandom ? Random::RandomRanged(0, count - 1) : laserColorIndex;
 			ColorStruct color = type.LaserType.ColorList[laserColorIndex];
 			if (++laserColorIndex >= count)
 			{
@@ -201,7 +201,7 @@ void Trail::DrawAnimTrail(CoordStruct currentPos, CoordStruct behindPos, HouseCl
 			}
 			else
 			{
-				index = ScenarioClass::Instance->Random.RandomRanged(0, facing);
+				index = Random::RandomRanged(0, facing - 1);
 			}
 		}
 		animType = animTypes->at(index);

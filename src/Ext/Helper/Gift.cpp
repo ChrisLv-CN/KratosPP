@@ -4,6 +4,8 @@
 
 #include <Unsorted.h>
 
+#include <Utilities/Debug.h>
+
 TechnoClass* CreateAndPutTechno(TechnoTypeClass* pType, HouseClass* pHouse, CoordStruct location, CellClass* pCell)
 {
 	TechnoClass* pTechno = static_cast<TechnoClass*>(pType->CreateObject(pHouse));
@@ -56,7 +58,7 @@ bool RealReleaseGift(std::string id, HouseClass* pHouse,
 		int max = cellOffsets.size();
 		for (int i = 0; i < max; i++)
 		{
-			int index = GetRandom().RandomRanged(0, max - 1);
+			int index = Random::RandomRanged(0, max - 1);
 			CellStruct offset = cellOffsets[index];
 			CellStruct targetCellPos = centerCellPos + offset;
 			// 检查目标格子是否可用

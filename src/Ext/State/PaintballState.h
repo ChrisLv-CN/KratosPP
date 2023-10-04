@@ -65,7 +65,7 @@ public:
 			_rgbTimer.Start(15);
 		}
 		// 不灵不灵
-		Data.SetBrightMultiplier(static_cast<float>(GetRandom().RandomRanged(5, 15) / 10));
+		Data.SetBrightMultiplier(static_cast<float>(Random::RandomRanged(5, 15) / 10));
 		Reset();
 	}
 

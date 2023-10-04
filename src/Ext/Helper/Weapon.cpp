@@ -4,6 +4,7 @@
 #include <Ext/Helper/Component.h>
 #include <Ext/Helper/Effect.h>
 #include <Ext/Helper/FLH.h>
+#include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Status.h>
 
 #include <Extension/WeaponTypeExt.h>
@@ -365,7 +366,7 @@ void PlayReportSound(WeaponTypeClass* pWeapon, CoordStruct sourcePos)
 {
 	if (pWeapon->Report.Count > 0)
 	{
-		int index = ScenarioClass::Instance->Random.RandomRanged(0, pWeapon->Report.Count - 1);
+		int index = Random::RandomRanged(0, pWeapon->Report.Count - 1);
 		int soundIndex = pWeapon->Report.GetItem(index);
 		if (soundIndex != -1)
 		{

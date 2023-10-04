@@ -120,7 +120,7 @@ void BulletStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 		{
 			auto const range = static_cast<size_t>(data.RandomRange + 0.99);
 			for (CellSpreadEnumerator it(data.RandomRange); it; ++it) {
-				CellStruct pos = *it + cellPos;
+				CellStruct pos = *it;
 				cellOffsets.push_back(pos);
 			}
 		}

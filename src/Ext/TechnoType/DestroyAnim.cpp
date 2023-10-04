@@ -90,7 +90,7 @@ bool TechnoStatus::PlayDestroyAnims()
 				}
 				else
 				{
-					index = GetRandom().RandomRanged(0, facing - 1);
+					index = Random::RandomRanged(0, facing - 1);
 				}
 				std::string animId = data->Anims[index];
 				AnimTypeClass* pAnimType = AnimTypeClass::Find(animId.c_str());
