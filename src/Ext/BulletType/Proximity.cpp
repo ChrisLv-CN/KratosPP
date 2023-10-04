@@ -13,7 +13,7 @@ ProximityData* BulletStatus::GetProximityData()
 
 void BulletStatus::ActiveProximity()
 {
-	this->proximity = { pBullet->Type->CourseLockDuration, proximityData->PenetrationTimes };
+	this->proximity = { pBullet->Type->CourseLockDuration, GetProximityData()->PenetrationTimes };
 	this->_activeProximity = true;
 }
 
@@ -38,7 +38,7 @@ void BulletStatus::InitState_Proximity() {
 		}
 	}
 	// 设置碰触引擎
-	if (proximityData->Force)
+	if (GetProximityData()->Force)
 	{
 		ActiveProximity();
 	}

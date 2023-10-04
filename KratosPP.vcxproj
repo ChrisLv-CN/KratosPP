@@ -59,6 +59,7 @@
     <ClCompile Include="src\Ext\Helper\FLH.cpp" />
     <ClCompile Include="src\Ext\Helper\Gift.cpp" />
     <ClCompile Include="src\Ext\Helper\MathEx.cpp" />
+    <ClCompile Include="src\Ext\Helper\Physics.cpp" />
     <ClCompile Include="src\Ext\Helper\Status.cpp" />
     <ClCompile Include="src\Ext\Helper\StringEx.cpp" />
     <ClCompile Include="src\Ext\Helper\SurfaceEx.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="src\Ext\Helper\FLH.h" />
     <ClInclude Include="src\Ext\Helper\Gift.h" />
     <ClInclude Include="src\Ext\Helper\MathEx.h" />
+    <ClInclude Include="src\Ext\Helper\Physics.h" />
     <ClInclude Include="src\Ext\Helper\Status.h" />
     <ClInclude Include="src\Ext\Helper\StringEx.h" />
     <ClInclude Include="src\Ext\Helper\SurfaceEx.h" />
@@ -201,6 +203,7 @@
     <ClInclude Include="src\Ext\PrintText\PrintTextData.h" />
     <ClInclude Include="src\Ext\State\AntiBulletData.h" />
     <ClInclude Include="src\Ext\State\AntiBulletState.h" />
+    <ClInclude Include="src\Ext\State\BounceData.h" />
     <ClInclude Include="src\Ext\State\CrateBuffData.h" />
     <ClInclude Include="src\Ext\State\DestroyAnimData.h" />
     <ClInclude Include="src\Ext\State\DestroySelfData.h" />

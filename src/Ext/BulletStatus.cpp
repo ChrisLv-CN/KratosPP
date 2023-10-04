@@ -195,7 +195,7 @@ void BulletStatus::OnUpdate()
 	// 潜地
 	if (!life.IsDetonate && !HasPreImpactAnim(pBullet->WH))
 	{
-		if ((SubjectToGround || IsBounceSplit) && pBullet->GetHeight() < 0)
+		if ((SubjectToGround || _isBounceSplit) && pBullet->GetHeight() < 0)
 		{
 			// 抛射体潜入地下，重新设置目标参数，并手动引爆
 			CoordStruct targetPos = location;
@@ -210,11 +210,11 @@ void BulletStatus::OnUpdate()
 		if (!life.IsDetonate && IsArcing() && pBullet->GetHeight() <= 8)
 		{
 			// Arcing 近炸
-			CoordStruct tempSoucePos = location;
-			tempSoucePos.Z = 0;
+			CoordStruct tempSourcePos = location;
+			tempSourcePos.Z = 0;
 			CoordStruct tempTargetPos = pBullet->TargetCoords;
 			tempTargetPos.Z = 0;
-			if (tempSoucePos.DistanceFrom(tempTargetPos) <= static_cast<double>(256 + pBullet->Type->Acceleration))
+			if (tempSourcePos.DistanceFrom(tempTargetPos) <= static_cast<double>(256 + pBullet->Type->Acceleration))
 			{
 				// 距离目标太近，强制爆炸
 				life.Detonate();

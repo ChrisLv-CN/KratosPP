@@ -29,6 +29,8 @@ public:
 
 	virtual void Read(INIBufferReader* reader, std::string title) override
 	{
+		EffectData::Read(reader, title);
+
 		Enable = reader->Get(title + "Enable", Enable);
 		Weapon = reader->Get(title + "Weapon", Weapon);
 		OneShotOneKill = reader->Get(title + "OneShotOneKill", OneShotOneKill);

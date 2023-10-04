@@ -22,6 +22,8 @@ public:
 
 	virtual void Read(INIBufferReader* reader, std::string title) override
 	{
+		EffectData::Read(reader, title);
+
 		bool destroySelf = false;
 		destroySelf = reader->Get("DestroySelf", false);
 		if (destroySelf)
@@ -32,6 +34,8 @@ public:
 		{
 			Delay = reader->Get(title + "Delay", Delay);
 		}
+
+		Enable = Delay >= 0;
 
 		Peaceful = reader->Get(title + "Peaceful", Peaceful);
 	}

@@ -19,6 +19,7 @@
 
 #include <Ext/Helper/CastEx.h>
 
+#include <Ext/State/BounceData.h>
 #include <Ext/State/DestroySelfState.h>
 #include <Ext/State/GiftBoxState.h>
 #include <Ext/State/PaintballState.h>
@@ -128,6 +129,7 @@ public:
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
 	// 状态机
+	State<BounceData> BounceState{};
 	DestroySelfState DestroySelfState{};
 	GiftBoxState GiftBoxState{};
 	PaintballState PaintballState{};
@@ -142,8 +144,6 @@ public:
 
 	// 碰触地面会炸
 	bool SubjectToGround = false;
-	// 是弹跳抛射体分裂的子抛射体
-	bool IsBounceSplit = false;
 	// 正在被黑洞吸引
 	bool CaptureByBlackHole = false;
 
@@ -164,20 +164,33 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->TargetAircraftBullets)
+
+			.Process(this->BounceState)
+			.Process(this->DestroySelfState)
 			.Process(this->GiftBoxState)
+			.Process(this->PaintballState)
 
 			.Process(this->pSource)
 			.Process(this->pSourceHouse)
+			.Process(this->pFakeTarget)
 			.Process(this->life)
 			.Process(this->damage)
 
 			.Process(this->SubjectToGround)
-			.Process(this->IsBounceSplit)
-			.Process(this->pFakeTarget)
-			.Process(this->TargetAircraftBullets)
+
+			.Process(this->SpeedChanged)
+			.Process(this->LocationLocked)
+
 			.Process(this->_initFlag)
 			// 弹道控制
 			.Process(this->_arcingTrajectoryInitFlag)
+			// 弹跳
+			.Process(this->_bounceData)
+			.Process(this->_isBounceSplit)
+			.Process(this->_bounceIndex)
+			.Process(this->_bounceTargetPos)
+			.Process(this->_bounceSpeedMultiple)
 			// 直线
 			.Process(this->straightBullet)
 			.Process(this->_resetTargetFlag)
@@ -214,6 +227,10 @@ private:
 
 	// 反抛射体
 	void CanAffectAndDamageBullet(BulletClass* pTarget, WarheadTypeClass* pWH);
+
+	// 生成弹跳子抛射体
+	void SetBounceData(BounceData bounceData);
+	bool SpawnSplitCannon();
 
 	void InitState_Trajectory_Missile();
 	void InitState_Trajectory_Straight();
@@ -260,6 +277,13 @@ private:
 	bool _arcingTrajectoryInitFlag = false;
 	bool _missileShakeVelocityFlag = false;
 
+	// 弹跳
+	BounceData _bounceData{};
+	bool _isBounceSplit = false; // 是弹跳抛射体分裂的子抛射体
+	int _bounceIndex = 0; // 第几号子抛射体
+	CoordStruct _bounceTargetPos = CoordStruct::Empty;
+	float _bounceSpeedMultiple = 1.0f;
+
 	// 直线
 	StraightBullet straightBullet{};
 	bool _resetTargetFlag = false;
@@ -267,7 +291,6 @@ private:
 	// 碰撞引信配置
 	ProximityData* _proximityData = nullptr;
 	ProximityData* GetProximityData();
-	__declspec(property(get = GetProximityData)) ProximityData* proximityData;
 	// 碰撞引信
 	Proximity proximity{};
 	bool _activeProximity = false;
