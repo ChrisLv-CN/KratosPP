@@ -71,7 +71,12 @@ namespace INIConstant
 
 	static void SetGameModeName(EventSystem* sender, Event e, void* args)
 	{
-		_gameModeName = SessionClass::Instance->MPGameMode->INIFilename.Buffer;
+		// 直接进战役为空指针
+		MPGameModeClass* pMPGame = SessionClass::Instance->MPGameMode;
+		if (pMPGame)
+		{
+			_gameModeName = pMPGame->INIFilename.Buffer;
+		}
 #ifdef DEBUG
 		Debug::Log("Config file info:\n  Rules = \"%s\"\n  Art = \"%s\"\n  Ai = \"%s\"\n  MapName = \"%s\"\n  GameMode = \"%s\"\n",
 			GetRulesName().data(),
