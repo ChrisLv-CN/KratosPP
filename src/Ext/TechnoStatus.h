@@ -22,6 +22,7 @@
 #include <Ext/State/PaintballState.h>
 
 #include <Ext/TechnoType/AutoFireAreaWeaponData.h>
+#include <Ext/TechnoType/BaseNormalData.h>
 #include <Ext/TechnoType/CrawlingFLHData.h>
 #include <Ext/TechnoType/DamageTextData.h>
 #include <Ext/TechnoType/HealthTextData.h>
@@ -114,6 +115,8 @@ public:
 
 	virtual void OnTemporalUpdate(TemporalClass* pTemporal) override;
 
+	virtual void OnRemove() override;
+
 	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
 
 	virtual void OnReceiveDamageDestroy() override;
@@ -122,6 +125,9 @@ public:
 
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
+	// 清单
+	inline static std::map<TechnoClass*, bool> BaseUnitArray{}; // key = 单位, value = 做友军的基地建造节点
+	inline static std::map<TechnoClass*, bool> BaseStandArray{}; // key = 单位, value = 做友军的基地建造节点
 
 	// 状态机
 	AntiBulletState AntiBulletState{};
@@ -200,7 +206,8 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		return this->Serialize(stream);
+		bool success = this->Serialize(stream);
+		return success;
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
@@ -210,6 +217,8 @@ public:
 #pragma endregion
 
 private:
+	void ResetBaseNormal();
+
 	// 伤害数字
 	bool SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& damageTextType);
 	void OrderDamageText(std::wstring text, CoordStruct location, DamageText*& data);
@@ -238,9 +247,11 @@ private:
 	void InitState_Paintball();
 
 	void OnPut_AutoArea(CoordStruct* pLocation, DirType dir);
+	void OnPut_BaseNormarl(CoordStruct* pLocation, DirType dir);
 
 	void OnUpdate_AntiBullet();
 	void OnUpdate_AutoArea();
+	void OnUpdate_BaseNormal();
 	void OnUpdate_CrawlingFLH();
 	void OnUpdate_DamageText();
 	void OnUpdate_DestroySelf();
@@ -251,11 +262,14 @@ private:
 
 	void OnWarpUpdate_DestroySelf_Stand();
 
+	void OnRemove_BaseNormarl();
+
 	void OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 
+	void OnReceiveDamageDestroy_BaseNormarl();
 	void OnReceiveDamageDestroy_GiftBox();
 
 	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
@@ -270,6 +284,10 @@ private:
 
 	CoordStruct _location{};
 	bool _isMoving = false;
+
+	// 建造节点
+	BaseNormalData* _baseNormalData = nullptr;
+	BaseNormalData* GetBaseNormalData();
 
 	// Buff
 	CrateBuffData* _crateBuffData = nullptr;

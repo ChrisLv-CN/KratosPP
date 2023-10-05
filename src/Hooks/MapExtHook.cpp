@@ -8,6 +8,7 @@
 #include <TechnoClass.h>
 #include <HouseClass.h>
 
+#include <Ext/CommonStatus.h>
 #include <Ext/Helper.h>
 #include <Ext/TechnoStatus.h>
 #include <Ext/TechnoType/BuildingRangeData.h>
@@ -393,9 +394,63 @@ DEFINE_HOOK(0x6D5116, TacticalClass_Draw_Placement_Recheck, 0x5)
 	return 0;
 }
 
-
 DEFINE_HOOK(0x4A904E, DisplayClass_Passes_Proximity_Check_MobileMCV, 0x5)
 {
+	GET_STACK(bool, canBuild, 0x3C);
+	if (!canBuild && CombatDamage::Data()->AllowUnitAsBaseNormal)
+	{
+		BuildingTypeClass* pBuildingType = nullptr;
+		if ((!TechnoStatus::BaseUnitArray.empty() || !TechnoStatus::BaseStandArray.empty()) && (pBuildingType = DisplayClass::Display_PendingObject) != nullptr)
+		{
+			// 获取建筑建造范围四点坐标
+			// 显示建造范围
+			int width = pBuildingType->GetFoundationWidth();
+			int height = pBuildingType->GetFoundationHeight(false);
+			CellStruct zoneCell = DisplayClass::Display_ZoneCell.get();
+			CellStruct zoneOffset = DisplayClass::Display_ZoneOffset.get();
+			CellStruct center = zoneCell + zoneOffset;
+			int cellX = center.X;
+			int cellY = center.Y;
+			int adjust = pBuildingType->Adjacent + 1;
+			// 北
+			CellStruct nCell{ static_cast<short>(cellX - adjust), static_cast<short>(cellY - adjust) };
+			// 东
+			CellStruct eCell{ static_cast<short>(cellX + adjust + width - 1), static_cast<short>(cellY - adjust) };
+			// 南
+			CellStruct sCell{ static_cast<short>(cellX + adjust + width - 1), static_cast<short>(cellY + adjust + height - 1) };
+			// 西
+			CellStruct wCell{ static_cast<short>(cellX - adjust), static_cast<short>(cellY + adjust + height - 1) };
+			// 有效范围
+			int minX = nCell.X;
+			int minY = nCell.Y;
+			int maxX = eCell.X;
+			int maxY = wCell.Y;
+			// 检查单位节点
+			bool found = false;
+			int houseIndex = DisplayClass::Display_PendingHouse;
+			for(auto it : TechnoStatus::BaseUnitArray)
+			{
+				if (found = CanBeBase(it.first, it.second, houseIndex, minX, maxX, minY, maxY))
+				{
+					break;
+				}
+			}
+			if (!found && CombatDamage::Data()->AllowStandAsBaseNormal)
+			{
+				for(auto it : TechnoStatus::BaseStandArray)
+			{
+				if (found = CanBeBase(it.first, it.second, houseIndex, minX, maxX, minY, maxY))
+				{
+					break;
+				}
+			}
+			}
+			if (found)
+			{
+				R->Stack(0x3C, true);
+			}
+		}
+	}
 	return 0;
 }
 #pragma endregion

@@ -146,6 +146,20 @@ void ActiveRGBMode(TechnoClass* pTechno)
 	}
 }
 
+bool CanBeBase(TechnoClass* pTechno, bool eligibileForAllyBuilding, int houseIndex, int minX, int maxX, int minY, int maxY)
+{
+	// 检查位置在范围内
+	CoordStruct location = pTechno->GetCoords();
+	CellStruct cellPos = CellClass::Coord2Cell(location);
+	if (cellPos.X >= minX && cellPos.X <= maxX && cellPos.Y >= minY && cellPos.Y <= maxY)
+	{
+		// 判断所属
+		HouseClass* pTargetHouse = pTechno->Owner;
+		return pTargetHouse->ArrayIndex == houseIndex || (eligibileForAllyBuilding && pTargetHouse->IsAlliedWith(houseIndex));
+	}
+	return false;
+}
+
 bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, bool isPassiveAcquire)
 {
 	bool canAttack = false;

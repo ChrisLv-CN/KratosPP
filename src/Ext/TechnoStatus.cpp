@@ -28,6 +28,8 @@ void TechnoStatus::OnTransform(TypeChangeEventArgs* args)
 		_homingData = nullptr;
 
 		_jjFacingData = nullptr;
+
+		ResetBaseNormal();
 	}
 }
 
@@ -149,6 +151,7 @@ void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 		_initStateFlag = true;
 		InitState();
 		OnPut_AutoArea(pLocation, dirType);
+		OnPut_BaseNormarl(pLocation, dirType);
 	}
 }
 
@@ -165,6 +168,7 @@ void TechnoStatus::InitState()
 
 void TechnoStatus::OnUpdate()
 {
+	OnUpdate_DestroySelf();
 	if (!IsDead(pTechno))
 	{
 		switch (pTechno->CurrentMission)
@@ -197,15 +201,16 @@ void TechnoStatus::OnUpdate()
 		{
 			FootClass* pFoot = static_cast<FootClass*>(pTechno);
 			_isMoving = pFoot->GetCurrentSpeed() > 0 && pFoot->Locomotor.get()->Is_Moving();
+			OnUpdate_BaseNormal();
+			OnUpdate_CrawlingFLH();
+			OnUpdate_DeployToTransform();
+			OnUpdate_MissileHoming();
+			OnUpdate_JJFacing();
 		}
 		OnUpdate_AutoArea();
 		OnUpdate_AntiBullet();
-		OnUpdate_CrawlingFLH();
 		OnUpdate_DamageText();
-		OnUpdate_DeployToTransform();
 		OnUpdate_GiftBox();
-		OnUpdate_JJFacing();
-		OnUpdate_MissileHoming();
 		OnUpdate_Paintball();
 	}
 }
@@ -238,6 +243,11 @@ void TechnoStatus::OnTemporalUpdate(TemporalClass* pTemporal)
 	}
 }
 
+void TechnoStatus::OnRemove()
+{
+	OnRemove_BaseNormarl();
+}
+
 void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	if (damageState == DamageState::NowDead)
@@ -254,6 +264,7 @@ void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeCla
 
 void TechnoStatus::OnReceiveDamageDestroy()
 {
+	OnReceiveDamageDestroy_BaseNormarl();
 	OnReceiveDamageDestroy_GiftBox();
 }
 
