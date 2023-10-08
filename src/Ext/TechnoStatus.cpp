@@ -2,35 +2,24 @@
 
 #include <Ext/FireSuperManager.h>
 
-bool TechnoStatus::OnAwake()
+void TechnoStatus::OnTransform()
 {
-	VoxelShadowScaleInAir = INI::GetSection(INI::Rules, INI::SectionAudioVisual)->Get("VoxelShadowScaleInAir", VoxelShadowScaleInAir);
-	IsHoming = GetHomingData()->Homing;
-	return true;
-}
+	_absType = AbstractType::None;
+	_locoType = LocoType::None;
 
-void TechnoStatus::OnTransform(TypeChangeEventArgs* args)
-{
-	TechnoClass* pTarget = args->pTechno;
-	if (pTarget && pTarget == pTechno)
-	{
-		_absType = AbstractType::None;
-		_locoType = LocoType::None;
+	_autoAreaData = nullptr;
 
-		_autoAreaData = nullptr;
+	_destroyAnimData = nullptr;
 
-		_destroyAnimData = nullptr;
+	_crawlingFLHData = nullptr;
+	_transformData = nullptr;
 
-		_crawlingFLHData = nullptr;
-		_transformData = nullptr;
+	_spawnData = nullptr;
+	_homingData = nullptr;
 
-		_spawnData = nullptr;
-		_homingData = nullptr;
+	_jjFacingData = nullptr;
 
-		_jjFacingData = nullptr;
-
-		ResetBaseNormal();
-	}
+	ResetBaseNormal();
 }
 
 void TechnoStatus::Destroy()
@@ -146,6 +135,10 @@ bool TechnoStatus::AmIStand()
 
 void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 {
+	if (!IsHoming)
+	{
+		IsHoming = GetHomingData()->Homing;
+	}
 	if (!_initStateFlag)
 	{
 		_initStateFlag = true;

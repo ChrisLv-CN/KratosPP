@@ -4,8 +4,6 @@
 #include <Ext/Helper.h>
 #include <Ext/TechnoStatus.h>
 
-std::vector<BulletClass*> BulletStatus::TargetAircraftBullets = {};
-
 BulletType BulletStatus::GetBulletType()
 {
 	if (_bulletType == BulletType::UNKNOWN)
@@ -90,10 +88,10 @@ void BulletStatus::Awake()
 
 void BulletStatus::Destroy()
 {
-	auto it = std::find(TargetAircraftBullets.begin(), TargetAircraftBullets.end(), pBullet);
-	if (it != TargetAircraftBullets.end())
+	auto it = std::find(BulletExt::TargetAircraftBullets.begin(), BulletExt::TargetAircraftBullets.end(), pBullet);
+	if (it != BulletExt::TargetAircraftBullets.end())
 	{
-		TargetAircraftBullets.erase(it);
+		BulletExt::TargetAircraftBullets.erase(it);
 	}
 }
 
@@ -166,8 +164,9 @@ void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 	AbstractClass* pTarget = nullptr;
 	if (IsMissile() && (pTarget = pBullet->Target) != nullptr && (pTarget->WhatAmI() == AbstractType::Aircraft || pTarget->IsInAir()))
 	{
-		TargetAircraftBullets.push_back(pBullet);
+		BulletExt::TargetAircraftBullets.push_back(pBullet);
 	}
+	_targetToAircraftFlag = true;
 }
 
 void BulletStatus::InitState_BlackHole() {};
@@ -175,6 +174,16 @@ void BulletStatus::InitState_ECM() {};
 
 void BulletStatus::OnUpdate()
 {
+	if (!_targetToAircraftFlag)
+	{
+		_targetToAircraftFlag = true;
+		// 是否是对飞行器攻击
+		AbstractClass* pTarget = nullptr;
+		if (IsMissile() && (pTarget = pBullet->Target) != nullptr && (pTarget->WhatAmI() == AbstractType::Aircraft || pTarget->IsInAir()))
+		{
+			BulletExt::TargetAircraftBullets.push_back(pBullet);
+		}
+	}
 	// 弹道
 	if (IsArcing())
 	{

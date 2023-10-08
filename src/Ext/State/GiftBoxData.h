@@ -257,6 +257,26 @@ public:
 
 		GiftBoxData::Read(reader, TITLE);
 	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
+	{
+		GiftBoxData::Load(stream, registerForChange);
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const override
+	{
+		GiftBoxData::Save(stream);
+		return const_cast<DeployToTransformData*>(this)->Serialize(stream);
+	}
+#pragma endregion
 private:
 	inline static std::string TITLE = "DeployToTransform.";
 };

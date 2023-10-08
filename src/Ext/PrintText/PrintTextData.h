@@ -4,7 +4,7 @@
 
 #include <Common/INI/INIConfig.h>
 
-enum class PrintTextAlign
+enum class PrintTextAlign : int
 {
 	LEFT = 0, CENTER = 1, RIGHT = 2
 };
@@ -35,7 +35,7 @@ inline bool Parser<PrintTextAlign>::TryParse(const char* pValue, PrintTextAlign*
 	}
 }
 
-enum class SHPDrawStyle
+enum class SHPDrawStyle : int
 {
 	NUMBER = 0,
 	TEXT = 1, // 固定帧
@@ -133,4 +133,51 @@ public:
 		BlockSHP = reader->Get(title + "BLOCK.SHP", BlockSHP);
 		BlockIndex = reader->Get(title + "BLOCK.Index", BlockIndex);
 	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->Offset)
+			.Process(this->ShadowOffset)
+			.Process(this->Color)
+			.Process(this->ShadowColor)
+			.Process(this->IsHouseColor)
+
+			.Process(this->Align)
+
+			.Process(this->UseSHP)
+			.Process(this->SHPDrawStyle)
+			.Process(this->SHPFileName)
+			.Process(this->ZeroFrameIndex)
+			.Process(this->MaxFrameIndex)
+			.Process(this->ImageSize)
+			.Process(this->Wrap)
+
+			.Process(this->NoNumbers)
+			.Process(this->HitSHP)
+			.Process(this->HitIndex)
+			.Process(this->MissSHP)
+			.Process(this->MissIndex)
+			.Process(this->CritSHP)
+			.Process(this->CritIndex)
+			.Process(this->GlancingSHP)
+			.Process(this->GlancingIndex)
+			.Process(this->BlockSHP)
+			.Process(this->BlockIndex)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange)
+	{
+		INIConfig::Load(stream, registerForChange);
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const
+	{
+		INIConfig::Save(stream);
+		return const_cast<PrintTextData*>(this)->Serialize(stream);
+	}
+#pragma endregion
 };

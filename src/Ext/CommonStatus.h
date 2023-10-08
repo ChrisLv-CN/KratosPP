@@ -65,6 +65,7 @@ public:
 
 	// Kratos
 	bool AllowMakeVoxelDebrisByKratos = true;
+	float VoxelShadowScaleInAir = 2.0f;
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -72,6 +73,7 @@ public:
 		DeactivateDimPowered = reader->Get("DeactivateDimPowered", DeactivateDimPowered);
 
 		AllowMakeVoxelDebrisByKratos = reader->Get("AllowMakeVoxelDebrisByKratos", AllowMakeVoxelDebrisByKratos);
+		VoxelShadowScaleInAir = reader->Get("VoxelShadowScaleInAir", VoxelShadowScaleInAir);
 	}
 
 };

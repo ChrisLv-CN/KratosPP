@@ -73,12 +73,12 @@ public:
 
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
-		FilterData::Load(stream, registerForChange);
+		EffectData::Load(stream, registerForChange);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
-		FilterData::Save(stream);
+		EffectData::Save(stream);
 		return const_cast<PaintballData*>(this)->Serialize(stream);
 	}
 #pragma endregion

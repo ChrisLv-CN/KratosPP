@@ -28,6 +28,27 @@ bool IsDeadOrInvisible(ObjectClass* pObject);
 #pragma endregion
 
 #pragma region TechnoClass
+enum class DrivingState
+{
+	Moving = 0, Stand = 1, Start = 2, Stop = 3
+};
+
+enum class LocoType
+{
+	None = 0,
+	Drive = 1,
+	Hover = 2,
+	Tunnel = 3,
+	Walk = 4,
+	Droppod = 5,
+	Fly = 6,
+	Teleport = 7,
+	Mech = 8,
+	Ship = 9,
+	Jumpjet = 10,
+	Rocket = 11
+};
+
 bool IsDead(TechnoClass* pTechno);
 bool IsDeadOrInvisible(TechnoClass* pTechno);
 
@@ -45,6 +66,7 @@ bool CanBeBase(TechnoClass* pTechno, bool eligibileForAllyBuilding, int houseInd
 bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, bool isPassiveAcquire = false);
 #pragma endregion
 
+#pragma region BulletClass
 enum class BulletType
 {
 	UNKNOWN = 0,
@@ -56,7 +78,6 @@ enum class BulletType
 	BOMB = 6
 };
 
-#pragma region BulletClass
 /** @brief 获取抛射体的轨迹类型.
  *
  * Inviso优先级最高；\n

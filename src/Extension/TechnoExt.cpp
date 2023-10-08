@@ -25,3 +25,7 @@ void TechnoExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* 
 }
 
 TechnoExt::ExtContainer TechnoExt::ExtMap{};
+std::map<TechnoClass*, bool> TechnoExt::BaseUnitArray{};
+std::map<TechnoClass*, bool> TechnoExt::BaseStandArray{};
+
+HealthTextControlData TechnoExt::HealthTextControlData{};

@@ -400,7 +400,7 @@ DEFINE_HOOK(0x4A904E, DisplayClass_Passes_Proximity_Check_MobileMCV, 0x5)
 	if (!canBuild && CombatDamage::Data()->AllowUnitAsBaseNormal)
 	{
 		BuildingTypeClass* pBuildingType = nullptr;
-		if ((!TechnoStatus::BaseUnitArray.empty() || !TechnoStatus::BaseStandArray.empty()) && (pBuildingType = DisplayClass::Display_PendingObject) != nullptr)
+		if ((!TechnoExt::BaseUnitArray.empty() || !TechnoExt::BaseStandArray.empty()) && (pBuildingType = DisplayClass::Display_PendingObject) != nullptr)
 		{
 			// 获取建筑建造范围四点坐标
 			// 显示建造范围
@@ -428,22 +428,24 @@ DEFINE_HOOK(0x4A904E, DisplayClass_Passes_Proximity_Check_MobileMCV, 0x5)
 			// 检查单位节点
 			bool found = false;
 			int houseIndex = DisplayClass::Display_PendingHouse;
-			for(auto it : TechnoStatus::BaseUnitArray)
+			for (auto it : TechnoExt::BaseUnitArray)
 			{
-				if (found = CanBeBase(it.first, it.second, houseIndex, minX, maxX, minY, maxY))
+				found = CanBeBase(it.first, it.second, houseIndex, minX, maxX, minY, maxY);
+				if (found)
 				{
 					break;
 				}
 			}
 			if (!found && CombatDamage::Data()->AllowStandAsBaseNormal)
 			{
-				for(auto it : TechnoStatus::BaseStandArray)
-			{
-				if (found = CanBeBase(it.first, it.second, houseIndex, minX, maxX, minY, maxY))
+				for (auto it : TechnoExt::BaseStandArray)
 				{
-					break;
+					found = CanBeBase(it.first, it.second, houseIndex, minX, maxX, minY, maxY);
+					if (found)
+					{
+						break;
+					}
 				}
-			}
 			}
 			if (found)
 			{

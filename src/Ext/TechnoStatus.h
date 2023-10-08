@@ -11,7 +11,6 @@
 #include <Utilities/Debug.h>
 
 #include <Common/Components/ScriptComponent.h>
-#include <Common/EventSystems/EventSystem.h>
 
 #include <Ext/State/AntiBulletState.h>
 #include <Ext/State/CrateBuffData.h>
@@ -30,39 +29,14 @@
 #include <Ext/TechnoType/MissileHomingData.h>
 #include <Ext/TechnoType/SpawnData.h>
 
-enum class DrivingState
-{
-	Moving = 0, Stand = 1, Start = 2, Stop = 3
-};
-
-enum class LocoType
-{
-	None = 0,
-	Drive = 1,
-	Hover = 2,
-	Tunnel = 3,
-	Walk = 4,
-	Droppod = 5,
-	Fly = 6,
-	Teleport = 7,
-	Mech = 8,
-	Ship = 9,
-	Jumpjet = 10,
-	Rocket = 11
-};
-
 /// @brief base compoment, save the Techno status
-class TechnoStatus : public TransformScript
+class TechnoStatus : public TechnoScript
 {
 public:
-	TechnoStatus(TechnoExt::ExtData* ext) : TransformScript(ext)
+	TechnoStatus(TechnoExt::ExtData* ext) : TechnoScript(ext)
 	{
 		this->Name = typeid(this).name();
 	}
-
-	virtual bool OnAwake() override;
-
-	virtual void OnTransform(TypeChangeEventArgs* args) override;
 
 	virtual void Destroy() override;
 
@@ -125,10 +99,6 @@ public:
 
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
-	// 清单
-	inline static std::map<TechnoClass*, bool> BaseUnitArray{}; // key = 单位, value = 做友军的基地建造节点
-	inline static std::map<TechnoClass*, bool> BaseStandArray{}; // key = 单位, value = 做友军的基地建造节点
-
 	// 状态机
 	AntiBulletState AntiBulletState{};
 	State<CrateBuffData> CrateBuffState{};
@@ -142,8 +112,8 @@ public:
 	CrateBuffData CrateBuff{};
 
 	DrivingState drivingState = DrivingState::Moving;
+
 	bool DisableVoxelCache = false;
-	float VoxelShadowScaleInAir = 2.0f;
 
 	bool DisableSelectVoice = false;
 
@@ -179,7 +149,6 @@ public:
 			.Process(this->pKillerHouse)
 
 			.Process(this->DisableVoxelCache)
-			.Process(this->VoxelShadowScaleInAir)
 
 			.Process(this->DisableSelectVoice)
 
@@ -206,8 +175,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		bool success = this->Serialize(stream);
-		return success;
+		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
@@ -217,6 +185,8 @@ public:
 #pragma endregion
 
 private:
+	void OnTransform();
+
 	void ResetBaseNormal();
 
 	// 伤害数字
@@ -224,7 +194,6 @@ private:
 	void OrderDamageText(std::wstring text, CoordStruct location, DamageText*& data);
 
 	// 血量数字
-	static HealthTextControlData GetHealthTextControlData();
 	HealthTextData GetHealthTextData();
 	void PrintHealthText(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding);
 	void OffsetPosAlign(Point2D& pos, int textWidth, int barWidth, PrintTextAlign align, bool isBuilding, bool useSHP);
@@ -304,7 +273,6 @@ private:
 	std::map<DamageText*, DamageTextCache> _repairCache{};
 
 	// 血条数字
-	inline static HealthTextControlData _healthControlData{}; // 全局默认设置
 	HealthTextData _healthTextData{}; // 个体设置
 
 	// 光环武器

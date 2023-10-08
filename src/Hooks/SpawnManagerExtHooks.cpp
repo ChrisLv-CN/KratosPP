@@ -145,7 +145,8 @@ DEFINE_HOOK(0x6B743E, SpawnManagerClass_Update_PutSpawns, 0x6)
 					// Logger.Log($"{Game.CurrentFrame} [{pTechno->Type->Base.Base.ID}]{pTechno} 发射子机 {index} - {pManager->DrawState()}/{count}");
 				}
 				auto it = pFire->SpawnerBurstFLH.find(index);
-				if (it != pFire->SpawnerBurstFLH.end())
+				customFLH = it != pFire->SpawnerBurstFLH.end();
+				if (customFLH)
 				{
 					// 副武器和盖特武器上都没有子机发射器，检查子机是否由ExtraFire或者AutoWeapon发射
 					GET(CoordStruct*, eax, EAX);
@@ -163,7 +164,10 @@ DEFINE_HOOK(0x6B743E, SpawnManagerClass_Update_PutSpawns, 0x6)
 			pManager->SpawnTimer.Start(status->GetSpawnData()->SpawnDelay);
 		}
 	}
-
+	if (customFLH)
+	{
+		return 0x6B7498;
+	}
 	return 0;
 }
 

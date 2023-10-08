@@ -22,3 +22,4 @@ void BulletExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* 
 }
 
 BulletExt::ExtContainer BulletExt::ExtMap{};
+std::vector<BulletClass*> BulletExt::TargetAircraftBullets{};

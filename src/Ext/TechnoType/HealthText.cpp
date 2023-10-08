@@ -11,35 +11,31 @@ void TechnoStatus::DrawHealthBar(int barLength, Point2D* pPos, RectangleStruct* 
 	}
 }
 
-HealthTextControlData TechnoStatus::GetHealthTextControlData()
-{
-	if (!_healthControlData.IsRead)
-	{
-		_healthControlData.Read();
-	}
-	return _healthControlData;
-}
-
 HealthTextData TechnoStatus::GetHealthTextData()
 {
 	if (!_healthTextData.IsRead)
 	{
+		HealthTextControlData* controlData = &TechnoExt::HealthTextControlData;
+		if (controlData->IsRead)
+		{
+			controlData->Read();
+		}
 		// 读取全局设置
 		if (IsBuilding())
 		{
-			_healthTextData = GetHealthTextControlData().Building;
+			_healthTextData = controlData->Building;
 		}
 		else if (IsInfantry())
 		{
-			_healthTextData = GetHealthTextControlData().Infantry;
+			_healthTextData = controlData->Infantry;
 		}
 		else if (IsUnit())
 		{
-			_healthTextData = GetHealthTextControlData().Unit;
+			_healthTextData = controlData->Unit;
 		}
 		else if (IsAircraft())
 		{
-			_healthTextData = GetHealthTextControlData().Aircraft;
+			_healthTextData = controlData->Aircraft;
 		}
 		// 读取个体设置
 		INIBufferReader* reader = INI::GetSection(INI::Rules, pTechno->GetTechnoType()->ID);

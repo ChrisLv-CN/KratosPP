@@ -6,7 +6,7 @@
 #include <Common/INI/INIConfig.h>
 #include <Ext/PrintText/PrintTextData.h>
 
-enum class HealthTextStyle
+enum class HealthTextStyle : int
 {
 	AUTO = 0, FULL = 1, SHORT = 2, PERCENT = 3
 };
@@ -83,6 +83,31 @@ public:
 		Style = reader->Get(title + "Style", Style);
 		HoverStyle = reader->Get(title + "HoverStyle", HoverStyle);
 	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->Hidden)
+			.Process(this->ShowEnemy)
+			.Process(this->ShowHover)
+			.Process(this->Style)
+			.Process(this->HoverStyle)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange)
+	{
+		PrintTextData::Load(stream, registerForChange);
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const
+	{
+		PrintTextData::Save(stream);
+		return const_cast<HealthTextEntity*>(this)->Serialize(stream);
+	}
+#pragma endregion
 };
 
 struct HealthTextData
@@ -145,6 +170,28 @@ public:
 		IsRead = true;
 	}
 
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->IsRead)
+			.Process(this->Hidden)
+			.Process(this->Green)
+			.Process(this->Yellow)
+			.Process(this->Red)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange)
+	{
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const
+	{
+		return const_cast<HealthTextData*>(this)->Serialize(stream);
+	}
+#pragma endregion
 };
 
 struct HealthTextControlData
@@ -178,5 +225,29 @@ struct HealthTextControlData
 
 		IsRead = true;
 	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->IsRead)
+			.Process(this->Hidden)
+			.Process(this->Building)
+			.Process(this->Infantry)
+			.Process(this->Unit)
+			.Process(this->Aircraft)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange)
+	{
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const
+	{
+		return const_cast<HealthTextControlData*>(this)->Serialize(stream);
+	}
+#pragma endregion
 };
 

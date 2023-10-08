@@ -14,11 +14,11 @@
 
 namespace INIConstant
 {
-	static std::string _rulesName{}; // rulesmd.ini
-	static std::string _artName{};   // artmd.ini
-	static std::string _aiName{};	 // aimd.ini
+	static std::string _rulesName{ "RULESMD.INI" }; // rulesmd.ini
+	static std::string _artName{ "ARTMD.INI" };   // artmd.ini
+	static std::string _aiName{ "AIMD.INI" };	 // aimd.ini
 
-	static std::string _ra2md = "ra2md.ini"; // ra2md.ini
+	static std::string _ra2md{ "RA2MD.INI" }; // ra2md.ini
 
 	static std::string _gameModeName{};
 	static std::string _mapName{};

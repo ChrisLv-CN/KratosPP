@@ -2,7 +2,7 @@
 
 #include <FootClass.h>
 
-#include <Ext/Helper.h>
+#include <Ext/Helper/Finder.h>
 
 bool TechnoStatus::WeaponNoAA(int weaponIdx)
 {

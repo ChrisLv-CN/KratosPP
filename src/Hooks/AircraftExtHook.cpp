@@ -9,6 +9,7 @@
 #include <Extension.h>
 #include <Utilities/Macro.h>
 #include <Ext/Helper.h>
+#include <Ext/CommonStatus.h>
 #include <Ext/TechnoStatus.h>
 #include <Extension/TechnoExt.h>
 #include <Extension/WarheadTypeExt.h>
@@ -39,17 +40,13 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 {
 	GET(TechnoClass*, pTechno, EBP);
 	GET(Matrix3D*, pMatrix, EAX);
-	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt, TechnoStatus>(pTechno, status)
-		&& (status->IsAircraft() || pTechno->GetTechnoType()->ConsideredAircraft))
+	if (pTechno->GetTechnoType()->ConsideredAircraft || pTechno->WhatAmI() == AbstractType::Aircraft)
 	{
-		pMatrix->Scale(status->VoxelShadowScaleInAir);
-	}
-	// 调整倾斜时影子的纵向比例
-	FootClass* pFoot = nullptr;
-	if (CastToFoot(pTechno, pFoot))
-	{
-		Matrix3D matrix = pFoot->Locomotor->Draw_Matrix(nullptr);
+		// 缩放影子
+		pMatrix->Scale(AudioVisual::Data()->VoxelShadowScaleInAir);
+
+		// 调整倾斜时影子的纵向比例
+		Matrix3D matrix = static_cast<FootClass*>(pTechno)->Locomotor->Draw_Matrix(nullptr);
 		double scale = Math::cos(abs(matrix.GetYRotation()));
 		pMatrix->ScaleX(static_cast<float>(scale));
 	}

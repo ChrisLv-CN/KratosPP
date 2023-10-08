@@ -23,11 +23,11 @@ void TechnoStatus::OnPut_BaseNormarl(CoordStruct* pLocation, DirType dir)
 	{
 		if (AmIStand())
 		{
-			BaseStandArray[pTechno] = GetBaseNormalData()->EligibileForAllyBuilding;
+			TechnoExt::BaseStandArray[pTechno] = GetBaseNormalData()->EligibileForAllyBuilding;
 		}
 		else
 		{
-			BaseUnitArray[pTechno] = GetBaseNormalData()->EligibileForAllyBuilding;
+			TechnoExt::BaseUnitArray[pTechno] = GetBaseNormalData()->EligibileForAllyBuilding;
 		}
 	}
 }
@@ -41,18 +41,17 @@ void TechnoStatus::OnUpdate_BaseNormal()
 	}
 }
 
-
 void TechnoStatus::OnRemove_BaseNormarl()
 {
-	auto it = BaseStandArray.find(pTechno);
-	if (it != BaseStandArray.end())
+	auto it = TechnoExt::BaseStandArray.find(pTechno);
+	if (it != TechnoExt::BaseStandArray.end())
 	{
-		BaseStandArray.erase(it);
+		TechnoExt::BaseStandArray.erase(it);
 	}
-	auto it2 = BaseUnitArray.find(pTechno);
-	if (it2 != BaseUnitArray.end())
+	auto it2 = TechnoExt::BaseUnitArray.find(pTechno);
+	if (it2 != TechnoExt::BaseUnitArray.end())
 	{
-		BaseUnitArray.erase(it);
+		TechnoExt::BaseUnitArray.erase(it);
 	}
 }
 

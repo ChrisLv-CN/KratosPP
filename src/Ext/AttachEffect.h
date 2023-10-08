@@ -1,22 +1,33 @@
 ﻿#pragma once
 
 #include <codecvt>
-#include <Extension.h>
-#include <TechnoClass.h>
-#include <LaserDrawClass.h>
-#include <Drawing.h>
-#include <HouseClass.h>
-#include <TacticalClass.h>
 
+#include <TechnoClass.h>
+
+#include <Utilities/Macro.h>
 #include <Utilities/Debug.h>
 
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
-#include <Common/INI/INI.h>
-#include <Common/INI/INIConfig.h>
-#include <Common/INI/INIReader.h>
-#include <Extension/GOExtension.h>
-#include <Extension/TechnoExt.h>
+
+#include <Ext/State/AntiBulletState.h>
+#include <Ext/State/CrateBuffData.h>
+#include <Ext/State/DestroyAnimData.h>
+#include <Ext/State/DestroySelfState.h>
+#include <Ext/State/FireSuperData.h>
+#include <Ext/State/GiftBoxState.h>
+#include <Ext/State/PaintballState.h>
+
+#include <Ext/TechnoStatus.h>
+
+#include <Ext/TechnoType/AutoFireAreaWeaponData.h>
+#include <Ext/TechnoType/BaseNormalData.h>
+#include <Ext/TechnoType/CrawlingFLHData.h>
+#include <Ext/TechnoType/DamageTextData.h>
+#include <Ext/TechnoType/HealthTextData.h>
+#include <Ext/TechnoType/JumpjetFacingData.h>
+#include <Ext/TechnoType/MissileHomingData.h>
+#include <Ext/TechnoType/SpawnData.h>
 
 class AttachEffectData : public INIConfig
 {
@@ -41,8 +52,6 @@ public:
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
-			.Process(this->laserColor)
-			.Process(this->colorChanged)
 			.Success();
 	};
 
@@ -57,10 +66,5 @@ public:
 		return const_cast<AttachEffect*>(this)->Serialize(stream);
 	}
 #pragma endregion
-
-	ColorStruct laserColor = { 0, 255, 0 };
-
-	bool colorChanged = false;
 private:
-	AttachEffectData _data;
 };

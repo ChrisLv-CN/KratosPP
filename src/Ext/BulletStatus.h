@@ -150,8 +150,6 @@ public:
 	bool SpeedChanged = false; // 改变抛射体的速度
 	bool LocationLocked = false; // 锁定抛射体的位置
 
-	static std::vector<BulletClass*> TargetAircraftBullets;
-
 	virtual void InvalidatePointer(void* ptr) override
 	{
 		AnnounceInvalidPointer(this->pSource, ptr);
@@ -164,8 +162,6 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(this->TargetAircraftBullets)
-
 			.Process(this->BounceState)
 			.Process(this->DestroySelfState)
 			.Process(this->GiftBoxState)
@@ -272,6 +268,8 @@ private:
 	__declspec(property(get = GetTrajectoryData)) TrajectoryData* trajectoryData;
 
 	bool _initFlag = false;
+
+	bool _targetToAircraftFlag = false;
 
 	// 弹道控制
 	bool _arcingTrajectoryInitFlag = false;
