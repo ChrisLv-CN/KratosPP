@@ -222,6 +222,7 @@
     <ClInclude Include="src\Ext\TechnoType\BuildingRangeData.h" />
     <ClInclude Include="src\Ext\TechnoType\CrawlingFLHData.h" />
     <ClInclude Include="src\Ext\TechnoType\DamageTextData.h" />
+    <ClInclude Include="src\Ext\TechnoType\DisguiseData.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />
     <ClInclude Include="src\Ext\TechnoType\JumpjetFacingData.h" />
     <ClInclude Include="src\Ext\TechnoType\MissileHomingData.h" />
