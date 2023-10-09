@@ -484,16 +484,29 @@ DEFINE_HOOK(0x702299, TechnoClass_Destroy_VxlDebris_Remap, 0xA)
 		// Phobos hook 这个地址，要自己算随机数
 		int max = pType->MaxDebris;
 		int min = pType->MinDebris;
-		int times = Random::RandomRanged(min, max);
-		DynamicVectorClass<VoxelAnimTypeClass*> debrisTypes = pType->DebrisTypes;
-		if (debrisTypes.Count > 0)
+		if (min < 0)
 		{
-			HouseClass* pHouse = pTechno->Owner;
-			CoordStruct location = pTechno->GetCoords();
-			ExpandAnimsManager::PlayExpandDebirs(debrisTypes, pType->DebrisMaximums, times, location, pHouse, pTechno);
+			Debug::Log("Warning: TechnoType [%s] MinDebris = %d\n", pType->ID, min);
+			min = 0;
 		}
-		R->EBX(times);
-		return 0x7023E5;
+		if (max < min)
+		{
+			Debug::Log("Warning: TechnoType [%s] MinDebris = %d, MaxDebris = %d\n", pType->ID, min, max);
+			max = min;
+		}
+		int times = Random::RandomRanged(min, max);
+		if (times > 0)
+		{
+			DynamicVectorClass<VoxelAnimTypeClass*> debrisTypes = pType->DebrisTypes;
+			if (debrisTypes.Count > 0)
+			{
+				HouseClass* pHouse = pTechno->Owner;
+				CoordStruct location = pTechno->GetCoords();
+				ExpandAnimsManager::PlayExpandDebirs(debrisTypes, pType->DebrisMaximums, times, location, pHouse, pTechno);
+			}
+			R->EBX(times);
+			return 0x7023E5;
+		}
 	}
 	return 0;
 }
