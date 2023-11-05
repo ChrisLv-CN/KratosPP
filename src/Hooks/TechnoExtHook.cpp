@@ -8,6 +8,7 @@
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
+#include <Utilities/Debug.h>
 #include <Common/Components/Component.h>
 #include <Common/Components/ScriptComponent.h>
 #include <Ext/CommonStatus.h>
@@ -41,7 +42,14 @@ DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 DEFINE_HOOK(0x6F4500, TechnoClass_DTOR, 0x5)
 {
 	GET(TechnoClass*, pItem, ECX);
-
+	TechnoExt::ExtData* ext = TechnoExt::ExtMap.Find(pItem);
+	if (ext)
+	{
+		ext->SetExtStatus(nullptr);
+	}
+#ifdef DEBUG_COMPONENT
+	Debug::Log("Techno %p is DTOR, Remove form ExtMap. ExtMap has %d left.\n", pItem, TechnoExt::ExtMap.size());
+#endif // DEBUG
 	TechnoExt::ExtMap.Remove(pItem);
 
 	return 0;

@@ -24,6 +24,12 @@ void TechnoExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* 
 	globalScripts.emplace_back(attachEffect);
 }
 
+void TechnoExt::ClearBaseArray(EventSystem* sender, Event e, void* args)
+{
+	BaseUnitArray.clear();
+	BaseStandArray.clear();
+}
+
 TechnoExt::ExtContainer TechnoExt::ExtMap{};
 std::map<TechnoClass*, bool> TechnoExt::BaseUnitArray{};
 std::map<TechnoClass*, bool> TechnoExt::BaseStandArray{};

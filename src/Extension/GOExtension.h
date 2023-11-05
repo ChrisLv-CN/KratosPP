@@ -59,6 +59,9 @@ public:
 		{
 			if (ptr == this->OwnerObject())
 			{
+#ifdef DEBUG_COMPONENT
+			Debug::Log("[%s]%s [%s]%s Owner is Release, GameObject [%s]%s.\n",  this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
+#endif // DEBUG
 				_ownerIsRelease = true;
 				_status = nullptr;
 			}

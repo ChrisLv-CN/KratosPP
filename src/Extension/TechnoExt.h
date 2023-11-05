@@ -23,6 +23,17 @@ public:
 	static TechnoExt::ExtContainer ExtMap;
 
 	/**
+	 *@brief 在游戏读取时，手动清理缓存的清单。
+	 * 在游戏内直接读取游戏时，游戏会先执行OnRemove，
+	 * OnRemove会遍历Array移除自身，因而导致游戏在读档时卡住，剩余几个Techno无法继续读档，原因不明。
+	 *
+	 * @param sender
+	 * @param e
+	 * @param args
+	 */
+	static void ClearBaseArray(EventSystem* sender, Event e, void* args);
+
+	/**
 	 *@brief 储存可以作为基地建造节点的单位.
 	 * key = 单位, value = 做友军的基地建造节点
 	 */

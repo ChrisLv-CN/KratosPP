@@ -9,6 +9,7 @@
 #include <Common/INI/INIConstant.h>
 
 #include <Ext/FireSuperManager.h>
+#include <Extension/TechnoExt.h>
 
 class SaveGameHook
 {
@@ -19,6 +20,7 @@ public:
 		EventSystems::SaveLoad.AddHandler(Events::LoadGameEvent, INIConstant::LoadGameModeName);
 		EventSystems::SaveLoad.AddHandler(Events::SaveGameEvent, FireSuperManager::SaveSuperQueue);
 		EventSystems::SaveLoad.AddHandler(Events::LoadGameEvent, FireSuperManager::LoadSuperQueue);
+		EventSystems::SaveLoad.AddHandler(Events::LoadGameEvent, TechnoExt::ClearBaseArray);
 	}
 };
 
