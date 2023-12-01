@@ -64,7 +64,6 @@
     <ClCompile Include="src\Ext\Helper\StringEx.cpp" />
     <ClCompile Include="src\Ext\Helper\SurfaceEx.cpp" />
     <ClCompile Include="src\Ext\Helper\Weapon.cpp" />
-    <ClCompile Include="src\Ext\LaserTrail.cpp" />
     <ClCompile Include="src\Ext\PrintTextManager.cpp" />
     <ClCompile Include="src\Ext\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoTrail.cpp" />
@@ -198,7 +197,6 @@
     <ClInclude Include="src\Ext\Helper\StringEx.h" />
     <ClInclude Include="src\Ext\Helper\SurfaceEx.h" />
     <ClInclude Include="src\Ext\Helper\Weapon.h" />
-    <ClInclude Include="src\Ext\LaserTrail.h" />
     <ClInclude Include="src\Ext\PrintTextManager.h" />
     <ClInclude Include="src\Ext\PrintText\PrintText.h" />
     <ClInclude Include="src\Ext\PrintText\PrintTextData.h" />

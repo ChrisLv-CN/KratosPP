@@ -228,6 +228,9 @@ private:
 	bool _started = false;
 	bool _disable = false;
 
+	// 添加的Component名单
+	std::vector<std::string> _whiteList{};
+
 	// 读取存档时，所有的Component都是重新构建的，运行时失效的Component需要被记录
 	std::vector<std::string> _disableComponents{};
 

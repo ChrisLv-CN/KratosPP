@@ -18,10 +18,8 @@
 class TechnoTrail : public TransformScript
 {
 public:
-	TechnoTrail(TechnoExt::ExtData* ext) : TransformScript(ext)
-	{
-		this->Name = typeid(this).name();
-	}
+	
+	TRANSFORM_SCRIPT(TechnoTrail);
 
 	void SetupTrails();
 
@@ -39,7 +37,7 @@ public:
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
-			.Process(this->trails)
+			.Process(this->_trails)
 			.Success();
 	};
 
@@ -56,5 +54,5 @@ public:
 #pragma endregion
 
 private:
-	std::vector<Trail> trails{};
+	std::vector<Trail> _trails{};
 };

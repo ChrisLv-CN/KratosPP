@@ -43,10 +43,8 @@ public:
 class AttachEffect : public TechnoScript
 {
 public:
-	AttachEffect(TechnoExt::ExtData* ext) : TechnoScript(ext)
-	{
-		this->Name = typeid(this).name();
-	}
+	TECHNO_SCRIPT(AttachEffect);
+
 
 #pragma region Save/Load
 	template <typename T>

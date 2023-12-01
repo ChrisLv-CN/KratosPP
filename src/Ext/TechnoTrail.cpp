@@ -3,10 +3,12 @@
 
 #include <Ext/Helper.h>
 
+TECHNO_SCRIPT_CPP(TechnoTrail);
+
 void TechnoTrail::SetupTrails()
 {
-	trails.clear();
-	TryGetTrails(pTechno->GetTechnoType()->ID, trails);
+	_trails.clear();
+	TryGetTrails(pTechno->GetTechnoType()->ID, _trails);
 }
 
 bool TechnoTrail::OnAwake()
@@ -29,7 +31,7 @@ void TechnoTrail::OnTransform(TypeChangeEventArgs* args)
 
 void TechnoTrail::OnPut(CoordStruct* pLocation, DirType dirType)
 {
-	if (trails.empty())
+	if (_trails.empty())
 	{
 		SetupTrails();
 	}
@@ -37,17 +39,17 @@ void TechnoTrail::OnPut(CoordStruct* pLocation, DirType dirType)
 
 void TechnoTrail::OnRemove()
 {
-	trails.clear();
+	_trails.clear();
 }
 
 void TechnoTrail::OnUpdateEnd()
 {
-	if (!trails.empty())
+	if (!_trails.empty())
 	{
 		if (!IsDeadOrInvisibleOrCloaked(pTechno) && pTechno->GetHeight() >= 0)
 		{
 			TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno);
-			for (Trail& trail : trails)
+			for (Trail& trail : _trails)
 			{
 				// 检查动画尾巴
 				if (trail.GetMode() == TrailMode::ANIM)
@@ -67,7 +69,7 @@ void TechnoTrail::OnUpdateEnd()
 		else
 		{
 			// 更新坐标
-			for (Trail& trail : trails)
+			for (Trail& trail : _trails)
 			{
 				CoordStruct sourcePos = GetFLHAbsoluteCoords(pTechno, trail.FLH, trail.IsOnTurret);
 				trail.UpdateLastLocation(sourcePos);

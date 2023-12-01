@@ -33,10 +33,7 @@
 class TechnoStatus : public TechnoScript
 {
 public:
-	TechnoStatus(TechnoExt::ExtData* ext) : TechnoScript(ext)
-	{
-		this->Name = typeid(this).name();
-	}
+	TECHNO_SCRIPT(TechnoStatus);
 
 	virtual void Destroy() override;
 
@@ -171,7 +168,6 @@ public:
 			.Process(this->pExtraSparkleAnim)
 			.Success();
 	};
-
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);

@@ -18,10 +18,7 @@
 class BulletTrail : public BulletScript
 {
 public:
-	BulletTrail(BulletExt::ExtData* ext) : BulletScript(ext)
-	{
-		this->Name = typeid(this).name();
-	}
+	BULLET_SCRIPT(BulletTrail);
 
 	virtual void Awake() override;
 

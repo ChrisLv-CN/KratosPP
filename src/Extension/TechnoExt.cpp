@@ -10,18 +10,21 @@ void TechnoExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* 
 	// Base Component
 	// can't use GameCreate because can't use GameDelete to release memory.
 	// TechnoStatus *status = GameCreate<TechnoStatus>(ext);
-	TechnoStatus* status = new TechnoStatus(ext);
+	// TechnoStatus* status = new TechnoStatus(ext);
+	TechnoStatus* status = CREATE_SCRIPT<TechnoStatus>("TechnoStatus", ext);
 	globalScripts.emplace_back(status);
 
+	AttachEffect* attachEffect = CREATE_SCRIPT<AttachEffect>("AttachEffect", ext);
+	globalScripts.emplace_back(attachEffect);
+
 	// Other Components
-	AttachFire<TechnoClass, TechnoExt>* attachFire = new AttachFire<TechnoClass, TechnoExt>(ext);
+	AttachFire* attachFire = CREATE_SCRIPT<AttachFire>("AttachFire", ext);
 	globalScripts.emplace_back(attachFire);
 
-	TechnoTrail* trail = new TechnoTrail(ext);
+	// TechnoTrail* trail = new TechnoTrail(ext);
+	TechnoTrail* trail = CREATE_SCRIPT<TechnoTrail>("TechnoTrail", ext);
 	globalScripts.emplace_back(trail);
 
-	AttachEffect* attachEffect = new AttachEffect(ext);
-	globalScripts.emplace_back(attachEffect);
 }
 
 void TechnoExt::ClearBaseArray(EventSystem* sender, Event e, void* args)

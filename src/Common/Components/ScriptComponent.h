@@ -16,11 +16,10 @@
 
 #include <Ext/Helper.h>
 
-template <typename TBase>
 class ScriptComponent : public Component
 {
 public:
-	ScriptComponent(Extension<TBase>* ext)
+	ScriptComponent(IExtData* ext)
 	{
 		this->extData = ext;
 #ifdef DEBUG
@@ -38,43 +37,73 @@ public:
 #endif // DEBUG
 	}
 
-	Extension<TBase>* extData;
+	IExtData* extData;
 
-	TBase* GetOwner()
+	GameObject* GetGameObject()
 	{
-		return extData->OwnerObject();
+		return extData->GetGameObject();
 	}
-	__declspec(property(get = GetOwner)) TBase* _owner;
 
-	virtual GameObject* GetGameObject() = 0;
 	__declspec(property(get = GetGameObject)) GameObject* _gameObject;
 };
 
-template <typename TBase, typename TExt>
-class ObjectScript : public ScriptComponent<TBase>, public ITechnoScript, public IBulletScript
+#define SCRIPT_COMPONENT(SCRIPT_TYPE, TBASE, TEXT, P_NAME) \
+	SCRIPT_TYPE(TEXT::ExtData* ext) : ScriptComponent(ext) {} \
+	\
+	TBASE* GetOwner() \
+	{ \
+		return ((TEXT::ExtData*)extData)->OwnerObject(); \
+	} \
+	__declspec(property(get = GetOwner)) TBASE* P_NAME; \
+
+class ObjectScript : public ScriptComponent, public ITechnoScript, public IBulletScript
 {
 public:
-	ObjectScript(GOExtension<TBase, TExt>::ExtData* ext) : ScriptComponent<TBase>(ext) {}
+	ObjectScript(IExtData* ext) : ScriptComponent(ext) {}
 
-	virtual GameObject* GetGameObject() override
+	TechnoClass* GetTechno()
 	{
-		return ((typename GOExtension<TBase, TExt>::ExtData*)this->extData)->_GameObject;
+		if (TechnoExt::ExtData* technoExtData = dynamic_cast<TechnoExt::ExtData*>(extData))
+		{
+			return technoExtData->OwnerObject();
+		}
+		return nullptr;
 	}
 
-	__declspec(property(get = GetOwner)) TBase* pObject;
+	__declspec(property(get = GetTechno)) TechnoClass* pTechno;
+
+	BulletClass* GetBullet()
+	{
+		if (BulletExt::ExtData* bulletExtData = dynamic_cast<BulletExt::ExtData*>(extData))
+		{
+			return bulletExtData->OwnerObject();
+		}
+		return nullptr;
+	}
+
+	__declspec(property(get = GetBullet)) BulletClass* pBullet;
+
+	ObjectClass* GetOwner()
+	{
+		ObjectClass* pObject = pTechno;
+		if (!pTechno)
+		{
+			pObject = pBullet;
+		}
+		if (!pObject)
+		{
+			Debug::Log("Warning: ObjectScript \"%s\" got a unknown ExtData!\n", Name.c_str());
+		}
+		return pObject;
+	}
+
+	__declspec(property(get = GetOwner)) ObjectClass* pObject;
 };
 
-class TechnoScript : public ScriptComponent<TechnoClass>, public ITechnoScript
+class TechnoScript : public ScriptComponent, public ITechnoScript
 {
 public:
-	TechnoScript(TechnoExt::ExtData* ext) : ScriptComponent(ext) {}
-
-	virtual GameObject* GetGameObject() override
-	{
-		return ((TechnoExt::ExtData*)extData)->_GameObject;
-	}
-
-	__declspec(property(get = GetOwner)) TechnoClass* pTechno;
+	SCRIPT_COMPONENT(TechnoScript, TechnoClass, TechnoExt, pTechno);
 };
 
 class TransformScript : public TechnoScript
@@ -109,41 +138,104 @@ public:
 	virtual void OnTransform(TypeChangeEventArgs* args) = 0;
 };
 
-class BulletScript : public ScriptComponent<BulletClass>, public IBulletScript
+class BulletScript : public ScriptComponent, public IBulletScript
 {
 public:
-	BulletScript(BulletExt::ExtData* ext) : ScriptComponent(ext) {}
-
-	virtual GameObject* GetGameObject() override
-	{
-		return ((BulletExt::ExtData*)extData)->_GameObject;
-	}
-
-	__declspec(property(get = GetOwner)) BulletClass* pBullet;
+	SCRIPT_COMPONENT(BulletScript, BulletClass, BulletExt, pBullet);
 };
 
-class AnimScript : public ScriptComponent<AnimClass>, public IAnimScript
+class AnimScript : public ScriptComponent, public IAnimScript
 {
 public:
-	AnimScript(AnimExt::ExtData* ext) : ScriptComponent(ext) {}
-
-	virtual GameObject* GetGameObject() override
-	{
-		return ((AnimExt::ExtData*)extData)->_GameObject;
-	}
-
-	__declspec(property(get = GetOwner)) AnimClass* pAnim;
+	SCRIPT_COMPONENT(AnimScript, AnimClass, AnimExt, pAnim);
 };
 
-class SuperWeaponScript : public ScriptComponent<SuperClass>, public ISuperScript
+class SuperWeaponScript : public ScriptComponent, public ISuperScript
 {
 public:
-	SuperWeaponScript(SuperWeaponExt::ExtData* ext) : ScriptComponent(ext) {}
+	SCRIPT_COMPONENT(SuperWeaponScript, SuperClass, SuperWeaponExt, pSuper);
+};
 
-	virtual GameObject* GetGameObject() override
+class ScriptFactory
+{
+public:
+	static ScriptFactory& GetInstance()
 	{
-		return ((SuperWeaponExt::ExtData*)extData)->_GameObject;
+		static ScriptFactory instance;
+		return instance;
 	}
 
-	__declspec(property(get = GetOwner)) SuperClass* pSuper;
+	using ScriptCreator = std::function<Component* (IExtData*)>;
+
+	int Register(const std::string& name, ScriptCreator creator)
+	{
+		_creatorMap.insert(make_pair(name, creator));
+		Debug::Log("Registration script \"%s\".\n", name.c_str());
+		return 0;
+	}
+
+	Component* Create(const std::string& name, IExtData* extData)
+	{
+		auto it = _creatorMap.find(name);
+		if (it != _creatorMap.end())
+		{
+			Component* c = it->second(extData);
+			c->Name = name;
+			return c;
+		}
+		return nullptr;
+	}
+
+private:
+	ScriptFactory() {};
+	~ScriptFactory() {};
+
+	ScriptFactory(const ScriptFactory&) = delete;
+
+	std::map<std::string, ScriptCreator> _creatorMap{};
 };
+
+#define DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TEXTDATA, TSCRIPT) \
+	CLASS_NAME(TEXTDATA* ext) : TSCRIPT(ext) \
+	{ \
+		this->Name = #CLASS_NAME; \
+	} \
+	\
+	static Component* Create(IExtData* extData); \
+
+#define OBJECT_SCRIPT(CLASS_NAME) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, IExtData, ObjectScript) \
+
+#define TECHNO_SCRIPT(CLASS_NAME) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TechnoExt::ExtData, TechnoScript) \
+
+#define TRANSFORM_SCRIPT(CLASS_NAME) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TechnoExt::ExtData, TransformScript) \
+
+#define BULLET_SCRIPT(CLASS_NAME) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, BulletExt::ExtData, BulletScript) \
+
+#define DYNAMIC_SCRIPT_CPP(CLASS_NAME, EXTDATA) \
+	Component* CLASS_NAME::Create(IExtData* extData) \
+	{ \
+		return static_cast<Component*>(new CLASS_NAME(static_cast<EXTDATA*>(extData))); \
+	} \
+	\
+	static int g_temp_##CLASS_NAME = \
+	ScriptFactory::GetInstance().Register(#CLASS_NAME, CLASS_NAME::Create); \
+
+#define OBJECT_SCRIPT_CPP(CLASS_NAME) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME, IExtData) \
+
+#define TECHNO_SCRIPT_CPP(CLASS_NAME) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME, TechnoExt::ExtData) \
+
+#define BULLET_SCRIPT_CPP(CLASS_NAME) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME, BulletExt::ExtData) \
+
+template<typename T>
+T* CREATE_SCRIPT(const std::string& name, IExtData* extData)
+{
+	return dynamic_cast<T*>(ScriptFactory::GetInstance().Create(name, extData));
+}
+

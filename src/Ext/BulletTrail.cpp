@@ -1,6 +1,8 @@
 ﻿#include "BulletTrail.h"
 #include "BulletStatus.h"
 
+BULLET_SCRIPT_CPP(BulletTrail);
+
 void BulletTrail::Awake()
 {
 	if (!TryGetTrails(pBullet->Type->ID, trails))

@@ -113,6 +113,9 @@ void Component::AddComponent(Component& component)
 		// vector::push_back 和 vector::emplace_back 会调用析构
 		// list::emplace_back 不会
 		_children.emplace_back(&component);
+		// 加入白名单
+		std::string name = component.Name;
+		_whiteList.push_back(name);
 #ifdef DEBUG_COMPONENT
 		Debug::Log("Add Component [%s]%s to %s [%s]%s.\n", component.thisName.c_str(), component.thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif // DEBUG
@@ -139,8 +142,15 @@ void Component::RemoveComponent(Component* component)
 		(*it)->_parent = nullptr;
 		(*it)->_disable = true;
 		// it = _children.erase(it);
-		std::string disableName = (*it)->Name;
-		_disableComponents.push_back(disableName);
+		std::string name = (*it)->Name;
+		// 移出白名单
+		auto ite = std::find(_whiteList.begin(), _whiteList.end(), name);
+		if (ite != _whiteList.end())
+		{
+			_whiteList.erase(ite);
+		}
+		// 加入黑名单
+		_disableComponents.push_back(name);
 	}
 }
 

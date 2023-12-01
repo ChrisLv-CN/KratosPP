@@ -89,10 +89,7 @@ public:
 class BulletStatus : public BulletScript
 {
 public:
-	BulletStatus(BulletExt::ExtData* ext) : BulletScript(ext)
-	{
-		this->Name = typeid(this).name();
-	}
+	BULLET_SCRIPT(BulletStatus);
 
 	BulletType GetBulletType();
 

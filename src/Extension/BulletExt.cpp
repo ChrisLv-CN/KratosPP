@@ -10,14 +10,14 @@ void BulletExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* 
 	// Base Component
 	// can't use GameCreate because can't use GameDelete to release memory.
 	// BulletStatus *status = GameCreate<BulletStatus>(ext);
-	BulletStatus* status = new BulletStatus(ext);
+	BulletStatus* status = CREATE_SCRIPT<BulletStatus>("BulletStatus", ext);
 	globalScripts.emplace_back(status);
 
 	// Other Component
-	AttachFire<BulletClass, BulletExt>* attachFire = new AttachFire<BulletClass, BulletExt>(ext);
+	AttachFire* attachFire = CREATE_SCRIPT<AttachFire>("AttachFire", ext);
 	globalScripts.emplace_back(attachFire);
 
-	BulletTrail* trail = new BulletTrail(ext);
+	BulletTrail* trail = CREATE_SCRIPT<BulletTrail>("BulletTrail", ext);
 	globalScripts.emplace_back(trail);
 }
 

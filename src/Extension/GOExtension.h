@@ -10,23 +10,52 @@
 #include <Utilities/Container.h>
 #include <Utilities/Debug.h>
 
+class IExtData
+{
+public:
+#ifdef DEBUG
+	std::string thisId{};
+	std::string thisName{};
+
+	std::string baseId{};
+	std::string baseName{};
+#endif // DEBUG
+
+	std::string ExtName{};
+	std::string BaseName{};
+
+	virtual std::string GetExtName() = 0;
+	virtual std::string GetBaseName() = 0;
+
+	virtual GameObject* GetGameObject() = 0;
+
+};
+
 template <typename TBase, typename TExt>
 class GOExtension
 {
 public:
 	using base_type = TBase;
 
-	class ExtData : public Extension<TBase>
+	class ExtData : public Extension<TBase>, public IExtData
 	{
 	public:
 		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
 		{
+			this->ExtName = typeid(TExt).name();
+			this->BaseName = typeid(TBase).name();
 #ifdef DEBUG
 			char t_this[1024];
 			sprintf_s(t_this, "%p", this);
 			this->thisId = { t_this };
 
 			this->thisName = typeid(TExt).name();
+
+			char t_base[1024];
+			sprintf_s(t_base, "%p", OwnerObject);
+			this->baseId = { t_base };
+
+			this->baseName = typeid(TBase).name();
 
 			m_GameObject.extId = this->thisId;
 			m_GameObject.extName = this->thisName;
@@ -43,24 +72,34 @@ public:
 			// 从存档读入时，Component的标记_awaked被读入，不会重复激活
 			AttachComponents();
 			// m_GameObject._OnAwake += newDelegate(this, &ExtData::AttachComponents);
-		};
+};
 
 		~ExtData() override
 		{
 #ifdef DEBUG_COMPONENT
-			Debug::Log("[%s]%s [%s]%s  calling GameObject [%s]%s destroy all component.\n",  this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
+			Debug::Log("[%s]%s [%s]%s  calling GameObject [%s]%s destroy all component.\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
 #endif // DEBUG
 			// delete *m_GameObject;
 			m_GameObject.ForeachChild([](Component* c)
 				{ c->EnsureDestroy(); });
 		};
 
+		virtual std::string GetExtName() override
+		{
+			return this->ExtName;
+		}
+
+		virtual std::string GetBaseName() override
+		{
+			return this->BaseName;
+		}
+
 		virtual void InvalidatePointer(void* ptr, bool bRemoved) override
 		{
 			if (ptr == this->OwnerObject())
 			{
 #ifdef DEBUG_COMPONENT
-			Debug::Log("[%s]%s [%s]%s Owner is Release, GameObject [%s]%s.\n",  this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
+				Debug::Log("[%s]%s [%s]%s Owner is Release, GameObject [%s]%s.\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
 #endif // DEBUG
 				_ownerIsRelease = true;
 				_status = nullptr;
@@ -99,7 +138,7 @@ public:
 
 		//----------------------
 		// GameObject
-		GameObject* GetGameObject()
+		virtual GameObject* GetGameObject() override
 		{
 			return m_GameObject.GetAwaked();
 		};
@@ -175,11 +214,11 @@ public:
 				s->EnsureAwaked();
 			}*/
 			m_GlobalScriptsCreated = true;
-	};
+		};
 
 		// 全局脚本
 		bool m_GlobalScriptsCreated = false;
-};
+	};
 
 	class ExtContainer : public Container<TExt>
 	{

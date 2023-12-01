@@ -21,15 +21,10 @@
 #include <Extension/WarheadTypeExt.h>
 #include <Extension/WeaponTypeExt.h>
 
-template <typename TBase, typename TExt>
-class AttachFire : public ObjectScript<TBase, TExt>
+class AttachFire : public ObjectScript
 {
 public:
-	AttachFire(GOExtension<TBase, TExt>::ExtData* ext) : ObjectScript<TBase, TExt>(ext)
-	{
-		this->Name = typeid(this).name();
-		EventSystems::General.AddHandler(Events::PointerExpireEvent, this, &AttachFire::PointerExpired);
-	}
+	OBJECT_SCRIPT(AttachFire);
 
 	virtual void Destroy() override
 	{
@@ -119,9 +114,9 @@ public:
 				// 抛射体没有AA，终止发射
 				return isFire;
 			}
-			if (std::is_same<TBase, TechnoClass>::value)
+			if (this->pTechno)
 			{
-				maxRange += dynamic_cast<TechnoClass*>(this->pObject)->GetTechnoType()->AirRangeBonus;
+				maxRange += this->pTechno->GetTechnoType()->AirRangeBonus;
 			}
 		}
 		// 检查射程
@@ -226,9 +221,9 @@ public:
 			return;
 		}
 		// 发射自身武器
-		if (std::is_same_v<TBase, TechnoClass>)
+		if (this->pTechno)
 		{
-			TechnoClass* pShooter = dynamic_cast<TechnoClass*>(this->pObject);
+			TechnoClass* pShooter = this->pTechno;
 			int size = _delayFires.size();
 			for (int i = 0; i < size; i++)
 			{
@@ -333,15 +328,13 @@ private:
 	CoordStruct GetSourcePos(CoordStruct flh, DirStruct& facingDir, bool isOnTurret = true, int flipY = 1)
 	{
 		CoordStruct sourcePos = this->pObject->GetCoords();
-		if (std::is_same_v<TBase, TechnoClass>)
+		if (this->pTechno)
 		{
-			TechnoClass* pTechno = dynamic_cast<TechnoClass*>(this->pObject);
 			sourcePos = GetFLHAbsoluteCoords(pTechno, flh, isOnTurret, flipY);
 			facingDir = pTechno->GetRealFacing().Current();
 		}
-		else if (std::is_same_v<TBase, BulletClass>)
+		else if (this->pBullet)
 		{
-			BulletClass* pBullet = dynamic_cast<BulletClass*>(this->pObject);
 			facingDir = Facing(pBullet, sourcePos);
 			CoordStruct tempFLH = flh;
 			tempFLH.Y *= flipY;

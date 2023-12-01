@@ -2,6 +2,8 @@
 
 #include <Ext/FireSuperManager.h>
 
+TECHNO_SCRIPT_CPP(TechnoStatus);
+
 void TechnoStatus::OnTransform()
 {
 	_absType = AbstractType::None;

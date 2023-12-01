@@ -12,18 +12,10 @@
 #include <Common/Components/ScriptComponent.h>
 
 /// @brief base compoment, save the EBolt status
-class EBoltStatus : public ScriptComponent<EBolt>
+class EBoltStatus : public ScriptComponent
 {
 public:
-	EBoltStatus(Extension<EBolt> *ext) : ScriptComponent(ext)
-	{
-		this->Name = typeid(this).name();
-	}
-
-	virtual GameObject* GetGameObject() override
-	{
-		return ((EBoltExt::ExtData*)extData)->_GameObject;
-	}
+	SCRIPT_COMPONENT(EBoltStatus, EBolt, EBoltExt, pBolt);
 
 	ColorStruct Color1 = Colors::Empty;
 	ColorStruct Color2 = Colors::Empty;
