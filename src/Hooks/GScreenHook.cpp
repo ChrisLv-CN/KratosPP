@@ -28,7 +28,8 @@ DEFINE_HOOK(0x4F4583, GScreenClass_Render_Late, 0x6)
 	return 0;
 }
 
-DEFINE_HOOK(0x6A6EB1, SidebarClass_DrawIt, 0x6)
+// SidebarClass_5F38C0
+DEFINE_HOOK(0x6A70EB, SidebarClass_DrawIt, 0x6)
 {
 	EventSystems::Render.Broadcast(Events::SidebarRenderEvent);
 	return 0;
