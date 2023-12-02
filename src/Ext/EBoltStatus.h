@@ -12,10 +12,10 @@
 #include <Common/Components/ScriptComponent.h>
 
 /// @brief base compoment, save the EBolt status
-class EBoltStatus : public ScriptComponent
+class EBoltStatus : public EBoltScript
 {
 public:
-	SCRIPT_COMPONENT(EBoltStatus, EBolt, EBoltExt, pBolt);
+	EBOLT_SCRIPT(EBoltStatus);
 
 	ColorStruct Color1 = Colors::Empty;
 	ColorStruct Color2 = Colors::Empty;

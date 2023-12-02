@@ -148,6 +148,12 @@ void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 		OnPut_AutoArea(pLocation, dirType);
 		OnPut_BaseNormarl(pLocation, dirType);
 	}
+	OnPut_Trail(pLocation, dirType);
+}
+
+void TechnoStatus::OnPut_Trail(CoordStruct* pLocation, DirType dirType)
+{
+	// std::vector<Trails
 }
 
 void TechnoStatus::InitState()

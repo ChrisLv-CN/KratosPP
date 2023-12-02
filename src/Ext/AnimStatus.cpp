@@ -4,6 +4,8 @@
 #include <Ext/ExpandAnimsManager.h>
 #include <Ext/FireSuperManager.h>
 
+ANIM_SCRIPT_CPP(AnimStatus);
+
 bool AnimStatus::TryGetCreater(TechnoClass*& pTechno)
 {
 	pTechno = pCreater;

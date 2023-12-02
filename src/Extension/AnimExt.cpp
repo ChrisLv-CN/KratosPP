@@ -2,13 +2,10 @@
 
 #include <Ext/AnimStatus.h>
 
-void AnimExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* ext)
+void AnimExt::AddGlobalScripts(std::list<std::string>& globalScripts, ExtData* ext)
 {
 	// Base Component
-	// can't use GameCreate because can't use GameDelete to release memory.
-	// AnimStatus *status = GameCreate<AnimStatus>(ext);
-	AnimStatus* status = new AnimStatus(ext);
-	globalScripts.push_back(status);
+	globalScripts.push_back(AnimStatus::ScriptName);
 }
 
 AnimExt::ExtContainer AnimExt::ExtMap{};

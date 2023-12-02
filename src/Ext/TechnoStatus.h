@@ -211,6 +211,7 @@ private:
 	void InitState_GiftBox();
 	void InitState_Paintball();
 
+	void OnPut_Trail(CoordStruct* pLocation, DirType dir);
 	void OnPut_AutoArea(CoordStruct* pLocation, DirType dir);
 	void OnPut_BaseNormarl(CoordStruct* pLocation, DirType dir);
 

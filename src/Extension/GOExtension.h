@@ -6,6 +6,7 @@
 #include <stack>
 
 #include <Common/Components/GameObject.h>
+#include <Common/Components/ScriptFactory.h>
 
 #include <Utilities/Container.h>
 #include <Utilities/Debug.h>
@@ -144,10 +145,32 @@ public:
 		};
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
+		/// @brief 通过Ext查找GameObject下的脚本
+		/// @tparam TComponent 
+		/// @return 
 		template <typename TComponent>
 		TComponent* GetComponent()
 		{
 			return m_GameObject.GetComponentInChildren<TComponent>();
+		}
+
+		/// @brief 通过Ext查找GameObject下的脚本，如果没有则新增一个实例
+		/// @tparam TComponent 
+		/// @return 
+		template <typename TComponent>
+		TComponent* FindOrAllocate()
+		{
+			TComponent* c = GetComponent<TComponent>();
+			if (!c)
+			{
+				// 创建新的脚本
+				c = ScriptFactory::CreateScript<TComponent>(this);
+				if (c)
+				{
+					m_GameObject.AddComponent(*c);
+				}
+			}
+			return c;
 		}
 
 		template <typename TStatus>
@@ -196,18 +219,22 @@ public:
 				return;
 			}
 			// Search and instantiate global script objects in TechnoExt
-			std::list<Component*> m_GlobalScripts{};
+			std::list<std::string> globalScripts{};
 
-			// 在Ext中创建Component实例并加入到GameObject中
-			// Component的创建需要使用new，在Component::EnsureDesroy中Delete
-			TExt::AddGlobalScripts(m_GlobalScripts, this);
+			// 在Ext中读取需要添加的脚本名单
+			TExt::AddGlobalScripts(globalScripts, this);
 #ifdef DEBUG_COMPONENT
 			Debug::Log("[%s]%s [%s]%s ready to attach %d components\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GlobalScripts.size());
 #endif // DEBUG
 			// 该函数只将Component实例加入GameObject
-			for (Component* s : m_GlobalScripts)
+			for (std::string& scriptName : globalScripts)
 			{
-				m_GameObject.AddComponent(*s);
+				// Component的创建需要使用new，在Component::EnsureDesroy中Delete
+				Component* c = ScriptFactory::CreateScript(scriptName, this);
+				if (c)
+				{
+					m_GameObject.AddComponent(*c);
+				}
 			}
 			/*for (Component* s : m_GlobalScripts)
 			{

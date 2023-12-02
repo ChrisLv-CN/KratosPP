@@ -18,7 +18,7 @@ public:
 	 * @param globalScripts 待附加的脚本列表
 	 * @param ext ExtData
 	 */
-	static void AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* ext);
+	static void AddGlobalScripts(std::list<std::string>& globalScripts, ExtData* ext);
 
 	static TechnoExt::ExtContainer ExtMap;
 

@@ -93,7 +93,9 @@
 			"ostream": "cpp",
 			"regex": "cpp",
 			"random": "cpp",
-			"*.rh": "cpp"
+			"*.rh": "cpp",
+			"ranges": "cpp",
+			"span": "cpp"
 		},
 		"C_Cpp.formatting": "vcFormat",
 		"files.encoding": "utf8bom"

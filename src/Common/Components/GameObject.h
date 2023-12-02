@@ -29,6 +29,16 @@ public:
 	}
 #endif // DEBUG
 
+	virtual void AddDynamicComponent(std::vector<std::string>& names) override
+	{
+		std::string log = "AddDynamicComponent \n";
+		for (std::string& name : names)
+		{
+			log.append(name + "\n");
+		}
+		Debug::Log(log.c_str());
+	}
+
 	virtual void Awake() override
 	{
 		this->Component::Awake();

@@ -2,13 +2,10 @@
 
 #include <Ext/EBoltStatus.h>
 
-void EBoltExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* ext)
+void EBoltExt::AddGlobalScripts(std::list<std::string>& globalScripts, ExtData* ext)
 {
 	// Base Component
-	// can't use GameCreate because can't use GameDelete to release memory.
-	// EBoltStatus *status = GameCreate<EBoltStatus>(ext);
-	EBoltStatus* status = new EBoltStatus(ext);
-	globalScripts.push_back(status);
+	globalScripts.push_back(EBoltStatus::ScriptName);
 }
 
 EBoltExt::ExtContainer EBoltExt::ExtMap{};

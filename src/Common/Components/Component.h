@@ -83,6 +83,13 @@ public:
 	bool IsActive();
 
 	void AddComponent(Component& component);
+
+	/// <summary>
+	/// Load存档后，初始化所有的component列表，需要
+	/// 从_whiteList中重新添加运行时动态附加的component
+	/// </summary>
+	virtual void AddDynamicComponent(std::vector<std::string>& names);
+
 	// <summary>
 	// 由Component自身调用GameObject的函数，将自己从GameObject中移除
 	// </summary>
@@ -170,16 +177,28 @@ public:
 		}
 		return c;
 	}
+
+	Component* FindOrAllocate(const std::string& name)
+	{
+		
+	}
 #pragma endregion
 
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream, bool isLoad)
 	{
+		// 从存档读取需要添加的Component的名单
+		stream.Process(this->_whiteList);
+		// 从存档读取需要被移除的Component的名单
+		stream.Process(this->_disableComponents);
 		if (isLoad)
 		{
-			// 从存档读取需要被移除的Component的名单
-			stream.Process(this->_disableComponents);
+#ifdef DEBUG_COMPONENT
+			Debug::Log("Component [%s]%s is loading, has %d dynamic attach components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), _whiteList.size(), _children.size());
+#endif //DEBUG
+			// 动态附加Component
+			AddDynamicComponent(_whiteList);
 #ifdef DEBUG_COMPONENT
 			Debug::Log("Component [%s]%s is loading, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
 #endif //DEBUG
@@ -194,8 +213,6 @@ public:
 #ifdef DEBUG_COMPONENT
 			Debug::Log("Component [%s]%s is saveing, has %d disable components, children has %d\n\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
 #endif //DEBUG
-			// 需要被移除的Component的名单先写入存档
-			stream.Process(this->_disableComponents);
 		}
 		// 储存Component的控制参数
 		stream

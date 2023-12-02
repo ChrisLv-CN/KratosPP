@@ -4,7 +4,7 @@
 #include <TechnoClass.h>
 #include <FootClass.h>
 
-void VoxelAnimExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* ext)
+void VoxelAnimExt::AddGlobalScripts(std::list<std::string>& globalScripts, ExtData* ext)
 {
 }
 

@@ -28,10 +28,7 @@
 class AnimStatus : public AnimScript
 {
 public:
-	AnimStatus(AnimExt::ExtData* ext) : AnimScript(ext)
-	{
-		this->Name = typeid(this).name();
-	}
+	ANIM_SCRIPT(AnimStatus);
 
 	bool TryGetCreater(TechnoClass*& pTechno);
 

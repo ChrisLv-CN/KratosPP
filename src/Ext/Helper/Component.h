@@ -8,7 +8,6 @@
 
 #include <Extension/GOExtension.h>
 
-
 template <typename TExt, typename TComponent, typename TBase>
 static bool TryGetComponent(TBase* p, TComponent*& pComponent)
 {
@@ -29,6 +28,21 @@ static TComponent* GetComponent(TBase* p)
 {
 	TComponent* pComponent = nullptr;
 	TryGetComponent<TExt>(p, pComponent);
+	return pComponent;
+}
+
+template <typename TExt, typename TComponent, typename TBase>
+static TComponent* FindOrAllocate(TBase* p)
+{
+	TComponent* pComponent = nullptr;
+	if (p != nullptr)
+	{
+		auto* ext = TExt::ExtMap.Find(p);
+		if (ext)
+		{
+			pComponent = ext->FindOrAllocate<TComponent>();
+		}
+	}
 	return pComponent;
 }
 

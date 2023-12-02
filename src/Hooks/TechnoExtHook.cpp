@@ -17,6 +17,7 @@
 #include <Ext/TechnoStatus.h>
 #include <Ext/State/AntiBulletData.h>
 #include <Ext/TechnoType/SelectWeaponData.h>
+#include <Ext/PrintTextManager.h>
 #include <Extension/TechnoExt.h>
 #include <Extension/WarheadTypeExt.h>
 
@@ -325,6 +326,23 @@ DEFINE_HOOK(0x6F683C, TechnoClass_DrawHealthBar_Other, 0x7)
 	GET_STACK(RectangleStruct*, pBound, 0x4C - (-0x8));
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
+#ifdef DEBUG
+	if (pThis->IsSelected && pExt->_GameObject)
+	{
+		std::vector<std::string> names;
+		pExt->_GameObject->Foreach([&](Component* c)
+			{
+				std::string name = c->Name;
+				names.push_back(name);
+			});
+		std::string log = "";
+		for(std::string n : names)
+		{
+			log.append(n).append(",");
+		}
+		PrintTextManager::PrintText(log, Colors::Green, pThis->GetCoords());
+	}
+#endif // DEBUG
 	pExt->_GameObject->Foreach([&](Component* c)
 		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->DrawHealthBar(barLength, pPos, pBound, false); } });
 

@@ -6,11 +6,13 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Scriptable.h"
+#include "ScriptFactory.h"
 
 #include <Utilities/Container.h>
 
 #include <Extension/AnimExt.h>
 #include <Extension/BulletExt.h>
+#include <Extension/EBoltExt.h>
 #include <Extension/TechnoExt.h>
 #include <Extension/SuperWeaponExt.h>
 
@@ -156,51 +158,19 @@ public:
 	SCRIPT_COMPONENT(SuperWeaponScript, SuperClass, SuperWeaponExt, pSuper);
 };
 
-class ScriptFactory
+class EBoltScript : public ScriptComponent
 {
 public:
-	static ScriptFactory& GetInstance()
-	{
-		static ScriptFactory instance;
-		return instance;
-	}
-
-	using ScriptCreator = std::function<Component* (IExtData*)>;
-
-	int Register(const std::string& name, ScriptCreator creator)
-	{
-		_creatorMap.insert(make_pair(name, creator));
-		Debug::Log("Registration script \"%s\".\n", name.c_str());
-		return 0;
-	}
-
-	Component* Create(const std::string& name, IExtData* extData)
-	{
-		auto it = _creatorMap.find(name);
-		if (it != _creatorMap.end())
-		{
-			Component* c = it->second(extData);
-			c->Name = name;
-			return c;
-		}
-		return nullptr;
-	}
-
-private:
-	ScriptFactory() {};
-	~ScriptFactory() {};
-
-	ScriptFactory(const ScriptFactory&) = delete;
-
-	std::map<std::string, ScriptCreator> _creatorMap{};
+	SCRIPT_COMPONENT(EBoltScript, EBolt, EBoltExt, pBolt);
 };
 
 #define DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TEXTDATA, TSCRIPT) \
 	CLASS_NAME(TEXTDATA* ext) : TSCRIPT(ext) \
 	{ \
-		this->Name = #CLASS_NAME; \
+		this->Name = ScriptName; \
 	} \
 	\
+	inline static std::string ScriptName = #CLASS_NAME; \
 	static Component* Create(IExtData* extData); \
 
 #define OBJECT_SCRIPT(CLASS_NAME) \
@@ -214,6 +184,15 @@ private:
 
 #define BULLET_SCRIPT(CLASS_NAME) \
 	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, BulletExt::ExtData, BulletScript) \
+
+#define ANIM_SCRIPT(CLASS_NAME) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, AnimExt::ExtData, AnimScript) \
+
+#define SUPER_SCRIPT(CLASS_NAME) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, SuperWeaponExt::ExtData, SuperWeaponScript) \
+
+#define EBOLT_SCRIPT(CLASS_NAME) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, EBoltExt::ExtData, EBoltScript) \
 
 #define DYNAMIC_SCRIPT_CPP(CLASS_NAME, EXTDATA) \
 	Component* CLASS_NAME::Create(IExtData* extData) \
@@ -233,9 +212,11 @@ private:
 #define BULLET_SCRIPT_CPP(CLASS_NAME) \
 	DYNAMIC_SCRIPT_CPP(CLASS_NAME, BulletExt::ExtData) \
 
-template<typename T>
-T* CREATE_SCRIPT(const std::string& name, IExtData* extData)
-{
-	return dynamic_cast<T*>(ScriptFactory::GetInstance().Create(name, extData));
-}
+#define ANIM_SCRIPT_CPP(CLASS_NAME) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME, AnimExt::ExtData) \
 
+#define SUPER_SCRIPT_CPP(CLASS_NAME) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME, SuperWeaponExt::ExtData) \
+
+#define EBOLT_SCRIPT_CPP(CLASS_NAME) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME, EBoltExt::ExtData) \

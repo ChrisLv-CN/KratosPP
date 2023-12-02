@@ -37,7 +37,6 @@ public:
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
-			.Process(this->_trails)
 			.Success();
 	};
 

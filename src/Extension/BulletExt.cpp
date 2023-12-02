@@ -5,20 +5,11 @@
 #include <Ext/BulletStatus.h>
 #include <Ext/BulletTrail.h>
 
-void BulletExt::AddGlobalScripts(std::list<Component*>& globalScripts, ExtData* ext)
+void BulletExt::AddGlobalScripts(std::list<std::string>& globalScripts, ExtData* ext)
 {
 	// Base Component
-	// can't use GameCreate because can't use GameDelete to release memory.
-	// BulletStatus *status = GameCreate<BulletStatus>(ext);
-	BulletStatus* status = CREATE_SCRIPT<BulletStatus>("BulletStatus", ext);
-	globalScripts.emplace_back(status);
-
-	// Other Component
-	AttachFire* attachFire = CREATE_SCRIPT<AttachFire>("AttachFire", ext);
-	globalScripts.emplace_back(attachFire);
-
-	BulletTrail* trail = CREATE_SCRIPT<BulletTrail>("BulletTrail", ext);
-	globalScripts.emplace_back(trail);
+	globalScripts.push_back(BulletStatus::ScriptName);
+	globalScripts.push_back(BulletTrail::ScriptName);
 }
 
 BulletExt::ExtContainer BulletExt::ExtMap{};

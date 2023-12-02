@@ -128,6 +128,8 @@ void Component::AddComponent(Component& component)
 #endif // DEBUG
 }
 
+void Component::AddDynamicComponent(std::vector<std::string>& names) {}
+
 void Component::RemoveComponent(Component* component)
 {
 	auto it = std::find(_children.begin(), _children.end(), component);
