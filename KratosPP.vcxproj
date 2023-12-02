@@ -130,7 +130,6 @@
     <ClInclude Include="src\Common\Components\Component.h" />
     <ClInclude Include="src\Common\Components\Scriptable.h" />
     <ClInclude Include="src\Common\Components\ScriptComponent.h" />
-    <ClInclude Include="src\Common\Components\ScriptFactory.h" />
     <ClInclude Include="src\Common\EventSystems\EventSystem.h" />
     <ClInclude Include="src\Common\INI\INIBuffer.h" />
     <ClInclude Include="src\Common\INI\INIConfig.h" />

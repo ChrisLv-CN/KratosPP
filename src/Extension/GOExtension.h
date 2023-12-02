@@ -6,31 +6,9 @@
 #include <stack>
 
 #include <Common/Components/GameObject.h>
-#include <Common/Components/ScriptFactory.h>
 
 #include <Utilities/Container.h>
 #include <Utilities/Debug.h>
-
-class IExtData
-{
-public:
-#ifdef DEBUG
-	std::string thisId{};
-	std::string thisName{};
-
-	std::string baseId{};
-	std::string baseName{};
-#endif // DEBUG
-
-	std::string ExtName{};
-	std::string BaseName{};
-
-	virtual std::string GetExtName() = 0;
-	virtual std::string GetBaseName() = 0;
-
-	virtual GameObject* GetGameObject() = 0;
-
-};
 
 template <typename TBase, typename TExt>
 class GOExtension
@@ -41,10 +19,16 @@ public:
 	class ExtData : public Extension<TBase>, public IExtData
 	{
 	public:
+#ifdef DEBUG
+		std::string thisId{};
+		std::string thisName{};
+
+		std::string baseId{};
+		std::string baseName{};
+#endif // DEBUG
+
 		ExtData(TBase* OwnerObject) : Extension<TBase>(OwnerObject)
 		{
-			this->ExtName = typeid(TExt).name();
-			this->BaseName = typeid(TBase).name();
 #ifdef DEBUG
 			char t_this[1024];
 			sprintf_s(t_this, "%p", this);
@@ -84,16 +68,6 @@ public:
 			m_GameObject.ForeachChild([](Component* c)
 				{ c->EnsureDestroy(); });
 		};
-
-		virtual std::string GetExtName() override
-		{
-			return this->ExtName;
-		}
-
-		virtual std::string GetBaseName() override
-		{
-			return this->BaseName;
-		}
 
 		virtual void InvalidatePointer(void* ptr, bool bRemoved) override
 		{
@@ -139,7 +113,7 @@ public:
 
 		//----------------------
 		// GameObject
-		virtual GameObject* GetGameObject() override
+		GameObject* GetGameObject()
 		{
 			return m_GameObject.GetAwaked();
 		};
@@ -164,11 +138,11 @@ public:
 			if (!c)
 			{
 				// 创建新的脚本
-				c = ScriptFactory::CreateScript<TComponent>(this);
-				if (c)
-				{
-					m_GameObject.AddComponent(*c);
-				}
+				// c = ScriptFactory::CreateScript<TComponent>();
+				// if (c)
+				// {
+				// 	m_GameObject.AddComponent(*c);
+				// }
 			}
 			return c;
 		}
@@ -209,7 +183,7 @@ public:
 		/// 但当从存档载入时，TechnoClass_Init不会触发，而是通过TechnoClass_Load_Suffix实例化TechnoExt，此时无法获得TechnoType，
 		/// 在LoadFromStream里读取_awaked，跳过执行Awake()，直接通过LoadFromStream读取数据
 		/// </summary>
-		void AttachComponents()
+		virtual void AttachComponents() override
 		{
 #ifdef DEBUG_COMPONENT
 			Debug::Log("[%s]%s [%s]%s call AttachComponents\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str());
@@ -230,9 +204,10 @@ public:
 			for (std::string& scriptName : globalScripts)
 			{
 				// Component的创建需要使用new，在Component::EnsureDesroy中Delete
-				Component* c = ScriptFactory::CreateScript(scriptName, this);
+				Component* c = ComponentFactory::GetInstance().Create(scriptName);
 				if (c)
 				{
+					c->extData = this;
 					m_GameObject.AddComponent(*c);
 				}
 			}

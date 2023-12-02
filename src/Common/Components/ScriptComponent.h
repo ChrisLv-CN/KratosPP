@@ -6,7 +6,6 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Scriptable.h"
-#include "ScriptFactory.h"
 
 #include <Utilities/Container.h>
 
@@ -18,39 +17,23 @@
 
 #include <Ext/Helper.h>
 
+/// @brief 所有的脚本都位于GameObject下
 class ScriptComponent : public Component
 {
 public:
-	ScriptComponent(IExtData* ext)
-	{
-		this->extData = ext;
-#ifdef DEBUG
-		char t_this[1024];
-		sprintf_s(t_this, "%p", this);
-		this->thisId = { t_this };
+	ScriptComponent() : Component() {}
 
-		// thisName = this->Name;
-
-		this->extId = ext->thisId;
-		this->extName = ext->thisName;
-
-		this->baseId = ext->baseId;
-		this->baseName = ext->baseName;
-#endif // DEBUG
-	}
-
-	IExtData* extData;
-
-	GameObject* GetGameObject()
-	{
-		return extData->GetGameObject();
-	}
-
+	virtual GameObject* GetGameObject() = 0;
 	__declspec(property(get = GetGameObject)) GameObject* _gameObject;
 };
 
 #define SCRIPT_COMPONENT(SCRIPT_TYPE, TBASE, TEXT, P_NAME) \
-	SCRIPT_TYPE(TEXT::ExtData* ext) : ScriptComponent(ext) {} \
+	SCRIPT_TYPE() : ScriptComponent() {} \
+	\
+	virtual GameObject* GetGameObject() override \
+	{ \
+	return ((TEXT::ExtData*)extData)->_GameObject; \
+	}\
 	\
 	TBASE* GetOwner() \
 	{ \
@@ -61,7 +44,20 @@ public:
 class ObjectScript : public ScriptComponent, public ITechnoScript, public IBulletScript
 {
 public:
-	ObjectScript(IExtData* ext) : ScriptComponent(ext) {}
+	ObjectScript() : ScriptComponent() {}
+
+	virtual GameObject* GetGameObject() override
+	{
+		if (TechnoExt::ExtData* technoExtData = dynamic_cast<TechnoExt::ExtData*>(extData))
+		{
+			return technoExtData->_GameObject;
+		}
+		else if (BulletExt::ExtData* bulletExtData = dynamic_cast<BulletExt::ExtData*>(extData))
+		{
+			return bulletExtData->_GameObject;
+		}
+		return nullptr;
+	}
 
 	TechnoClass* GetTechno()
 	{
@@ -111,7 +107,7 @@ public:
 class TransformScript : public TechnoScript
 {
 public:
-	TransformScript(TechnoExt::ExtData* ext) : TechnoScript(ext)
+	TransformScript() : TechnoScript()
 	{
 		EventSystems::Logic.AddHandler(Events::TypeChangeEvent, this, &TransformScript::Transform);
 	}
@@ -164,59 +160,59 @@ public:
 	SCRIPT_COMPONENT(EBoltScript, EBolt, EBoltExt, pBolt);
 };
 
-#define DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TEXTDATA, TSCRIPT) \
-	CLASS_NAME(TEXTDATA* ext) : TSCRIPT(ext) \
+#define DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TSCRIPT) \
+	CLASS_NAME() : TSCRIPT() \
 	{ \
 		this->Name = ScriptName; \
 	} \
 	\
 	inline static std::string ScriptName = #CLASS_NAME; \
-	static Component* Create(IExtData* extData); \
+	static Component* Create(); \
 
 #define OBJECT_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, IExtData, ObjectScript) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, ObjectScript) \
 
 #define TECHNO_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TechnoExt::ExtData, TechnoScript) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TechnoScript) \
 
 #define TRANSFORM_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TechnoExt::ExtData, TransformScript) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TransformScript) \
 
 #define BULLET_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, BulletExt::ExtData, BulletScript) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, BulletScript) \
 
 #define ANIM_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, AnimExt::ExtData, AnimScript) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, AnimScript) \
 
 #define SUPER_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, SuperWeaponExt::ExtData, SuperWeaponScript) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, SuperWeaponScript) \
 
 #define EBOLT_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, EBoltExt::ExtData, EBoltScript) \
+	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, EBoltScript) \
 
-#define DYNAMIC_SCRIPT_CPP(CLASS_NAME, EXTDATA) \
-	Component* CLASS_NAME::Create(IExtData* extData) \
+#define DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
+	Component* CLASS_NAME::Create() \
 	{ \
-		return static_cast<Component*>(new CLASS_NAME(static_cast<EXTDATA*>(extData))); \
+		return static_cast<Component*>(new CLASS_NAME()); \
 	} \
 	\
 	static int g_temp_##CLASS_NAME = \
-	ScriptFactory::GetInstance().Register(#CLASS_NAME, CLASS_NAME::Create); \
+	ComponentFactory::GetInstance().Register(#CLASS_NAME, CLASS_NAME::Create); \
 
 #define OBJECT_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME, IExtData) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
 
 #define TECHNO_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME, TechnoExt::ExtData) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
 
 #define BULLET_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME, BulletExt::ExtData) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
 
 #define ANIM_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME, AnimExt::ExtData) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
 
 #define SUPER_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME, SuperWeaponExt::ExtData) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
 
 #define EBOLT_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME, EBoltExt::ExtData) \
+	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \

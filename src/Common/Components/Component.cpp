@@ -106,26 +106,10 @@ bool Component::IsActive()
 
 void Component::AddComponent(Component& component)
 {
-	auto it = std::find(_disableComponents.begin(), _disableComponents.end(), component.Name);
-	if (it == _disableComponents.end())
-	{
-		component._parent = this;
-		// vector::push_back 和 vector::emplace_back 会调用析构
-		// list::emplace_back 不会
-		_children.emplace_back(&component);
-		// 加入白名单
-		std::string name = component.Name;
-		_whiteList.push_back(name);
-#ifdef DEBUG_COMPONENT
-		Debug::Log("Add Component [%s]%s to %s [%s]%s.\n", component.thisName.c_str(), component.thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
-#endif // DEBUG
-	}
-#ifdef DEBUG_COMPONENT
-	else
-	{
-		Debug::Log("Add Component [%s]%s to %s [%s]%s, but is already exist.\n", component.thisName.c_str(), component.thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
-	}
-#endif // DEBUG
+	component._parent = this;
+	// vector::push_back 和 vector::emplace_back 会调用析构
+	// list::emplace_back 不会
+	_children.emplace_back(&component);
 }
 
 void Component::AddDynamicComponent(std::vector<std::string>& names) {}
@@ -144,39 +128,87 @@ void Component::RemoveComponent(Component* component)
 		(*it)->_parent = nullptr;
 		(*it)->_disable = true;
 		// it = _children.erase(it);
-		std::string name = (*it)->Name;
-		// 移出白名单
-		auto ite = std::find(_whiteList.begin(), _whiteList.end(), name);
-		if (ite != _whiteList.end())
-		{
-			_whiteList.erase(ite);
-		}
-		// 加入黑名单
-		_disableComponents.push_back(name);
 	}
 }
 
 void Component::ClearDisableComponent()
 {
-	for (std::string disableName : _disableComponents)
+	for (auto it = _children.begin(); it != _children.end();)
 	{
-		for (auto it = _children.begin(); it != _children.end();)
+		Component* c = *it;
+		if (c->_disable)
 		{
-			Component* c = *it;
-			if (c->Name == disableName || c->_disable)
-			{
 #ifdef DEBUG_COMPONENT
-				Debug::Log("Remove disable [%s] Component [%s]%s from %s [%s]%s.\n", disableName.c_str(), (*it)->thisName.c_str(), (*it)->thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
+			Debug::Log("Remove disable [%s] Component [%s]%s from %s [%s]%s.\n", (*it)->Name.c_str(), (*it)->thisName.c_str(), (*it)->thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif //DEBUG
-				c->_parent = nullptr;
-				it = _children.erase(it);
-				c->EnsureDestroy();
-			}
-			else
-			{
-				it++;
-			}
+			c->_parent = nullptr;
+			it = _children.erase(it);
+			c->EnsureDestroy();
 		}
+		else
+		{
+			it++;
+		}
+	}
+}
+
+void Component::RestoreComponent()
+{
+	// 去除名单中不存在的组件
+	for (auto it = _children.begin(); it != _children.end();)
+	{
+		Component* c = *it;
+		if (std::find(_childrenNames.begin(), _childrenNames.end(), c->Name) == _childrenNames.end())
+		{
+#ifdef DEBUG
+			Debug::Log("Remove disable [%s] Component [%s]%s from %s [%s]%s.\n", (*it)->Name.c_str(), (*it)->thisName.c_str(), (*it)->thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
+#endif //DEBUG
+			c->_parent = nullptr;
+			it = _children.erase(it);
+			c->EnsureDestroy();
+		}
+		else
+		{
+			it++;
+		}
+	}
+	// 添加列表中不存在的组件
+	std::vector<std::string> currentNames{};
+	for (Component* c : _children)
+	{
+		currentNames.push_back(c->Name);
+	}
+	// 取差集
+	std::string s1 = "_childrenNames: ";
+	for_each(_childrenNames.begin(), _childrenNames.end(), [&](std::string& s) {
+		s1.append(s).append(", ");
+		});
+	s1.append("\n");
+	Debug::Log(s1.c_str());
+
+	std::string s2 = "currentNames: ";
+	for_each(currentNames.begin(), currentNames.end(), [&](std::string& s) {
+		s2.append(s).append(", ");
+		});
+	s2.append("\n");
+	Debug::Log(s2.c_str());
+
+	std::vector<std::string> v;
+	v.resize(_childrenNames.size());
+	std::vector<std::string>::iterator end = set_difference(_childrenNames.begin(), _childrenNames.end(), currentNames.begin(), currentNames.end(), v.begin());
+
+	std::string s3;
+	for_each(v.begin(), end, [&](std::string& s) {
+		s3.append(s).append(", ");
+		});
+	s3.append("\n");
+	Debug::Log(s3.c_str());
+
+	for (auto ite = v.begin(); ite != end; ite++)
+	{
+		Debug::Log("需要添加新的Component [%s] \n", (*ite).c_str());
+		Component* c = ComponentFactory::GetInstance().Create((*ite));
+		AddComponent(*c);
 	}
 }
 

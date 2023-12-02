@@ -12,6 +12,12 @@
 #include <Utilities/Stream.h>
 #include <Utilities/Debug.h>
 
+class IExtData
+{
+public:
+	virtual void AttachComponents() = 0;
+};
+
 class IComponent
 {
 public:
@@ -49,6 +55,10 @@ class Component : public IComponent
 public:
 	std::string Name;
 	std::string Tag;
+
+	// Ext由ScriptFactory传入
+	IExtData* extData;
+
 
 #ifdef DEBUG
 	std::string thisId{};
@@ -96,10 +106,14 @@ public:
 	void RemoveComponent(Component* component);
 
 	/// <summary>
-	/// Load存档后，初始化所有的component列表，需要
-	/// 从_children中清理已经记录为失效的component
+	/// 在结束循环后需要从_children中清理已经标记为失效的component
 	/// </summary>
 	void ClearDisableComponent();
+
+	/// <summary>
+	/// 从存档中恢复子组件列表
+	/// </summary>
+	void RestoreComponent();
 
 	void AttachToComponent(Component* component);
 	void DetachFromParent();
@@ -177,45 +191,17 @@ public:
 		}
 		return c;
 	}
-
-	Component* FindOrAllocate(const std::string& name)
-	{
-		
-	}
 #pragma endregion
 
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream, bool isLoad)
 	{
-		// 从存档读取需要添加的Component的名单
-		stream.Process(this->_whiteList);
-		// 从存档读取需要被移除的Component的名单
-		stream.Process(this->_disableComponents);
-		if (isLoad)
-		{
-#ifdef DEBUG_COMPONENT
-			Debug::Log("Component [%s]%s is loading, has %d dynamic attach components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), _whiteList.size(), _children.size());
-#endif //DEBUG
-			// 动态附加Component
-			AddDynamicComponent(_whiteList);
-#ifdef DEBUG_COMPONENT
-			Debug::Log("Component [%s]%s is loading, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
-#endif //DEBUG
-			// 读入存档后，清理失效的Component
-			ClearDisableComponent();
-#ifdef DEBUG_COMPONENT
-			Debug::Log("Component [%s]%s is loading, clear disable done, has %d disable components, children has %d\n\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
-#endif //DEBUG
-		}
-		else
-		{
-#ifdef DEBUG_COMPONENT
-			Debug::Log("Component [%s]%s is saveing, has %d disable components, children has %d\n\n", this->thisName.c_str(), this->thisId.c_str(), _disableComponents.size(), _children.size());
-#endif //DEBUG
-		}
 		// 储存Component的控制参数
 		stream
+			// 存取子组件清单
+			.Process(this->_childrenNames)
+			// 存取Component自身的属性
 			.Process(this->Name)
 			// 每次读档之后，所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
 			.Process(this->_awaked)
@@ -226,13 +212,23 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		bool loaded = this->Serialize(stream, true);
+		// 根据子组件清单恢复
+		RestoreComponent();
+		// 读取每个子组件的内容
 		this->ForeachChild([&stream, &registerForChange](Component* c) { c->Load(stream, registerForChange); });
 		return loaded;
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
 		Component* pThis = const_cast<Component*>(this);
+		// 生成子组件清单
+		pThis->_childrenNames.clear();
+		for (Component* c : pThis->_children)
+		{
+			pThis->_childrenNames.push_back(c->Name);
+		}
 		bool saved = pThis->Serialize(stream, false);
+		// 存入每个子组件的内容
 		pThis->ForeachChild([&stream](Component* c) {
 			c->Save(stream);
 			});
@@ -240,17 +236,65 @@ public:
 	}
 #pragma endregion
 
-private:
+protected:
 	bool _awaked = false;
 	bool _started = false;
 	bool _disable = false;
 
-	// 添加的Component名单
-	std::vector<std::string> _whiteList{};
-
-	// 读取存档时，所有的Component都是重新构建的，运行时失效的Component需要被记录
-	std::vector<std::string> _disableComponents{};
+	// 添加的Component名单，在存档时生成
+	std::vector<std::string> _childrenNames{};
 
 	Component* _parent = nullptr;
 	std::list<Component*> _children{};
 };
+
+class ComponentFactory
+{
+public:
+	static ComponentFactory& GetInstance()
+	{
+		static ComponentFactory instance;
+		return instance;
+	}
+
+	using ComponentCreator = std::function<Component* (void)>;
+
+	int Register(const std::string& name, ComponentCreator creator)
+	{
+		_creatorMap.insert(make_pair(name, creator));
+		Debug::Log("Registration Component \"%s\".\n", name.c_str());
+		return 0;
+	}
+
+	Component* Create(const std::string& name)
+	{
+		auto it = _creatorMap.find(name);
+		if (it != _creatorMap.end())
+		{
+			Component* c = it->second();
+			c->Name = name;
+#ifdef DEBUG
+			char c_this[1024];
+			sprintf_s(c_this, "%p", c);
+			std::string thisId = { c_this };
+			Debug::Log("Create Component [%s]%s. \n", name.c_str(), thisId.c_str());
+#endif // DEBUG
+			return c;
+		}
+		return nullptr;
+	}
+
+	static Component* CreateComponent(const std::string name)
+	{
+		return ComponentFactory::GetInstance().Create(name);
+	}
+
+private:
+	ComponentFactory() {};
+	~ComponentFactory() {};
+
+	ComponentFactory(const ComponentFactory&) = delete;
+
+	std::map<std::string, ComponentCreator> _creatorMap{};
+};
+
