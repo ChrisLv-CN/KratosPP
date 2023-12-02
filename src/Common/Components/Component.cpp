@@ -104,15 +104,35 @@ bool Component::IsActive()
 	return !_disable;
 }
 
-void Component::AddComponent(Component& component)
+void Component::AddComponent(Component* component)
 {
-	component._parent = this;
+	component->extData = extData;
+	component->_parent = this;
 	// vector::push_back 和 vector::emplace_back 会调用析构
 	// list::emplace_back 不会
-	_children.emplace_back(&component);
+	_children.emplace_back(component);
 }
 
-void Component::AddDynamicComponent(std::vector<std::string>& names) {}
+Component* Component::AddComponent(const std::string& name)
+{
+	Component* c = CreateComponent(name);
+	if (c)
+	{
+		AddComponent(c);
+	}
+	return c;
+}
+
+Component* Component::FindOrAllocate(const std::string& name)
+{
+	Component* c = GetComponentByName(name);
+	if (!c)
+	{
+		// 添加新的Component
+		c = AddComponent(name);
+	}
+	return c;
+}
 
 void Component::RemoveComponent(Component* component)
 {
@@ -160,7 +180,7 @@ void Component::RestoreComponent()
 		Component* c = *it;
 		if (std::find(_childrenNames.begin(), _childrenNames.end(), c->Name) == _childrenNames.end())
 		{
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 			Debug::Log("Remove disable [%s] Component [%s]%s from %s [%s]%s.\n", (*it)->Name.c_str(), (*it)->thisName.c_str(), (*it)->thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif //DEBUG
 			c->_parent = nullptr;
@@ -178,7 +198,13 @@ void Component::RestoreComponent()
 	{
 		currentNames.push_back(c->Name);
 	}
+
 	// 取差集
+	std::vector<std::string> v;
+	v.resize(_childrenNames.size());
+	std::vector<std::string>::iterator end = set_difference(_childrenNames.begin(), _childrenNames.end(), currentNames.begin(), currentNames.end(), v.begin());
+
+#ifdef DEBUG_COMPONENT
 	std::string s1 = "_childrenNames: ";
 	for_each(_childrenNames.begin(), _childrenNames.end(), [&](std::string& s) {
 		s1.append(s).append(", ");
@@ -193,23 +219,73 @@ void Component::RestoreComponent()
 	s2.append("\n");
 	Debug::Log(s2.c_str());
 
-	std::vector<std::string> v;
-	v.resize(_childrenNames.size());
-	std::vector<std::string>::iterator end = set_difference(_childrenNames.begin(), _childrenNames.end(), currentNames.begin(), currentNames.end(), v.begin());
-
 	std::string s3;
 	for_each(v.begin(), end, [&](std::string& s) {
 		s3.append(s).append(", ");
 		});
 	s3.append("\n");
 	Debug::Log(s3.c_str());
+#endif
 
 	for (auto ite = v.begin(); ite != end; ite++)
 	{
-		Debug::Log("需要添加新的Component [%s] \n", (*ite).c_str());
-		Component* c = ComponentFactory::GetInstance().Create((*ite));
-		AddComponent(*c);
+#ifdef DEBUG_COMPONENT
+		Debug::Log("Nedd to add new Component [%s] to Component [%s]%s \n", (*ite).c_str(), thisName.c_str(), thisId.c_str());
+#endif
+		Component* c = CreateComponent((*ite));
+		AddComponent(c);
 	}
+}
+
+Component* Component::GetComponentInParentByName(const std::string& name)
+{
+	Component* c = nullptr;
+	// find first level
+	for (Component* children : _children)
+	{
+		if (children->Name == name)
+		{
+			c = children;
+			break;
+		}
+	}
+	if (!c && _parent)
+	{
+		c = _parent->GetComponentInParentByName(name);
+	}
+	return c;
+}
+
+Component* Component::GetComponentInChildrenByName(const std::string& name)
+{
+	Component* c = nullptr;
+	// find first level
+	for (Component* children : _children)
+	{
+		if (children->Name == name)
+		{
+			c = children;
+			break;
+		}
+	}
+	if (!c)
+	{
+		for (Component* children : _children)
+		{
+			Component* r = children->GetComponentInChildrenByName(name);
+			if (r)
+			{
+				c = r;
+				break;
+			}
+		}
+	}
+	return c;
+}
+
+Component* Component::GetComponentByName(const std::string& name)
+{
+	return GetComponentInChildrenByName(name);
 }
 
 void Component::AttachToComponent(Component* component)
@@ -220,7 +296,7 @@ void Component::AttachToComponent(Component* component)
 	}
 	DetachFromParent();
 
-	component->AddComponent(*this);
+	component->AddComponent(this);
 }
 
 void Component::DetachFromParent()

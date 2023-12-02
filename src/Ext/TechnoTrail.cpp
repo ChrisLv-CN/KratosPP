@@ -8,24 +8,9 @@ TECHNO_SCRIPT_CPP(TechnoTrail);
 void TechnoTrail::SetupTrails()
 {
 	_trails.clear();
-	TryGetTrails(pTechno->GetTechnoType()->ID, _trails);
-}
-
-bool TechnoTrail::OnAwake()
-{
-	if (pTechno->AbstractFlags & AbstractFlags::Foot)
+	if (!TryGetTrails(pTechno->GetTechnoType()->ID, _trails))
 	{
-		return true;
-	}
-	return false;
-}
-
-void TechnoTrail::OnTransform(TypeChangeEventArgs* args)
-{
-	TechnoClass* pTarget = args->pTechno;
-	if (pTarget && pTarget == pTechno)
-	{
-		SetupTrails();
+		_gameObject->RemoveComponent(this);
 	}
 }
 
@@ -40,6 +25,15 @@ void TechnoTrail::OnPut(CoordStruct* pLocation, DirType dirType)
 void TechnoTrail::OnRemove()
 {
 	_trails.clear();
+}
+
+void TechnoTrail::OnUpdate()
+{
+	if (!_setupFlag)
+	{
+		_setupFlag = true;
+		SetupTrails();
+	}
 }
 
 void TechnoTrail::OnUpdateEnd()

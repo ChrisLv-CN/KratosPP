@@ -10,7 +10,7 @@ void TechnoExt::AddGlobalScripts(std::list<std::string>& globalScripts, ExtData*
 	// Base Component
 	globalScripts.push_back(TechnoStatus::ScriptName);
 	globalScripts.push_back(AttachEffect::ScriptName);
-	// globalScripts.push_back(TechnoTrail::ScriptName);
+	globalScripts.push_back(TechnoTrail::ScriptName);
 }
 
 void TechnoExt::ClearBaseArray(EventSystem* sender, Event e, void* args)

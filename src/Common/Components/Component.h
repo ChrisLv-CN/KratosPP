@@ -12,6 +12,8 @@
 #include <Utilities/Stream.h>
 #include <Utilities/Debug.h>
 
+#define ComponentName(CLASS_NAME) #CLASS_NAME
+
 class IExtData
 {
 public:
@@ -92,13 +94,14 @@ public:
 	bool AlreadyStart();
 	bool IsActive();
 
-	void AddComponent(Component& component);
-
 	/// <summary>
-	/// Load存档后，初始化所有的component列表，需要
-	/// 从_whiteList中重新添加运行时动态附加的component
+	/// 将Component加入子列表，同时赋予自身储存的IExtData
 	/// </summary>
-	virtual void AddDynamicComponent(std::vector<std::string>& names);
+	void AddComponent(Component* component);
+
+	Component* AddComponent(const std::string& name);
+
+	virtual Component* FindOrAllocate(const std::string& name);
 
 	// <summary>
 	// 由Component自身调用GameObject的函数，将自己从GameObject中移除
@@ -138,11 +141,12 @@ public:
 #pragma endregion
 
 #pragma region GetComponent
-	template <typename TComponent>
-	TComponent* GetComponent()
-	{
-		return GetComponentInChildren<TComponent>();
-	}
+
+	Component* GetComponentInParentByName(const std::string& name);
+
+	Component* GetComponentInChildrenByName(const std::string& name);
+
+	Component* GetComponentByName(const std::string& name);
 
 	template <typename TComponent>
 	TComponent* GetComponentInParent()
@@ -190,6 +194,12 @@ public:
 			}
 		}
 		return c;
+	}
+
+	template <typename TComponent>
+	TComponent* GetComponent()
+	{
+		return GetComponentInChildren<TComponent>();
 	}
 #pragma endregion
 
@@ -273,7 +283,7 @@ public:
 		{
 			Component* c = it->second();
 			c->Name = name;
-#ifdef DEBUG
+#ifdef DEBUG_COMPONENT
 			char c_this[1024];
 			sprintf_s(c_this, "%p", c);
 			std::string thisId = { c_this };
@@ -284,10 +294,6 @@ public:
 		return nullptr;
 	}
 
-	static Component* CreateComponent(const std::string name)
-	{
-		return ComponentFactory::GetInstance().Create(name);
-	}
 
 private:
 	ComponentFactory() {};
@@ -297,4 +303,9 @@ private:
 
 	std::map<std::string, ComponentCreator> _creatorMap{};
 };
+
+static Component* CreateComponent(const std::string name)
+{
+	return ComponentFactory::GetInstance().Create(name);
+}
 

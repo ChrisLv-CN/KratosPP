@@ -3,11 +3,21 @@
 
 BULLET_SCRIPT_CPP(BulletTrail);
 
-void BulletTrail::Awake()
+void BulletTrail::SetupTrails()
 {
-	if (!TryGetTrails(pBullet->Type->ID, trails))
+	_trails.clear();
+	if (!TryGetTrails(pBullet->Type->ID, _trails))
 	{
 		_gameObject->RemoveComponent(this);
+	}
+}
+
+void BulletTrail::OnUpdate()
+{
+	if (!_setupFlag)
+	{
+		_setupFlag = true;
+		SetupTrails();
 	}
 }
 
@@ -15,7 +25,7 @@ void BulletTrail::OnUpdateEnd()
 {
 	if (!IsDeadOrInvisible(pBullet) && pBullet->GetHeight() >= 0)
 	{
-		if (!trails.empty())
+		if (!_trails.empty())
 		{
 			TechnoClass* pSource = nullptr;
 			HouseClass* pHouse = nullptr;
@@ -26,7 +36,7 @@ void BulletTrail::OnUpdateEnd()
 			}
 			CoordStruct location = pBullet->GetCoords();
 			DirStruct bulletFacing = Facing(pBullet, location);
-			for(Trail& trail : trails)
+			for(Trail& trail : _trails)
 			{
 				CoordStruct sourcePos = GetFLHAbsoluteCoords(location, trail.FLH, bulletFacing);
 				trail.DrawTrail(sourcePos, pHouse, pSource);

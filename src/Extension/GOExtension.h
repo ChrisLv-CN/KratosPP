@@ -48,16 +48,13 @@ public:
 			m_GameObject.baseName = this->baseName;
 #endif // DEBUG
 			// 为了保证读存档的key一致，除GO外都不进行实例化
-			// m_GameObject = new GameObject(goName);
-			// m_GameObject = std::make_unique<GameObject>();
-			m_GameObject.Name = typeid(TExt).name();
-			m_GameObject.Name.append("_GameObject");
+			m_GameObject.Tag = typeid(TExt).name();
+			m_GameObject.extData = this;
 			// 附加Components但是不激活
 			// 不从存档读入时，首次唤醒GameObject时激活所有的Components
 			// 从存档读入时，Component的标记_awaked被读入，不会重复激活
 			AttachComponents();
-			// m_GameObject._OnAwake += newDelegate(this, &ExtData::AttachComponents);
-};
+		}
 
 		~ExtData() override
 		{
@@ -67,7 +64,7 @@ public:
 			// delete *m_GameObject;
 			m_GameObject.ForeachChild([](Component* c)
 				{ c->EnsureDestroy(); });
-		};
+		}
 
 		virtual void InvalidatePointer(void* ptr, bool bRemoved) override
 		{
@@ -81,7 +78,7 @@ public:
 			}
 			m_GameObject.Foreach([&ptr](Component* c)
 				{ c->InvalidatePointer(ptr); });
-		};
+		}
 
 #pragma region Save/Load
 		template <typename T>
@@ -92,7 +89,7 @@ public:
 				// 由GameObject自己维护自己的读存档长度
 				// GameObject自身储存的列表如何变化，都不影响Ext的读存档
 				.Process(this->m_GameObject);
-		};
+		}
 
 		virtual void LoadFromStream(ExStreamReader& stream) override
 		{
@@ -103,12 +100,12 @@ public:
 #endif // DEBUG
 			// 读取GameObject，由GameObject自身清理不用的Component，再读入存档
 			this->Serialize(stream);
-		};
+		}
 		virtual void SaveToStream(ExStreamWriter& stream) override
 		{
 			Extension<TBase>::SaveToStream(stream);
 			this->Serialize(stream);
-		};
+		}
 #pragma endregion
 
 		//----------------------
@@ -116,7 +113,7 @@ public:
 		GameObject* GetGameObject()
 		{
 			return m_GameObject.GetAwaked();
-		};
+		}
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
 		/// @brief 通过Ext查找GameObject下的脚本
@@ -176,7 +173,6 @@ public:
 		// Scripts
 
 		/// <summary>
-		///  call by GameObject _OnAwake Event
 		/// 逻辑开始运行时再对Component进行实例化
 		/// Component的Awake分两种情况调用：
 		/// 当正常开始游戏时，TechnoClass_Init触发调用_GameObject，唤醒Components，此时可以获得TechnoType；
@@ -188,7 +184,7 @@ public:
 #ifdef DEBUG_COMPONENT
 			Debug::Log("[%s]%s [%s]%s call AttachComponents\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str());
 #endif // DEBUG
-			if (m_GlobalScriptsCreated)
+			if (globalScriptsCreated)
 			{
 				return;
 			}
@@ -198,28 +194,19 @@ public:
 			// 在Ext中读取需要添加的脚本名单
 			TExt::AddGlobalScripts(globalScripts, this);
 #ifdef DEBUG_COMPONENT
-			Debug::Log("[%s]%s [%s]%s ready to attach %d components\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GlobalScripts.size());
+			Debug::Log("[%s]%s [%s]%s ready to attach %d components\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), globalScripts.size());
 #endif // DEBUG
 			// 该函数只将Component实例加入GameObject
 			for (std::string& scriptName : globalScripts)
 			{
 				// Component的创建需要使用new，在Component::EnsureDesroy中Delete
-				Component* c = ComponentFactory::GetInstance().Create(scriptName);
-				if (c)
-				{
-					c->extData = this;
-					m_GameObject.AddComponent(*c);
-				}
+				m_GameObject.AddComponent(scriptName);
 			}
-			/*for (Component* s : m_GlobalScripts)
-			{
-				s->EnsureAwaked();
-			}*/
-			m_GlobalScriptsCreated = true;
-		};
+			globalScriptsCreated = true;
+		}
 
-		// 全局脚本
-		bool m_GlobalScriptsCreated = false;
+		// 已经初始化全局脚本的标记
+		bool globalScriptsCreated = false;
 	};
 
 	class ExtContainer : public Container<TExt>

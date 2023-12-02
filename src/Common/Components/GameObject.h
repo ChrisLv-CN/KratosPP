@@ -14,7 +14,7 @@ class GameObject : public Component
 public:
 	GameObject() : Component()
 	{
-		this->Name = "GameObject";
+		this->Name = ComponentName(GameObject);
 #ifdef DEBUG
 		char t_this[1024];
 		sprintf_s(t_this, "%p", this);
@@ -29,51 +29,10 @@ public:
 	}
 #endif // DEBUG
 
-	virtual void AddDynamicComponent(std::vector<std::string>& names) override
-	{
-		std::string log = "AddDynamicComponent \n";
-		for (std::string& name : names)
-		{
-			log.append(name + "\n");
-		}
-		Debug::Log(log.c_str());
-	}
-
-	virtual void Awake() override
-	{
-		this->Component::Awake();
-		_OnAwake();
-	}
-
 	GameObject* GetAwaked()
 	{
 		EnsureAwaked();
 		return this;
 	}
 
-	CMultiDelegate<void> _OnAwake{};
-
-#pragma region save/load
-	template <typename T>
-	bool Serialize(T& stream)
-	{
-		return stream
-			.Success();
-	}
-
-	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
-	{
-		Component::Load(stream, registerForChange);
-		// 清理_unstartedComponents
-		return this->Serialize(stream);
-	}
-
-	virtual bool Save(ExStreamWriter& stream) const override
-	{
-		Component::Save(stream);
-		return const_cast<GameObject*>(this)->Serialize(stream);
-	}
-#pragma endregion
-
-private:
 };

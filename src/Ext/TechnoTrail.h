@@ -14,44 +14,25 @@
 
 #include "TrailType/Trail.h"
 
-
-class TechnoTrail : public TransformScript
+/// @brief 动态载入组件
+class TechnoTrail : public TechnoScript
 {
 public:
 	
-	TRANSFORM_SCRIPT(TechnoTrail);
+	TECHNO_SCRIPT(TechnoTrail);
 
 	void SetupTrails();
-
-	virtual bool OnAwake() override;
-
-	virtual void OnTransform(TypeChangeEventArgs* args) override;
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
 
 	virtual void OnRemove() override;
 
+	virtual void OnUpdate() override;
+
 	virtual void OnUpdateEnd() override;
 
-#pragma region Save/Load
-	template <typename T>
-	bool Serialize(T& stream) {
-		return stream
-			.Success();
-	};
-
-	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
-	{
-		Component::Load(stream, registerForChange);
-		return this->Serialize(stream);
-	}
-	virtual bool Save(ExStreamWriter& stream) const override
-	{
-		Component::Save(stream);
-		return const_cast<TechnoTrail*>(this)->Serialize(stream);
-	}
-#pragma endregion
-
 private:
+	bool _setupFlag = false;
+
 	std::vector<Trail> _trails{};
 };
