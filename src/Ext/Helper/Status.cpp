@@ -1,6 +1,6 @@
 ﻿#include "Status.h"
 #include <Ext/Helper/CastEx.h>
-#include <Ext/Helper/Component.h>
+#include <Ext/Helper/Scripts.h>
 
 #include <Ext/AnimStatus.h>
 #include <Ext/BulletStatus.h>

@@ -116,33 +116,24 @@ public:
 		}
 		__declspec(property(get = GetGameObject)) GameObject* _GameObject;
 
-		/// @brief 通过Ext查找GameObject下的脚本
-		/// @tparam TComponent 
+		/// @brief Helper调用，通过Ext查找或附加GameObject下的脚本
+		/// @tparam TScript 
 		/// @return 
-		template <typename TComponent>
-		TComponent* GetComponent()
+		template <typename TScript>
+		TScript* FindOrAttach()
 		{
-			return m_GameObject.GetComponentInChildren<TComponent>();
+			return m_GameObject.FindOrAttach<TScript>();
 		}
 
-		/// @brief 通过Ext查找GameObject下的脚本，如果没有则新增一个实例
-		/// @tparam TComponent 
+		/// @brief Helper调用，通过Ext查找GameObject下的脚本
+		/// @tparam TScript 
 		/// @return 
-		template <typename TComponent>
-		TComponent* FindOrAllocate()
+		template <typename TScript>
+		TScript* GetScript()
 		{
-			TComponent* c = GetComponent<TComponent>();
-			if (!c)
-			{
-				// 创建新的脚本
-				// c = ScriptFactory::CreateScript<TComponent>();
-				// if (c)
-				// {
-				// 	m_GameObject.AddComponent(*c);
-				// }
-			}
-			return c;
+			return m_GameObject.GetComponentInChildren<TScript>();
 		}
+
 
 		template <typename TStatus>
 		TStatus* GetExtStatus()

@@ -53,13 +53,13 @@
     <ClCompile Include="src\Ext\ExpandAnimsManager.cpp" />
     <ClCompile Include="src\Ext\FireSuperManager.cpp" />
     <ClCompile Include="src\Ext\Helper\CastEx.cpp" />
-    <ClCompile Include="src\Ext\Helper\Component.cpp" />
     <ClCompile Include="src\Ext\Helper\Effect.cpp" />
     <ClCompile Include="src\Ext\Helper\Finder.cpp" />
     <ClCompile Include="src\Ext\Helper\FLH.cpp" />
     <ClCompile Include="src\Ext\Helper\Gift.cpp" />
     <ClCompile Include="src\Ext\Helper\MathEx.cpp" />
     <ClCompile Include="src\Ext\Helper\Physics.cpp" />
+    <ClCompile Include="src\Ext\Helper\Scripts.cpp" />
     <ClCompile Include="src\Ext\Helper\Status.cpp" />
     <ClCompile Include="src\Ext\Helper\StringEx.cpp" />
     <ClCompile Include="src\Ext\Helper\SurfaceEx.cpp" />
@@ -82,6 +82,7 @@
     <ClCompile Include="src\Ext\TechnoType\MissileHoming.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Paintball.cpp" />
     <ClCompile Include="src\Ext\TechnoType\SpawnManager.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Transform.cpp" />
     <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
     <ClCompile Include="src\Hooks\AircraftExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimExtHook.cpp" />
@@ -186,13 +187,13 @@
     <ClInclude Include="src\Ext\FireSuper\FireSuper.h" />
     <ClInclude Include="src\Ext\Helper.h" />
     <ClInclude Include="src\Ext\Helper\CastEx.h" />
-    <ClInclude Include="src\Ext\Helper\Component.h" />
     <ClInclude Include="src\Ext\Helper\Effect.h" />
     <ClInclude Include="src\Ext\Helper\Finder.h" />
     <ClInclude Include="src\Ext\Helper\FLH.h" />
     <ClInclude Include="src\Ext\Helper\Gift.h" />
     <ClInclude Include="src\Ext\Helper\MathEx.h" />
     <ClInclude Include="src\Ext\Helper\Physics.h" />
+    <ClInclude Include="src\Ext\Helper\Scripts.h" />
     <ClInclude Include="src\Ext\Helper\Status.h" />
     <ClInclude Include="src\Ext\Helper\StringEx.h" />
     <ClInclude Include="src\Ext\Helper\SurfaceEx.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="src\Ext\State\PaintballData.h" />
     <ClInclude Include="src\Ext\State\PaintballState.h" />
     <ClInclude Include="src\Ext\State\State.h" />
+    <ClInclude Include="src\Ext\State\TransformData.h" />
     <ClInclude Include="src\Ext\TechnoStatus.h" />
     <ClInclude Include="src\Ext\TechnoTrail.h" />
     <ClInclude Include="src\Ext\TechnoType\AutoFireAreaWeaponData.h" />

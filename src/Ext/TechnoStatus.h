@@ -19,6 +19,7 @@
 #include <Ext/State/FireSuperData.h>
 #include <Ext/State/GiftBoxState.h>
 #include <Ext/State/PaintballState.h>
+#include <Ext/State/TransformData.h>
 
 #include <Ext/TechnoType/AutoFireAreaWeaponData.h>
 #include <Ext/TechnoType/BaseNormalData.h>
@@ -34,6 +35,8 @@ class TechnoStatus : public TechnoScript
 {
 public:
 	TECHNO_SCRIPT(TechnoStatus);
+
+	virtual void Awake() override;
 
 	virtual void Destroy() override;
 
@@ -74,6 +77,8 @@ public:
 	SpawnData* GetSpawnData();
 	bool TryGetSpawnType(int i, std::string& newId);
 
+	void OnGScreenRender(EventSystem* sender, Event e, void* args);
+
 	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
 
 	virtual void OnUpdate() override;
@@ -104,6 +109,7 @@ public:
 	State<FireSuperData> FireSuperState{};
 	GiftBoxState GiftBoxState{};
 	PaintballState PaintballState{};
+	State<TransformData> TransformState{};
 
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
@@ -139,6 +145,8 @@ public:
 			.Process(this->FireSuperState)
 			.Process(this->GiftBoxState)
 			.Process(this->PaintballState)
+			.Process(this->TransformState)
+
 			.Process(this->_initStateFlag)
 
 			.Process(this->CrateBuff)
@@ -165,6 +173,14 @@ public:
 			.Process(this->_berserkColor2)
 			.Process(this->_buildingWasBerzerk)
 			.Process(this->_buildingWasEMP)
+			.Process(this->_buildingWasColor)
+
+			.Process(this->pSourceType)
+			.Process(this->pTargetType)
+			.Process(this->_changeToType)
+			.Process(this->_hasBeenChanged)
+			.Process(this->_transformLocked)
+
 			.Process(this->pExtraSparkleAnim)
 			.Success();
 	};
@@ -184,6 +200,7 @@ private:
 	void OnTransform();
 
 	void ResetBaseNormal();
+	void ResetTrails();
 
 	// 伤害数字
 	bool SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& damageTextType);
@@ -201,6 +218,9 @@ private:
 	// 反抛射体
 	bool WeaponNoAA(int weaponIdx);
 
+	// 变形
+	void ChangeTechnoTypeTo(TechnoTypeClass* pNewType);
+
 	void InitState();
 
 	void InitState_AntiBullet();
@@ -210,8 +230,8 @@ private:
 	void InitState_FireSuper();
 	void InitState_GiftBox();
 	void InitState_Paintball();
+	void InitState_Transform();
 
-	void OnPut_Trail(CoordStruct* pLocation, DirType dir);
 	void OnPut_AutoArea(CoordStruct* pLocation, DirType dir);
 	void OnPut_BaseNormarl(CoordStruct* pLocation, DirType dir);
 
@@ -225,6 +245,7 @@ private:
 	void OnUpdate_JJFacing();
 	void OnUpdate_MissileHoming();
 	void OnUpdate_Paintball();
+	void OnUpdate_Transform();
 
 	void OnWarpUpdate_DestroySelf_Stand();
 
@@ -237,6 +258,7 @@ private:
 
 	void OnReceiveDamageDestroy_BaseNormarl();
 	void OnReceiveDamageDestroy_GiftBox();
+	void OnReceiveDamageDestroy_Transform();
 
 	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
@@ -308,6 +330,14 @@ private:
 	bool _buildingWasBerzerk = false;
 	bool _buildingWasEMP = false;
 	bool _buildingWasColor = false;
+
+	// 变形
+	TechnoTypeClass* pSourceType = nullptr;
+	TechnoTypeClass* pTargetType = nullptr;
+	std::string _changeToType{ "" };
+	bool _hasBeenChanged = false; // 处于变形状态
+	bool _transformLocked = false; // 处于变形状态时锁定不允许再变形
+
 	// EMP动画
 	AnimClass* pExtraSparkleAnim = nullptr;
 };

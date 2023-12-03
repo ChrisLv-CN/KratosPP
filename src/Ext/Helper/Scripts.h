@@ -1,46 +1,44 @@
 ﻿#pragma once
 
-#include <Common/Components/Component.h>
-
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
 #include <Common/INI/INIReader.h>
 
 #include <Extension/GOExtension.h>
 
-template <typename TExt, typename TComponent, typename TBase>
-static bool TryGetComponent(TBase* p, TComponent*& pComponent)
+template <typename TExt, typename TScript, typename TBase>
+static bool TryGetScript(TBase* p, TScript*& pComponent)
 {
 	if (p != nullptr)
 	{
 		auto* ext = TExt::ExtMap.Find(p);
 		if (ext)
 		{
-			pComponent = ext->GetComponent<TComponent>();
+			pComponent = ext->GetScript<TScript>();
 			return pComponent != nullptr;
 		}
 	}
 	return false;
 }
 
-template <typename TExt, typename TComponent, typename TBase>
-static TComponent* GetComponent(TBase* p)
+template <typename TExt, typename TScript, typename TBase>
+static TScript* GetScript(TBase* p)
 {
-	TComponent* pComponent = nullptr;
-	TryGetComponent<TExt>(p, pComponent);
+	TScript* pComponent = nullptr;
+	TryGetScript<TExt>(p, pComponent);
 	return pComponent;
 }
 
-template <typename TExt, typename TComponent, typename TBase>
-static TComponent* FindOrAllocate(TBase* p)
+template <typename TExt, typename TScript, typename TBase>
+static TScript* FindOrAttach(TBase* p)
 {
-	TComponent* pComponent = nullptr;
+	TScript* pComponent = nullptr;
 	if (p != nullptr)
 	{
 		auto* ext = TExt::ExtMap.Find(p);
 		if (ext)
 		{
-			pComponent = ext->FindOrAllocate<TComponent>();
+			pComponent = ext->FindOrAttach<TScript>();
 		}
 	}
 	return pComponent;

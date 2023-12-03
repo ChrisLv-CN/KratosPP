@@ -125,7 +125,7 @@ inline bool Parser<Mission>::TryParse(const char* pValue, Mission* outValue)
 	auto it = MissionTypeStrings.find(key);
 	if (it != MissionTypeStrings.end())
 	{
-		outValue = &it->second;
+		*outValue = it->second;
 		return true;
 	}
 	return false;

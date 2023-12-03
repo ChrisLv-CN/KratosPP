@@ -34,7 +34,7 @@ inline bool Parser<LandType>::TryParse(const char* pValue, LandType* outValue)
 	auto it = LandTypeStrings.find(key);
 	if (it != LandTypeStrings.end())
 	{
-		outValue = &it->second;
+		*outValue = it->second;
 		return true;
 	}
 	return false;
@@ -71,7 +71,7 @@ inline bool Parser<TileType>::TryParse(const char* pValue, TileType* outValue)
 	auto it = TileTypeStrings.find(key);
 	if (it != TileTypeStrings.end())
 	{
-		outValue = &it->second;
+		*outValue = it->second;
 		return true;
 	}
 	return false;

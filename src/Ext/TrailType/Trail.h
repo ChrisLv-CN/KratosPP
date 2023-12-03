@@ -54,7 +54,6 @@ private:
 
 static bool TryGetImageTrails(const char* imageSection, std::vector<Trail>& trails)
 {
-	trails.clear();
 	// 获取尾巴
 	INIBufferReader* reader = INI::GetSection(INI::Art, imageSection);
 	int i = -1;
@@ -79,7 +78,6 @@ static bool TryGetImageTrails(const char* imageSection, std::vector<Trail>& trai
 
 static bool TryGetTrails(const char* section, std::vector<Trail>& trails)
 {
-	trails.clear();
 	// 获取Image的Section
 	std::string image = INI::GetSection(INI::Rules, section)->Get("Image", std::string{ section });
 	return TryGetImageTrails(image.c_str(), trails);

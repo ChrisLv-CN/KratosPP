@@ -104,38 +104,6 @@ public:
 	SCRIPT_COMPONENT(TechnoScript, TechnoClass, TechnoExt, pTechno);
 };
 
-class TransformScript : public TechnoScript
-{
-public:
-	TransformScript() : TechnoScript()
-	{
-		EventSystems::Logic.AddHandler(Events::TypeChangeEvent, this, &TransformScript::Transform);
-	}
-
-	virtual void Awake() override
-	{
-		if (!OnAwake())
-		{
-			_gameObject->RemoveComponent(this);
-			return;
-		}
-	}
-
-	virtual bool OnAwake() { return true; }
-
-	virtual void Destroy() override
-	{
-		EventSystems::Logic.RemoveHandler(Events::TypeChangeEvent, this, &TransformScript::Transform);
-	}
-
-	void Transform(EventSystem* sender, Event e, void* args)
-	{
-		this->OnTransform((TypeChangeEventArgs*)args);
-	}
-
-	virtual void OnTransform(TypeChangeEventArgs* args) = 0;
-};
-
 class BulletScript : public ScriptComponent, public IBulletScript
 {
 public:
@@ -174,9 +142,6 @@ public:
 
 #define TECHNO_SCRIPT(CLASS_NAME) \
 	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TechnoScript) \
-
-#define TRANSFORM_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TransformScript) \
 
 #define BULLET_SCRIPT(CLASS_NAME) \
 	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, BulletScript) \

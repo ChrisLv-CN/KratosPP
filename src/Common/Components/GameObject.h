@@ -35,4 +35,10 @@ public:
 		return this;
 	}
 
+	template <typename TScript>
+	TScript* FindOrAttach()
+	{
+		return static_cast<TScript*>(FindOrAllocate(TScript::ScriptName));
+	}
+
 };

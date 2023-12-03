@@ -1,8 +1,57 @@
 ﻿#include "TechnoStatus.h"
 
 #include <Ext/FireSuperManager.h>
+#include <Ext/PrintTextManager.h>
+
+#include <Ext/TechnoTrail.h>
 
 TECHNO_SCRIPT_CPP(TechnoStatus);
+
+void TechnoStatus::Awake()
+{
+	EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
+	// 动态附加其他的组件
+	ResetTrails();
+}
+
+void TechnoStatus::Destroy()
+{
+	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
+	((TechnoExt::ExtData*)extData)->SetExtStatus(nullptr);
+}
+
+void TechnoStatus::OnGScreenRender(EventSystem* sender, Event e, void* args)
+{
+	if (args && !IsDeadOrInvisible(pTechno))
+	{
+#ifdef DEBUG
+		std::vector<std::string> names;
+		_gameObject->Foreach([&](Component* c)
+			{
+				std::string name = c->Name;
+				names.push_back(name);
+			});
+		std::string log = "";
+		for(std::string n : names)
+		{
+			log.append(n).append(",");
+		}
+		PrintTextManager::PrintText(log, Colors::Green, pTechno->GetCoords());
+#endif // DEBUG
+	}
+}
+
+void TechnoStatus::ResetTrails()
+{
+	if (!IsBuilding())
+	{
+		TechnoTrail* trail = _gameObject->FindOrAttach<TechnoTrail>();
+		if (trail)
+		{
+			trail->SetupTrails();
+		}
+	}
+}
 
 void TechnoStatus::OnTransform()
 {
@@ -22,11 +71,8 @@ void TechnoStatus::OnTransform()
 	_jjFacingData = nullptr;
 
 	ResetBaseNormal();
-}
-
-void TechnoStatus::Destroy()
-{
-	((TechnoExt::ExtData*)extData)->SetExtStatus(nullptr);
+	// 通知其他脚本
+	ResetTrails();
 }
 
 AbstractType TechnoStatus::GetAbsType()
@@ -36,9 +82,9 @@ AbstractType TechnoStatus::GetAbsType()
 		_absType = pTechno->WhatAmI();
 	}
 	return _absType;
-}
-
-
+	}
+	
+	
 bool TechnoStatus::IsBuilding()
 {
 	return GetAbsType() == AbstractType::Building;
@@ -148,12 +194,6 @@ void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 		OnPut_AutoArea(pLocation, dirType);
 		OnPut_BaseNormarl(pLocation, dirType);
 	}
-	OnPut_Trail(pLocation, dirType);
-}
-
-void TechnoStatus::OnPut_Trail(CoordStruct* pLocation, DirType dirType)
-{
-	// std::vector<Trails
 }
 
 void TechnoStatus::InitState()
@@ -165,6 +205,7 @@ void TechnoStatus::InitState()
 	InitState_FireSuper();
 	InitState_GiftBox();
 	InitState_Paintball();
+	InitState_Transform();
 }
 
 void TechnoStatus::OnUpdate()
@@ -208,6 +249,8 @@ void TechnoStatus::OnUpdate()
 			OnUpdate_MissileHoming();
 			OnUpdate_JJFacing();
 		}
+		OnUpdate_Transform();
+
 		OnUpdate_AutoArea();
 		OnUpdate_AntiBullet();
 		OnUpdate_DamageText();
@@ -266,6 +309,8 @@ void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeCla
 void TechnoStatus::OnReceiveDamageDestroy()
 {
 	OnReceiveDamageDestroy_BaseNormarl();
+	OnReceiveDamageDestroy_Transform();
+
 	OnReceiveDamageDestroy_GiftBox();
 }
 

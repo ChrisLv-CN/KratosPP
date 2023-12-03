@@ -3,14 +3,12 @@
 void Component::OnUpdate()
 {
 	IComponent::OnUpdate();
-	EnsureStarted();
 }
 
 void Component::EnsureAwaked()
 {
 	if (!_awaked)
 	{
-		_awaked = true;
 #ifdef DEBUG_COMPONENT
 		char t_this[1024];
 		sprintf_s(t_this, "%p", this);
@@ -18,6 +16,8 @@ void Component::EnsureAwaked()
 		Debug::Log("Component [%s]%s - %s calling awake, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _disableComponents.size(), _children.size());
 #endif // DEBUG
 		Awake();
+		// 在Awake中可能出现移除自身的操作，_awaked标记也用于控制Remove时是否延迟删除
+		_awaked = true;
 		ForeachChild([](Component* c)
 			{
 #ifdef DEBUG_COMPONENT
@@ -27,33 +27,6 @@ void Component::EnsureAwaked()
 				Debug::Log("Child Component [%s]%s - %s calling EnsureAwaked.\n", c->thisName.c_str(), c->thisId.c_str(), thisId3.c_str());
 #endif // DEBUG
 				c->EnsureAwaked();
-			});
-		// 销毁失效的Component
-		ClearDisableComponent();
-	}
-}
-
-void Component::EnsureStarted()
-{
-	if (!_started)
-	{
-		_started = true;
-#ifdef DEBUG_COMPONENT
-		char t_this[1024];
-		sprintf_s(t_this, "%p", this);
-		std::string thisId2 = { t_this };
-		Debug::Log("Component [%s]%s - %s calling start, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _disableComponents.size(), _children.size());
-#endif // DEBUG
-		Start();
-		ForeachChild([](Component* c)
-			{
-#ifdef DEBUG_COMPONENT
-				char c_this[1024];
-				sprintf_s(c_this, "%p", c);
-				std::string thisId3 = { c_this };
-				Debug::Log("Child Component [%s]%s - %s calling EnsureStarted.\n", c->thisName.c_str(), c->thisId.c_str(), thisId3.c_str());
-#endif // DEBUG
-				c->EnsureStarted();
 			});
 		// 销毁失效的Component
 		ClearDisableComponent();
@@ -94,11 +67,6 @@ bool Component::AlreadyAwake()
 	return _awaked;
 }
 
-bool Component::AlreadyStart()
-{
-	return _started;
-}
-
 bool Component::IsActive()
 {
 	return !_disable;
@@ -111,6 +79,11 @@ void Component::AddComponent(Component* component)
 	// vector::push_back 和 vector::emplace_back 会调用析构
 	// list::emplace_back 不会
 	_children.emplace_back(component);
+#ifdef DEBUG_COMPONENT
+		std::string thisId = component->thisId;
+		std::string thisName = component->thisName;
+		Debug::Log("Add Component [%s]%s to %s [%s]%s.\n", thisName.c_str(), thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
+#endif // DEBUG
 }
 
 Component* Component::AddComponent(const std::string& name)
@@ -130,6 +103,8 @@ Component* Component::FindOrAllocate(const std::string& name)
 	{
 		// 添加新的Component
 		c = AddComponent(name);
+		// 激活新的Component
+		c->EnsureAwaked();
 	}
 	return c;
 }
@@ -144,10 +119,17 @@ void Component::RemoveComponent(Component* component)
 		std::string thisName = component->thisName;
 		Debug::Log("Remove Component [%s]%s from %s [%s]%s.\n", thisName.c_str(), thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif // DEBUG
+		// 在Awake和Start中删除Component，在循环内，需要延迟删除，
 		// 将Component失活，并记录，在结束_children的循环后，再清除
-		(*it)->_parent = nullptr;
-		(*it)->_disable = true;
-		// it = _children.erase(it);
+		Component* c = *it;
+		c->_parent = nullptr;
+		c->_disable = true;
+
+		// 在其他位置的删除为直接删除
+		if (c->AlreadyAwake())
+		{
+			it = _children.erase(it);
+		}
 	}
 }
 

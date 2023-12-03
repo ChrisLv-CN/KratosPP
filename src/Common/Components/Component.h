@@ -32,11 +32,6 @@ public:
 	/// </summary>
 	virtual void Awake() { };
 
-	/// <summary>
-	/// OnStart called on the frame
-	/// </summary>
-	virtual void Start() { };
-
 	virtual void OnUpdate() {};
 	virtual void OnUpdateEnd() {};
 	virtual void OnWarpUpdate() {};
@@ -87,11 +82,9 @@ public:
 	virtual void OnUpdate() override;
 
 	void EnsureAwaked();
-	void EnsureStarted();
 	void EnsureDestroy();
 
 	bool AlreadyAwake();
-	bool AlreadyStart();
 	bool IsActive();
 
 	/// <summary>
@@ -104,7 +97,7 @@ public:
 	virtual Component* FindOrAllocate(const std::string& name);
 
 	// <summary>
-	// 由Component自身调用GameObject的函数，将自己从GameObject中移除
+	// 将Component加入子列表中移除
 	// </summary>
 	void RemoveComponent(Component* component);
 
@@ -215,7 +208,6 @@ public:
 			.Process(this->Name)
 			// 每次读档之后，所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
 			.Process(this->_awaked)
-			.Process(this->_started)
 			.Process(this->_disable);
 		return stream.Success();
 	}
@@ -248,7 +240,6 @@ public:
 
 protected:
 	bool _awaked = false;
-	bool _started = false;
 	bool _disable = false;
 
 	// 添加的Component名单，在存档时生成
