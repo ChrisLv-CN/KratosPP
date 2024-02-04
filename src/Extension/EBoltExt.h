@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GOExtension.h"
-
 #include <EBolt.h>
+
+#include "GOExtension.h"
 
 class EBoltExt : public GOExtension<EBolt, EBoltExt>
 {

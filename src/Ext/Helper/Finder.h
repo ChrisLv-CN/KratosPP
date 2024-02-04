@@ -4,14 +4,11 @@
 #include <functional>
 #include <string>
 
-#include <GeneralStructures.h>
+#include <GeneralDefinitions.h>
 #include <HouseClass.h>
 #include <ObjectClass.h>
 #include <BulletClass.h>
 #include <TechnoClass.h>
-
-#include <Ext/Helper/CastEx.h>
-#include <Ext/Helper/FLH.h>
 
 TechnoClass* FindRandomTechno(HouseClass* pHouse);
 

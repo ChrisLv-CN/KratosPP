@@ -1,6 +1,8 @@
 ﻿#include "Trail.h"
 
-#include "Ext/Helper.h"
+#include <Ext/Helper/DrawEx.h>
+#include <Ext/Helper/FLH.h>
+#include <Ext/Helper/MathEx.h>
 
 Trail::Trail() {}
 

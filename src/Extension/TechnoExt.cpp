@@ -1,7 +1,7 @@
 ﻿#include "TechnoExt.h"
 
-#include <Ext/AttachEffect.h>
-#include <Ext/TechnoStatus.h>
+#include <Ext/ObjectType/AttachEffect.h>
+#include <Ext/TechnoType/TechnoStatus.h>
 
 void TechnoExt::AddGlobalScripts(std::list<std::string>& globalScripts, ExtData* ext)
 {

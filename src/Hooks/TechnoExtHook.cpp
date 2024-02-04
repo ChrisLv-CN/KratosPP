@@ -9,16 +9,19 @@
 #include <Extension.h>
 #include <Utilities/Macro.h>
 #include <Utilities/Debug.h>
-#include <Common/Components/Component.h>
-#include <Common/Components/ScriptComponent.h>
-#include <Ext/CommonStatus.h>
-#include <Ext/ExpandAnimsManager.h>
-#include <Ext/Helper.h>
-#include <Ext/TechnoStatus.h>
-#include <Ext/State/AntiBulletData.h>
-#include <Ext/TechnoType/SelectWeaponData.h>
+
+#include <Common/INI/INI.h>
+
 #include <Extension/TechnoExt.h>
 #include <Extension/WarheadTypeExt.h>
+
+#include <Ext/Helper/Scripts.h>
+
+#include <Ext/Common/CommonStatus.h>
+#include <Ext/Common/ExpandAnimsManager.h>
+#include <Ext/ObjectType/State/AntiBulletData.h>
+#include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/TechnoType/Status/SelectWeaponData.h>
 
 // ----------------
 // Extension

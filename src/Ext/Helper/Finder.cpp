@@ -1,4 +1,5 @@
 ﻿#include "Finder.h"
+#include "CastEx.h"
 #include "MathEx.h"
 #include "Status.h"
 

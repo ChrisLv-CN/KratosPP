@@ -1,19 +1,22 @@
 ﻿#include <exception>
 #include <Windows.h>
 
+#include <AircraftClass.h>
+#include <AircraftTypeClass.h>
+#include <Kamikaze.h>
+#include <SpawnManagerClass.h>
 #include <TechnoTypeClass.h>
 #include <TechnoClass.h>
-#include <AircraftTypeClass.h>
-#include <AircraftClass.h>
-#include <SpawnManagerClass.h>
-#include <Kamikaze.h>
 
 #include <Extension.h>
 #include <Helpers/Macro.h>
-#include <Ext/Helper/Status.h>
-#include <Ext/TechnoStatus.h>
-#include <Ext/AttachFire.h>
+
 #include <Extension/TechnoExt.h>
+
+#include <Ext/Helper/Scripts.h>
+
+#include <Ext/ObjectType/AttachFire.h>
+#include <Ext/TechnoType/TechnoStatus.h>
 
 static bool TryFindNewIdInSpwanType(std::string typeId, int index, std::string& newId)
 {

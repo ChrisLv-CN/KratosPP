@@ -1,13 +1,13 @@
 ﻿#include "Status.h"
-#include <Ext/Helper/CastEx.h>
-#include <Ext/Helper/Scripts.h>
-
-#include <Ext/AnimStatus.h>
-#include <Ext/BulletStatus.h>
-#include <Ext/CommonStatus.h>
-#include <Ext/TechnoStatus.h>
+#include "CastEx.h"
+#include "Scripts.h"
 
 #include <Extension/WarheadTypeExt.h>
+
+#include <Ext/AnimType/AnimStatus.h>
+#include <Ext/BulletType/BulletStatus.h>
+#include <Ext/Common/CommonStatus.h>
+#include <Ext/TechnoType/TechnoStatus.h>
 
 
 #pragma endregion AnimClass

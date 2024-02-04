@@ -1,8 +1,8 @@
 #pragma once
 
-#include "TypeExtension.h"
-
 #include <TerrainTypeClass.h>
+
+#include "TypeExtension.h"
 
 class TerrainTypeExt : public TypeExtension<TerrainTypeClass, TerrainTypeExt>
 {

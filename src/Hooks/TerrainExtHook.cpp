@@ -5,8 +5,10 @@
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
+
 #include <Extension/TerrainTypeExt.h>
-#include <Ext/TerrainDestroyAnim.h>
+
+#include <Ext/TerrainType/TerrainDestroyAnim.h>
 
 DEFINE_HOOK(0x71C94C, TerrainClass_Remove_PlayDestroyAnim, 0xA)
 {

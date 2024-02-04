@@ -7,10 +7,13 @@
 #include <Extension.h>
 #include <Utilities/Macro.h>
 
-#include <Ext/Helper.h>
-#include <Ext/TechnoStatus.h>
-#include <Ext/TechnoType/DisguiseData.h>
 #include <Extension/TechnoExt.h>
+
+#include <Ext/Helper/FLH.h>
+#include <Ext/Helper/Scripts.h>
+
+#include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/TechnoType/Status/DisguiseData.h>
 
 #pragma region Unit Deploy
 DEFINE_HOOK(0x6FF929, TechnoClass_Fire_FireOnce, 0x6)

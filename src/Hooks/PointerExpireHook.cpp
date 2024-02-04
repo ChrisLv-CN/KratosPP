@@ -3,6 +3,7 @@
 
 #include <Extension.h>
 #include <Helpers/Macro.h>
+
 #include <Common/EventSystems/EventSystem.h>
 
 class PointerExpireHook

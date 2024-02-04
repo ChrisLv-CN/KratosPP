@@ -1,8 +1,10 @@
 #pragma once
 
+#include <FootClass.h>
+#include <VoxelAnimClass.h>
+
 #include "GOExtension.h"
 
-#include <VoxelAnimClass.h>
 
 class VoxelAnimExt : public GOExtension<VoxelAnimClass, VoxelAnimExt>
 {

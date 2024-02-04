@@ -1,4 +1,5 @@
 #include <Common/EventSystems/EventSystem.h>
+
 #include <Kratos.h>
 
 class KratosHook

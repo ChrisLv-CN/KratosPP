@@ -2,7 +2,7 @@
 
 #include <bitset>
 
-#include <GeneralStructures.h>
+#include <GeneralDefinitions.h>
 #include <TacticalClass.h>
 #include <ObjectClass.h>
 #include <BulletClass.h>

@@ -1,9 +1,10 @@
 #pragma once
 
-#include "TypeExtension.h"
-#include "Ext/WeaponType/AttachFireData.h"
-
 #include <WeaponTypeClass.h>
+
+#include "Ext/ObjectType/AttachFireData.h"
+
+#include "TypeExtension.h"
 
 class WeaponTypeExt : public TypeExtension<WeaponTypeClass, WeaponTypeExt>
 {

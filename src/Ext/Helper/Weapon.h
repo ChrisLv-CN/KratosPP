@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include <YRPP.h>
+#include <GeneralDefinitions.h>
+#include <BulletClass.h>
 
 // ----------------
 // 高级弹道学

@@ -1,11 +1,14 @@
 ﻿#include "Weapon.h"
+#include "CastEx.h"
+#include "DrawEx.h"
+#include "FLH.h"
+#include "MathEx.h"
+#include "Scripts.h"
+#include "Status.h"
 
-#include <Ext/Helper/CastEx.h>
-#include <Ext/Helper/Effect.h>
-#include <Ext/Helper/FLH.h>
-#include <Ext/Helper/MathEx.h>
-#include <Ext/Helper/Scripts.h>
-#include <Ext/Helper/Status.h>
+#include <SpawnManagerClass.h>
+#include <VocClass.h>
+#include <WarheadTypeClass.h>
 
 #include <Extension/WeaponTypeExt.h>
 

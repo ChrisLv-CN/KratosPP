@@ -6,10 +6,10 @@
 #include <Common.h>
 
 #include <Common/EventSystems/EventSystem.h>
-#include <Common/INI/INIConstant.h>
 
-#include <Ext/FireSuperManager.h>
 #include <Extension/TechnoExt.h>
+
+#include <Ext/Common/FireSuperManager.h>
 
 class SaveGameHook
 {

@@ -1,12 +1,13 @@
 ﻿#include <exception>
 #include <Windows.h>
 
-#include <ParasiteClass.h>
-#include <AnimTypeClass.h>
 #include <AnimClass.h>
+#include <AnimTypeClass.h>
+#include <ParasiteClass.h>
 
 #include <Extension.h>
 #include <Helpers/Macro.h>
+
 #include <Ext/Helper/Status.h>
 
 // Take over create Anim by ParasiteEat

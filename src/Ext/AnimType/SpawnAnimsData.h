@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <Common/INI/INIConfig.h>
-#include <Ext/ExpandAnims/ExpandAnimsData.h>
+#include <Ext/Common/ExpandAnimsData.h>
 
 class SpawnAnimsData : public ExpandAnimsData
 {

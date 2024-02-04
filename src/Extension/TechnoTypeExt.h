@@ -1,8 +1,8 @@
 #pragma once
 
-#include "TypeExtension.h"
-
 #include <TechnoTypeClass.h>
+
+#include "TypeExtension.h"
 
 class TechnoTypeExt : public TypeExtension<TechnoTypeClass, TechnoTypeExt>
 {

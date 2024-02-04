@@ -5,10 +5,10 @@
 #include <format>
 #include <stack>
 
-#include <Common/Components/GameObject.h>
-
 #include <Utilities/Container.h>
 #include <Utilities/Debug.h>
+
+#include <Common/Components/GameObject.h>
 
 template <typename TBase, typename TExt>
 class GOExtension

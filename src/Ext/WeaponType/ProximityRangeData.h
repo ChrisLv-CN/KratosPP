@@ -1,12 +1,10 @@
 ﻿#pragma once
 
-#include <Common/INI/INI.h>
+#include <GeneralStructures.h>
+
 #include <Common/INI/INIConfig.h>
-#include <Common/INI/INIReader.h>
 
-#include <Ext/Helper.h>
-
-#include <YRPP.h>
+#include <Ext/Helper/MathEx.h>
 
 class ProximityRangeData : public INIConfig
 {

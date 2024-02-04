@@ -3,13 +3,13 @@
 #include <cmath>
 #include <string>
 
-#include <GeneralStructures.h>
+#include <GeneralDefinitions.h>
 #include <Matrix3D.h>
 #include <ObjectClass.h>
 #include <BulletClass.h>
 #include <TechnoClass.h>
 
-#include <Ext/Data/OffsetData.h>
+#include <Ext/EffectType/Effect/OffsetData.h>
 
 struct LocationMark
 {

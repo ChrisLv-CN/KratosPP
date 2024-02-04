@@ -3,13 +3,12 @@
 #include <map>
 #include <vector>
 
+#include <GeneralDefinitions.h>
 #include <CellClass.h>
 #include <MapClass.h>
 #include <BuildingClass.h>
 
-#include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
-#include <Common/INI/INIReader.h>
 
 static std::map<std::string, LandType> LandTypeStrings
 {

@@ -3,11 +3,15 @@
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
+
 #include <Common/EventSystems/EventSystem.h>
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConstant.h>
-#include <Ext/FireSuperManager.h>
-#include <Ext/PrintTextManager.h>
+
+#include <Ext/Helper/MathEx.h>
+
+#include <Ext/Common/FireSuperManager.h>
+#include <Ext/Common/PrintTextManager.h>
 
 class GeneraHook
 {

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "GOExtension.h"
-
 #include <BulletClass.h>
+
+#include "GOExtension.h"
 
 class BulletExt : public GOExtension<BulletClass, BulletExt>
 {

@@ -1,15 +1,16 @@
 ﻿#include <exception>
 #include <Windows.h>
 
+#include <AnimClass.h>
 #include <TechnoClass.h>
 #include <UnitClass.h>
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
 
-#include <Ext/Helper.h>
-#include <Ext/TechnoStatus.h>
 #include <Extension/TechnoExt.h>
+
+#include <Ext/TechnoType/TechnoStatus.h>
 
 #pragma region Building explosion anims
 

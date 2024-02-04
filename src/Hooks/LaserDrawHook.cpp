@@ -1,15 +1,13 @@
 #include <exception>
 #include <Windows.h>
 
-#include <Extension.h>
-#include <Utilities/Macro.h>
-#include <Extension/EBoltExt.h>
-#include <Common/Components/Component.h>
-#include <Common/Components/ScriptComponent.h>
-#include <Common/EventSystems/EventSystem.h>
-
 #include <GeneralDefinitions.h>
 #include <SpecificStructures.h>
+#include <LaserDrawClass.h>
+
+#include <Extension.h>
+#include <Utilities/GeneralUtils.h>
+#include <Utilities/Macro.h>
 
 namespace LaserDrawTemp
 {

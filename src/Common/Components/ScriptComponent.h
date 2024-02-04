@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <YRPP.h>
+#include <GeneralDefinitions.h>
 #include <SpecificStructures.h>
 
 #include "Component.h"
@@ -14,8 +15,6 @@
 #include <Extension/EBoltExt.h>
 #include <Extension/TechnoExt.h>
 #include <Extension/SuperWeaponExt.h>
-
-#include <Ext/Helper.h>
 
 /// @brief 所有的脚本都位于GameObject下
 class ScriptComponent : public Component

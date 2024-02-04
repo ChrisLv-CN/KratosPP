@@ -8,12 +8,11 @@
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
-#include <Ext/Helper.h>
-#include <Ext/TechnoStatus.h>
+
 #include <Extension/TechnoExt.h>
 #include <Extension/WarheadTypeExt.h>
-#include <Common/Components/Component.h>
-#include <Common/Components/ScriptComponent.h>
+
+#include <Ext/TechnoType/TechnoStatus.h>
 
 DEFINE_HOOK(0x5194EF, InfantryClass_DrawIt_InAir_Shadow_Skip, 0x5)
 {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "TypeExtension.h"
-
 #include <BulletTypeClass.h>
+
+#include "TypeExtension.h"
 
 class BulletTypeExt : public TypeExtension<BulletTypeClass, BulletTypeExt>
 {

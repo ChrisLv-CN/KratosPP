@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-#include <GeneralStructures.h>
+#include <GeneralDefinitions.h>
 #include <AnimClass.h>
 #include <BulletClass.h>
 #include <HouseClass.h>
 #include <TechnoClass.h>
 
-#include <Ext/Data/RelationData.h>
+#include <Ext/AnimType/RelationData.h>
 
 class AnimStatus;
 class BulletStatus;

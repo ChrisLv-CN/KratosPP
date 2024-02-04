@@ -1,8 +1,8 @@
 #pragma once
 
-#include "TypeExtension.h"
-
 #include <VoxelAnimTypeClass.h>
+
+#include "TypeExtension.h"
 
 class VoxelAnimTypeExt : public TypeExtension<VoxelAnimTypeClass, VoxelAnimTypeExt>
 {

@@ -1,14 +1,14 @@
 ﻿#pragma once
 
+#include <string>
+#include <vector>
+
+#include <GeneralStructures.h>
+
 #include <Common/INI/INI.h>
-#include <Common/INI/INIConfig.h>
-#include <Common/INI/INIReader.h>
 
-#include <Ext/Helper.h>
+#include <Ext/Helper/Status.h>
 
-#include <YRPP.h>
-
-#include "../TechnoStatus.h"
 #include "TrailData.h"
 #include "TrailTypeData.h"
 

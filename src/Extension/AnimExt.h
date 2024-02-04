@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "GOExtension.h"
-
 #include <AnimClass.h>
+
+#include "GOExtension.h"
 
 class AnimExt : public GOExtension<AnimClass, AnimExt>
 {

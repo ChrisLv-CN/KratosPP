@@ -3,8 +3,8 @@
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
+
 #include <Extension/BulletTypeExt.h>
-#include <Common/EventSystems/EventSystem.h>
 
 extern bool IsLoadGame;
 

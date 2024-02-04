@@ -2,7 +2,6 @@
 
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
-#include <Common/INI/INIReader.h>
 
 #include <Extension/GOExtension.h>
 

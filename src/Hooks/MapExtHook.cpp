@@ -2,18 +2,20 @@
 #include <Windows.h>
 #include <set>
 
-#include <Extension.h>
-#include <Utilities/Macro.h>
-
 #include <TechnoClass.h>
 #include <HouseClass.h>
 
-#include <Ext/CommonStatus.h>
-#include <Ext/Helper.h>
-#include <Ext/TechnoStatus.h>
-#include <Ext/TechnoType/BuildingRangeData.h>
+#include <Extension.h>
+#include <Utilities/Macro.h>
+
 #include <Extension/TechnoExt.h>
 #include <Extension/TechnoTypeExt.h>
+
+#include <Ext/Helper/Scripts.h>
+
+#include <Ext/Common/CommonStatus.h>
+#include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/TechnoType/Status/BuildingRangeData.h>
 
 #pragma region Crate buff
 

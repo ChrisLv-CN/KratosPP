@@ -1,16 +1,17 @@
 #include <exception>
 #include <Windows.h>
 
+#include <GeneralStructures.h>
+#include <EBolt.h>
+
 #include <Extension.h>
 #include <Utilities/Macro.h>
+
 #include <Extension/EBoltExt.h>
-#include <Common/Components/Component.h>
-#include <Common/Components/ScriptComponent.h>
-#include <Common/EventSystems/EventSystem.h>
 
-#include <Ext/EBoltStatus.h>
+#include <Ext/Helper/Scripts.h>
 
-#include <EBolt.h>
+#include <Ext/EBoltType/EBoltStatus.h>
 
 // ----------------
 // Extension
@@ -85,7 +86,7 @@ DEFINE_HOOK(0x4C26C7, EBolt_Draw_Color3, 0x5)
 	return 0;
 }
 
-DEFINE_HOOK(0x4C24E4, Ebolt_Draw_Disable1, 0x8)
+DEFINE_HOOK(0x4C24E4, EBolt_Draw_Disable1, 0x8)
 {
 	GET_STACK(EBolt*, pThis, 0x40);
 
@@ -99,7 +100,7 @@ DEFINE_HOOK(0x4C24E4, Ebolt_Draw_Disable1, 0x8)
 	return 0;
 }
 
-DEFINE_HOOK(0x4C25FD, Ebolt_Draw_Disable2, 0xA)
+DEFINE_HOOK(0x4C25FD, EBolt_Draw_Disable2, 0xA)
 {
 	GET_STACK(EBolt*, pThis, 0x40);
 
@@ -113,7 +114,7 @@ DEFINE_HOOK(0x4C25FD, Ebolt_Draw_Disable2, 0xA)
 	return 0;
 }
 
-DEFINE_HOOK(0x4C26EE, Ebolt_Draw_Disable3, 0x8)
+DEFINE_HOOK(0x4C26EE, EBolt_Draw_Disable3, 0x8)
 {
 	GET_STACK(EBolt*, pThis, 0x40);
 

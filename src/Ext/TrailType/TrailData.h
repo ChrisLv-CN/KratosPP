@@ -1,12 +1,13 @@
 ﻿#pragma once
 
-#include <Common/INI/INI.h>
+#include <string>
+#include <vector>
+
+#include <GeneralDefinitions.h>
+
 #include <Common/INI/INIConfig.h>
-#include <Common/INI/INIReader.h>
 
-#include <Ext/Helper.h>
-
-#include <YRPP.h>
+#include <Ext/Helper/Physics.h>
 
 /**
  *@brief 尾巴绑定设置

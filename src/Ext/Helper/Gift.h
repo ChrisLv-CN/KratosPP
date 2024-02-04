@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include <GeneralStructures.h>
+#include <GeneralDefinitions.h>
 #include <HouseClass.h>
 #include <MapClass.h>
 #include <TechnoClass.h>

@@ -8,13 +8,12 @@
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
-#include <Ext/Helper.h>
-#include <Ext/CommonStatus.h>
-#include <Ext/TechnoStatus.h>
+
 #include <Extension/TechnoExt.h>
 #include <Extension/WarheadTypeExt.h>
-#include <Common/Components/Component.h>
-#include <Common/Components/ScriptComponent.h>
+
+#include <Ext/Common/CommonStatus.h>
+#include <Ext/TechnoType/TechnoStatus.h>
 
 DEFINE_HOOK(0x639DD8, PlanningManager_AllowAircraftsWaypoint, 0x5)
 {

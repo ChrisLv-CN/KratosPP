@@ -3,15 +3,16 @@
 #include <vector>
 #include <stack>
 
-#include "TypeExtension.h"
-
 #include <GeneralDefinitions.h>
 #include <GeneralStructures.h>
 #include <WarheadTypeClass.h>
 #include <CCINIClass.h>
 
 #include <Common/INI/INI.h>
-#include <Ext/Helper.h>
+
+#include <Ext/Helper/Scripts.h>
+
+#include "TypeExtension.h"
 
 enum class ExpLevel
 {

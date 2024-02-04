@@ -1,9 +1,11 @@
-﻿#include <Helpers/Macro.h>
-
+﻿
 #include <exception>
 
+#include <Helpers/Macro.h>
+
 #include <Common/EventSystems/EventSystem.h>
-#include <Ext/PrintTextManager.h>
+
+#include <Ext/Common/PrintTextManager.h>
 
 class GScreenHook
 {

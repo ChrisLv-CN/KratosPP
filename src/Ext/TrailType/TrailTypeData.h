@@ -1,12 +1,14 @@
 ﻿#pragma once
 
-#include <Common/INI/INI.h>
+#include <string>
+#include <vector>
+
+#include <GeneralStructures.h>
+
 #include <Common/INI/INIConfig.h>
-#include <Common/INI/INIReader.h>
 
-#include <Ext/Helper.h>
+#include <Ext/Helper/DrawEx.h>
 
-#include <YRPP.h>
 
 enum class TrailMode
 {

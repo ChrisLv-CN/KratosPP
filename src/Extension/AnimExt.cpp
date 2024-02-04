@@ -1,6 +1,6 @@
 ﻿#include "AnimExt.h"
 
-#include <Ext/AnimStatus.h>
+#include <Ext/AnimType/AnimStatus.h>
 
 void AnimExt::AddGlobalScripts(std::list<std::string>& globalScripts, ExtData* ext)
 {

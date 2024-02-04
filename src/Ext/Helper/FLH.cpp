@@ -1,10 +1,10 @@
 ﻿#include "FLH.h"
+#include "CastEx.h"
+#include "MathEx.h"
 
 #include <LocomotionClass.h>
 #include <JumpjetLocomotionClass.h>
 
-#include <Ext/Helper/CastEx.h>
-#include <Ext/Helper/MathEx.h>
 #include <Common/INI/INI.h>
 
 // ----------------

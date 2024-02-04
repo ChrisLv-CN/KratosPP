@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GOExtension.h"
-
 #include <SuperClass.h>
+
+#include "GOExtension.h"
 
 class SuperWeaponExt : public GOExtension<SuperClass, SuperWeaponExt>
 {

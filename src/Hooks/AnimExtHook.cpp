@@ -1,19 +1,21 @@
 ﻿#include <exception>
 #include <Windows.h>
 
-#include <Extension.h>
-#include <Utilities/Macro.h>
-#include <Extension/AnimExt.h>
-#include <Common/Components/Component.h>
-#include <Common/Components/ScriptComponent.h>
-#include <Common/EventSystems/EventSystem.h>
-
-#include <Ext/AnimStatus.h>
-#include <Ext/CommonStatus.h>
-
 #include <AnimTypeClass.h>
 #include <GeneralDefinitions.h>
 #include <SpecificStructures.h>
+
+#include <Extension.h>
+#include <Utilities/Macro.h>
+
+#include <Extension/AnimExt.h>
+#include <Extension/TechnoExt.h>
+
+#include <Ext/Helper/Scripts.h>
+
+#include <Ext/AnimType/AnimStatus.h>
+#include <Ext/Common/CommonStatus.h>
+#include <Ext/TechnoType/TechnoStatus.h>
 
 // ----------------
 // Extension

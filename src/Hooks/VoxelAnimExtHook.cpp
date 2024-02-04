@@ -3,13 +3,8 @@
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
-#include <Extension/VoxelAnimExt.h>
-#include <Common/Components/Component.h>
-#include <Common/Components/ScriptComponent.h>
-#include <Common/EventSystems/EventSystem.h>
 
-#include <GeneralDefinitions.h>
-#include <SpecificStructures.h>
+#include <Extension/VoxelAnimExt.h>
 
 // ----------------
 // Extension

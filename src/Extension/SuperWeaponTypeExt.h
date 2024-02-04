@@ -1,8 +1,8 @@
 #pragma once
 
-#include "TypeExtension.h"
-
 #include <SuperWeaponTypeClass.h>
+
+#include "TypeExtension.h"
 
 class SuperWeaponTypeExt : public TypeExtension<SuperWeaponTypeClass, SuperWeaponTypeExt>
 {

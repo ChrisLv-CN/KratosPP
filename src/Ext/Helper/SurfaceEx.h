@@ -1,7 +1,7 @@
 ﻿#pragma once
 
+#include <GeneralDefinitions.h>
 #include <CellClass.h>
-#include <GeneralStructures.h>
 #include <MapClass.h>
 
 static bool InRect(Point2D point, RectangleStruct bound)

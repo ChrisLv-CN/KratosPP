@@ -1,23 +1,23 @@
 ﻿#include <exception>
 #include <Windows.h>
 
-#include <AnimClass.h>
-#include <AnimTypeClass.h>
 #include <GeneralDefinitions.h>
 #include <SpecificStructures.h>
+#include <AnimClass.h>
+#include <AnimTypeClass.h>
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
+
 #include <Extension/AnimExt.h>
 #include <Extension/BulletExt.h>
-#include <Common/Components/Component.h>
-#include <Common/Components/ScriptComponent.h>
-#include <Common/EventSystems/EventSystem.h>
 
-#include <Ext/BulletStatus.h>
-#include <Ext/CommonStatus.h>
-#include <Ext/ExpandAnimsManager.h>
-#include <Ext/Helper.h>
+#include <Ext/Helper/Scripts.h>
+
+#include <Ext/BulletType/BulletStatus.h>
+#include <Ext/Common/CommonStatus.h>
+#include <Ext/Common/ExpandAnimsManager.h>
+
 
 // ----------------
 // Extension

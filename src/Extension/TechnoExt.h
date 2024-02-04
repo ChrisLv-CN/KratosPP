@@ -3,7 +3,8 @@
 #include <TechnoClass.h>
 
 #include "GOExtension.h"
-#include <Ext/TechnoType/HealthTextData.h>
+
+#include <Ext/TechnoType/Status/HealthTextData.h>
 
 
 class TechnoExt : public GOExtension<TechnoClass, TechnoExt>

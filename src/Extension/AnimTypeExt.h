@@ -1,8 +1,8 @@
 #pragma once
 
-#include "TypeExtension.h"
-
 #include <AnimTypeClass.h>
+
+#include "TypeExtension.h"
 
 class AnimTypeExt : public TypeExtension<AnimTypeClass, AnimTypeExt>
 {
