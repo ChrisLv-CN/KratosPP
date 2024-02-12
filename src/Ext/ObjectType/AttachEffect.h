@@ -16,6 +16,7 @@
 #include <Ext/Helper/FLH.h>
 
 #include <Ext/EffectType/AttachEffectData.h>
+#include <Ext/EffectType/AttachEffectTypeData.h>
 
 /// @brief AEManager, sub-component is AttachEffectScript, and AttachEffectScript 's sub-component is EffectScript
 /// GameObject
@@ -59,6 +60,44 @@ public:
 	void SetLocationSpace(int cabinLength);
 
 	/**
+	 *@brief 附加自身携带的AE
+	 *
+	 * @param typeData AE类型
+	 */
+	void Attach(AttachEffectTypeData* typeData);
+
+	/**
+	 *@brief 按照清单来附加AE
+	 *
+	 * @param types 清单
+	 * @param chances 几率清单
+	 * @param attachOnceFlag 是否初次添加的标记
+	 * @param pSource 来源
+	 * @param pSourceHouse 来源所属
+	 * @param warheadLocation 通过弹头附加时弹头的位置
+	 * @param aeMode 分组编号
+	 * @param fromPassenger 来自乘客
+	 */
+	void Attach(std::vector<std::string> types, std::vector<double> chances, bool attachOnceFlag,
+		ObjectClass* pSource, HouseClass* pSourceHouse = nullptr,
+		CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
+
+	/**
+	 *@brief 按照AE的Section来附加
+	 *
+	 * @param type section名称
+	 * @param attachOnceFlag 是否初次添加的标记
+	 * @param pSource 来源
+	 * @param pSourceHouse 来源所属
+	 * @param warheadLocation 通过弹头附加时弹头的位置
+	 * @param aeMode 分组编号
+	 * @param fromPassenger 来自乘客
+	 */
+	void Attach(std::string type, bool attachOnceFlag = false,
+		ObjectClass* pSource = nullptr, HouseClass* pSourceHouse = nullptr,
+		CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
+
+	/**
 	 *@brief 附加一个AE
 	 *
 	 * @param data AE类型
@@ -68,7 +107,10 @@ public:
 	 * @param aeMode 分组编号
 	 * @param fromPassenger 来自乘客
 	 */
-	void Attach(AttachEffectData data, ObjectClass* pSource, HouseClass* pSourceHouse = nullptr, CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
+	void Attach(AttachEffectData data,
+		ObjectClass* pSource, HouseClass* pSourceHouse = nullptr,
+		CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
+
 
 	virtual void Awake() override;
 
@@ -76,13 +118,17 @@ public:
 
 	void OnGScreenRender(EventSystem* sender, Event e, void* args);
 
-	virtual void OnReceiveDamageDestroy();
+	virtual void OnUpdate() override;
+	virtual void OnUpdateEnd() override;
+
+	virtual void OnReceiveDamageDestroy() override;
 
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
 			.Process(this->_ownerIsDead)
+			.Process(this->_attachEffectOnceFlag)
 
 			.Process(this->_location)
 			.Process(this->_lastLocation)
@@ -106,6 +152,8 @@ public:
 	}
 #pragma endregion
 private:
+	void RemoveDisableAE();
+
 	bool IsOnMark(AttachEffectData data);
 	bool HasContradiction(AttachEffectData data);
 
@@ -131,4 +179,8 @@ private:
 	int _locationMarkDistance = 16; // 多少格记录一个位置
 	double _totalMileage = 0; // 总里程
 	int _locationSpace = 512; // 替身火车的车厢间距
+
+	// section上的AE设置
+	AttachEffectTypeData* _typeData = nullptr;
+	AttachEffectTypeData* GetTypeData();
 };

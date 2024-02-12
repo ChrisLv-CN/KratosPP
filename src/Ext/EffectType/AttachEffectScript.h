@@ -20,6 +20,33 @@
 #include <Ext/ObjectType/AttachEffect.h>
 #include "AttachEffectData.h"
 
+class IAEScript
+{
+public:
+	virtual void Enable() {};
+	virtual void Disable(CoordStruct location) {};
+	virtual void ResetDuration() {};
+
+	/**
+	 *@brief 渲染事件开始
+	 *
+	 * @param location 定位
+	 */
+	virtual void OnGScreenRender(CoordStruct location) {};
+	/**
+	 *@brief 渲染事件结束
+	 *
+	 * @param location 定位
+	 */
+	virtual void OnGScreenRenderEnd(CoordStruct location) {};
+
+	/**
+	 *@brief 子机导弹爆炸
+	 *
+	 */
+	virtual void OnRocketExplosion() {};
+};
+
 /// @brief AE组件
 /// GameObject
 ///		|__ AttachEffect
@@ -30,7 +57,7 @@
 ///						|__ EffectScript#0
 ///						|__ EffectScript#1
 ///						|__ EffectScript#2
-class AttachEffectScript : public ObjectScript
+class AttachEffectScript : public ObjectScript, public IAEScript
 {
 public:
 	OBJECT_SCRIPT(AttachEffectScript);
@@ -52,12 +79,12 @@ public:
 
 	bool NonInheritable = false; // 不允许继承
 
+	virtual void ResetDuration() override;
 	int GetDuration();
 	bool TryGetInitDelayTimeLeft(int& timeLeft);
 	bool TryGetDurationTimeLeft(int& timeLeft);
 	void MergeDuration(int otherDuration);
 	void ForceStartLifeTimer(int timeLeft);
-	void ResetDuration();
 	void ResetEffectsDuration();
 
 	bool IsSameGroup(AttachEffectData otherType);
@@ -97,7 +124,10 @@ public:
 	 *
 	 * @param location 结束时的位置
 	 */
-	void Disable(CoordStruct location);
+	virtual void Disable(CoordStruct location) override;
+
+	virtual void OnGScreenRender(CoordStruct location) override;
+	virtual void OnGScreenRenderEnd(CoordStruct location) override;
 
 #pragma region Save/Load
 	template <typename T>

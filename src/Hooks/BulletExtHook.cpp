@@ -83,7 +83,7 @@ DEFINE_HOOK(0x466556, BulletClass_Init, 0x6)
 
 	auto pExt = BulletExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component* c)
-		{if (auto cc = dynamic_cast<BulletScript*>(c)) { cc->OnInit(); } });
+		{if (auto cc = dynamic_cast<IBulletScript*>(c)) { cc->OnInit(); } });
 
 	return 0;
 }
@@ -96,7 +96,7 @@ DEFINE_HOOK(0x468B5D, BulletClass_Put, 0x6)
 
 	auto pExt = BulletExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([pCoord, faceDir](Component* c)
-		{ if (auto cc = dynamic_cast<BulletScript*>(c)) { cc->OnPut(pCoord, faceDir); } });
+		{ if (auto cc = dynamic_cast<IBulletScript*>(c)) { cc->OnPut(pCoord, faceDir); } });
 
 	return 0;
 }
@@ -132,7 +132,7 @@ DEFINE_HOOK(0x4690C1, BulletClass_Detonate, 0x8)
 	auto pExt = BulletExt::ExtMap.Find(pThis);
 	bool skip = false;
 	pExt->_GameObject->Foreach([&](Component* c)
-		{ if (auto cc = dynamic_cast<BulletScript*>(c)) { cc->OnDetonate(pPos, skip); } });
+		{ if (auto cc = dynamic_cast<IBulletScript*>(c)) { cc->OnDetonate(pPos, skip); } });
 
 	if (skip)
 	{

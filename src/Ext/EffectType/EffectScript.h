@@ -24,7 +24,7 @@
 	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
 
 
-class EffectScript : public ObjectScript
+class EffectScript : public ObjectScript, public IAEScript
 {
 public:
 	OBJECT_SCRIPT(EffectScript);
@@ -35,11 +35,6 @@ public:
 	AttachEffectScript* _ae = nullptr;
 	AttachEffectScript* GetAE();
 	__declspec(property(get = GetAE)) AttachEffectScript* AE;
-
-	virtual void ResetDuration() {};
-
-	virtual void Enable() {};
-	virtual void Disable(CoordStruct location) {};
 
 #pragma region Save/Load
 	template <typename T>

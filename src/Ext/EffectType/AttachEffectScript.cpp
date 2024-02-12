@@ -180,6 +180,7 @@ bool AttachEffectScript::IsActive()
 
 void AttachEffectScript::Awake()
 {
+	Tag = AEData.Name;
 	// 延迟启用AE
 	int initDelay = GetRandomValue(AEData.InitialRandomDelay, AEData.InitialDelay);
 	_delayToEnable = initDelay > 0;
@@ -231,6 +232,20 @@ void AttachEffectScript::Disable(CoordStruct location)
 		});
 }
 
+void AttachEffectScript::OnGScreenRender(CoordStruct location)
+{
+	ForeachChild([&location](Component* c) {
+		if (auto cc = dynamic_cast<EffectScript*>(c)) { cc->OnGScreenRender(location); }
+		});
+}
+
+void AttachEffectScript::OnGScreenRenderEnd(CoordStruct location)
+{
+	ForeachChild([&location](Component* c) {
+		if (auto cc = dynamic_cast<EffectScript*>(c)) { cc->OnGScreenRenderEnd(location); }
+		});
+}
+
 void AttachEffectScript::InitEffects()
 {
 	for (std::string scriptName : AEData.EffectScriptNames)
@@ -241,6 +256,7 @@ void AttachEffectScript::InitEffects()
 			EffectScript* e = dynamic_cast<EffectScript*>(c);
 			// 初始化Effect
 			e->AEData = this->AEData;
+			e->EnsureAwaked();
 			e->Deactivate(); // 令其失活等待唤醒
 		}
 	}
@@ -265,9 +281,15 @@ void AttachEffectScript::EnableEffects()
 {
 	_isDelayToEnable = false;
 	SetupLifeTimer();
-	ForeachChild([](Component* c) {
-		if (auto cc = dynamic_cast<EffectScript*>(c)) { cc->Enable(); }
-		});
+	// Effect is disable stats, so there cannot use ForeachChild function
+	for (Component* c : _children)
+	{
+		if (EffectScript* effect = dynamic_cast<EffectScript*>(c))
+		{
+			effect->Activate();
+			effect->Enable();
+		}
+	}
 }
 
 AttachEffect* AttachEffectScript::GetAEManager()
@@ -275,9 +297,8 @@ AttachEffect* AttachEffectScript::GetAEManager()
 	if (!_aeManager)
 	{
 		_aeManager = dynamic_cast<AttachEffect*>(_parent);
-		return _aeManager;
 	}
-	return nullptr;
+	return _aeManager;
 }
 
 

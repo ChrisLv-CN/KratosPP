@@ -91,7 +91,7 @@ public:
 	AnimationData Animation{};
 	MarkData Mark{};
 
-	std::vector<std::string> EffectScriptNames{}; // 存放效果组件的名字用于初始化实例
+	std::set<std::string> EffectScriptNames{}; // 存放效果组件的名字用于初始化实例
 
 	AttachEffectData() : FilterData()
 	{
@@ -121,13 +121,13 @@ public:
 			Animation.Read(reader, title);
 			if (Animation.Enable)
 			{
-				EffectScriptNames.push_back(Animation.ScriptName);
+				EffectScriptNames.insert(Animation.ScriptName);
 			}
 
 			Mark.Read(reader);
 			if (Mark.Enable)
 			{
-				EffectScriptNames.push_back(Mark.ScriptName);
+				EffectScriptNames.insert(Mark.ScriptName);
 			}
 
 			// 至少要有一个效果组件

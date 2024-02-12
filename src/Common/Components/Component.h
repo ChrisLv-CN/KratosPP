@@ -125,6 +125,8 @@ public:
 	void AttachToComponent(Component* component);
 	void DetachFromParent();
 
+	void PrintNames(std::vector<std::string>& names, int& level);
+
 #pragma region Foreach
 	/// <summary>
 	/// execute action for each components in root (include itself)
@@ -132,23 +134,19 @@ public:
 	/// <param name="action"></param>
 	void Foreach(std::function<void(Component*)> action);
 
-	void ForeachChild(std::function<void(Component*)> action);
+	void ForeachLevel(std::function<void(Component*)> action, int& level, int& maxLevel);
 
 	/// <summary>
-	/// execute action for each components in root (include root)
+	/// execute action for each child (exclude child's child)
 	/// </summary>
-	/// <param name="root">the root component</param>
-	/// <param name="action">the action to executed</param>
-	void ForeachComponents(Component* root, std::function<void(Component*)> action);
-
-	void ForeachComponents(std::list<Component*>& components, std::function<void(Component*)> action);
+	/// <param name="action"></param>
+	void ForeachChild(std::function<void(Component*)> action);
 
 	void Break();
 	bool IsBreak();
 #pragma endregion
 
 #pragma region GetComponent
-
 	Component* GetComponentInParentByName(const std::string& name);
 
 	Component* GetComponentInChildrenByName(const std::string& name);

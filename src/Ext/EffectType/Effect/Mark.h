@@ -31,6 +31,8 @@ public:
 	}
 	__declspec(property(get = GetData)) MarkData Data;
 
+	virtual void Enable() override;
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {

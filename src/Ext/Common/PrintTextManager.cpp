@@ -205,6 +205,15 @@ void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTex
 	Print(text, houseColor, data, pos, &bound, pSurface, isBuilding);
 }
 
+void PrintTextManager::PrintText(std::string text, ColorStruct color, Point2D pos)
+{
+	std::wstring wText = String2WString(text);
+	DSurface* pSurface = DSurface::Temp;
+	PrintTextData data{};
+	data.Color = color;
+	Print(wText, color, data, pos, pSurface);
+}
+
 void PrintTextManager::PrintText(std::string text, ColorStruct color, CoordStruct location)
 {
 	std::wstring wText = String2WString(text);

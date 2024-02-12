@@ -86,6 +86,37 @@ DEFINE_HOOK(0x4253FF, AnimClass_Save_Suffix, 0x5)
 // Component
 // ----------------
 
+DEFINE_HOOK(0x423AC0, AnimClass_Update, 0x6)
+{
+	GET(AnimClass*, pThis, ECX);
+
+	auto pExt = AnimExt::ExtMap.Find(pThis);
+	pExt->_GameObject->Foreach([](Component* c)
+		{ c->OnUpdate(); });
+
+	return 0;
+}
+
+DEFINE_HOOK_AGAIN(0x42429E, AnimClass_UpdateEnd, 0x6)
+DEFINE_HOOK_AGAIN(0x42437E, AnimClass_UpdateEnd, 0x6)
+DEFINE_HOOK_AGAIN(0x4243A6, AnimClass_UpdateEnd, 0x6)
+DEFINE_HOOK_AGAIN(0x424567, AnimClass_UpdateEnd, 0x6)
+DEFINE_HOOK_AGAIN(0x4246DC, AnimClass_UpdateEnd, 0x6)
+DEFINE_HOOK_AGAIN(0x424B42, AnimClass_UpdateEnd, 0x6)
+DEFINE_HOOK_AGAIN(0x4247EB, AnimClass_UpdateEnd, 0x6)
+DEFINE_HOOK_AGAIN(0x42492A, AnimClass_UpdateEnd, 0x6)
+DEFINE_HOOK_AGAIN(0x424B29, AnimClass_UpdateEnd, 0x6)
+DEFINE_HOOK(0x424B1B, AnimClass_UpdateEnd, 0x6)
+{
+	GET(AnimClass*, pThis, ESI);
+
+	auto pExt = AnimExt::ExtMap.Find(pThis);
+	pExt->_GameObject->Foreach([](Component* c)
+		{ c->OnUpdateEnd(); });
+
+	return 0;
+}
+
 DEFINE_HOOK(0x424785, AnimClass_Loop, 0x6)
 {
 	GET(AnimClass*, pThis, ESI);

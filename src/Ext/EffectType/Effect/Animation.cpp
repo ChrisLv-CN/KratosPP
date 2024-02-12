@@ -15,7 +15,7 @@ EFFECT_SCRIPT_CPP(Animation);
 void Animation::UpdateLocationOffset(CoordStruct offset)
 {
 	AnimStatus* animStatus = nullptr;
-	if (pAnim && TryGetStatus<AnimExt, AnimStatus>(pAnim, animStatus))
+	if (pIdleAnim && TryGetStatus<AnimExt, AnimStatus>(pIdleAnim, animStatus))
 	{
 		animStatus->Offset = offset;
 	}
@@ -24,7 +24,7 @@ void Animation::UpdateLocationOffset(CoordStruct offset)
 
 void Animation::CreateIdleAnim(bool force, CoordStruct location)
 {
-	if (pAnim)
+	if (pIdleAnim)
 	{
 		KillIdleAnim();
 	}
@@ -33,44 +33,43 @@ void Animation::CreateIdleAnim(bool force, CoordStruct location)
 		return;
 	}
 	// 创建动画
-	AnimTypeClass* pAnimType = AnimTypeClass::Find(Data.ActiveAnim.Type.c_str());
+	AnimTypeClass* pAnimType = AnimTypeClass::Find(Data.IdleAnim.Type.c_str());
 	if (pAnimType)
 	{
-		OffsetData offsetData = Data.ActiveAnim.Offset;
+		OffsetData offsetData = Data.IdleAnim.Offset;
 		if (location.IsEmpty())
 		{
 			location = GetRelativeLocation(pObject, offsetData).Location;
 		}
-		AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, location);
-		pAnim->RemainingIterations = 0xFF; // Loops
+		pIdleAnim = GameCreate<AnimClass>(pAnimType, location);
+		pIdleAnim->RemainingIterations = 0xFF; // Loops
 		if (pBullet)
 		{
-			SetAnimOwner(pAnim, pBullet);
-			SetAnimCreater(pAnim, pBullet);
+			SetAnimOwner(pIdleAnim, pBullet);
+			SetAnimCreater(pIdleAnim, pBullet);
 		}
 		else if (pTechno)
 		{
-			SetAnimOwner(pAnim, pTechno);
-			SetAnimCreater(pAnim, pTechno);
+			SetAnimOwner(pIdleAnim, pTechno);
+			SetAnimCreater(pIdleAnim, pTechno);
 		}
-		ShowAnim(pAnim, Data.IdleAnim.Visibility);
+		ShowAnim(pIdleAnim, Data.IdleAnim.Visibility);
 		// 记录动画的渲染参数
-		animFlags = pAnim->AnimFlags;
+		animFlags = pIdleAnim->AnimFlags;
 		// 设置动画的附着对象，由动画自身去位移
-		AnimStatus* status = GetStatus<AnimExt, AnimStatus>(pAnim);
-		status->pAttachOwner = pObject;
+		AnimStatus* status = GetStatus<AnimExt, AnimStatus>(pIdleAnim);
 		status->AttachToObject(pObject, offsetData);
 	}
 }
 
 void Animation::KillIdleAnim()
 {
-	if (pAnim)
+	if (pIdleAnim)
 	{
 		// 不将动画附着于单位上，动画就不会自行注销，需要手动注销
-		pAnim->TimeToDie = true;
-		pAnim->UnInit(); // 包含了SetOwnerObject(0) 0x4255B0
-		pAnim = nullptr;
+		pIdleAnim->TimeToDie = true;
+		pIdleAnim->UnInit(); // 包含了SetOwnerObject(0) 0x4255B0
+		pIdleAnim = nullptr;
 	}
 }
 
@@ -151,10 +150,10 @@ void Animation::OnUpdate()
 				{
 					CreateIdleAnim();
 				}
-				else if (Data.IdleAnim.TranslucentInCloak)
+				else if (pIdleAnim && Data.IdleAnim.TranslucentInCloak)
 				{
 					// 恢复不透明
-					pAnim->AnimFlags = animFlags;
+					pIdleAnim->AnimFlags = animFlags;
 				}
 			}
 			break;
@@ -167,10 +166,10 @@ void Animation::OnUpdate()
 				{
 					KillIdleAnim();
 				}
-				else if (Data.IdleAnim.TranslucentInCloak)
+				else if (pIdleAnim && Data.IdleAnim.TranslucentInCloak)
 				{
 					// 半透明
-					pAnim->AnimFlags |= BlitterFlags::TransLucent50;
+					pIdleAnim->AnimFlags |= BlitterFlags::TransLucent50;
 				}
 			}
 			break;
@@ -207,7 +206,6 @@ void Animation::OnReceiveDamage(args_ReceiveDamage* args)
 			ShowAnim(pAnim, Data.IdleAnim.Visibility);
 			// 设置动画的附着对象，由动画自身去位移
 			AnimStatus* status = GetStatus<AnimExt, AnimStatus>(pAnim);
-			status->pAttachOwner = pObject;
 			status->AttachToObject(pObject, offsetData);
 		}
 	}

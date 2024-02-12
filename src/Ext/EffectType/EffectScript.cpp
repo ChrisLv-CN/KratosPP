@@ -10,7 +10,6 @@ AttachEffectScript* EffectScript::GetAE()
 	if (!_ae)
 	{
 		_ae = dynamic_cast<AttachEffectScript*>(_parent);
-		return _ae;
 	}
-	return nullptr;
+	return _ae;
 }

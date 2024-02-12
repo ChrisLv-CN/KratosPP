@@ -46,7 +46,7 @@ public:
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
-			.Process(this->pAnim)
+			.Process(this->pIdleAnim)
 			.Process(this->animFlags)
 			.Process(this->ownerIsCloak)
 			.Success();
@@ -64,7 +64,7 @@ public:
 	}
 #pragma endregion
 private:
-	AnimClass* pAnim = nullptr;
+	AnimClass* pIdleAnim = nullptr;
 	BlitterFlags animFlags = BlitterFlags::None;
 	bool ownerIsCloak = false;
 

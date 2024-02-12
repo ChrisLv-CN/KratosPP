@@ -3,6 +3,9 @@
 #include <BuildingClass.h>
 #include <MissionClass.h>
 
+#include <Common/INI/INI.h>
+
+#include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Status.h>
 #include <Ext/Helper/Weapon.h>
 #include <Ext/Common/PrintTextManager.h>
@@ -79,7 +82,58 @@ void AttachEffect::SetLocationSpace(int cabinLength)
 	}
 }
 
-void AttachEffect::Attach(AttachEffectData data, ObjectClass* pSource, HouseClass* pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger)
+void AttachEffect::Attach(AttachEffectTypeData* typeData)
+{
+	if (typeData->Enable)
+	{
+		Attach(typeData->AttachEffectTypes, {}, _attachEffectOnceFlag, pObject);
+	}
+	if (typeData->StandTrainCabinLength > 0)
+	{
+		SetLocationSpace(typeData->StandTrainCabinLength);
+	}
+
+}
+
+void AttachEffect::Attach(std::vector<std::string> types, std::vector<double> chances, bool attachOnceFlag,
+	ObjectClass* pSource, HouseClass* pSourceHouse,
+	CoordStruct warheadLocation, int aeMode, bool fromPassenger)
+{
+	if (!types.empty())
+	{
+		int index = 0;
+		for (std::string type : types)
+		{
+			if (Bingo(chances, index))
+			{
+				Attach(type, attachOnceFlag, pSource, pSourceHouse, warheadLocation, aeMode, fromPassenger);
+			}
+			index++;
+		}
+	}
+}
+
+void AttachEffect::Attach(std::string type, bool attachOnceFlag,
+	ObjectClass* pSource, HouseClass* pSourceHouse,
+	CoordStruct warheadLocation, int aeMode, bool fromPassenger)
+{
+	if (IsNotNone(type))
+	{
+		AttachEffectData* data = INI::GetConfig<AttachEffectData>(INI::Rules, type.c_str())->Data;
+		if (data->Enable)
+		{
+			if (attachOnceFlag && data->AttachOnceInTechnoType)
+			{
+				return;
+			}
+			Attach(*data, pSource, pSourceHouse, warheadLocation, aeMode, fromPassenger);
+		}
+	}
+}
+
+void AttachEffect::Attach(AttachEffectData data,
+	ObjectClass* pSource, HouseClass* pSourceHouse,
+	CoordStruct warheadLocation, int aeMode, bool fromPassenger)
 {
 	if (!data.Enable)
 	{
@@ -264,14 +318,30 @@ void AttachEffect::Attach(AttachEffectData data, ObjectClass* pSource, HouseClas
 		Component* c = AddComponent(AttachEffectScript::ScriptName); // TODO 插队
 		if (c)
 		{
+			AddStackCount(data); // 叠层计数
+			// 初始化AE
 			AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
 			ae->AEData = data;
-			AddStackCount(data); // 叠层计数
 			// 激活AE
+			ae->EnsureAwaked();
 			ae->Enable(pAttacker, pAttackingHouse, warheadLocation, aeMode, fromPassenger);
 		}
 
 	}
+}
+
+void AttachEffect::RemoveDisableAE()
+{
+	
+}
+
+AttachEffectTypeData* AttachEffect::GetTypeData()
+{
+	if (!_typeData)
+	{
+		_typeData = INI::GetConfig<AttachEffectTypeData>(INI::Rules, pObject->GetType()->ID)->Data;
+	}
+	return _typeData;
 }
 
 bool AttachEffect::IsOnMark(AttachEffectData data)
@@ -324,23 +394,85 @@ void AttachEffect::Destroy()
 
 void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 {
-	if (args && !IsDeadOrInvisible(pTechno))
+	if (!IsDeadOrInvisible(pObject))
 	{
-#ifdef DEBUG
-		std::vector<std::string> names;
-		_gameObject->Foreach([&](Component* c)
-			{
-				std::string name = c->Name;
-				names.push_back(name);
-			});
-		std::string log = "";
-		for (std::string n : names)
+		CoordStruct location = _location;
+		if (args)
 		{
-			log.append(n).append(",");
+			ForeachChild([&location](Component* c) {
+				if (auto cc = dynamic_cast<AttachEffectScript*>(c)) { cc->OnGScreenRenderEnd(location); }
+				});
+#ifdef DEBUG
+			// 打印Component结构
+			/// GameObject
+			///		|__ AttachEffect
+			///				|__ AttachEffectScript#0
+			///						|__ EffectScript#0
+			///						|__ EffectScript#1
+			///				|__ AttachEffectScript#1
+			///						|__ EffectScript#0
+			///						|__ EffectScript#1
+			///						|__ EffectScript#2
+			if (_gameObject)
+			{
+				std::vector<std::string> names;
+				int level = 0;
+				_gameObject->PrintNames(names, level);
+				CoordStruct coords = pObject->GetCoords();
+				Point2D pos = ToClientPos(coords);
+				int offsetZ = PrintTextManager::GetFontSize().Y;
+				for (std::string& n : names)
+				{
+					std::string log{ n };
+					log.append("\n");
+					pos.Y += offsetZ;
+					PrintTextManager::PrintText(log, Colors::Green, pos);
+				}
 		}
-		PrintTextManager::PrintText(log, Colors::Green, pTechno->GetCoords());
 #endif // DEBUG
 	}
+		else
+		{
+			ForeachChild([&location](Component* c) {
+				if (auto cc = dynamic_cast<AttachEffectScript*>(c)) { cc->OnGScreenRender(location); }
+				});
+		}
+}
+}
+
+void AttachEffect::OnUpdate()
+{
+	// 添加Section上记录的AE
+	if (!_ownerIsDead)
+	{
+		_location = pObject->GetCoords();
+		// 检查电力
+		if (!IsBullet())
+		{
+			PowerOff = pTechno->Owner->HasLowPower();
+			if (!PowerOff && IsBuilding())
+			{
+				// 关闭当前建筑电源
+				PowerOff = !dynamic_cast<BuildingClass*>(pTechno)->HasPower;
+			}
+		}
+
+		// 添加section自带AE，无分组的
+		Attach(GetTypeData());
+		// 检查乘客并附加乘客带来的AE
+		if (pTechno)
+		{
+			// TODO 乘客附加的AE
+		}
+		// TODO 添加分组的
+		this->_attachEffectOnceFlag = true;
+	}
+}
+
+void AttachEffect::OnUpdateEnd()
+{
+	// 移除失效的AE，附加Next的AE
+	RemoveDisableAE();
 }
 
 void AttachEffect::OnReceiveDamageDestroy()

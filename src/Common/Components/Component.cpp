@@ -305,46 +305,73 @@ void Component::DetachFromParent()
 	}
 }
 
+void Component::PrintNames(std::vector<std::string>& names, int& level)
+{
+	// 自己
+	std::string name = "";
+	if (level > 1)
+	{
+		for (int i = 0; i < level - 1; i++)
+		{
+			name.append("  ");
+		}
+	}
+	if (level > 0)
+	{
+		name.append("--");
+	}
+	name.append(this->Name);
+	if (!this->Tag.empty())
+	{
+		name.append("#").append(this->Tag);
+	}
+	names.push_back(name);
+	ForeachChild([&names, &level](Component* c) {
+		int l = level + 1;
+		c->PrintNames(names, l);
+		});
+}
+
 #pragma region Foreach
-/// <summary>
-/// execute action for each components in root (include itself)
-/// </summary>
-/// <param name="action"></param>
+
 void Component::Foreach(std::function<void(Component*)> action)
 {
-	ForeachComponents(this, action);
+	// 执行全部
+	int level = 0;
+	int maxLevel = -1;
+	ForeachLevel(action, level, maxLevel);
+}
+
+void Component::ForeachLevel(std::function<void(Component*)> action, int& level, int& maxLevel)
+{
+	// 执行自身
+	if (IsAlive() && IsActive())
+	{
+		action(this);
+		int nextLevel = level + 1;
+		if (maxLevel < 0 || nextLevel < maxLevel)
+		{
+			// 执行子模块
+			for (Component* c : _children)
+			{
+				c->ForeachLevel(action, nextLevel, maxLevel);
+				if (c->IsBreak())
+				{
+					break;
+				}
+			}
+		}
+	}
 }
 
 void Component::ForeachChild(std::function<void(Component*)> action)
 {
-	ForeachComponents(_children, action);
-}
-
-/// <summary>
-/// execute action for each components in root (include root)
-/// </summary>
-/// <param name="root">the root component</param>
-/// <param name="action">the action to executed</param>
-void Component::ForeachComponents(Component* root, std::function<void(Component*)> action)
-{
-	if (IsAlive() && IsActive())
+	for (Component* c : _children)
 	{
-		action(root);
-		root->ForeachChild(action);
-	}
-}
-
-void Component::ForeachComponents(std::list<Component*>& components, std::function<void(Component*)> action)
-{
-	for (Component* c : components)
-	{
-		if (c && c->IsAlive() && c->IsActive())
+		action(c);
+		if (c->IsBreak())
 		{
-			action(c);
-			if (c->IsBreak())
-			{
-				break;
-			}
+			break;
 		}
 	}
 }
