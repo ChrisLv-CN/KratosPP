@@ -103,8 +103,10 @@ public:
 	std::string BlockSHP = "pipstext.shp";
 	int BlockIndex = 5;
 
-	virtual void Read(INIBufferReader* ini) override
-	{ }
+	virtual void Read(INIBufferReader* reader) override
+	{
+		Read(reader, "");
+	}
 
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{

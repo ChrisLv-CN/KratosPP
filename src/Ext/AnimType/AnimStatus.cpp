@@ -14,9 +14,15 @@ bool AnimStatus::TryGetCreater(TechnoClass*& pTechno)
 	return pTechno != nullptr;
 }
 
-void AnimStatus::SetOffset(OffsetData data)
+void AnimStatus::AttachToObject(ObjectClass* pObject, OffsetData offsetData)
 {
-	_offsetData = data;
+	pAttachOwner = pObject;
+	SetOffset(offsetData);
+}
+
+void AnimStatus::SetOffset(OffsetData offsetData)
+{
+	_offsetData = offsetData;
 	Offset = _offsetData.Offset;
 }
 

@@ -1,7 +1,9 @@
 ﻿#pragma once
 
+#include <algorithm>
 #include <string>
 #include <vector>
+#include <set>
 
 #include <GeneralStructures.h>
 #include <HouseClass.h>
@@ -34,16 +36,18 @@ public:
 	bool AffectStand = false;
 	bool AffectSelf = false;
 	bool AffectInAir = true;
-	std::vector<std::string> NotAffectMarks{};
-	std::vector<std::string> OnlyAffectMarks{};
+	std::set<std::string> NotAffectMarks{};
+	std::set<std::string> OnlyAffectMarks{};
 
 	bool AffectsOwner = true;
 	bool AffectsAllies = true;
 	bool AffectsEnemies = true;
 	bool AffectsCivilian = true;
 
-	virtual void Read(INIBufferReader* ini) override
-	{ }
+	virtual void Read(INIBufferReader* reader) override
+	{
+		Read(reader, "");
+	}
 
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{
@@ -73,8 +77,19 @@ public:
 		AffectStand = reader->Get(title + "AffectStand", AffectStand);
 		AffectSelf = reader->Get(title + "AffectSelf", AffectSelf);
 		AffectInAir = reader->Get(title + "AffectInAir", AffectInAir);
-		NotAffectMarks = reader->GetList(title + "NotAffectMarks", NotAffectMarks);
-		OnlyAffectMarks = reader->GetList(title + "OnlyAffectMarks", OnlyAffectMarks);
+
+		std::vector<std::string> notAffectMarks{};
+		notAffectMarks = reader->GetList(title + "NotAffectMarks", notAffectMarks);
+		for (std::string& m : notAffectMarks)
+		{
+			NotAffectMarks.insert(m);
+		}
+		std::vector<std::string> onlyAffectMarks{};
+		onlyAffectMarks = reader->GetList(title + "OnlyAffectMarks", onlyAffectMarks);
+		for (std::string& m : onlyAffectMarks)
+		{
+			OnlyAffectMarks.insert(m);
+		}
 
 		bool affectsAllies = true;
 		if (reader->TryGet(title + "AffectsAllies", affectsAllies))
@@ -173,40 +188,32 @@ public:
 		}
 		return false;
 	}
-/* TODO AE标记
-	bool IsOnMark(Pointer<ObjectClass> pObject)
-	{
-		return (null == OnlyAffectMarks || !OnlyAffectMarks.Any())
-			&& (null == NotAffectMarks || !NotAffectMarks.Any())
-			|| (pObject.TryGetAEManager(out AttachEffectScript aeManager) && IsOnMark(aeManager));
-	}
 
-	bool IsOnMark(Pointer<BulletClass> pBullet)
+	bool IsOnMark(std::vector<std::string> marks)
 	{
-		return (null == OnlyAffectMarks || !OnlyAffectMarks.Any())
-			&& (null == NotAffectMarks || !NotAffectMarks.Any())
-			|| (pBullet.TryGetAEManager(out AttachEffectScript aeManager) && IsOnMark(aeManager));
+		bool mark = marks.empty();
+		if (!mark)
+		{
+			std::set<std::string> m(marks.begin(), marks.end());
+			bool hasWhiteList = !OnlyAffectMarks.empty();
+			bool hasBlackList = !NotAffectMarks.empty();
+			if (hasWhiteList)
+			{
+				// 取交集
+				std::set<std::string> v;
+				std::set_intersection(m.begin(), m.end(), OnlyAffectMarks.begin(), OnlyAffectMarks.end(), std::inserter(v, v.begin()));
+				mark = !v.empty();
+			}
+			if (!mark && hasBlackList)
+			{
+				// 取交集
+				std::set<std::string> v;
+				std::set_intersection(m.begin(), m.end(), NotAffectMarks.begin(), NotAffectMarks.end(), std::inserter(v, v.begin()));
+				mark = v.empty();
+			}
+		}
+		return mark;
 	}
-
-	bool IsOnMark(Pointer<TechnoClass> pTechno)
-	{
-		return (null == OnlyAffectMarks || !OnlyAffectMarks.Any())
-			&& (null == NotAffectMarks || !NotAffectMarks.Any())
-			|| (pTechno.TryGetAEManager(out AttachEffectScript aeManager) && IsOnMark(aeManager));
-	}
-
-	bool IsOnMark(AttachEffectScript aeManager)
-	{
-		bool hasWhiteList = null != OnlyAffectMarks && OnlyAffectMarks.Any();
-		bool hasBlackList = null != NotAffectMarks && NotAffectMarks.Any();
-		HashSet<string> marks = null;
-		return (!hasWhiteList && !hasBlackList)
-			|| aeManager.TryGetMarks(out marks) ? (
-				(!hasWhiteList || OnlyAffectMarks.Intersect(marks).Count() > 0)
-				&& (!hasBlackList || NotAffectMarks.Intersect(marks).Count() <= 0)
-				) : !hasWhiteList;
-	}
-*/
 
 #pragma region save/load
 	template <typename T>

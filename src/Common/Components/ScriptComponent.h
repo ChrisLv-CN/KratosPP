@@ -16,6 +16,8 @@
 #include <Extension/TechnoExt.h>
 #include <Extension/SuperWeaponExt.h>
 
+#include <Ext/Helper/Status.h>
+
 /// @brief 所有的脚本都位于GameObject下
 class ScriptComponent : public Component
 {
@@ -95,12 +97,144 @@ public:
 	}
 
 	__declspec(property(get = GetOwner)) ObjectClass* pObject;
+
+	AbstractType GetAbsType()
+	{
+		if (_absType == AbstractType::None)
+		{
+			_absType = pObject->WhatAmI();
+		}
+		return _absType;
+	}
+
+	bool IsBullet()
+	{
+		return pBullet != nullptr;
+	}
+
+	bool IsBuilding()
+	{
+		return pTechno && GetAbsType() == AbstractType::Building;
+	}
+
+	bool IsFoot()
+	{
+		return !IsBullet() && !IsBuilding();
+	}
+
+protected:
+	AbstractType _absType = AbstractType::None;
 };
 
 class TechnoScript : public ScriptComponent, public ITechnoScript
 {
 public:
 	SCRIPT_COMPONENT(TechnoScript, TechnoClass, TechnoExt, pTechno);
+
+	AbstractType GetAbsType()
+	{
+		if (_absType == AbstractType::None)
+		{
+			_absType = pTechno->WhatAmI();
+		}
+		return _absType;
+	}
+
+	bool IsBuilding()
+	{
+		return GetAbsType() == AbstractType::Building;
+	}
+	bool IsInfantry()
+	{
+		return GetAbsType() == AbstractType::Infantry;
+	}
+	bool IsUnit()
+	{
+		return GetAbsType() == AbstractType::Unit;
+	}
+	bool IsAircraft()
+	{
+		return GetAbsType() == AbstractType::Aircraft;
+	}
+
+	LocoType GetLocoType()
+	{
+		if (!IsBuilding())
+		{
+			if (_locoType == LocoType::None)
+			{
+				GUID locoId = pTechno->GetTechnoType()->Locomotor;
+				if (locoId == LocomotionClass::CLSIDs::Drive)
+				{
+					return LocoType::Drive;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Hover)
+				{
+					return LocoType::Hover;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Tunnel)
+				{
+					return LocoType::Tunnel;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Walk)
+				{
+					return LocoType::Walk;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Droppod)
+				{
+					return LocoType::Droppod;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Fly)
+				{
+					return LocoType::Fly;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Teleport)
+				{
+					return LocoType::Teleport;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Mech)
+				{
+					return LocoType::Mech;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Ship)
+				{
+					return LocoType::Ship;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Jumpjet)
+				{
+					return LocoType::Jumpjet;
+				}
+				else if (locoId == LocomotionClass::CLSIDs::Rocket)
+				{
+					return LocoType::Rocket;
+				}
+			}
+		}
+		return _locoType;
+	}
+
+	bool IsFly()
+	{
+		return GetLocoType() == LocoType::Fly;
+	}
+	bool IsJumpjet()
+	{
+		return GetLocoType() == LocoType::Jumpjet;
+	}
+	bool IsShip()
+	{
+		return GetLocoType() == LocoType::Ship;
+	}
+
+	bool IsRocket()
+	{
+		return IsAircraft() && GetLocoType() == LocoType::Rocket;
+	}
+
+protected:
+	// 单位类型
+	AbstractType _absType = AbstractType::None;
+	LocoType _locoType = LocoType::None;
 };
 
 class BulletScript : public ScriptComponent, public IBulletScript

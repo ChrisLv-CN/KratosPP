@@ -26,6 +26,7 @@ public:
 
 	bool TryGetCreater(TechnoClass*& pTechno);
 
+	void AttachToObject(ObjectClass* pObject, OffsetData data = OffsetData::Empty);
 	void SetOffset(OffsetData data);
 
 	void UpdateVisibility(Relation visibility);
@@ -61,7 +62,7 @@ public:
 	virtual void OnNext(AnimTypeClass* pNext) override;
 
 	TechnoClass* pCreater = nullptr;
-	TechnoClass* pAttachOwner = nullptr; // 动画附着的对象
+	ObjectClass* pAttachOwner = nullptr; // 动画附着的对象
 	CoordStruct Offset = CoordStruct::Empty; // 附着的偏移位置
 
 	virtual void InvalidatePointer(void* ptr) override

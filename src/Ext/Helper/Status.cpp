@@ -53,6 +53,24 @@ AnimClass* SetAnimCreater(AnimClass* pAnim, BulletClass* pBullet)
 	}
 	return pAnim;
 }
+
+void ShowAnim(AnimClass* pAnim, Relation visibility)
+{
+	AnimStatus* status = nullptr;
+	if (TryGetStatus<AnimExt, AnimStatus>(pAnim, status))
+	{
+		status->UpdateVisibility(visibility);
+	}
+	else
+	{
+		pAnim->Invisible = false;
+	}
+}
+
+void HiddenAnim(AnimClass* pAnim)
+{
+	pAnim->Invisible = true;
+}
 #pragma endregion
 
 #pragma region ObjectClass

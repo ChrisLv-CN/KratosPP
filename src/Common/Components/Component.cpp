@@ -67,9 +67,24 @@ bool Component::AlreadyAwake()
 	return _awaked;
 }
 
-bool Component::IsActive()
+bool Component::IsAlive()
 {
 	return !_disable;
+}
+
+void Component::Activate()
+{
+	_active = true;
+}
+
+void Component::Deactivate()
+{
+	_active = false;
+}
+
+bool Component::IsActive()
+{
+	return _active;
 }
 
 void Component::AddComponent(Component* component)
@@ -80,9 +95,9 @@ void Component::AddComponent(Component* component)
 	// list::emplace_back 不会
 	_children.emplace_back(component);
 #ifdef DEBUG_COMPONENT
-		std::string thisId = component->thisId;
-		std::string thisName = component->thisName;
-		Debug::Log("Add Component [%s]%s to %s [%s]%s.\n", thisName.c_str(), thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
+	std::string thisId = component->thisId;
+	std::string thisName = component->thisName;
+	Debug::Log("Add Component [%s]%s to %s [%s]%s.\n", thisName.c_str(), thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif // DEBUG
 }
 
@@ -312,18 +327,40 @@ void Component::ForeachChild(std::function<void(Component*)> action)
 /// <param name="action">the action to executed</param>
 void Component::ForeachComponents(Component* root, std::function<void(Component*)> action)
 {
-	action(root);
-	root->ForeachChild(action);
+	if (IsAlive() && IsActive())
+	{
+		action(root);
+		root->ForeachChild(action);
+	}
 }
 
 void Component::ForeachComponents(std::list<Component*>& components, std::function<void(Component*)> action)
 {
 	for (Component* c : components)
 	{
-		if (c && c->IsActive())
+		if (c && c->IsAlive() && c->IsActive())
 		{
 			action(c);
+			if (c->IsBreak())
+			{
+				break;
+			}
 		}
 	}
+}
+
+void Component::Break()
+{
+	_break = true;
+}
+
+bool Component::IsBreak()
+{
+	if (_break)
+	{
+		_break = false;
+		return true;
+	}
+	return _break;
 }
 #pragma endregion

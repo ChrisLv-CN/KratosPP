@@ -27,7 +27,7 @@ public:
 class IObjectScript : public IAbstractScript
 {
 public:
-	virtual void OnPut(CoordStruct* location, DirType faceDir) {};
+	virtual void OnPut(CoordStruct* pCoords, DirType faceDir) {};
 	virtual void OnRemove() {};
 	virtual void OnReceiveDamage(args_ReceiveDamage* args) {};
 	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};

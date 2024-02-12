@@ -25,7 +25,10 @@ public:
 	Point2D RandomOffsetL = Point2D::Empty;
 	Point2D RandomOffsetH = Point2D::Empty;
 
-	virtual void Read(INIBufferReader* reader) override {}
+	virtual void Read(INIBufferReader* reader) override
+	{
+		Read(reader, "");
+	}
 
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{

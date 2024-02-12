@@ -20,6 +20,9 @@ AnimClass* SetAnimOwner(AnimClass* pAnim, BulletClass* pBullet);
 
 AnimClass* SetAnimCreater(AnimClass* pAnim, TechnoClass* pTechno);
 AnimClass* SetAnimCreater(AnimClass* pAnim, BulletClass* pBullet);
+
+void ShowAnim(AnimClass* pAnim, Relation visibility);
+void HiddenAnim(AnimClass* pAnim);
 #pragma endregion
 
 #pragma region ObjectClass

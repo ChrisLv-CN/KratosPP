@@ -5,6 +5,8 @@
 
 #include <Extension/GOExtension.h>
 
+class AttachEffect;
+
 template <typename TExt, typename TScript, typename TBase>
 static bool TryGetScript(TBase* p, TScript*& pComponent)
 {
@@ -64,6 +66,18 @@ static TStatus* GetStatus(TBase* p)
 	TStatus* status = nullptr;
 	TryGetStatus<TExt>(p, status);
 	return status;
+}
+
+template <typename TExt, typename TBase>
+static bool TryGetAEManager(TBase* p, AttachEffect*& aeManager)
+{
+	return TryGetScript<TExt, TBase>(p, aeManager);
+}
+
+template <typename TExt, typename TBase>
+static AttachEffect* GetAEManager(TBase* p)
+{
+	return GetScript<TExt, AttachEffect>(p);
 }
 
 template <typename TypeExt, typename TypeData, typename TBase>

@@ -44,21 +44,6 @@ public:
 
 	virtual void Destroy() override;
 
-	AbstractType GetAbsType();
-
-	bool IsBuilding();
-	bool IsInfantry();
-	bool IsUnit();
-	bool IsAircraft();
-
-	LocoType GetLocoType();
-
-	bool IsFly();
-	bool IsJumpjet();
-	bool IsShip();
-
-	bool IsRocket();
-
 	bool AmIStand();
 
 	/**
@@ -80,8 +65,6 @@ public:
 
 	SpawnData* GetSpawnData();
 	bool TryGetSpawnType(int i, std::string& newId);
-
-	void OnGScreenRender(EventSystem* sender, Event e, void* args);
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
 
@@ -266,9 +249,6 @@ private:
 
 	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
-	// 单位类型
-	AbstractType _absType = AbstractType::None;
-	LocoType _locoType = LocoType::None;
 
 	bool _initStateFlag = false;
 

@@ -7,6 +7,8 @@
 class OffsetData : public INIConfig
 {
 public:
+	static const OffsetData Empty;
+
 	CoordStruct Offset = CoordStruct::Empty; // 偏移FLH
 
 	CoordStruct StackOffset = CoordStruct::Empty; // 堆叠偏移
@@ -18,8 +20,13 @@ public:
 
 	int Direction = 0; // 相对朝向，16分圆，[0-15]
 
-	virtual void Read(INIBufferReader* ini) override
-	{ }
+	OffsetData() : INIConfig() {}
+	OffsetData(int temp) : OffsetData() {}
+
+	virtual void Read(INIBufferReader* reader) override
+	{
+		Read(reader, "");
+	}
 
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{
@@ -65,3 +72,4 @@ public:
 	}
 #pragma endregion
 };
+

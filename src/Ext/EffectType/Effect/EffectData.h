@@ -42,6 +42,12 @@ public:
 	AffectWho AffectWho = AffectWho::MASTER;
 	bool DeactiveWhenCivilian = false;
 
+	virtual void Read(INIBufferReader* reader) override
+	{
+		FilterData::Read(reader);
+		Read(reader, "");
+	}
+
 	virtual void Read(INIBufferReader* reader, std::string title) override
 	{
 		FilterData::Read(reader, title);

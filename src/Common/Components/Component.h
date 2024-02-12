@@ -85,7 +85,18 @@ public:
 	void EnsureDestroy();
 
 	bool AlreadyAwake();
-	bool IsActive();
+
+	virtual bool IsAlive();
+
+	/// <summary>
+	/// 激活组件，使其可以执行Foreach逻辑
+	/// </summary>
+	virtual void Activate();
+	/// <summary>
+	/// 失活组件，使其跳过执行Foreach逻辑
+	/// </summary>
+	virtual void Deactivate();
+	virtual bool IsActive();
 
 	/// <summary>
 	/// 将Component加入子列表，同时赋予自身储存的IExtData
@@ -131,6 +142,9 @@ public:
 	void ForeachComponents(Component* root, std::function<void(Component*)> action);
 
 	void ForeachComponents(std::list<Component*>& components, std::function<void(Component*)> action);
+
+	void Break();
+	bool IsBreak();
 #pragma endregion
 
 #pragma region GetComponent
@@ -208,7 +222,8 @@ public:
 			.Process(this->Name)
 			// 每次读档之后，所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
 			.Process(this->_awaked)
-			.Process(this->_disable);
+			.Process(this->_disable)
+			.Process(this->_active);
 		return stream.Success();
 	}
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
@@ -241,6 +256,9 @@ public:
 protected:
 	bool _awaked = false;
 	bool _disable = false;
+	bool _active = true;
+
+	bool _break = false; // 中断上层循环
 
 	// 添加的Component名单，在存档时生成
 	std::vector<std::string> _childrenNames{};

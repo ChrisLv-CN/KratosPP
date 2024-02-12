@@ -9,36 +9,13 @@ TECHNO_SCRIPT_CPP(TechnoStatus);
 
 void TechnoStatus::Awake()
 {
-	EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 	// 动态附加其他的组件
 	ResetTrails();
 }
 
 void TechnoStatus::Destroy()
 {
-	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 	((TechnoExt::ExtData*)extData)->SetExtStatus(nullptr);
-}
-
-void TechnoStatus::OnGScreenRender(EventSystem* sender, Event e, void* args)
-{
-	if (args && !IsDeadOrInvisible(pTechno))
-	{
-#ifdef DEBUG
-		std::vector<std::string> names;
-		_gameObject->Foreach([&](Component* c)
-			{
-				std::string name = c->Name;
-				names.push_back(name);
-			});
-		std::string log = "";
-		for(std::string n : names)
-		{
-			log.append(n).append(",");
-		}
-		PrintTextManager::PrintText(log, Colors::Green, pTechno->GetCoords());
-#endif // DEBUG
-	}
 }
 
 void TechnoStatus::ResetTrails()
@@ -73,107 +50,6 @@ void TechnoStatus::OnTransform()
 	ResetBaseNormal();
 	// 通知其他脚本
 	ResetTrails();
-}
-
-AbstractType TechnoStatus::GetAbsType()
-{
-	if (_absType == AbstractType::None)
-	{
-		_absType = pTechno->WhatAmI();
-	}
-	return _absType;
-	}
-	
-	
-bool TechnoStatus::IsBuilding()
-{
-	return GetAbsType() == AbstractType::Building;
-}
-bool TechnoStatus::IsInfantry()
-{
-	return GetAbsType() == AbstractType::Infantry;
-}
-bool TechnoStatus::IsUnit()
-{
-	return GetAbsType() == AbstractType::Unit;
-}
-bool TechnoStatus::IsAircraft()
-{
-	return GetAbsType() == AbstractType::Aircraft;
-}
-
-LocoType TechnoStatus::GetLocoType()
-{
-	if (!IsBuilding())
-	{
-		if (_locoType == LocoType::None)
-		{
-			GUID locoId = pTechno->GetTechnoType()->Locomotor;
-			if (locoId == LocomotionClass::CLSIDs::Drive)
-			{
-				return LocoType::Drive;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Hover)
-			{
-				return LocoType::Hover;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Tunnel)
-			{
-				return LocoType::Tunnel;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Walk)
-			{
-				return LocoType::Walk;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Droppod)
-			{
-				return LocoType::Droppod;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Fly)
-			{
-				return LocoType::Fly;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Teleport)
-			{
-				return LocoType::Teleport;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Mech)
-			{
-				return LocoType::Mech;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Ship)
-			{
-				return LocoType::Ship;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Jumpjet)
-			{
-				return LocoType::Jumpjet;
-			}
-			else if (locoId == LocomotionClass::CLSIDs::Rocket)
-			{
-				return LocoType::Rocket;
-			}
-		}
-	}
-	return _locoType;
-}
-
-bool TechnoStatus::IsFly()
-{
-	return GetLocoType() == LocoType::Fly;
-}
-bool TechnoStatus::IsJumpjet()
-{
-	return GetLocoType() == LocoType::Jumpjet;
-}
-bool TechnoStatus::IsShip()
-{
-	return GetLocoType() == LocoType::Ship;
-}
-
-bool TechnoStatus::IsRocket()
-{
-	return IsAircraft() && GetLocoType() == LocoType::Rocket;
 }
 
 bool TechnoStatus::AmIStand()

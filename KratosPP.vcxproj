@@ -51,6 +51,10 @@
     <ClCompile Include="src\Ext\Common\FireSuperManager.cpp" />
     <ClCompile Include="src\Ext\Common\PrintTextManager.cpp" />
     <ClCompile Include="src\Ext\EBoltType\EBoltStatus.cpp" />
+    <ClCompile Include="src\Ext\EffectType\AttachEffectScript.cpp" />
+    <ClCompile Include="src\Ext\EffectType\EffectScript.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\Animation.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\Mark.cpp" />
     <ClCompile Include="src\Ext\Helper\CastEx.cpp" />
     <ClCompile Include="src\Ext\Helper\DrawEx.cpp" />
     <ClCompile Include="src\Ext\Helper\Finder.cpp" />
@@ -178,7 +182,15 @@
     <ClInclude Include="src\Ext\Common\PrintTextData.h" />
     <ClInclude Include="src\Ext\Common\PrintTextManager.h" />
     <ClInclude Include="src\Ext\EBoltType\EBoltStatus.h" />
+    <ClInclude Include="src\Ext\EffectType\AttachEffectData.h" />
+    <ClInclude Include="src\Ext\EffectType\AttachEffectScript.h" />
+    <ClInclude Include="src\Ext\EffectType\AttachEffectTypeData.h" />
+    <ClInclude Include="src\Ext\EffectType\EffectScript.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\Animation.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\AnimationData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\Mark.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\MarkData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\OffsetData.h" />
     <ClInclude Include="src\Ext\Helper\CastEx.h" />
     <ClInclude Include="src\Ext\Helper\DrawEx.h" />

@@ -3,7 +3,7 @@
 #include <string>
 #include <any>
 
-#include <GeneralStructures.h>
+#include <GeneralDefinitions.h>
 
 #include <Utilities/Stream.h>
 
