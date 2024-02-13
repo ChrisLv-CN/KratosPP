@@ -23,9 +23,11 @@
 class IAEScript
 {
 public:
-	virtual void Enable() {};
-	virtual void Disable(CoordStruct location) {};
+	virtual void Start() {};
+	virtual void End(CoordStruct location) {};
 	virtual void ResetDuration() {};
+
+	virtual bool IsAlive() { return true; };
 
 	/**
 	 *@brief 渲染事件开始
@@ -98,7 +100,7 @@ public:
 	 * @return true
 	 * @return false
 	 */
-	virtual bool IsActive() override;
+	virtual bool IsAlive() override;
 
 	/**
 	 *@brief 根据AEData初始化AE配置，如果延迟生效则令Component失活等待延迟激活，同时调用InitEffects初始化子Effects
@@ -117,14 +119,14 @@ public:
 	 * @param aeMode AE模式
 	 * @param fromPassenger 由乘客赋予
 	 */
-	void Enable(TechnoClass* pSource, HouseClass* pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger);
+	void Start(TechnoClass* pSource, HouseClass* pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger);
 
 	/**
 	 *@brief 强制关闭AE
 	 *
 	 * @param location 结束时的位置
 	 */
-	virtual void Disable(CoordStruct location) override;
+	virtual void End(CoordStruct location) override;
 
 	virtual void OnGScreenRender(CoordStruct location) override;
 	virtual void OnGScreenRenderEnd(CoordStruct location) override;

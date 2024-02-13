@@ -28,7 +28,7 @@ void Component::EnsureAwaked()
 #endif // DEBUG
 				c->EnsureAwaked();
 			});
-		// 销毁失效的Component
+		// 销毁失效的子模块
 		ClearDisableComponent();
 	}
 }
@@ -67,7 +67,12 @@ bool Component::AlreadyAwake()
 	return _awaked;
 }
 
-bool Component::IsAlive()
+void Component::Disable()
+{
+	_disable = true;
+}
+
+bool Component::IsEnable()
 {
 	return !_disable;
 }
@@ -138,13 +143,7 @@ void Component::RemoveComponent(Component* component)
 		// 将Component失活，并记录，在结束_children的循环后，再清除
 		Component* c = *it;
 		c->_parent = nullptr;
-		c->_disable = true;
-
-		// 在其他位置的删除为直接删除
-		if (c->AlreadyAwake())
-		{
-			it = _children.erase(it);
-		}
+		c->Disable();
 	}
 }
 
@@ -345,7 +344,7 @@ void Component::Foreach(std::function<void(Component*)> action)
 void Component::ForeachLevel(std::function<void(Component*)> action, int& level, int& maxLevel)
 {
 	// 执行自身
-	if (IsAlive() && IsActive())
+	if (IsEnable() && IsActive())
 	{
 		action(this);
 		int nextLevel = level + 1;
@@ -362,6 +361,8 @@ void Component::ForeachLevel(std::function<void(Component*)> action, int& level,
 			}
 		}
 	}
+	// 清理失效的子模块
+	ClearDisableComponent();
 }
 
 void Component::ForeachChild(std::function<void(Component*)> action)

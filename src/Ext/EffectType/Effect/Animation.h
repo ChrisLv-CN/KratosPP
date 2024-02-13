@@ -33,9 +33,9 @@ public:
 
 	void UpdateLocationOffset(CoordStruct offset);
 
-	virtual void Enable() override;
+	virtual void Start() override;
 
-	virtual void Disable(CoordStruct location) override;
+	virtual void End(CoordStruct location) override;
 
 	virtual void OnPut(CoordStruct* pCoord, DirType faceDir) override;
 	virtual void OnUpdate() override;

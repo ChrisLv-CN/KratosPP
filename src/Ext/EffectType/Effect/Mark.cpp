@@ -6,7 +6,7 @@
 
 EFFECT_SCRIPT_CPP(Mark);
 
-void Mark::Enable()
+void Mark::Start()
 {
 	if (Data.Enable)
 	{

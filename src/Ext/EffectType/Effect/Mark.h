@@ -31,7 +31,7 @@ public:
 	}
 	__declspec(property(get = GetData)) MarkData Data;
 
-	virtual void Enable() override;
+	virtual void Start() override;
 
 #pragma region Save/Load
 	template <typename T>

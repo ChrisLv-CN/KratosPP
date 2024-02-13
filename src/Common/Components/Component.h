@@ -86,17 +86,22 @@ public:
 
 	bool AlreadyAwake();
 
-	virtual bool IsAlive();
+	/// <summary>
+	/// 关闭组件，标记为失效，组件会在执行完Foreach后被移除
+	/// </summary>
+	void Disable();
+	bool IsEnable();
+
 
 	/// <summary>
 	/// 激活组件，使其可以执行Foreach逻辑
 	/// </summary>
-	virtual void Activate();
+	void Activate();
 	/// <summary>
 	/// 失活组件，使其跳过执行Foreach逻辑
 	/// </summary>
-	virtual void Deactivate();
-	virtual bool IsActive();
+	void Deactivate();
+	bool IsActive();
 
 	/// <summary>
 	/// 将Component加入子列表，同时赋予自身储存的IExtData
@@ -113,7 +118,7 @@ public:
 	void RemoveComponent(Component* component);
 
 	/// <summary>
-	/// 在结束循环后需要从_children中清理已经标记为失效的component
+	/// 在结束循环后需要从_children中清理已经标记为disable的component
 	/// </summary>
 	void ClearDisableComponent();
 
@@ -218,6 +223,7 @@ public:
 			.Process(this->_childrenNames)
 			// 存取Component自身的属性
 			.Process(this->Name)
+			.Process(this->Tag)
 			// 每次读档之后，所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
 			.Process(this->_awaked)
 			.Process(this->_disable)
@@ -252,9 +258,9 @@ public:
 #pragma endregion
 
 protected:
-	bool _awaked = false;
-	bool _disable = false;
-	bool _active = true;
+	bool _awaked = false; // 已经完成初始化
+	bool _disable = false; // 已经失效，等待移除
+	bool _active = true; // 可以执行循环
 
 	bool _break = false; // 中断上层循环
 

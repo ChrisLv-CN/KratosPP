@@ -73,7 +73,7 @@ void Animation::KillIdleAnim()
 	}
 }
 
-void Animation::Enable() {
+void Animation::Start() {
 	// 激活动画
 	if (Data.ActiveAnim.Enable)
 	{
@@ -99,7 +99,7 @@ void Animation::Enable() {
 	CreateIdleAnim();
 }
 
-void Animation::Disable(CoordStruct location)
+void Animation::End(CoordStruct location)
 {
 	KillIdleAnim();
 	if (Data.DoneAnim.Enable)

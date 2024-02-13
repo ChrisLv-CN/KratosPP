@@ -58,8 +58,8 @@ int AttachEffect::Count()
 void AttachEffect::GetMarks(std::vector<std::string>& marks)
 {
 	ForeachChild([&marks](Component* c) {
-		if (auto cc = dynamic_cast<AttachEffectScript*>(c)) {
-			cc->GetMarks(marks);
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c)) {
+			ae->GetMarks(marks);
 		}
 		});
 }
@@ -67,8 +67,8 @@ void AttachEffect::GetMarks(std::vector<std::string>& marks)
 void AttachEffect::GetAENames(std::vector<std::string>& names)
 {
 	ForeachChild([&names](Component* c) {
-		if (auto cc = dynamic_cast<AttachEffectScript*>(c)) {
-			names.push_back(cc->AEData.Name);
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c)) {
+			names.push_back(ae->AEData.Name);
 		}
 		});
 }
@@ -294,7 +294,7 @@ void AttachEffect::Attach(AttachEffectData data,
 						if (data.OverrideSameGroup)
 						{
 							// 执行替换操作，关闭所有的同组AE
-							temp->Disable(location);
+							temp->End(location);
 							add = true;
 							// 继续循环直至全部关闭
 						}
@@ -324,15 +324,25 @@ void AttachEffect::Attach(AttachEffectData data,
 			ae->AEData = data;
 			// 激活AE
 			ae->EnsureAwaked();
-			ae->Enable(pAttacker, pAttackingHouse, warheadLocation, aeMode, fromPassenger);
+			ae->Start(pAttacker, pAttackingHouse, warheadLocation, aeMode, fromPassenger);
 		}
 
 	}
 }
 
-void AttachEffect::RemoveDisableAE()
+void AttachEffect::CheckDurationAndDisable()
 {
-	
+	CoordStruct location = _location;
+	ForeachChild([&location](Component* c) {
+		AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
+		// 执行IsAlive时，检查AE的生命状态，失效的AE会在这里被标记为Deactivate
+		if (ae && !ae->IsAlive())
+		{
+			ae->End(location);
+			// Deactivate的组件不会再执行Foreach事件，标记为失效，以便父组件将其删除
+			ae->Disable();
+		}
+		});
 }
 
 AttachEffectTypeData* AttachEffect::GetTypeData()
@@ -400,7 +410,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 		if (args)
 		{
 			ForeachChild([&location](Component* c) {
-				if (auto cc = dynamic_cast<AttachEffectScript*>(c)) { cc->OnGScreenRenderEnd(location); }
+				if (auto ae = dynamic_cast<AttachEffectScript*>(c)) { ae->OnGScreenRenderEnd(location); }
 				});
 #ifdef DEBUG
 			// 打印Component结构
@@ -427,14 +437,14 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 					log.append("\n");
 					pos.Y += offsetZ;
 					PrintTextManager::PrintText(log, Colors::Green, pos);
-				}
-		}
+	}
+}
 #endif // DEBUG
 	}
 		else
 		{
 			ForeachChild([&location](Component* c) {
-				if (auto cc = dynamic_cast<AttachEffectScript*>(c)) { cc->OnGScreenRender(location); }
+				if (auto ae = dynamic_cast<AttachEffectScript*>(c)) { ae->OnGScreenRender(location); }
 				});
 		}
 }
@@ -472,7 +482,7 @@ void AttachEffect::OnUpdate()
 void AttachEffect::OnUpdateEnd()
 {
 	// 移除失效的AE，附加Next的AE
-	RemoveDisableAE();
+	CheckDurationAndDisable();
 }
 
 void AttachEffect::OnReceiveDamageDestroy()

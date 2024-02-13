@@ -55,7 +55,7 @@ void AttachEffectScript::MergeDuration(int otherDuration)
 		if (_duration <= 0 || timeLeft <= 0)
 		{
 			// 削减的时间超过总长度，直接减没了
-			_active = false;
+			Deactivate();
 		}
 		else
 		{
@@ -63,7 +63,7 @@ void AttachEffectScript::MergeDuration(int otherDuration)
 			if (timeLeft <= 0)
 			{
 				// 削减完后彻底没了
-				_active = false;
+				Deactivate();
 			}
 			else
 			{
@@ -139,9 +139,9 @@ bool AttachEffectScript::OwnerIsDead()
 	return AEManager->OwnerIsDead();
 }
 
-bool AttachEffectScript::IsActive()
+bool AttachEffectScript::IsAlive()
 {
-	if (_active)
+	if (IsActive())
 	{
 		// AE来源于乘客，检查乘客是否已经下车
 		if (FromPassenger)
@@ -149,16 +149,16 @@ bool AttachEffectScript::IsActive()
 			if (IsDead(pSource) || !pSource->Transporter)
 			{
 				// 乘客已经下车
-				_active = false;
+				Deactivate();
 			}
 		}
 		// 检查AEMode
-		if (_active && AEMode >= 0)
+		if (IsActive() && AEMode >= 0)
 		{
 			// TODO AEMode
 		}
 		// 检查是否有Effect失活
-		if (_active)
+		if (IsActive())
 		{
 			bool hasDead = false;
 			ForeachChild([&hasDead](Component* c) {
@@ -170,12 +170,16 @@ bool AttachEffectScript::IsActive()
 				});
 			if (hasDead)
 			{
-				_active = false;
+				Deactivate();
 			}
 		}
-
+		// 检查计时器
+		if (IsActive() && !_immortal && _lifeTimer.Expired())
+		{
+			Deactivate();
+		}
 	}
-	return _active;
+	return IsActive();
 }
 
 void AttachEffectScript::Awake()
@@ -201,7 +205,7 @@ void AttachEffectScript::Destroy()
 
 }
 
-void AttachEffectScript::Enable(TechnoClass* pSource, HouseClass* pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger)
+void AttachEffectScript::Start(TechnoClass* pSource, HouseClass* pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger)
 {
 	Activate();
 	this->pSource = pSource;
@@ -220,7 +224,7 @@ void AttachEffectScript::Enable(TechnoClass* pSource, HouseClass* pSourceHouse, 
 	}
 }
 
-void AttachEffectScript::Disable(CoordStruct location)
+void AttachEffectScript::End(CoordStruct location)
 {
 	Deactivate();
 	if (_isDelayToEnable)
@@ -228,7 +232,7 @@ void AttachEffectScript::Disable(CoordStruct location)
 		return;
 	}
 	ForeachChild([&location](Component* c) {
-		if (auto cc = dynamic_cast<EffectScript*>(c)) { cc->Disable(location); }
+		if (auto cc = dynamic_cast<EffectScript*>(c)) { cc->End(location); }
 		});
 }
 
@@ -287,7 +291,7 @@ void AttachEffectScript::EnableEffects()
 		if (EffectScript* effect = dynamic_cast<EffectScript*>(c))
 		{
 			effect->Activate();
-			effect->Enable();
+			effect->Start();
 		}
 	}
 }

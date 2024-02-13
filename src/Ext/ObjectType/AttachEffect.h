@@ -152,7 +152,7 @@ public:
 	}
 #pragma endregion
 private:
-	void RemoveDisableAE();
+	void CheckDurationAndDisable();
 
 	bool IsOnMark(AttachEffectData data);
 	bool HasContradiction(AttachEffectData data);
