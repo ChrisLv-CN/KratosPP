@@ -71,7 +71,7 @@ static TStatus* GetStatus(TBase* p)
 template <typename TExt, typename TBase>
 static bool TryGetAEManager(TBase* p, AttachEffect*& aeManager)
 {
-	return TryGetScript<TExt, TBase>(p, aeManager);
+	return TryGetScript<TExt>(p, aeManager);
 }
 
 template <typename TExt, typename TBase>

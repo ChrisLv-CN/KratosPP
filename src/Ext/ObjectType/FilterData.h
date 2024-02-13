@@ -36,8 +36,8 @@ public:
 	bool AffectStand = false;
 	bool AffectSelf = false;
 	bool AffectInAir = true;
-	std::set<std::string> NotAffectMarks{};
-	std::set<std::string> OnlyAffectMarks{};
+	std::vector<std::string> NotAffectMarks{};
+	std::vector<std::string> OnlyAffectMarks{};
 
 	bool AffectsOwner = true;
 	bool AffectsAllies = true;
@@ -78,18 +78,8 @@ public:
 		AffectSelf = reader->Get(title + "AffectSelf", AffectSelf);
 		AffectInAir = reader->Get(title + "AffectInAir", AffectInAir);
 
-		std::vector<std::string> notAffectMarks{};
-		notAffectMarks = reader->GetList(title + "NotAffectMarks", notAffectMarks);
-		for (std::string& m : notAffectMarks)
-		{
-			NotAffectMarks.insert(m);
-		}
-		std::vector<std::string> onlyAffectMarks{};
-		onlyAffectMarks = reader->GetList(title + "OnlyAffectMarks", onlyAffectMarks);
-		for (std::string& m : onlyAffectMarks)
-		{
-			OnlyAffectMarks.insert(m);
-		}
+		NotAffectMarks = reader->GetList(title + "NotAffectMarks", NotAffectMarks);
+		OnlyAffectMarks = reader->GetList(title + "OnlyAffectMarks", OnlyAffectMarks);
 
 		bool affectsAllies = true;
 		if (reader->TryGet(title + "AffectsAllies", affectsAllies))
@@ -200,15 +190,17 @@ public:
 			if (hasWhiteList)
 			{
 				// 取交集
+				std::set<std::string> t(OnlyAffectMarks.begin(), OnlyAffectMarks.end());
 				std::set<std::string> v;
-				std::set_intersection(m.begin(), m.end(), OnlyAffectMarks.begin(), OnlyAffectMarks.end(), std::inserter(v, v.begin()));
+				std::set_intersection(m.begin(), m.end(), t.begin(), t.end(), std::inserter(v, v.begin()));
 				mark = !v.empty();
 			}
 			if (!mark && hasBlackList)
 			{
 				// 取交集
+				std::set<std::string> t(NotAffectMarks.begin(), NotAffectMarks.end());
 				std::set<std::string> v;
-				std::set_intersection(m.begin(), m.end(), NotAffectMarks.begin(), NotAffectMarks.end(), std::inserter(v, v.begin()));
+				std::set_intersection(m.begin(), m.end(), t.begin(), t.end(), std::inserter(v, v.begin()));
 				mark = v.empty();
 			}
 		}

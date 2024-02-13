@@ -83,15 +83,13 @@ public:
 	bool OverrideSameGroup = false; // 是否覆盖同一个分组
 	std::string Next{ "" }; // 结束后播放下一个AE
 
-	std::set<std::string> AttachWithOutTypes{}; // 有这些AE存在则不可赋予
+	std::vector<std::string> AttachWithOutTypes{}; // 有这些AE存在则不可赋予
 	bool AttachOnceInTechnoType = false; // 写在TechnoType上只在创建时赋予一次
 	bool Inheritable = true; // 是否可以被礼盒礼物继承
 
 	// TODO Effects
 	AnimationData Animation{};
 	MarkData Mark{};
-
-	std::set<std::string> EffectScriptNames{}; // 存放效果组件的名字用于初始化实例
 
 	AttachEffectData() : FilterData()
 	{
@@ -119,52 +117,49 @@ public:
 
 			// TODO Read Effects
 			Animation.Read(reader, title);
-			if (Animation.Enable)
-			{
-				EffectScriptNames.insert(Animation.ScriptName);
-			}
-
 			Mark.Read(reader);
-			if (Mark.Enable)
-			{
-				EffectScriptNames.insert(Mark.ScriptName);
-			}
 
-			// 至少要有一个效果组件
-			Enable = !EffectScriptNames.empty();
-			if (Enable)
-			{
-				HoldDuration = Duration <= 0;
-				HoldDuration = reader->Get("HoldDuration", HoldDuration);
+			HoldDuration = Duration <= 0;
+			HoldDuration = reader->Get("HoldDuration", HoldDuration);
 
-				Delay = reader->Get("Delay", Delay);
-				RandomDelay = reader->Get("RandomDelay", RandomDelay);
-				InitialDelay = reader->Get("InitialDelay", InitialDelay);
-				InitialRandomDelay = reader->Get("InitialRandomDelay", InitialRandomDelay);
+			Delay = reader->Get("Delay", Delay);
+			RandomDelay = reader->Get("RandomDelay", RandomDelay);
+			InitialDelay = reader->Get("InitialDelay", InitialDelay);
+			InitialRandomDelay = reader->Get("InitialRandomDelay", InitialRandomDelay);
 
-				DiscardOnEntry = reader->Get("DiscardOnEntry", DiscardOnEntry);
-				DiscardOnTransform = reader->Get("DiscardOnTransform", DiscardOnTransform);
-				PenetratesIronCurtain = reader->Get("PenetratesIronCurtain", PenetratesIronCurtain);
-				FromTransporter = reader->Get("FromTransporter", FromTransporter);
-				ReceiverOwn = reader->Get("ReceiverOwn", ReceiverOwn);
+			DiscardOnEntry = reader->Get("DiscardOnEntry", DiscardOnEntry);
+			DiscardOnTransform = reader->Get("DiscardOnTransform", DiscardOnTransform);
+			PenetratesIronCurtain = reader->Get("PenetratesIronCurtain", PenetratesIronCurtain);
+			FromTransporter = reader->Get("FromTransporter", FromTransporter);
+			ReceiverOwn = reader->Get("ReceiverOwn", ReceiverOwn);
 
-				Cumulative = reader->Get("Cumulative", Cumulative);
-				MaxStack = reader->Get("MaxStack", MaxStack);
-				ResetDurationOnReapply = reader->Get("ResetDurationOnReapply", ResetDurationOnReapply);
-				Group = reader->Get("Group", Group);
-				OverrideSameGroup = reader->Get("OverrideSameGroup", OverrideSameGroup);
-				Next = reader->Get("Next", Next);
+			Cumulative = reader->Get("Cumulative", Cumulative);
+			MaxStack = reader->Get("MaxStack", MaxStack);
+			ResetDurationOnReapply = reader->Get("ResetDurationOnReapply", ResetDurationOnReapply);
+			Group = reader->Get("Group", Group);
+			OverrideSameGroup = reader->Get("OverrideSameGroup", OverrideSameGroup);
+			Next = reader->Get("Next", Next);
 
-				std::vector<std::string> attachWithOutTypes{};
-				attachWithOutTypes = reader->GetList("AttachWithOutTypes", attachWithOutTypes);
-				for (std::string& n : attachWithOutTypes)
-				{
-					AttachWithOutTypes.insert(n);
-				}
-				AttachOnceInTechnoType = reader->Get("AttachOnceInTechnoType", AttachOnceInTechnoType);
-				Inheritable = reader->Get("Inheritable", Inheritable);
-			}
+			AttachWithOutTypes = reader->GetList("AttachWithOutTypes", AttachWithOutTypes);
+
+			AttachOnceInTechnoType = reader->Get("AttachOnceInTechnoType", AttachOnceInTechnoType);
+			Inheritable = reader->Get("Inheritable", Inheritable);
 		}
+	}
+
+	// TODO Get Effects ScriptName
+	std::set<std::string> GetScriptNames()
+	{
+		std::set<std::string> names{};
+		if (Animation.Enable)
+		{
+			names.insert(Animation.ScriptName);
+		}
+		if (Mark.Enable)
+		{
+			names.insert(Mark.ScriptName);
+		}
+		return names;
 	}
 
 	bool HasContradiction(std::vector<std::string> AENames)
@@ -173,9 +168,10 @@ public:
 		if (has)
 		{
 			std::set<std::string> n(AENames.begin(), AENames.end());
+			std::set<std::string> t(AttachWithOutTypes.begin(), AttachWithOutTypes.end());
 			std::set<std::string> v;
 			// 取交集
-			std::set_intersection(n.begin(), n.end(), AttachWithOutTypes.begin(), AttachWithOutTypes.end(), std::inserter(v, v.begin()));
+			std::set_intersection(n.begin(), n.end(), t.begin(), t.end(), std::inserter(v, v.begin()));
 			has = !v.empty();
 		}
 		return has;
@@ -214,8 +210,8 @@ public:
 			.Process(this->Inheritable)
 
 			.Process(this->Animation)
+			.Process(this->Mark)
 
-			.Process(this->EffectScriptNames)
 			.Success();
 	};
 

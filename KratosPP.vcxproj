@@ -233,6 +233,8 @@
     <ClInclude Include="src\Ext\TechnoType\Status\MissileHomingData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\SelectWeaponData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\SpawnData.h" />
+    <ClInclude Include="src\Ext\TechnoType\Status\UploadAttachData.h" />
+    <ClInclude Include="src\Ext\TechnoType\Status\UploadModeAttachData.h" />
     <ClInclude Include="src\Ext\TechnoType\TechnoStatus.h" />
     <ClInclude Include="src\Ext\TechnoType\TechnoTrail.h" />
     <ClInclude Include="src\Ext\TerrainType\TerrainDestroyAnim.h" />
@@ -240,6 +242,7 @@
     <ClInclude Include="src\Ext\TrailType\Trail.h" />
     <ClInclude Include="src\Ext\TrailType\TrailData.h" />
     <ClInclude Include="src\Ext\TrailType\TrailTypeData.h" />
+    <ClInclude Include="src\Ext\WeaponType\FeedbackAttachData.h" />
     <ClInclude Include="src\Ext\WeaponType\ProximityRangeData.h" />
     <ClInclude Include="src\Kratos.h" />
     <ClInclude Include="src\Utilities\Anchor.h" />

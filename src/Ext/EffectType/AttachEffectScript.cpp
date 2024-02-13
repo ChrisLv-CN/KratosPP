@@ -4,6 +4,7 @@
 #include <Ext/Common/PrintTextManager.h>
 
 #include "EffectScript.h"
+#include "Effect/Animation.h"
 
 OBJECT_SCRIPT_CPP(AttachEffectScript);
 
@@ -139,6 +140,19 @@ bool AttachEffectScript::OwnerIsDead()
 	return AEManager->OwnerIsDead();
 }
 
+void AttachEffectScript::UpdateStandLocation(LocationMark LocationMark)
+{
+	// TODO Stand
+}
+
+void AttachEffectScript::UpdateAnimOffset(CoordStruct offset)
+{
+	if (Animation* c = GetComponent<Animation>())
+	{
+		c->UpdateLocationOffset(offset);
+	}
+}
+
 bool AttachEffectScript::IsAlive()
 {
 	if (IsActive())
@@ -155,7 +169,13 @@ bool AttachEffectScript::IsAlive()
 		// 检查AEMode
 		if (IsActive() && AEMode >= 0)
 		{
-			// TODO AEMode
+			std::vector<int> ids = AEManager->PassengerIds;
+			auto it = std::find(ids.begin(), ids.end(), AEMode);
+			if (ids.empty() || it == ids.end())
+			{
+				// 乘客已经下车
+				Deactivate();
+			}
 		}
 		// 检查是否有Effect失活
 		if (IsActive())
@@ -252,7 +272,8 @@ void AttachEffectScript::OnGScreenRenderEnd(CoordStruct location)
 
 void AttachEffectScript::InitEffects()
 {
-	for (std::string scriptName : AEData.EffectScriptNames)
+	std::set<std::string> scriptNames = AEData.GetScriptNames();
+	for (std::string scriptName : scriptNames)
 	{
 		Component* c = AddComponent(scriptName);
 		if (c)

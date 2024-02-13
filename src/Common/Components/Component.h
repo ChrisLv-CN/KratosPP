@@ -106,9 +106,9 @@ public:
 	/// <summary>
 	/// 将Component加入子列表，同时赋予自身储存的IExtData
 	/// </summary>
-	void AddComponent(Component* component);
+	void AddComponent(Component* component, int index = -1);
 
-	Component* AddComponent(const std::string& name);
+	Component* AddComponent(const std::string& name, int index = -1);
 
 	virtual Component* FindOrAllocate(const std::string& name);
 

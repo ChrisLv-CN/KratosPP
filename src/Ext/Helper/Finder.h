@@ -9,8 +9,7 @@
 #include <ObjectClass.h>
 #include <BulletClass.h>
 #include <TechnoClass.h>
-
-TechnoClass* FindRandomTechno(HouseClass* pHouse);
+#include <WarheadTypeClass.h>
 
 namespace Finder
 {
@@ -110,3 +109,23 @@ void FindObject(DynamicVectorClass<TBase*>* array, std::function<void(TBase*)> f
 {
 	FindObject<TBase>(array, func, CoordStruct::Empty, 0, 0, pHouse, owner, allied, enemies, civilian);
 }
+
+/**
+ *@brief 随机搜索一个阵营里的单位
+ *
+ * @param pHouse 阵营
+ * @return TechnoClass* 搜索到的单位
+ */
+TechnoClass* FindRandomTechno(HouseClass* pHouse);
+
+/**
+ *@brief 搜索爆炸位置物体并附加AE
+ *
+ * @param location 爆炸位置
+ * @param damage 伤害
+ * @param pWH 弹头
+ * @param pAttacker 攻击者
+ * @param pAttackingHouse 攻击者所属
+ */
+void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
+

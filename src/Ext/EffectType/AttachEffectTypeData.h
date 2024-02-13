@@ -13,11 +13,10 @@ public:
 	std::vector<double> AttachEffectChances{}; // 附加成功率，应该只对弹头有用
 	bool AttachFullAirspace = false; // 搜索圆柱体范围
 
-	// 单条AE
 	int StandTrainCabinLength = 512; // 火车替身间隔
 	int AEMode = -1; // 作为乘客时的激活载具的组序号
 
-	//多组AE
+	// 多组AE的赋予控制
 	bool AttachByPassenger = true; // 仅由乘客的AEMode赋予
 	int AEModeIndex = -1; // 组序号
 
@@ -35,7 +34,7 @@ public:
 		Enable = !AttachEffectTypes.empty();
 	}
 
-	// 多组AE
+	// 通过AEMode触发附加的多组AE的设置读取
 	void Read(INIBufferReader* reader, int index)
 	{
 		std::string title = "AttachEffectTypes" + std::to_string(index);
@@ -48,3 +47,47 @@ public:
 	}
 
 };
+
+class AttachEffectGroupData : public INIConfig
+{
+public:
+	std::map<int, AttachEffectTypeData> Datas{};
+
+	virtual void Read(INIBufferReader* reader) override
+	{
+		// 读取带序号的
+		for (int i = 0; i < 128; i++)
+		{
+			AttachEffectTypeData data;
+			data.Read(reader, i);
+			if (data.Enable)
+			{
+				Datas[i] = data;
+			}
+		}
+
+		Enable = !Datas.empty();
+	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->Datas)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
+	{
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const override
+	{
+		return const_cast<AttachEffectGroupData*>(this)->Serialize(stream);
+	}
+#pragma endregion
+};
+
+
+

@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <queue>
 #include <type_traits>
 
 #include <GeneralStructures.h>
@@ -71,29 +70,29 @@ public:
 	 *
 	 * @param types 清单
 	 * @param chances 几率清单
-	 * @param attachOnceFlag 是否初次添加的标记
+	 * @param onceCheck 检查单次标记
 	 * @param pSource 来源
 	 * @param pSourceHouse 来源所属
 	 * @param warheadLocation 通过弹头附加时弹头的位置
 	 * @param aeMode 分组编号
 	 * @param fromPassenger 来自乘客
 	 */
-	void Attach(std::vector<std::string> types, std::vector<double> chances, bool attachOnceFlag,
-		ObjectClass* pSource, HouseClass* pSourceHouse = nullptr,
+	void Attach(std::vector<std::string> types, std::vector<double> chances = {}, bool onceCheck = false,
+		ObjectClass* pSource = nullptr, HouseClass* pSourceHouse = nullptr,
 		CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
 
 	/**
 	 *@brief 按照AE的Section来附加
 	 *
 	 * @param type section名称
-	 * @param attachOnceFlag 是否初次添加的标记
+	 * @param onceCheck 检查单次标记
 	 * @param pSource 来源
 	 * @param pSourceHouse 来源所属
 	 * @param warheadLocation 通过弹头附加时弹头的位置
 	 * @param aeMode 分组编号
 	 * @param fromPassenger 来自乘客
 	 */
-	void Attach(std::string type, bool attachOnceFlag = false,
+	void Attach(std::string type, bool onceCheck = false,
 		ObjectClass* pSource = nullptr, HouseClass* pSourceHouse = nullptr,
 		CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
 
@@ -108,9 +107,15 @@ public:
 	 * @param fromPassenger 来自乘客
 	 */
 	void Attach(AttachEffectData data,
-		ObjectClass* pSource, HouseClass* pSourceHouse = nullptr,
+		ObjectClass* pSource = nullptr, HouseClass* pSourceHouse = nullptr,
 		CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
 
+	/**
+	 *@brief 由自身武器发射赋予自身AE
+	 *
+	 * @param pWeapon 武器
+	 */
+	void FeedbackAttach(WeaponTypeClass* pWeapon);
 
 	virtual void Awake() override;
 
@@ -120,15 +125,27 @@ public:
 
 	virtual void OnUpdate() override;
 	virtual void OnUpdateEnd() override;
+	virtual void OnWarpUpdate() override;
+
+	virtual void OnPut(CoordStruct* pCoord, DirType dirType) override;
+	virtual void OnRemove() override;
+
+	virtual void CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, bool& ceaseFire) override;
+	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
 	virtual void OnReceiveDamageDestroy() override;
+
+	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
+			.Process(this->_disableDelayTimers)
+			.Process(this->_aeStacks)
+
 			.Process(this->_ownerIsDead)
-			.Process(this->_attachEffectOnceFlag)
+			.Process(this->_attachOnceFlag)
 
 			.Process(this->_location)
 			.Process(this->_lastLocation)
@@ -152,14 +169,43 @@ public:
 	}
 #pragma endregion
 private:
+	/**
+	 *@brief 赋予由乘客带来的AE
+	 *
+	 */
+	void AttachUploadAE();
+
+	/**
+	 *@brief 赋予自身的多组AE，读取乘客身上的AEMode来赋予指定的一组AE
+	 *
+	 */
+	void AttachGroupAE();
+
 	void CheckDurationAndDisable();
 
-	bool IsOnMark(AttachEffectData data);
+	bool IsOnMark(FilterData data);
 	bool HasContradiction(AttachEffectData data);
+
+	bool IsOnDelay(AttachEffectData data);
+	void StartDelay(AttachEffectData data);
 
 	void AddStackCount(AttachEffectData data);
 	void ReduceStackCount(AttachEffectData data);
 	bool StackNotFull(AttachEffectData data);
+	/**
+	 *@brief AE堆叠时，获取AE的堆叠位置偏移
+	 *
+	 * @param aeData AE类型
+	 * @param offsetData 偏移设置
+	 * @param offsetMarks 没有分组的堆叠，以AE名字为索引，取第一个AE的位置做偏移
+	 * @param groupMarks 有分组的堆叠，以分组为索引，取第一个分组的位置做偏移
+	 * @param groupFirstMarks 有分组的堆叠，以分组为索引，记录每个组的第一个偏移位置
+	 * @return Offset 当前AE的偏移值
+	 */
+	CoordStruct StackOffset(AttachEffectData aeData, OffsetData offsetData,
+		std::map<std::string, CoordStruct>& offsetMarks,
+		std::map<int, CoordStruct>& groupMarks,
+		std::map<int, CoordStruct>& groupFirstMarks);
 
 	/**
 	 *@brief 根据火车的位置，获取插入的序号
@@ -168,10 +214,19 @@ private:
 	 * @return int 序号
 	 */
 	int FindInsertIndex(AttachEffectData data);
+	CoordStruct MarkLocation();
+	void ClearLocationMarks();
+
+	std::map<std::string, CDTimerClass> _disableDelayTimers{};
+	std::map<std::string, int> _aeStacks{};
 
 	bool _ownerIsDead = false;
 
-	bool _attachEffectOnceFlag = false;
+	/**
+	 *@brief 已经执行过一次Update赋予的标记，对于AttachOnce的AE来说，下一次不会再赋予
+	 *
+	 */
+	bool _attachOnceFlag = false;
 
 	CoordStruct _location{}; // 当前位置
 	CoordStruct _lastLocation{}; // 上一次位置
@@ -183,4 +238,7 @@ private:
 	// section上的AE设置
 	AttachEffectTypeData* _typeData = nullptr;
 	AttachEffectTypeData* GetTypeData();
+
+	AttachEffectGroupData* _groupData = nullptr;
+	AttachEffectGroupData* GetGroupData();
 };

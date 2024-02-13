@@ -94,6 +94,9 @@ public:
 
 	bool OwnerIsDead();
 
+	void UpdateStandLocation(LocationMark locationMark);
+	void UpdateAnimOffset(CoordStruct offset);
+
 	/**
 	 *@brief 检查AE是否仍然可用，只要有任意一个Effect失效，则判定为失活，失活的AE会从AE管理器中移除
 	 *

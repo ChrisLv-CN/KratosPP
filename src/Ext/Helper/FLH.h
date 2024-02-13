@@ -11,11 +11,31 @@
 
 #include <Ext/EffectType/Effect/OffsetData.h>
 
-struct LocationMark
+class LocationMark
 {
 public:
 	CoordStruct Location;
 	DirStruct Dir;
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->Location)
+			.Process(this->Dir)
+			.Success();
+	};
+
+	bool Load(ExStreamReader& stream, bool registerForChange)
+	{
+		return this->Serialize(stream);
+	}
+	bool Save(ExStreamWriter& stream) const
+	{
+		return const_cast<LocationMark*>(this)->Serialize(stream);
+	}
+#pragma endregion
 };
 
 // ----------------

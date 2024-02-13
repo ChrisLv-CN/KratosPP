@@ -10,7 +10,11 @@
 #include <VocClass.h>
 #include <WarheadTypeClass.h>
 
+#include <Extension/TechnoExt.h>
+#include <Extension/BulletExt.h>
 #include <Extension/WeaponTypeExt.h>
+
+#include <Ext/ObjectType/AttachEffect.h>
 
 // ----------------
 // 高级弹道学
@@ -262,7 +266,16 @@ BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, Abstrac
 	{
 		// Draw weapon anim
 		DrawWeaponAnim(pShooter, pWeapon, sourcePos, targetPos);
-		// TODO feedbackAE
+		// feedbackAE
+		TechnoClass* pShooterT = nullptr;
+		BulletClass* pShooterB = nullptr;
+		AttachEffect* pAEM = nullptr;
+		if ((CastToTechno(pShooter, pShooterT) && TryGetAEManager<TechnoExt>(pShooterT, pAEM))
+			|| (CastToBullet(pShooter, pShooterB) && TryGetAEManager<BulletExt>(pShooterB, pAEM))
+		)
+		{
+			pAEM->FeedbackAttach(pWeapon);
+		}
 	}
 	return pBullet;
 }

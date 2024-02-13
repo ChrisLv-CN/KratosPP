@@ -92,13 +92,26 @@ bool Component::IsActive()
 	return _active;
 }
 
-void Component::AddComponent(Component* component)
+void Component::AddComponent(Component* component, int index)
 {
 	component->extData = extData;
 	component->_parent = this;
-	// vector::push_back 和 vector::emplace_back 会调用析构
-	// list::emplace_back 不会
-	_children.emplace_back(component);
+	if (index < 0 || index >= _children.size())
+	{
+		// vector::push_back 和 vector::emplace_back 会调用析构
+		// list::emplace_back 不会
+		_children.emplace_back(component);
+	}
+	else
+	{
+		// 插入指定位置
+		auto it = _children.begin();
+		if (index > 0)
+		{
+			std::advance(it, index);
+		}
+		_children.insert(it, component);
+	}
 #ifdef DEBUG_COMPONENT
 	std::string thisId = component->thisId;
 	std::string thisName = component->thisName;
@@ -106,12 +119,12 @@ void Component::AddComponent(Component* component)
 #endif // DEBUG
 }
 
-Component* Component::AddComponent(const std::string& name)
+Component* Component::AddComponent(const std::string& name, int index)
 {
 	Component* c = CreateComponent(name);
 	if (c)
 	{
-		AddComponent(c);
+		AddComponent(c, index);
 	}
 	return c;
 }
