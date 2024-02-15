@@ -108,6 +108,7 @@ public:
 	StandData StandData{};
 	TechnoClass* pMyMaster = nullptr;
 	bool MyMasterIsSpawned = false;
+	bool StandIsMoving = false;
 
 	DrivingState drivingState = DrivingState::Moving;
 

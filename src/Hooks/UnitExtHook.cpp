@@ -252,6 +252,12 @@ DEFINE_HOOK(0x73C69D, UnitClass_DrawSHP_TechnoType2, 0x6)
 		R->ECX(reinterpret_cast<unsigned int>(pTargetType));
 		return 0x73C6A3;
 	}
+	// Stand is Moving
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->StandIsMoving)
+	{
+		return 0x73C702;
+	}
 	return 0;
 }
 

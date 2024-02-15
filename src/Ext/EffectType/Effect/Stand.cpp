@@ -1,5 +1,10 @@
 ﻿#include "Stand.h"
 
+#include <DriveLocomotionClass.h>
+#include <MechLocomotionClass.h>
+#include <ShipLocomotionClass.h>
+#include <WalkLocomotionClass.h>
+
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/Gift.h>
 #include <Ext/Helper/Scripts.h>
@@ -100,7 +105,7 @@ void Stand::ExplodesOrDisappear(bool peaceful)
 		{
 			// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {Type.Type} 移除, 没有发现EXT");
 			pStand->Limbo();
-			// pStand.Ref.Base.UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
+			// pStand->Base.UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
 			pStand->TakeDamage(pStand->Health + 1, false);
 		}
 	}
@@ -240,7 +245,7 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 	Mission mission = pTechno->CurrentMission;
 
 	// check power off and moving
-	bool isMoving = mission == Mission::Move || mission == Mission::AttackMove;
+	bool masterIsMoving = mission == Mission::Move || mission == Mission::AttackMove;
 	if (IsBuilding())
 	{
 		if (standIsBuilding && pTechno->Owner == pStand->Owner)
@@ -248,15 +253,15 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 			pStand->Focus = pTechno->Focus;
 		}
 	}
-	else if (!isMoving)
+	else if (!masterIsMoving)
 	{
 		FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
-		isMoving = pFoot->Locomotor->Is_Moving() && pFoot->GetCurrentSpeed() > 0;
+		masterIsMoving = pFoot->Locomotor->Is_Moving() && pFoot->GetCurrentSpeed() > 0;
 	}
 
 	// check fire
 	bool powerOff = Data.Powered && AE->AEManager->PowerOff;
-	bool canFire = !powerOff && (Data.MobileFire || !isMoving);
+	bool canFire = !powerOff && (Data.MobileFire || !masterIsMoving);
 	if (canFire)
 	{
 		// synch mission
@@ -294,7 +299,6 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 					if (pStand->ROFTimer.Expired())
 					{
 						int weaponIdx = pStand->SelectWeapon(pTechno);
-						// Logger.Log($"{Game.CurrentFrame} [{Data.Type}]{pStand} 向 JOJO {pTarget} 发射武器");
 						pStand->Fire_IgnoreType(pTechno, weaponIdx);
 						int rof = 0;
 						WeaponStruct* pWeapon = pStand->GetWeapon(weaponIdx);
@@ -361,81 +365,84 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 		break;
 	}
 
-	/* TODO Stand moving anim
-			// synch Moving anim
-			if (Data.IsTrain || Data.SameMoving)
+	// synch Moving anim
+	if (Data.IsTrain || Data.SameMoving)
+	{
+		FootClass* pFoot = dynamic_cast<FootClass*>(pStand);
+		ILocomotion* loco = pFoot->Locomotor.get();
+		GUID locoId = pStand->GetTechnoType()->Locomotor;
+		if (locoId == LocomotionClass::CLSIDs::Drive
+			|| locoId == LocomotionClass::CLSIDs::Walk
+			|| locoId == LocomotionClass::CLSIDs::Mech
+			)
+		{
+			if (masterIsMoving)
 			{
-				FootClass* pFoot = dynamic_cast<FootClass*>(pStand);
-				ILocomotion* loco = pFoot->Locomotor;
-				Guid locoId = loco.ToLocomotionClass()->GetClassID();
-				if (locoId == LocomotionClass.Drive || locoId == LocomotionClass.Walk || locoId == LocomotionClass.Mech)
+				if (_isMoving)
 				{
-					if (masterIsMoving)
+					if (!Data.IsTrain)
 					{
-						if (isMoving)
-						{
-							if (!Data.IsTrain)
-							{
-								// 移动前，设置替身的朝向与JOJO相同
-								pStand->Facing.set(pMaster->Facing.current());
-							}
-							// 往前移动，播放移动动画
-							if (waklRateTimer.Expired())
-							{
-								// VXL只需要帧动起来，就会播放动画
-								// 但SHP动画，还需要检查Loco.Is_Moving()为true时，才可以播放动画 0x73C69D
-								pFoot->WalkedFramesSoFar_idle++;
-								waklRateTimer.Start(pFoot->Base.Type->WalkRate);
-							}
-							// 为SHP素材设置一个总的运动标记
-							if (pStand.TryGetStatus(out TechnoStatusScript status))
-							{
-								status.StandIsMoving = true;
-							}
-							// DriveLoco.Is_Moving()并不会判断IsDriving
-							// ShipLoco.Is_Moving()并不会判断IsDriving
-							// HoverLoco.Is_Moving()与前面两个一样，只用位置判断是否在运动
-							// 以上几个是通过判断位置来确定是否在运动
-							// WalkLoco和MechLoco则只返回IsMoving来判断是否在运动
-							if (locoId == LocomotionClass.Walk)
-							{
-								Pointer<WalkLocomotionClass> pLoco = loco.ToLocomotionClass<WalkLocomotionClass>();
-								pLoco->IsReallyMoving = true;
-							}
-							else if (locoId == LocomotionClass.Mech)
-							{
-								Pointer<MechLocomotionClass> pLoco = loco.ToLocomotionClass<MechLocomotionClass>();
-								pLoco->IsMoving = true;
-							}
-						}
+						// 移动前，设置替身的朝向与JOJO相同
+						pStand->PrimaryFacing.SetCurrent(pTechno->PrimaryFacing.Current());
 					}
-					else
+					// 往前移动，播放移动动画
+					if (_walkRateTimer.Expired())
 					{
-						if (isMoving)
-						{
-							// 停止移动
-							// 为SHP素材设置一个总的运动标记
-							if (pStand.TryGetStatus(out TechnoStatusScript status))
-							{
-								status.StandIsMoving = false;
-							}
-							// loco.ForceStopMoving();
-							if (locoId == LocomotionClass.Walk)
-							{
-								Pointer<WalkLocomotionClass> pLoco = loco.ToLocomotionClass<WalkLocomotionClass>();
-								pLoco->IsReallyMoving = false;
-							}
-							else if (locoId == LocomotionClass.Mech)
-							{
-								Pointer<MechLocomotionClass> pLoco = loco.ToLocomotionClass<MechLocomotionClass>();
-								pLoco->IsMoving = false;
-							}
-						}
-						isMoving = false;
+						// VXL只需要帧动起来，就会播放动画
+						// 但SHP动画，还需要检查Loco.Is_Moving()为true时，才可以播放动画 0x73C69D
+						pFoot->WalkedFramesSoFar++;
+						_walkRateTimer.Start(pFoot->GetTechnoType()->WalkRate);
+					}
+					// 为SHP素材设置一个总的运动标记
+					TechnoStatus* status = nullptr;
+					if (TryGetStatus<TechnoExt>(pStand, status))
+					{
+						status->StandIsMoving = true;
+					}
+					// DriveLoco.Is_Moving()并不会判断IsDriving
+					// ShipLoco.Is_Moving()并不会判断IsDriving
+					// HoverLoco.Is_Moving()与前面两个一样，只用位置判断是否在运动
+					// 以上几个是通过判断位置来确定是否在运动
+					// WalkLoco和MechLoco则只返回IsMoving来判断是否在运动
+					if (locoId == LocomotionClass::CLSIDs::Walk)
+					{
+						WalkLocomotionClass* pLoco = static_cast<WalkLocomotionClass*>(loco);
+						pLoco->IsReallyMoving = true;
+					}
+					else if (locoId == LocomotionClass::CLSIDs::Mech)
+					{
+						MechLocomotionClass* pLoco = static_cast<MechLocomotionClass*>(loco);
+						pLoco->IsMoving = true;
 					}
 				}
 			}
-*/
+			else
+			{
+				if (_isMoving)
+				{
+					// 停止移动
+					// 为SHP素材设置一个总的运动标记
+					TechnoStatus* status = nullptr;
+					if (TryGetStatus<TechnoExt>(pStand, status))
+					{
+						status->StandIsMoving = false;
+					}
+					// loco.ForceStopMoving();
+					if (locoId == LocomotionClass::CLSIDs::Walk)
+					{
+						WalkLocomotionClass* pLoco = static_cast<WalkLocomotionClass*>(loco);
+						pLoco->IsReallyMoving = false;
+					}
+					else if (locoId == LocomotionClass::CLSIDs::Mech)
+					{
+						MechLocomotionClass* pLoco = static_cast<MechLocomotionClass*>(loco);
+						pLoco->IsMoving = false;
+					}
+				}
+				_isMoving = false;
+			}
+		}
+	}
 }
 
 void Stand::RemoveStandIllegalTarget()
@@ -556,7 +563,69 @@ void Stand::OnGScreenRender(CoordStruct location)
 		{
 			if (Data.SameTilter)
 			{
-				// TODO Stand same tilter
+				// Stand same tilter
+				// rocker Squid capture ship
+				// pStand->AngleRotatedForwards = pMaster->Base.AngleRotatedForwards;
+				// pStand->AngleRotatedSideways = pMaster->Base.AngleRotatedSideways;
+
+				if (Data.SameTilter)
+				{
+					float forwards = pTechno->AngleRotatedForwards;
+					float sideways = pTechno->AngleRotatedSideways;
+					float t = 0.0;
+					// 计算方向
+					switch (Data.Offset.Direction)
+					{
+					case 0: // 正前 N
+						break;
+					case 2: // 前右 NE
+						break;
+					case 4: // 正右 E
+						t = forwards;
+						forwards = -sideways;
+						sideways = t;
+						break;
+					case 6: // 右后 SE
+						break;
+					case 8: // 正后 S
+						sideways = -sideways;
+						break;
+					case 10: // 后左 SW
+					case 12: // 正左 W
+						t = forwards;
+						forwards = sideways;
+						sideways = -t;
+						break;
+					case 14: // 前左 NW
+						break;
+					}
+					pStand->AngleRotatedForwards = forwards;
+					pStand->AngleRotatedSideways = sideways;
+					pStand->RockingForwardsPerFrame = forwards;
+					pStand->RockingSidewaysPerFrame = sideways;
+
+					// 同步 替身 与 JOJO 的翻车角度
+					ILocomotion* masterLoco = dynamic_cast<FootClass*>(pTechno)->Locomotor.get();
+					ILocomotion* standLoco = dynamic_cast<FootClass*>(pStand)->Locomotor.get();
+
+					GUID masterLocoId = pTechno->GetTechnoType()->Locomotor;
+					GUID standLocoId = pStand->GetTechnoType()->Locomotor;
+
+					if (masterLocoId == LocomotionClass::CLSIDs::Drive && standLocoId == LocomotionClass::CLSIDs::Drive)
+					{
+						DriveLocomotionClass* pMasterLoco = static_cast<DriveLocomotionClass*>(masterLoco);
+						DriveLocomotionClass* pStandLoco = static_cast<DriveLocomotionClass*>(standLoco);
+						pStandLoco->PreviousRamp = pMasterLoco->PreviousRamp;
+						pStandLoco->CurrentRamp = pMasterLoco->CurrentRamp;
+					}
+					else if (masterLocoId == LocomotionClass::CLSIDs::Ship && standLocoId == LocomotionClass::CLSIDs::Ship)
+					{
+						ShipLocomotionClass* pMasterLoco = static_cast<ShipLocomotionClass*>(masterLoco);
+						ShipLocomotionClass* pStandLoco = static_cast<ShipLocomotionClass*>(standLoco);
+						pStandLoco->Ramp1 = pMasterLoco->Ramp1;
+						pStandLoco->Ramp2 = pMasterLoco->Ramp2;
+					}
+				}
 			}
 		}
 	}
