@@ -55,6 +55,7 @@
     <ClCompile Include="src\Ext\EffectType\EffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\Animation.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\Mark.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\Stand.cpp" />
     <ClCompile Include="src\Ext\Helper\CastEx.cpp" />
     <ClCompile Include="src\Ext\Helper\DrawEx.cpp" />
     <ClCompile Include="src\Ext\Helper\Finder.cpp" />
@@ -84,6 +85,7 @@
     <ClCompile Include="src\Ext\TechnoType\Status\MissileHoming.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Paintball.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\SpawnManager.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\Stand.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Transform.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoTrail.cpp" />
@@ -192,6 +194,8 @@
     <ClInclude Include="src\Ext\EffectType\Effect\Mark.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\MarkData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\OffsetData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\Stand.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\StandData.h" />
     <ClInclude Include="src\Ext\Helper\CastEx.h" />
     <ClInclude Include="src\Ext\Helper\DrawEx.h" />
     <ClInclude Include="src\Ext\Helper\Finder.h" />

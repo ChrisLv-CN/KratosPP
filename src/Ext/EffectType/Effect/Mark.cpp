@@ -4,8 +4,6 @@
 #include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
 
-EFFECT_SCRIPT_CPP(Mark);
-
 void Mark::Start()
 {
 	if (Data.Enable)

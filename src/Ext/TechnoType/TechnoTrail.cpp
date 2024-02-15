@@ -4,8 +4,6 @@
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/Scripts.h>
 
-TECHNO_SCRIPT_CPP(TechnoTrail);
-
 void TechnoTrail::SetupTrails()
 {
 	_trails.clear();

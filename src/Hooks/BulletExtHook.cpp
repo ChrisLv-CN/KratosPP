@@ -41,7 +41,13 @@ DEFINE_HOOK(0x4664BA, BulletClass_CTOR, 0x5)
 DEFINE_HOOK(0x4665E9, BulletClass_DTOR, 0x5)
 {
 	GET(BulletClass*, pItem, ECX);
-
+	BulletExt::ExtData* ext = BulletExt::ExtMap.Find(pItem);
+	if (ext)
+	{
+		ext->SetExtStatus(nullptr);
+		ext->_GameObject->Foreach([](Component* c)
+			{if (auto cc = dynamic_cast<IBulletScript*>(c)) { cc->OnUnInit(); } });
+	}
 	BulletExt::ExtMap.Remove(pItem);
 
 	return 0;

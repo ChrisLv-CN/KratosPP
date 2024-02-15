@@ -11,6 +11,8 @@
 
 #include <Helpers/Enumerators.h>
 
+bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell = nullptr);
+
 TechnoClass* CreateAndPutTechno(TechnoTypeClass* pType, HouseClass* pHouse, CoordStruct location, CellClass* pCell = nullptr);
 
 TechnoClass* CreateAndPutTechno(std::string id, HouseClass* pHouse, CoordStruct location, CellClass* pCell = nullptr);

@@ -10,8 +10,6 @@
 
 #include <Ext/AnimType/AnimStatus.h>
 
-EFFECT_SCRIPT_CPP(Animation);
-
 void Animation::UpdateLocationOffset(CoordStruct offset)
 {
 	AnimStatus* animStatus = nullptr;

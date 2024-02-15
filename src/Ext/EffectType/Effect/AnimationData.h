@@ -71,6 +71,11 @@ public:
 	AnimationEntity HitAnim{}; // 被击中时播放的动画
 	AnimationEntity DoneAnim{}; // 结束时播放的动画
 
+	virtual void Read(INIBufferReader* reader) override
+	{
+		Read(reader, "");
+	}
+
 	virtual void Read(INIBufferReader* reader, std::string title) override
 	{
 		EffectData::Read(reader, title);

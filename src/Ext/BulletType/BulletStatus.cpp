@@ -4,8 +4,6 @@
 #include <Ext/Helper/Scripts.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 
-BULLET_SCRIPT_CPP(BulletStatus);
-
 BulletType BulletStatus::GetBulletType()
 {
 	if (_bulletType == BulletType::UNKNOWN)

@@ -5,8 +5,7 @@
 
 #include "EffectScript.h"
 #include "Effect/Animation.h"
-
-OBJECT_SCRIPT_CPP(AttachEffectScript);
+#include "Effect/Stand.h"
 
 int AttachEffectScript::GetDuration()
 {
@@ -140,9 +139,12 @@ bool AttachEffectScript::OwnerIsDead()
 	return AEManager->OwnerIsDead();
 }
 
-void AttachEffectScript::UpdateStandLocation(LocationMark LocationMark)
+void AttachEffectScript::UpdateStandLocation(LocationMark locationMark)
 {
-	// TODO Stand
+	if (Stand* c = GetComponent<Stand>())
+	{
+		c->UpdateLocation(locationMark);
+	}
 }
 
 void AttachEffectScript::UpdateAnimOffset(CoordStruct offset)

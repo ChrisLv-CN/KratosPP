@@ -67,6 +67,8 @@ void ActiveRGBMode(TechnoClass* pTechno);
 bool CanBeBase(TechnoClass* pTechno, bool eligibileForAllyBuilding, int houseIndex, int minX, int maxX, int minY, int maxY);
 
 bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, bool isPassiveAcquire = false);
+
+void ClearAllTarget(TechnoClass* pAttacker);
 #pragma endregion
 
 #pragma region BulletClass

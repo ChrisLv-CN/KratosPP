@@ -6,10 +6,9 @@
 
 #include <Utilities/Debug.h>
 
-TechnoClass* CreateAndPutTechno(TechnoTypeClass* pType, HouseClass* pHouse, CoordStruct location, CellClass* pCell)
+bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell)
 {
-	TechnoClass* pTechno = static_cast<TechnoClass*>(pType->CreateObject(pHouse));
-	if (!pCell || (pCell = MapClass::Instance->TryGetCellAt(location)) != nullptr)
+	if (pCell || (pCell = MapClass::Instance->TryGetCellAt(location)) != nullptr)
 	{
 		auto occFlags = pCell->OccupationFlags;
 		pTechno->OnBridge = pCell->ContainsBridge();
@@ -19,6 +18,16 @@ TechnoClass* CreateAndPutTechno(TechnoTypeClass* pType, HouseClass* pHouse, Coor
 		pCell->OccupationFlags = occFlags;
 		// 单位移动到指定位置
 		pTechno->SetLocation(location);
+		return true;
+	}
+	return false;
+}
+
+TechnoClass* CreateAndPutTechno(TechnoTypeClass* pType, HouseClass* pHouse, CoordStruct location, CellClass* pCell)
+{
+	TechnoClass* pTechno = static_cast<TechnoClass*>(pType->CreateObject(pHouse));
+	if (TryPutTechno(pTechno, location, pCell))
+	{
 		return pTechno;
 	}
 	return nullptr;

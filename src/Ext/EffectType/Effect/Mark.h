@@ -23,13 +23,7 @@
 class Mark : public EffectScript
 {
 public:
-	EFFECT_SCRIPT(Mark);
-
-	MarkData GetData()
-	{
-		return AEData.Mark;
-	}
-	__declspec(property(get = GetData)) MarkData Data;
+	EFFECT_SCRIPT(Mark, MarkData);
 
 	virtual void Start() override;
 
@@ -52,5 +46,4 @@ public:
 	}
 #pragma endregion
 private:
-
 };

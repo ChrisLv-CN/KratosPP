@@ -49,10 +49,9 @@ DEFINE_HOOK(0x6F4500, TechnoClass_DTOR, 0x5)
 	if (ext)
 	{
 		ext->SetExtStatus(nullptr);
+		ext->_GameObject->Foreach([](Component* c)
+			{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnUnInit(); } });
 	}
-#ifdef DEBUG_COMPONENT
-	Debug::Log("Techno %p is DTOR, Remove form ExtMap. ExtMap has %d left.\n", pItem, TechnoExt::ExtMap.size());
-#endif // DEBUG
 	TechnoExt::ExtMap.Remove(pItem);
 
 	return 0;
@@ -355,9 +354,10 @@ DEFINE_HOOK(0x730E56, ObjectClass_GuardCommand, 0x6)
 {
 	GET(ObjectClass*, pThis, ESI);
 
-	if (pThis->AbstractFlags == AbstractFlags::Techno)
+	TechnoClass* pTechno = nullptr;
+	if (CastToTechno(pThis, pTechno))
 	{
-		auto pExt = TechnoExt::ExtMap.Find((TechnoClass*)pThis);
+		auto pExt = TechnoExt::ExtMap.Find(pTechno);
 		pExt->_GameObject->Foreach([](Component* c)
 			{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnGuardCommand(); } });
 	}
@@ -368,9 +368,10 @@ DEFINE_HOOK(0x730EEB, ObjectClass_StopCommand, 0x6)
 {
 	GET(ObjectClass*, pThis, ESI);
 
-	if (pThis->AbstractFlags == AbstractFlags::Techno)
+	TechnoClass* pTechno = nullptr;
+	if (CastToTechno(pThis, pTechno))
 	{
-		auto pExt = TechnoExt::ExtMap.Find((TechnoClass*)pThis);
+		auto pExt = TechnoExt::ExtMap.Find(pTechno);
 		pExt->_GameObject->Foreach([](Component* c)
 			{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnStopCommand(); } });
 	}

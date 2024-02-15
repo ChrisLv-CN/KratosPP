@@ -4,8 +4,6 @@
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/Scripts.h>
 
-BULLET_SCRIPT_CPP(BulletTrail);
-
 void BulletTrail::SetupTrails()
 {
 	_trails.clear();

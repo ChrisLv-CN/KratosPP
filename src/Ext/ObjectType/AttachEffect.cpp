@@ -15,8 +15,6 @@
 #include <Ext/TechnoType/Status/UploadAttachData.h>
 #include <Ext/WeaponType/FeedbackAttachData.h>
 
-OBJECT_SCRIPT_CPP(AttachEffect);
-
 bool AttachEffect::OwnerIsDead()
 {
 	if (!_ownerIsDead)
@@ -443,7 +441,7 @@ void AttachEffect::AttachUploadAE()
 					}
 				}
 			}
-		} while (pPassenger = pPassenger->NextObject);
+		} while ((pPassenger = pPassenger->NextObject) != nullptr);
 	}
 }
 
@@ -656,8 +654,88 @@ CoordStruct AttachEffect::StackOffset(AttachEffectData aeData, OffsetData offset
 
 int AttachEffect::FindInsertIndex(AttachEffectData data)
 {
-	// TODO 火车插位
-	return -1;
+	int index = -1;
+	int size = -1;
+	if (data.Stand.Enable && data.Stand.IsTrain && (size = _children.size()) > 0)
+	{
+		// Head or Trail
+		if (data.Stand.CabinHead)
+		{
+			// check group
+			if (data.Stand.CabinGroup > -1)
+			{
+				// Find the first same group cabin but reverse
+				for (auto it = _children.rbegin(); it != _children.rend(); it++)
+				{
+					AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(*it);
+					if (ae && ae->IsActive() && ae->AEData.Stand.Enable && ae->AEData.Stand.IsTrain)
+					{
+						if (ae->AEData.Stand.CabinGroup == data.Stand.CabinGroup)
+						{
+							index = size - 1;
+							break;
+						}
+					}
+					size--;
+				}
+
+			}
+		}
+		else
+		{
+			index = 0;
+			// check group
+			if (data.Stand.CabinGroup > -1)
+			{
+				// Find the first same group cabin
+				int i = 0;
+				for (Component* c : _children)
+				{
+					AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
+					if (ae && ae->IsActive() && ae->AEData.Stand.Enable && ae->AEData.Stand.IsTrain)
+					{
+						if (ae->AEData.Stand.CabinGroup == data.Stand.CabinGroup)
+						{
+							index = i;
+							break;
+						}
+					}
+					i++;
+				}
+			}
+		}
+	}
+	return index;
+}
+
+bool AttachEffect::UpdateTrainStandLocation(AttachEffectScript* ae, int& markIndex)
+{
+	// 查找可以用的记录点
+	double length = 0;
+	LocationMark preMark;
+	for (int j = markIndex; j < _locationMarks.size(); j++)
+	{
+		markIndex = j;
+		LocationMark mark = _locationMarks[j];
+		if (preMark.IsEmpty())
+		{
+			preMark = mark;
+			continue;
+		}
+		length += mark.Location.DistanceFrom(preMark.Location);
+		preMark = mark;
+		if (length >= _locationSpace)
+		{
+			break;
+		}
+	}
+
+	if (preMark.IsEmpty())
+	{
+		ae->UpdateStandLocation(preMark);
+		return true;
+	}
+	return false;
 }
 
 CoordStruct AttachEffect::MarkLocation()
@@ -755,7 +833,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 			log.append(it->first).append(" : ").append(std::to_string(it->second)).append("\n");
 			pos2.Y -= offsetZ;
 			PrintTextManager::PrintText(log, Colors::Red, pos2);
-			}
+		}
 #endif // DEBUG
 	}
 	else
@@ -781,10 +859,19 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 				if (ae->IsAlive())
 				{
 					AttachEffectData aeData = ae->AEData;
-					// TODO 调整替身的位置
-					// if (aeData.Stand.Enable)
-					// {
-					// }
+					// 调整替身的位置
+					if (aeData.Stand.Enable)
+					{
+						// 调整火车替身的位置
+						if (!aeData.Stand.IsTrain || !UpdateTrainStandLocation(ae, markIndex))
+						{
+							// 堆叠偏移
+							OffsetData offsetData = aeData.Stand.Offset;
+							CoordStruct standOffset = this->StackOffset(aeData, offsetData, standMarks, standGroupMarks, standGroupFirstMarks);
+							LocationMark locationMark = GetRelativeLocation(pObject, offsetData, standOffset);
+							ae->UpdateStandLocation(locationMark);
+						}
+					}
 					// 调整动画的位置
 					if (aeData.Animation.Enable && aeData.Animation.IdleAnim.Enable)
 					{
@@ -891,4 +978,19 @@ void AttachEffect::OnDetonate(CoordStruct* pCoords, bool& skip)
 {
 	_ownerIsDead = true;
 	_location = *pCoords;
+}
+
+void AttachEffect::OnUnInit()
+{
+	_ownerIsDead = true;
+	CoordStruct location = _location;
+	ForeachChild([&location](Component* c) {
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+		{
+			if (ae->IsActive())
+			{
+				ae->End(location);
+			}
+		}
+		});
 }

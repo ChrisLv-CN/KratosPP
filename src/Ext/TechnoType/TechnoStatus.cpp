@@ -4,9 +4,6 @@
 #include <Ext/Common/FireSuperManager.h>
 #include <Ext/Common/PrintTextManager.h>
 
-
-TECHNO_SCRIPT_CPP(TechnoStatus);
-
 void TechnoStatus::Awake()
 {
 	// 动态附加其他的组件
@@ -193,4 +190,16 @@ void TechnoStatus::OnReceiveDamageDestroy()
 void TechnoStatus::OnFire(AbstractClass* pTarget, int weaponIdx)
 {
 	OnFire_FireSuper(pTarget, weaponIdx);
+}
+
+void TechnoStatus::OnSelect(bool& selectable)
+{
+	if (!(selectable = OnSelect_VirtualUnit()))
+	{
+		return;
+	}
+	if (!(selectable = OnSelect_Deselect()))
+	{
+		return;
+	}
 }

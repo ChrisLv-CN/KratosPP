@@ -1,8 +1,36 @@
 ﻿#pragma once
+#include <string>
+#include <map>
+#include <vector>
 
 #include <GeneralDefinitions.h>
 #include <CellClass.h>
 #include <MapClass.h>
+
+#include <Common/INI/INIConfig.h>
+
+static std::map<std::string, Layer> LayerStrings
+{
+	{ "None", Layer::None },
+	{ "Underground", Layer::Underground },
+	{ "Surface", Layer::Surface },
+	{ "Ground", Layer::Ground },
+	{ "Air", Layer::Air },
+	{ "Top", Layer::Top }
+};
+
+template <>
+inline bool Parser<Layer>::TryParse(const char* pValue, Layer* outValue)
+{
+	std::string key = pValue;
+	auto it = LayerStrings.find(key);
+	if (it != LayerStrings.end())
+	{
+		*outValue = it->second;
+		return true;
+	}
+	return false;
+}
 
 static bool InRect(Point2D point, RectangleStruct bound)
 {

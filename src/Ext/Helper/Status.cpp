@@ -226,6 +226,29 @@ bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, bool isPassiveAcq
 	}
 	return canAttack;
 }
+
+void ClearAllTarget(TechnoClass* pAttacker)
+{
+	if (pAttacker)
+	{
+		// 自身
+		pAttacker->Target = nullptr;
+		pAttacker->SetTarget(nullptr);
+		pAttacker->QueueMission(Mission::Stop, true);
+		// 子机管理器
+		if (pAttacker->SpawnManager)
+		{
+			pAttacker->SpawnManager->Destination = nullptr;
+			pAttacker->SpawnManager->Target = nullptr;
+			pAttacker->SpawnManager->SetTarget(nullptr);
+		}
+		// 超时空传送
+		if (pAttacker->TemporalImUsing)
+		{
+			pAttacker->TemporalImUsing->LetGo();
+		}
+	}
+}
 #pragma endregion
 
 #pragma endregion BulletClass

@@ -2,9 +2,6 @@
 
 #include <Ext/Helper/Status.h>
 
-OBJECT_SCRIPT_CPP(EffectScript);
-
-
 AttachEffectScript* EffectScript::GetAE()
 {
 	if (!_ae)

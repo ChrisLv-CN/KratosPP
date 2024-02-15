@@ -8,6 +8,7 @@
 #include <Ext/ObjectType/FilterData.h>
 #include "Effect/AnimationData.h"
 #include "Effect/MarkData.h"
+#include "Effect/StandData.h"
 
 enum class CumulativeMode
 {
@@ -90,6 +91,7 @@ public:
 	// TODO Effects
 	AnimationData Animation{};
 	MarkData Mark{};
+	StandData Stand{};
 
 	AttachEffectData() : FilterData()
 	{
@@ -107,7 +109,7 @@ public:
 		Name = reader->Section;
 
 
-		int druation = reader->Get("Duration", 0);
+		int druation = reader->Get("Duration", Duration);
 		if (druation != 0)
 		{
 			Enable = true;
@@ -116,8 +118,9 @@ public:
 			FilterData::Read(reader, title);
 
 			// TODO Read Effects
-			Animation.Read(reader, title);
+			Animation.Read(reader);
 			Mark.Read(reader);
+			Stand.Read(reader);
 
 			HoldDuration = Duration <= 0;
 			HoldDuration = reader->Get("HoldDuration", HoldDuration);
@@ -158,6 +161,10 @@ public:
 		if (Mark.Enable)
 		{
 			names.insert(Mark.ScriptName);
+		}
+		if (Stand.Enable)
+		{
+			names.insert(Stand.ScriptName);
 		}
 		return names;
 	}

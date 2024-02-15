@@ -17,12 +17,14 @@
 #include "AttachEffectScript.h"
 
 
-#define EFFECT_SCRIPT(CLASS_NAME) \
+#define EFFECT_SCRIPT(CLASS_NAME, EFFECT_DATA) \
 	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, EffectScript) \
-
-#define EFFECT_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
-
+	\
+	EFFECT_DATA GetData() \
+	{ \
+		return AEData.CLASS_NAME; \
+	} \
+	__declspec(property(get = GetData)) EFFECT_DATA Data; \
 
 class EffectScript : public ObjectScript, public IAEScript
 {

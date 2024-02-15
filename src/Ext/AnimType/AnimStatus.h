@@ -26,7 +26,7 @@ public:
 
 	bool TryGetCreater(TechnoClass*& pTechno);
 
-	void AttachToObject(ObjectClass* pObject, OffsetData data = OffsetData::Empty);
+	void AttachToObject(ObjectClass* pObject, OffsetData data = {});
 	void SetOffset(OffsetData data);
 
 	void UpdateVisibility(Relation visibility);

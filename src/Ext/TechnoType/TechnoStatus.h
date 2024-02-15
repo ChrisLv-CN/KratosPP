@@ -16,6 +16,7 @@
 #include <Common/INI/INIConfig.h>
 
 #include <Ext/Common/PrintTextData.h>
+#include <Ext/EffectType/Effect/StandData.h>
 #include <Ext/ObjectType/State/AntiBulletState.h>
 #include <Ext/ObjectType/State/CrateBuffData.h>
 #include <Ext/ObjectType/State/DestroyAnimData.h>
@@ -71,6 +72,7 @@ public:
 	virtual void OnUpdate() override;
 
 	void OnUpdate_DeployToTransform(); // call by hook
+	void OnUpdate_DestroySelf(); // call by Stand
 
 	virtual void OnUpdateEnd() override;
 
@@ -88,6 +90,8 @@ public:
 
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
+	virtual void OnSelect(bool& selectable) override;
+
 	// 状态机
 	AntiBulletState AntiBulletState{};
 	State<CrateBuffData> CrateBuffState{};
@@ -100,6 +104,10 @@ public:
 
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
+	// 替身的配置
+	StandData StandData{};
+	TechnoClass* pMyMaster = nullptr;
+	bool MyMasterIsSpawned = false;
 
 	DrivingState drivingState = DrivingState::Moving;
 
@@ -137,6 +145,9 @@ public:
 			.Process(this->_initStateFlag)
 
 			.Process(this->CrateBuff)
+			.Process(this->StandData)
+			.Process(this->pMyMaster)
+			.Process(this->MyMasterIsSpawned)
 
 			.Process(this->pKillerHouse)
 
@@ -227,7 +238,6 @@ private:
 	void OnUpdate_BaseNormal();
 	void OnUpdate_CrawlingFLH();
 	void OnUpdate_DamageText();
-	void OnUpdate_DestroySelf();
 	void OnUpdate_GiftBox();
 	void OnUpdate_JJFacing();
 	void OnUpdate_MissileHoming();
@@ -249,6 +259,8 @@ private:
 
 	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
+	bool OnSelect_VirtualUnit();
+	bool OnSelect_Deselect();
 
 	bool _initStateFlag = false;
 

@@ -4,7 +4,7 @@ rem Cleans build folders.
 
 rem Ensure we're in correct directory.
 cd /D "%~dp0"
-cd ..
+cd ../output
 
 if exist Debug\ rmdir /S /Q Debug\
 if exist DevBuild\ rmdir /S /Q DevBuild\

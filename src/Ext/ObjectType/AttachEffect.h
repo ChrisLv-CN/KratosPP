@@ -17,6 +17,8 @@
 #include <Ext/EffectType/AttachEffectData.h>
 #include <Ext/EffectType/AttachEffectTypeData.h>
 
+class AttachEffectScript;
+
 /// @brief AEManager, sub-component is AttachEffectScript, and AttachEffectScript 's sub-component is EffectScript
 /// GameObject
 ///		|__ AttachEffect
@@ -32,7 +34,7 @@ class AttachEffect : public ObjectScript
 public:
 	OBJECT_SCRIPT(AttachEffect);
 
-	bool PowerOff; // 停电状态
+	bool PowerOff = false; // 停电状态
 
 	std::vector<int> PassengerIds{}; // 乘客持有的AEMode ID
 
@@ -137,10 +139,15 @@ public:
 
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
+	virtual void OnUnInit() override;
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
+			.Process(this->PowerOff)
+			.Process(this->PassengerIds)
+
 			.Process(this->_disableDelayTimers)
 			.Process(this->_aeStacks)
 
@@ -214,6 +221,15 @@ private:
 	 * @return int 序号
 	 */
 	int FindInsertIndex(AttachEffectData data);
+	/**
+	 *@brief 更新火车替身车厢的位置
+	 *
+	 * @param ae AE
+	 * @param markIndex 记录的序号
+	 * @return true
+	 * @return false
+	 */
+	bool UpdateTrainStandLocation(AttachEffectScript* ae, int& markIndex);
 	CoordStruct MarkLocation();
 	void ClearLocationMarks();
 

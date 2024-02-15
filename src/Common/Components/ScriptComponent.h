@@ -117,6 +117,21 @@ public:
 		return pTechno && GetAbsType() == AbstractType::Building;
 	}
 
+	bool IsInfantry()
+	{
+		return pTechno && GetAbsType() == AbstractType::Infantry;
+	}
+
+	bool IsUnit()
+	{
+		return pTechno && GetAbsType() == AbstractType::Unit;
+	}
+
+	bool IsAircraft()
+	{
+		return pTechno && GetAbsType() == AbstractType::Aircraft;
+	}
+
 	bool IsFoot()
 	{
 		return !IsBullet() && !IsBuilding();
@@ -268,7 +283,13 @@ public:
 	} \
 	\
 	inline static std::string ScriptName = #CLASS_NAME; \
-	static Component* Create(); \
+	static Component* Create() \
+	{ \
+		return static_cast<Component*>(new CLASS_NAME()); \
+	} \
+	\
+	inline static int g_temp_##CLASS_NAME = \
+	ComponentFactory::GetInstance().Register(#CLASS_NAME, CLASS_NAME::Create); \
 
 #define OBJECT_SCRIPT(CLASS_NAME) \
 	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, ObjectScript) \
@@ -287,30 +308,3 @@ public:
 
 #define EBOLT_SCRIPT(CLASS_NAME) \
 	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, EBoltScript) \
-
-#define DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
-	Component* CLASS_NAME::Create() \
-	{ \
-		return static_cast<Component*>(new CLASS_NAME()); \
-	} \
-	\
-	static int g_temp_##CLASS_NAME = \
-	ComponentFactory::GetInstance().Register(#CLASS_NAME, CLASS_NAME::Create); \
-
-#define OBJECT_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
-
-#define TECHNO_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
-
-#define BULLET_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
-
-#define ANIM_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
-
-#define SUPER_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \
-
-#define EBOLT_SCRIPT_CPP(CLASS_NAME) \
-	DYNAMIC_SCRIPT_CPP(CLASS_NAME) \

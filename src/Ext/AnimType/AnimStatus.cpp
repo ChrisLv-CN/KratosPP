@@ -6,8 +6,6 @@
 #include <Ext/Helper/CastEx.h>
 #include <Ext/Helper/Scripts.h>
 
-ANIM_SCRIPT_CPP(AnimStatus);
-
 bool AnimStatus::TryGetCreater(TechnoClass*& pTechno)
 {
 	pTechno = pCreater;
@@ -48,7 +46,7 @@ void AnimStatus::Explosion_Damage(bool isBounce, bool bright)
 				location = pAnim->Bounce.GetCoords();
 			}
 			int damage = (int)pAnimType->Damage;
-			if (damage != 0 || (!IsNotNone(GetAnimDamageData()->Weapon) && GetAnimDamageData()->UseWeaponDamage))
+			if (damage != 0 || (IsNotNone(GetAnimDamageData()->Weapon) && GetAnimDamageData()->UseWeaponDamage))
 			{
 				// 制造伤害
 				std::string weaponType = GetAnimDamageData()->Weapon;

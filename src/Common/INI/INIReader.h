@@ -113,7 +113,7 @@ public:
 	{
 		std::string tempDef{ "" };
 		std::string v = Get<std::string>(key, tempDef);
-		if (!IsNotNone(v))
+		if (IsNotNone(v))
 		{
 			int value = 0;
 			// 是数字格式
@@ -203,6 +203,16 @@ public:
 			}
 		}
 		return v;
+	}
+
+	double GetPercent(std::string key, const double def)
+	{
+		return Get(key, def);
+	}
+
+	std::vector<double> GetPercentList(std::string key, std::vector<double> def)
+	{
+		return GetList(key.c_str(), def);
 	}
 
 	Point2D GetRange(std::string key, Point2D def)

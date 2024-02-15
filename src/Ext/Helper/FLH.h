@@ -17,6 +17,11 @@ public:
 	CoordStruct Location;
 	DirStruct Dir;
 
+	bool IsEmpty()
+	{
+		return Location.IsEmpty();
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

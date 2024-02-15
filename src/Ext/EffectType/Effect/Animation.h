@@ -23,13 +23,7 @@
 class Animation : public EffectScript
 {
 public:
-	EFFECT_SCRIPT(Animation);
-
-	AnimationData GetData()
-	{
-		return AEData.Animation;
-	}
-	__declspec(property(get = GetData)) AnimationData Data;
+	EFFECT_SCRIPT(Animation, AnimationData);
 
 	void UpdateLocationOffset(CoordStruct offset);
 

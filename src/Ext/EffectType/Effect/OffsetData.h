@@ -7,8 +7,6 @@
 class OffsetData : public INIConfig
 {
 public:
-	static const OffsetData Empty;
-
 	CoordStruct Offset = CoordStruct::Empty; // 偏移FLH
 
 	CoordStruct StackOffset = CoordStruct::Empty; // 堆叠偏移
