@@ -713,7 +713,7 @@ bool AttachEffect::UpdateTrainStandLocation(AttachEffectScript* ae, int& markInd
 	// 查找可以用的记录点
 	double length = 0;
 	LocationMark preMark;
-	for (int j = markIndex; j < _locationMarks.size(); j++)
+	for (std::size_t j = markIndex; j < _locationMarks.size(); j++)
 	{
 		markIndex = j;
 		LocationMark mark = _locationMarks[j];
@@ -786,7 +786,7 @@ void AttachEffect::Awake()
 void AttachEffect::Destroy()
 {
 	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
-	((TechnoExt::ExtData*)extData)->SetExtStatus(nullptr);
+	((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
 }
 
 

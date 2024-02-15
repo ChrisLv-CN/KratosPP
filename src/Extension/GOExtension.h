@@ -49,7 +49,7 @@ public:
 #endif // DEBUG
 			// 为了保证读存档的key一致，除GO外都不进行实例化
 			m_GameObject.Tag = typeid(TExt).name();
-			m_GameObject.extData = this;
+			m_GameObject.SetExtData(this);
 			// 附加Components但是不激活
 			// 不从存档读入时，首次唤醒GameObject时激活所有的Components
 			// 从存档读入时，Component的标记_awaked被读入，不会重复激活

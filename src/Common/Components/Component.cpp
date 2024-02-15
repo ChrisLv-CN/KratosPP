@@ -1,5 +1,14 @@
 ﻿#include "Component.h"
 
+void Component::SetExtData(IExtData* extData)
+{
+	_extData = extData;
+	for (Component* c : _children)
+	{
+		c->SetExtData(extData);
+	}
+}
+
 void Component::OnUpdate()
 {
 	IComponent::OnUpdate();
@@ -94,9 +103,10 @@ bool Component::IsActive()
 
 void Component::AddComponent(Component* component, int index)
 {
-	component->extData = extData;
+	// 将要加入的组件的子组件的extData全部更换
+	component->SetExtData(_extData);
 	component->_parent = this;
-	if (index < 0 || index >= _children.size())
+	if (index < 0 || index >= (int)_children.size())
 	{
 		// vector::push_back 和 vector::emplace_back 会调用析构
 		// list::emplace_back 不会
@@ -142,7 +152,7 @@ Component* Component::FindOrAllocate(const std::string& name)
 	return c;
 }
 
-void Component::RemoveComponent(Component* component)
+void Component::RemoveComponent(Component* component, bool disable)
 {
 	auto it = std::find(_children.begin(), _children.end(), component);
 	if (it != _children.end())
@@ -152,11 +162,14 @@ void Component::RemoveComponent(Component* component)
 		std::string thisName = component->thisName;
 		Debug::Log("Remove Component [%s]%s from %s [%s]%s.\n", thisName.c_str(), thisId.c_str(), extName.c_str(), this->thisName.c_str(), this->thisId.c_str());
 #endif // DEBUG
-		// 在Awake和Start中删除Component，在循环内，需要延迟删除，
-		// 将Component失活，并记录，在结束_children的循环后，再清除
 		Component* c = *it;
 		c->_parent = nullptr;
-		c->Disable();
+		if (disable)
+		{
+			c->Disable();
+		}
+		// 从_children清单中删除
+		_children.erase(it);
 	}
 }
 
@@ -297,6 +310,11 @@ Component* Component::GetComponentByName(const std::string& name)
 	return GetComponentInChildrenByName(name);
 }
 
+Component* Component::GetParent()
+{
+	return _parent;
+}
+
 void Component::AttachToComponent(Component* component)
 {
 	if (_parent == component)
@@ -308,11 +326,11 @@ void Component::AttachToComponent(Component* component)
 	component->AddComponent(this);
 }
 
-void Component::DetachFromParent()
+void Component::DetachFromParent(bool disable)
 {
 	if (_parent)
 	{
-		_parent->RemoveComponent(this);
+		_parent->RemoveComponent(this, disable);
 		this->_parent = nullptr;
 	}
 }

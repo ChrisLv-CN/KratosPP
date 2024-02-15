@@ -661,9 +661,9 @@ DEFINE_HOOK(0x6FF28F, TechnoClass_Fire_ROFMultiplier, 0x6)
 	{
 		return 0x6FF2BE; // skip ROF
 	}
+	/* TODO AE
 	// 计算ROF
 	GET(WeaponTypeClass*, pWeapon, EBX);
-	/* TODO AE
 	if (pTechno.Ref.CurrentBurstIndex >= pWeapon.Ref.Burst && pTechno.TryGetAEManager(out AttachEffectScript aeManager))
 	{
 		int rof = (int)R->EAX;

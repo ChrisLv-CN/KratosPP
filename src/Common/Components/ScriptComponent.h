@@ -33,12 +33,12 @@ public:
 	\
 	virtual GameObject* GetGameObject() override \
 	{ \
-	return ((TEXT::ExtData*)extData)->_GameObject; \
+	return ((TEXT::ExtData*)_extData)->_GameObject; \
 	}\
 	\
 	TBASE* GetOwner() \
 	{ \
-		return ((TEXT::ExtData*)extData)->OwnerObject(); \
+		return ((TEXT::ExtData*)_extData)->OwnerObject(); \
 	} \
 	__declspec(property(get = GetOwner)) TBASE* P_NAME; \
 
@@ -49,11 +49,11 @@ public:
 
 	virtual GameObject* GetGameObject() override
 	{
-		if (TechnoExt::ExtData* technoExtData = dynamic_cast<TechnoExt::ExtData*>(extData))
+		if (TechnoExt::ExtData* technoExtData = dynamic_cast<TechnoExt::ExtData*>(_extData))
 		{
 			return technoExtData->_GameObject;
 		}
-		else if (BulletExt::ExtData* bulletExtData = dynamic_cast<BulletExt::ExtData*>(extData))
+		else if (BulletExt::ExtData* bulletExtData = dynamic_cast<BulletExt::ExtData*>(_extData))
 		{
 			return bulletExtData->_GameObject;
 		}
@@ -62,7 +62,7 @@ public:
 
 	TechnoClass* GetTechno()
 	{
-		if (TechnoExt::ExtData* technoExtData = dynamic_cast<TechnoExt::ExtData*>(extData))
+		if (TechnoExt::ExtData* technoExtData = dynamic_cast<TechnoExt::ExtData*>(_extData))
 		{
 			return technoExtData->OwnerObject();
 		}
@@ -73,7 +73,7 @@ public:
 
 	BulletClass* GetBullet()
 	{
-		if (BulletExt::ExtData* bulletExtData = dynamic_cast<BulletExt::ExtData*>(extData))
+		if (BulletExt::ExtData* bulletExtData = dynamic_cast<BulletExt::ExtData*>(_extData))
 		{
 			return bulletExtData->OwnerObject();
 		}

@@ -53,10 +53,6 @@ public:
 	std::string Name;
 	std::string Tag;
 
-	// Ext由ScriptFactory传入
-	IExtData* extData;
-
-
 #ifdef DEBUG
 	std::string thisId{};
 	std::string GetThisName() { return Name; }
@@ -78,6 +74,8 @@ public:
 		Debug::Log("Component [%s]%s - %s is release.\n\n", thisName.c_str(), thisId.c_str(), thisId2.c_str());
 	}
 #endif // DEBUG
+
+	void SetExtData(IExtData* extData);
 
 	virtual void OnUpdate() override;
 
@@ -115,7 +113,7 @@ public:
 	// <summary>
 	// 将Component加入子列表中移除
 	// </summary>
-	void RemoveComponent(Component* component);
+	void RemoveComponent(Component* component, bool disable = true);
 
 	/// <summary>
 	/// 在结束循环后需要从_children中清理已经标记为disable的component
@@ -128,7 +126,7 @@ public:
 	void RestoreComponent();
 
 	void AttachToComponent(Component* component);
-	void DetachFromParent();
+	void DetachFromParent(bool disable = true);
 
 	void PrintNames(std::vector<std::string>& names, int& level);
 
@@ -211,6 +209,8 @@ public:
 	{
 		return GetComponentInChildren<TComponent>();
 	}
+
+	Component* GetParent();
 #pragma endregion
 
 #pragma region save/load
@@ -221,6 +221,7 @@ public:
 		stream
 			// 存取子组件清单
 			.Process(this->_childrenNames)
+
 			// 存取Component自身的属性
 			.Process(this->Name)
 			.Process(this->Tag)
@@ -258,6 +259,9 @@ public:
 #pragma endregion
 
 protected:
+	// Ext由ScriptFactory传入
+	IExtData* _extData = nullptr;
+
 	bool _awaked = false; // 已经完成初始化
 	bool _disable = false; // 已经失效，等待移除
 	bool _active = true; // 可以执行循环

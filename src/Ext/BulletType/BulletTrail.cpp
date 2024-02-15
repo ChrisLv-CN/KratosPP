@@ -9,7 +9,7 @@ void BulletTrail::SetupTrails()
 	_trails.clear();
 	if (!TryGetTrails(pBullet->Type->ID, _trails))
 	{
-		_gameObject->RemoveComponent(this);
+		Disable();
 	}
 }
 

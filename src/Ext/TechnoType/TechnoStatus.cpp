@@ -12,7 +12,7 @@ void TechnoStatus::Awake()
 
 void TechnoStatus::Destroy()
 {
-	((TechnoExt::ExtData*)extData)->SetExtStatus(nullptr);
+	((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
 }
 
 void TechnoStatus::ResetTrails()
@@ -194,11 +194,13 @@ void TechnoStatus::OnFire(AbstractClass* pTarget, int weaponIdx)
 
 void TechnoStatus::OnSelect(bool& selectable)
 {
-	if (!(selectable = OnSelect_VirtualUnit()))
+	selectable = OnSelect_VirtualUnit();
+	if (!selectable)
 	{
 		return;
 	}
-	if (!(selectable = OnSelect_Deselect()))
+	selectable = OnSelect_Deselect();
+	if (!selectable)
 	{
 		return;
 	}

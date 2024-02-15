@@ -9,7 +9,7 @@ void TechnoTrail::SetupTrails()
 	_trails.clear();
 	if (!TryGetTrails(pTechno->GetTechnoType()->ID, _trails))
 	{
-		_gameObject->RemoveComponent(this);
+		Disable();
 	}
 }
 

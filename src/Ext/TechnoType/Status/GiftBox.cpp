@@ -8,6 +8,8 @@
 #include <Ext/Helper/Gift.h>
 #include <Ext/Helper/Scripts.h>
 
+#include <Ext/ObjectType/AttachEffect.h>
+
 
 DeployToTransformData* TechnoStatus::GetTransformData()
 {
@@ -298,37 +300,45 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				}
 
 				// 继承AE管理器
-				/* TODO AE
-				AttachEffectScript giftAEM = null;
+				AttachEffect* giftAEM = nullptr;
 				if (inheritAE)
 				{
 					inheritAE = false;
-					// 继承除了GiftBox之外的状态机
-					InheritedStatsTo(giftStatus);
-					// 继承AE
-					giftAEM = pGift.GetAEManegr();
-					AttachEffectScript boxAEM = pTechno.GetAEManegr();
-					if (null != giftAEM && null != boxAEM)
+					//TODO 继承除了GiftBox之外的状态机
+					// InheritedStatsTo(giftStatus);
+					// 将礼物盒的AE管理器脱离，并交换给礼物
+					if (TryGetAEManager<TechnoExt>(pGift, giftAEM))
 					{
-						boxAEM.InheritedTo(giftAEM, true);
-						// Logger.Log($"{Game.CurrentFrame} 礼物[{id}]{pGift} 继承盒子 [{section}]{pTechno} 的 AE管理器");
-						// 移除指定的AE
-						giftAEM.Disable(data.RemoveEffects);
+						Component* giftGO = giftAEM->GetParent();
+
+						AttachEffect* boxAEM = GetAEManager<TechnoExt>(pTechno);
+						Component* boxGO = boxAEM->GetParent();
+
+						boxAEM->DetachFromParent(false);
+						giftAEM->DetachFromParent(false);
+
+						// TODO 将当前的GiftBox的AE关闭，如果有的话
+						// 从状态机中获取生效的AE并关闭
+
+						giftGO->AddComponent(boxAEM);
+						boxGO->AddComponent(giftAEM);
+
+						giftAEM = boxAEM;
 					}
 				}
 
-				// 附加AE
-				if (null != data.AttachEffects)
+				// 附加新的AE
+				if (!data.AttachEffects.empty())
 				{
-					if (null == giftAEM)
+					if (!giftAEM)
 					{
-						giftAEM = pGift.GetAEManegr();
+						giftAEM = GetAEManager<TechnoExt>(pGift);
 					}
-					if (null != giftAEM)
+					if (giftAEM)
 					{
-						giftAEM.Attach(data.AttachEffects, data.AttachChances);
+						giftAEM->Attach(data.AttachEffects, data.AttachChances);
 					}
-				}*/
+				}
 
 				// 强制任务
 				if (data.ForceMission != Mission::None && data.ForceMission != Mission::Move)
