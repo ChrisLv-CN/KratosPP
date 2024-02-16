@@ -5,6 +5,7 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 
+#include "MissileHoming.h"
 #include "TechnoTrail.h"
 #include "JumpjetFacing.h"
 
@@ -21,7 +22,6 @@ void TechnoStatus::ExtChanged()
 	_transformData = nullptr;
 
 	_spawnData = nullptr;
-	_homingData = nullptr;
 
 	ResetBaseNormal();
 
@@ -50,6 +50,10 @@ void TechnoStatus::InitExt()
 		{
 			FindOrAttach<JumpjetFacing>();
 		}
+		if (IsRocket())
+		{
+			FindOrAttach<MissileHoming>();
+		}
 	}
 }
 
@@ -65,10 +69,6 @@ AttachEffect* TechnoStatus::AEManager()
 
 void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 {
-	if (!IsHoming)
-	{
-		IsHoming = GetHomingData()->Homing;
-	}
 	if (!_initStateFlag)
 	{
 		_initStateFlag = true;
@@ -128,7 +128,6 @@ void TechnoStatus::OnUpdate()
 			OnUpdate_BaseNormal();
 			OnUpdate_CrawlingFLH();
 			OnUpdate_DeployToTransform();
-			OnUpdate_MissileHoming();
 		}
 		OnUpdate_Transform();
 

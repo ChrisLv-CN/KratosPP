@@ -17,6 +17,7 @@
 
 #include <Ext/ObjectType/AttachFire.h>
 #include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/TechnoType/MissileHoming.h>
 
 static bool TryFindNewIdInSpwanType(std::string typeId, int index, std::string& newId)
 {
@@ -200,9 +201,9 @@ DEFINE_HOOK(0x6B7A32, SpawnManagerClass_Update_Add_Missile_Target, 0x5)
 
 	if (pTarget && pTarget->IsInAir())
 	{
-		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pRocket))
+		if (MissileHoming* homing = GetScript<TechnoExt, MissileHoming>(pRocket))
 		{
-			status->IsHoming = true;
+			homing->IsHoming = true;
 		}
 	}
 
@@ -248,10 +249,10 @@ DEFINE_HOOK(0x54E661, KamikazeTrackerClass_Cannot_Detach2, 0x6)
 	{
 		// 目标是个死人，替换目标
 		CoordStruct lastLocation = pRocket->GetCoords();
-		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(static_cast<TechnoClass*>(pRocket)))
+		if (MissileHoming* homing = GetScript<TechnoExt, MissileHoming>(static_cast<TechnoClass*>(pRocket)))
 		{
-			status->IsHoming = false;
-			lastLocation = status->HomingTargetLocation;
+			homing->IsHoming = false;
+			lastLocation = homing->HomingTargetLocation;
 		}
 		// 获取最后目标所在的格子，然后重设导弹目标
 		if (CellClass* pCell = MapClass::Instance->TryGetCellAt(lastLocation))
@@ -279,9 +280,9 @@ DEFINE_HOOK(0x662CAC, RocketLocomotionClass_Process_Step5_To_Lazy_4, 0x6)
 	GET(RocketLocomotionClass*, pLoco, ESI);
 	pLoco -= 1; // ESI - 4 才是真正的指针地址
 	TechnoClass* pRocket = pLoco->LinkedTo;
-	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pRocket))
+	if (MissileHoming* homing = GetScript<TechnoExt, MissileHoming>(pRocket))
 	{
-		if (status->IsHoming)
+		if (homing->IsHoming)
 		{
 			return 0x662A32;
 		}

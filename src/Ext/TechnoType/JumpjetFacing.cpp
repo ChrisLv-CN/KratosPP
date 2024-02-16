@@ -17,7 +17,7 @@ JumpjetFacingData* JumpjetFacing::GetJJFacingData()
 void JumpjetFacing::SetupJJFacing()
 {
 	_jjFacingData = nullptr;
-	if (!GetJJFacingData()->Enable && !IsJumpjet())
+	if (!GetJJFacingData()->Enable || !IsJumpjet())
 	{
 		Disable();
 	}

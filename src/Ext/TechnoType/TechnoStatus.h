@@ -31,7 +31,6 @@
 #include "Status/CrawlingFLHData.h"
 #include "Status/DamageTextData.h"
 #include "Status/HealthTextData.h"
-#include "Status/MissileHomingData.h"
 #include "Status/SpawnData.h"
 
 class AttachEffect;
@@ -129,10 +128,6 @@ public:
 	bool VirtualUnit = false;
 	bool Disappear = false;
 
-	// 子机导弹跟踪
-	bool IsHoming = false;
-	CoordStruct HomingTargetLocation = CoordStruct::Empty;
-
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
@@ -164,10 +159,6 @@ public:
 
 			.Process(this->VirtualUnit)
 			.Process(this->Disappear)
-
-			.Process(this->IsHoming)
-			.Process(this->HomingTargetLocation)
-			.Process(this->_initHomingFlag)
 
 			.Process(this->_skipDamageText)
 
@@ -249,7 +240,6 @@ private:
 	void OnUpdate_CrawlingFLH();
 	void OnUpdate_DamageText();
 	void OnUpdate_GiftBox();
-	void OnUpdate_MissileHoming();
 	void OnUpdate_Paintball();
 	void OnUpdate_Transform();
 
@@ -315,11 +305,6 @@ private:
 
 	// 子机管理器
 	SpawnData* _spawnData = nullptr;
-
-	// 子机导弹
-	MissileHomingData* _homingData = nullptr;
-	MissileHomingData* GetHomingData();
-	bool _initHomingFlag = false;
 
 	// 染色状态
 	float _deactivateDimEMP = 0.8f;
