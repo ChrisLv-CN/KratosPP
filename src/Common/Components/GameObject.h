@@ -37,12 +37,6 @@ public:
 		return this;
 	}
 
-	template <typename TScript>
-	TScript* FindOrAttach()
-	{
-		return static_cast<TScript*>(FindOrAllocate(TScript::ScriptName));
-	}
-
 	virtual void OnForeachEnd() override
 	{
 		if (ExtChanged)

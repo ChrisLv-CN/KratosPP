@@ -13,6 +13,11 @@ void TechnoTrail::SetupTrails()
 	}
 }
 
+void TechnoTrail::Awake()
+{
+	SetupTrails();
+}
+
 void TechnoTrail::ExtChanged()
 {
 	SetupTrails();

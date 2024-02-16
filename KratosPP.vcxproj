@@ -71,6 +71,7 @@
     <ClCompile Include="src\Ext\Helper\Weapon.cpp" />
     <ClCompile Include="src\Ext\ObjectType\AttachEffect.cpp" />
     <ClCompile Include="src\Ext\ObjectType\AttachFire.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\JumpjetFacing.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\AntiBullet.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\AutoFireAreaWeapon.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\BaseNormal.cpp" />
@@ -82,7 +83,6 @@
     <ClCompile Include="src\Ext\TechnoType\Status\FireSuper.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\HealthText.cpp" />
-    <ClCompile Include="src\Ext\TechnoType\Status\JumpjetFacing.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\MissileHoming.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Paintball.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\SpawnManager.cpp" />
@@ -228,6 +228,8 @@
     <ClInclude Include="src\Ext\ObjectType\State\PaintballState.h" />
     <ClInclude Include="src\Ext\ObjectType\State\State.h" />
     <ClInclude Include="src\Ext\ObjectType\State\TransformData.h" />
+    <ClInclude Include="src\Ext\TechnoType\JumpjetFacing.h" />
+    <ClInclude Include="src\Ext\TechnoType\JumpjetFacingData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\AutoFireAreaWeaponData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\BaseNormalData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\BuildingRangeData.h" />
@@ -235,7 +237,6 @@
     <ClInclude Include="src\Ext\TechnoType\Status\DamageTextData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\DisguiseData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\HealthTextData.h" />
-    <ClInclude Include="src\Ext\TechnoType\Status\JumpjetFacingData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\MissileHomingData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\SelectWeaponData.h" />
     <ClInclude Include="src\Ext\TechnoType\Status\SpawnData.h" />

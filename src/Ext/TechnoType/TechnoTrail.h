@@ -16,7 +16,7 @@ public:
 
 	TECHNO_SCRIPT(TechnoTrail);
 
-	void SetupTrails();
+	virtual void Awake() override;
 
 	virtual void ExtChanged() override;
 
@@ -32,4 +32,6 @@ private:
 	bool _setupFlag = false;
 
 	std::vector<Trail> _trails{};
+
+	void SetupTrails();
 };

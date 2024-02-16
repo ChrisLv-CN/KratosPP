@@ -119,7 +119,13 @@ public:
 
 	Component* AddComponent(const std::string& name, int index = -1);
 
-	virtual Component* FindOrAllocate(const std::string& name);
+	Component* FindOrAllocate(const std::string& name);
+
+	template <typename TScript>
+	TScript* FindOrAttach()
+	{
+		return static_cast<TScript*>(FindOrAllocate(TScript::ScriptName));
+	}
 
 	// <summary>
 	// 将Component加入子列表中移除

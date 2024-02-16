@@ -1,12 +1,11 @@
-﻿#include "../TechnoStatus.h"
+﻿#include "JumpjetFacing.h"
 
 #include <JumpjetLocomotionClass.h>
 
-#include <Common/INI/INI.h>
-
 #include <Ext/Helper/FLH.h>
+#include <Ext/Helper/Scripts.h>
 
-JumpjetFacingData* TechnoStatus::GetJJFacingData()
+JumpjetFacingData* JumpjetFacing::GetJJFacingData()
 {
 	if (!_jjFacingData)
 	{
@@ -15,9 +14,28 @@ JumpjetFacingData* TechnoStatus::GetJJFacingData()
 	return _jjFacingData;
 }
 
-void TechnoStatus::OnUpdate_JJFacing()
+void JumpjetFacing::SetupJJFacing()
 {
-	if (!IsDeadOrInvisible(pTechno) && IsJumpjet() && GetJJFacingData()->Enable && pTechno->IsInAir())
+	_jjFacingData = nullptr;
+	if (!GetJJFacingData()->Enable && !IsJumpjet())
+	{
+		Disable();
+	}
+}
+
+void JumpjetFacing::Awake()
+{
+	SetupJJFacing();
+}
+
+void JumpjetFacing::ExtChanged()
+{
+	SetupJJFacing();
+}
+
+void JumpjetFacing::OnUpdate()
+{
+	if (!IsDeadOrInvisible(pTechno) && pTechno->IsInAir())
 	{
 		if (_JJNeedTurn)
 		{
@@ -70,21 +88,6 @@ void TechnoStatus::OnUpdate_JJFacing()
 					// Cancel
 					_JJNeedTurn = false;
 				}
-				/*
-				int facing = GetJJFacingData()->Facing;
-				int toIndex = Dir2FacingIndex(toDir, facing);
-				int selfIndex = Dir2FacingIndex(selfDir, facing);
-				if (selfIndex != toIndex)
-				{
-					// TurnTo(toDir);
-					_JJNeedTurn = true;
-					_JJTurnTo = toDir;
-				}
-				else
-				{
-					// Cancel
-					_JJNeedTurn = false;
-				}*/
 			}
 		}
 		else

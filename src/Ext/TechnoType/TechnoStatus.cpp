@@ -1,10 +1,12 @@
 ﻿#include "TechnoStatus.h"
-#include "TechnoTrail.h"
 
 #include <Ext/Common/FireSuperManager.h>
 #include <Ext/Common/PrintTextManager.h>
 
 #include <Ext/ObjectType/AttachEffect.h>
+
+#include "TechnoTrail.h"
+#include "JumpjetFacing.h"
 
 void TechnoStatus::ExtChanged()
 {
@@ -21,17 +23,16 @@ void TechnoStatus::ExtChanged()
 	_spawnData = nullptr;
 	_homingData = nullptr;
 
-	_jjFacingData = nullptr;
-
 	ResetBaseNormal();
-	// 通知其他脚本
-	ResetTrails();
+
+	// 重新附加其他的组件
+	InitExt();
 }
 
 void TechnoStatus::Awake()
 {
 	// 动态附加其他的组件
-	ResetTrails();
+	InitExt();
 }
 
 void TechnoStatus::Destroy()
@@ -39,14 +40,15 @@ void TechnoStatus::Destroy()
 	((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
 }
 
-void TechnoStatus::ResetTrails()
+void TechnoStatus::InitExt()
 {
 	if (!IsBuilding())
 	{
-		TechnoTrail* trail = _gameObject->FindOrAttach<TechnoTrail>();
-		if (trail)
+		// 初始化尾巴
+		FindOrAttach<TechnoTrail>();
+		if (IsJumpjet())
 		{
-			trail->SetupTrails();
+			FindOrAttach<JumpjetFacing>();
 		}
 	}
 }
@@ -127,7 +129,6 @@ void TechnoStatus::OnUpdate()
 			OnUpdate_CrawlingFLH();
 			OnUpdate_DeployToTransform();
 			OnUpdate_MissileHoming();
-			OnUpdate_JJFacing();
 		}
 		OnUpdate_Transform();
 

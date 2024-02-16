@@ -7,7 +7,7 @@
 class JumpjetFacingData : public INIConfig
 {
 public:
-	JumpjetFacingData()
+	JumpjetFacingData() : INIConfig()
 	{
 		Enable = true;
 	}

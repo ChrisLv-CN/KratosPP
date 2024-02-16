@@ -31,7 +31,6 @@
 #include "Status/CrawlingFLHData.h"
 #include "Status/DamageTextData.h"
 #include "Status/HealthTextData.h"
-#include "Status/JumpjetFacingData.h"
 #include "Status/MissileHomingData.h"
 #include "Status/SpawnData.h"
 
@@ -203,8 +202,13 @@ public:
 private:
 	AttachEffect* AEManager();
 
+	/**
+	 *@brief 从TechnoType中读取扩展的ini标签，并初始化相应的component
+	 *
+	 */
+	void InitExt();
+
 	void ResetBaseNormal();
-	void ResetTrails();
 
 	// 伤害数字
 	bool SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& damageTextType);
@@ -245,7 +249,6 @@ private:
 	void OnUpdate_CrawlingFLH();
 	void OnUpdate_DamageText();
 	void OnUpdate_GiftBox();
-	void OnUpdate_JJFacing();
 	void OnUpdate_MissileHoming();
 	void OnUpdate_Paintball();
 	void OnUpdate_Transform();
@@ -317,13 +320,6 @@ private:
 	MissileHomingData* _homingData = nullptr;
 	MissileHomingData* GetHomingData();
 	bool _initHomingFlag = false;
-
-	// JJFacing
-	JumpjetFacingData* _jjFacingData = nullptr;
-	JumpjetFacingData* GetJJFacingData();
-	bool _JJNeedTurn = false;
-	DirStruct _JJTurnTo{};
-	int _JJFacing = -1;
 
 	// 染色状态
 	float _deactivateDimEMP = 0.8f;
