@@ -15,7 +15,8 @@
 
 #include <Ext/Common/CommonStatus.h>
 #include <Ext/TechnoType/TechnoStatus.h>
-#include <Ext/TechnoType/Status/BuildingRangeData.h>
+
+#include <Ext/TechnoType/BuildingRangeData.h>
 
 #pragma region Crate buff
 

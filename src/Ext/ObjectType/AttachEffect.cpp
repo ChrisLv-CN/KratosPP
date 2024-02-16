@@ -13,7 +13,7 @@
 
 #include <Ext/EffectType/AttachEffectScript.h>
 #include <Ext/TechnoType/TechnoStatus.h>
-#include <Ext/TechnoType/Status/UploadAttachData.h>
+#include <Ext/TechnoType/UploadAttachData.h>
 #include <Ext/WeaponType/FeedbackAttachData.h>
 
 BulletStatus* AttachEffect::GetBulletStatus()

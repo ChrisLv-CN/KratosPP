@@ -13,7 +13,7 @@
 #include <Ext/Helper/Scripts.h>
 
 #include <Ext/TechnoType/TechnoStatus.h>
-#include <Ext/TechnoType/Status/DisguiseData.h>
+#include <Ext/TechnoType/DisguiseData.h>
 
 #pragma region Unit Deploy
 DEFINE_HOOK(0x6FF929, TechnoClass_Fire_FireOnce, 0x6)

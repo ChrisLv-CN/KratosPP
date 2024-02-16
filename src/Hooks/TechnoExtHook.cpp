@@ -23,7 +23,8 @@
 #include <Ext/ObjectType/State/AntiBulletData.h>
 #include <Ext/TechnoType/AutoFireAreaWeapon.h>
 #include <Ext/TechnoType/TechnoStatus.h>
-#include <Ext/TechnoType/Status/SelectWeaponData.h>
+
+#include <Ext/TechnoType/SelectWeaponData.h>
 
 // ----------------
 // Extension
