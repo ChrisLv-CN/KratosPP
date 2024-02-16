@@ -7,22 +7,30 @@
 
 #include <Common/Components/ScriptComponent.h>
 
-#include "CrawlingFLHData.h"
+#include "BaseNormalData.h"
 
 /// @brief 动态载入组件
-class CrawlingFLH : public TechnoScript
+class BaseNormal : public TechnoScript
 {
 public:
 
-	TECHNO_SCRIPT(CrawlingFLH);
+	TECHNO_SCRIPT(BaseNormal);
 
 	void Setup();
 
 	virtual void Awake() override;
 
+	virtual void Destroy() override;
+
 	virtual void ExtChanged() override;
 
+	virtual void OnPut(CoordStruct* pCoord, DirType dirType) override;
+
+	virtual void OnRemove() override;
+
 	virtual void OnUpdate() override;
+
+	virtual void OnReceiveDamageDestroy() override;
 
 #pragma region save/load
 	template <typename T>
@@ -39,13 +47,14 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
 		Component::Save(stream);
-		return const_cast<CrawlingFLH*>(this)->Serialize(stream);
+		return const_cast<BaseNormal*>(this)->Serialize(stream);
 	}
 #pragma endregion
 
 private:
-	// 卧倒FLH
-	CrawlingFLHData* _crawlingFLHData = nullptr;
-	CrawlingFLHData* GetCrawlingFLHData();
+	BaseNormalData* _baseNormalData = nullptr;
+	BaseNormalData* GetBaseNormalData();
+
+	bool AmIStand();
 
 };

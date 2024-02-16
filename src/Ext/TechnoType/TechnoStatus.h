@@ -26,7 +26,6 @@
 #include <Ext/ObjectType/State/PaintballState.h>
 #include <Ext/ObjectType/State/TransformData.h>
 
-#include "Status/BaseNormalData.h"
 #include "Status/DamageTextData.h"
 #include "Status/HealthTextData.h"
 #include "Status/SpawnData.h"
@@ -194,8 +193,6 @@ private:
 	 */
 	void InitExt();
 
-	void ResetBaseNormal();
-
 	// 伤害数字
 	bool SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& damageTextType);
 	void OrderDamageText(std::wstring text, CoordStruct location, DamageText*& data);
@@ -226,10 +223,7 @@ private:
 	void InitState_Paintball();
 	void InitState_Transform();
 
-	void OnPut_BaseNormarl(CoordStruct* pLocation, DirType dir);
-
 	void OnUpdate_AntiBullet();
-	void OnUpdate_BaseNormal();
 	void OnUpdate_DamageText();
 	void OnUpdate_GiftBox();
 	void OnUpdate_Paintball();
@@ -259,10 +253,6 @@ private:
 
 	CoordStruct _location{};
 	bool _isMoving = false;
-
-	// 建造节点
-	BaseNormalData* _baseNormalData = nullptr;
-	BaseNormalData* GetBaseNormalData();
 
 	// Buff
 	CrateBuffData* _crateBuffData = nullptr;

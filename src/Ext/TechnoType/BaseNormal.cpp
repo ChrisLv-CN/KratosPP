@@ -1,8 +1,10 @@
-﻿#include "../TechnoStatus.h"
+﻿#include "BaseNormal.h"
 
-#include <Ext/Common/CommonStatus.h>
+#include <Ext/Helper/Scripts.h>
 
-BaseNormalData* TechnoStatus::GetBaseNormalData()
+#include <Ext/TechnoType/TechnoStatus.h>
+
+BaseNormalData* BaseNormal::GetBaseNormalData()
 {
 	if (!_baseNormalData)
 	{
@@ -11,14 +13,46 @@ BaseNormalData* TechnoStatus::GetBaseNormalData()
 	return _baseNormalData;
 }
 
-void TechnoStatus::ResetBaseNormal()
+void BaseNormal::Setup()
 {
 	_baseNormalData = nullptr;
-	OnRemove_BaseNormarl();
-	OnPut_BaseNormarl(nullptr, DirType::North);
+	OnRemove();
+	if (!IsBuilding() && GetBaseNormalData()->Enable)
+	{
+		OnPut(nullptr, DirType::North);
+	}
+	else
+	{
+		Disable();
+	}
 }
 
-void TechnoStatus::OnPut_BaseNormarl(CoordStruct* pLocation, DirType dir)
+bool BaseNormal::AmIStand()
+{
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status))
+	{
+		return status->AmIStand();
+	}
+	return false;
+}
+
+void BaseNormal::Awake()
+{
+	Setup();
+}
+
+void BaseNormal::Destroy()
+{
+	OnRemove();
+}
+
+void BaseNormal::ExtChanged()
+{
+	Setup();
+}
+
+void BaseNormal::OnPut(CoordStruct* pCoord, DirType dir)
 {
 	if (!IsBuilding() && GetBaseNormalData()->BaseNormal)
 	{
@@ -33,16 +67,16 @@ void TechnoStatus::OnPut_BaseNormarl(CoordStruct* pLocation, DirType dir)
 	}
 }
 
-void TechnoStatus::OnUpdate_BaseNormal()
+void BaseNormal::OnUpdate()
 {
 	// 读档后重新将自己加入清单中
 	if (!_baseNormalData)
 	{
-		ResetBaseNormal();
+		Setup();
 	}
 }
 
-void TechnoStatus::OnRemove_BaseNormarl()
+void BaseNormal::OnRemove()
 {
 	auto it = TechnoExt::BaseStandArray.find(pTechno);
 	if (it != TechnoExt::BaseStandArray.end())
@@ -56,7 +90,8 @@ void TechnoStatus::OnRemove_BaseNormarl()
 	}
 }
 
-void TechnoStatus::OnReceiveDamageDestroy_BaseNormarl()
+void BaseNormal::OnReceiveDamageDestroy()
 {
-	OnRemove_BaseNormarl();
+	OnRemove();
 }
+

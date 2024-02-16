@@ -6,6 +6,7 @@
 #include <Ext/ObjectType/AttachEffect.h>
 
 #include "AutoFireAreaWeapon.h"
+#include "BaseNormal.h"
 #include "CrawlingFLH.h"
 #include "MissileHoming.h"
 #include "TechnoTrail.h"
@@ -21,8 +22,6 @@ void TechnoStatus::ExtChanged()
 	_transformData = nullptr;
 
 	_spawnData = nullptr;
-
-	ResetBaseNormal();
 
 	// 重新附加其他的组件
 	InitExt();
@@ -46,6 +45,7 @@ void TechnoStatus::InitExt()
 	{
 		// 初始化尾巴
 		FindOrAttach<TechnoTrail>();
+		FindOrAttach<BaseNormal>();
 		if (IsInfantry())
 		{
 			FindOrAttach<CrawlingFLH>();
@@ -77,7 +77,6 @@ void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 	{
 		_initStateFlag = true;
 		InitState();
-		OnPut_BaseNormarl(pLocation, dirType);
 	}
 }
 
@@ -128,7 +127,6 @@ void TechnoStatus::OnUpdate()
 		{
 			FootClass* pFoot = static_cast<FootClass*>(pTechno);
 			_isMoving = pFoot->GetCurrentSpeed() > 0 && pFoot->Locomotor.get()->Is_Moving();
-			OnUpdate_BaseNormal();
 			OnUpdate_DeployToTransform();
 		}
 		OnUpdate_Transform();
@@ -170,7 +168,6 @@ void TechnoStatus::OnTemporalUpdate(TemporalClass* pTemporal)
 
 void TechnoStatus::OnRemove()
 {
-	OnRemove_BaseNormarl();
 }
 
 void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
@@ -189,7 +186,6 @@ void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeCla
 
 void TechnoStatus::OnReceiveDamageDestroy()
 {
-	OnReceiveDamageDestroy_BaseNormarl();
 	OnReceiveDamageDestroy_Transform();
 
 	OnReceiveDamageDestroy_GiftBox();
