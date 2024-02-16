@@ -16,9 +16,9 @@
 #include <Common/INI/INIConfig.h>
 
 #include <Ext/Common/PrintTextData.h>
+#include <Ext/EffectType/Effect/CrateBuffData.h>
 #include <Ext/EffectType/Effect/StandData.h>
 #include <Ext/ObjectType/State/AntiBulletState.h>
-#include <Ext/ObjectType/State/CrateBuffData.h>
 #include <Ext/ObjectType/State/DestroyAnimData.h>
 #include <Ext/ObjectType/State/DestroySelfState.h>
 #include <Ext/ObjectType/State/FireSuperData.h>
@@ -35,6 +35,8 @@
 #include "Status/MissileHomingData.h"
 #include "Status/SpawnData.h"
 
+class AttachEffect;
+
 /// @brief base compoment, save the Techno status
 class TechnoStatus : public TechnoScript
 {
@@ -44,6 +46,8 @@ public:
 	virtual void Awake() override;
 
 	virtual void Destroy() override;
+
+	virtual void ExtChanged() override;
 
 	bool AmIStand();
 
@@ -108,6 +112,7 @@ public:
 	StandData StandData{};
 	TechnoClass* pMyMaster = nullptr;
 	bool MyMasterIsSpawned = false;
+	bool MyMasterIsAnim = false;
 	bool StandIsMoving = false;
 
 	DrivingState drivingState = DrivingState::Moving;
@@ -196,7 +201,7 @@ public:
 #pragma endregion
 
 private:
-	void OnTransform();
+	AttachEffect* AEManager();
 
 	void ResetBaseNormal();
 	void ResetTrails();

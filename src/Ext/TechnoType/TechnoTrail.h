@@ -13,10 +13,12 @@
 class TechnoTrail : public TechnoScript
 {
 public:
-	
+
 	TECHNO_SCRIPT(TechnoTrail);
 
 	void SetupTrails();
+
+	virtual void ExtChanged() override;
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
 

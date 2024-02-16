@@ -52,6 +52,7 @@ public:
 	virtual void OnStopCommand() {};
 
 	virtual void OnRocketExplosion() {};
+	virtual void OnTransform() {};
 };
 
 class IBulletScript : public IObjectScript

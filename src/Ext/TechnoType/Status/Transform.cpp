@@ -38,7 +38,8 @@ void TechnoStatus::OnUpdate_Transform()
 		if (pTechno->GetTechnoType() != pTargetType)
 		{
 			pTargetType = pTechno->GetTechnoType();
-			OnTransform();
+			// 通过GameObject发出通知
+			_gameObject->ExtChanged = true;
 		}
 	}
 }

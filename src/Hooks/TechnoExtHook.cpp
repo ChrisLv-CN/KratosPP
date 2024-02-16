@@ -19,6 +19,7 @@
 
 #include <Ext/Common/CommonStatus.h>
 #include <Ext/Common/ExpandAnimsManager.h>
+#include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/ObjectType/State/AntiBulletData.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/Status/SelectWeaponData.h>
@@ -661,16 +662,15 @@ DEFINE_HOOK(0x6FF28F, TechnoClass_Fire_ROFMultiplier, 0x6)
 	{
 		return 0x6FF2BE; // skip ROF
 	}
-	/* TODO AE
 	// 计算ROF
 	GET(WeaponTypeClass*, pWeapon, EBX);
-	if (pTechno.Ref.CurrentBurstIndex >= pWeapon.Ref.Burst && pTechno.TryGetAEManager(out AttachEffectScript aeManager))
+	AttachEffect* aem = nullptr;
+	if (pTechno->CurrentBurstIndex >= pWeapon->Burst && TryGetAEManager<TechnoExt>(pTechno, aem))
 	{
-		int rof = (int)R->EAX;
-		double rofMult = aeManager.CountAttachStatusMultiplier().ROFMultiplier;
-		// Logger.Log($"{Game.CurrentFrame} Techno [{pTechno.Ref.Type.Ref.Base.Base.ID}]{pTechno} fire done, weapon [{pWeapon.Ref.Base.ID}], burst {pTechno.Ref.CurrentBurstIndex}, ROF {rof}, ROFMult {rofMult}");
-		R->EAX = (uint)(rof * rofMult);
-	}*/
+		GET(int, rof, EAX);
+		double rofMult = aem->CountAttachStatusMultiplier().ROFMultiplier;
+		R->EAX(rof * rofMult);
+	}
 
 	return 0;
 }

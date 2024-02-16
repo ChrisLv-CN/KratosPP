@@ -12,6 +12,8 @@ using namespace Delegate;
 class GameObject : public Component
 {
 public:
+	bool ExtChanged = false;
+
 	GameObject() : Component()
 	{
 		this->Name = ComponentName(GameObject);
@@ -39,6 +41,18 @@ public:
 	TScript* FindOrAttach()
 	{
 		return static_cast<TScript*>(FindOrAllocate(TScript::ScriptName));
+	}
+
+	virtual void OnForeachEnd() override
+	{
+		if (ExtChanged)
+		{
+			ExtChanged = false;
+			for (Component* c : _children)
+			{
+				c->Foreach([](Component* cc) { cc->ExtChanged(); });
+			}
+		}
 	}
 
 };

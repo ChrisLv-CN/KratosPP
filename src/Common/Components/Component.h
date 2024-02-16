@@ -27,10 +27,16 @@ public:
 	virtual ~IComponent() {};
 
 	/// <summary>
+	/// ExtChanged is called when the ExtData has chaned like Techno's Type has changed.
+	/// GameObject call
+	/// </summary>
+	virtual void ExtChanged() {};
+
+	/// <summary>
 	/// Awake is called when an enabled instance is being created.
 	/// TechnoExt::ExtData() call
 	/// </summary>
-	virtual void Awake() { };
+	virtual void Awake() {};
 
 	virtual void OnUpdate() {};
 	virtual void OnUpdateEnd() {};
@@ -39,9 +45,14 @@ public:
 	/// <summary>
 	/// Destroy is called when enabled instance is delete.
 	/// </summary>
-	virtual void Destroy() { };
+	virtual void Destroy() {};
 
 	virtual void InvalidatePointer(void* ptr) {};
+
+	/// <summary>
+	/// ForeachEnd is called when Component::Foreach is end.
+	/// </summary>
+	virtual void OnForeachEnd() {};
 
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) = 0;
 	virtual bool Save(ExStreamWriter& stream) const = 0;
@@ -228,7 +239,9 @@ public:
 			// 每次读档之后，所有的Component实例都是重新创建的，不从存档中读取，只获取事件控制
 			.Process(this->_awaked)
 			.Process(this->_disable)
-			.Process(this->_active);
+			.Process(this->_active)
+
+			.Process(this->_break);
 		return stream.Success();
 	}
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override

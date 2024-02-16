@@ -2,6 +2,10 @@
 
 #include <Ext/Common/CommonStatus.h>
 
+#include <Ext/Helper/Scripts.h>
+
+#include <Ext/ObjectType/AttachEffect.h>
+
 CrateBuffData* TechnoStatus::GetCrateBuffData()
 {
 	if (!_crateBuffData)
@@ -28,19 +32,18 @@ void TechnoStatus::RecalculateStatus()
 		double firepowerMult = CrateBuff.FirepowerMultiplier;
 		double armorMult = CrateBuff.ArmorMultiplier;
 		double speedMult = CrateBuff.SpeedMultiplier;
-		double rofMult = CrateBuff.ROFMultiplier;
 		bool cloakable = CanICloakByDefault() || CrateBuff.Cloakable;
 		// 算上AE加成
-		/* TODO
-		AttachEffectScript ae = GameObject.GetComponent<AttachEffectScript>();
-		if (null != ae)
+		AttachEffect* ae = AEManager();
+		if (ae)
 		{
-			CrateBuffData aeMultiplier = ae.CountAttachStatusMultiplier();
+			CrateBuffData aeMultiplier = ae->CountAttachStatusMultiplier();
 			firepowerMult *= aeMultiplier.FirepowerMultiplier;
 			armorMult *= aeMultiplier.ArmorMultiplier;
 			cloakable |= aeMultiplier.Cloakable;
+
 			speedMult *= aeMultiplier.SpeedMultiplier;
-		}*/
+		}
 		// 赋予单位
 		pTechno->FirepowerMultiplier = firepowerMult;
 		pTechno->ArmorMultiplier = armorMult;

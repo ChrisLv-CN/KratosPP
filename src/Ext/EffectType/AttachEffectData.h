@@ -6,9 +6,11 @@
 #include <set>
 
 #include <Ext/ObjectType/FilterData.h>
+// TODO Effects
 #include "Effect/AnimationData.h"
 #include "Effect/MarkData.h"
 #include "Effect/StandData.h"
+#include "Effect/CrateBuffData.h"
 
 enum class CumulativeMode
 {
@@ -90,6 +92,7 @@ public:
 
 	// TODO Effects
 	AnimationData Animation{};
+	CrateBuffData CrateBuff{};
 	MarkData Mark{};
 	StandData Stand{};
 
@@ -119,6 +122,7 @@ public:
 
 			// TODO Read Effects
 			Animation.Read(reader);
+			CrateBuff.Read(reader);
 			Mark.Read(reader);
 			Stand.Read(reader);
 

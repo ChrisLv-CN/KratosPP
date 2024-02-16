@@ -13,6 +13,11 @@ void TechnoTrail::SetupTrails()
 	}
 }
 
+void TechnoTrail::ExtChanged()
+{
+	SetupTrails();
+}
+
 void TechnoTrail::OnPut(CoordStruct* pLocation, DirType dirType)
 {
 	if (_trails.empty())

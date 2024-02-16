@@ -235,8 +235,8 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 					}
 					// 同步编队
 					pGift->Group = GiftBoxState.Group;
-					// TODO同步箱子属性
-					// giftStatus.CrateBuff = this.CrateBuff.Clone();
+					// 同步箱子属性
+					giftStatus->CrateBuff = CrateBuff;
 				}
 
 				// 同步选中状态
@@ -311,7 +311,7 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 					{
 						Component* giftGO = giftAEM->GetParent();
 
-						AttachEffect* boxAEM = GetAEManager<TechnoExt>(pTechno);
+						AttachEffect* boxAEM = AEManager();
 						Component* boxGO = boxAEM->GetParent();
 
 						boxAEM->DetachFromParent(false);

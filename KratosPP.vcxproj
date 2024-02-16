@@ -54,6 +54,7 @@
     <ClCompile Include="src\Ext\EffectType\AttachEffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\EffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\Animation.cpp" />
+    <ClInclude Include="src\Ext\EffectType\Effect\CrateBuff.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\Mark.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\Stand.cpp" />
     <ClCompile Include="src\Ext\Helper\CastEx.cpp" />
@@ -190,6 +191,8 @@
     <ClInclude Include="src\Ext\EffectType\EffectScript.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\Animation.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\AnimationData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\CrateBuff.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\Mark.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\MarkData.h" />
@@ -215,7 +218,6 @@
     <ClInclude Include="src\Ext\ObjectType\State\AntiBulletData.h" />
     <ClInclude Include="src\Ext\ObjectType\State\AntiBulletState.h" />
     <ClInclude Include="src\Ext\ObjectType\State\BounceData.h" />
-    <ClInclude Include="src\Ext\ObjectType\State\CrateBuffData.h" />
     <ClInclude Include="src\Ext\ObjectType\State\DestroyAnimData.h" />
     <ClInclude Include="src\Ext\ObjectType\State\DestroySelfData.h" />
     <ClInclude Include="src\Ext\ObjectType\State\DestroySelfState.h" />

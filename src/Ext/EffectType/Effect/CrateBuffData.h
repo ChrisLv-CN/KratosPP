@@ -17,7 +17,7 @@ public:
 	bool Cloakable = false;
 	bool ForceDecloak = false;
 
-	CrateBuffData()
+	CrateBuffData() : EffectData()
 	{
 		AffectWho = AffectWho::ALL;
 	}
@@ -41,14 +41,20 @@ public:
 
 	virtual void Read(INIBufferReader* reader) override
 	{
-		EffectData::Read(reader, TITLE);
+		EffectData::Read(reader);
+		Read(reader, "Status.");
+	}
 
-		FirepowerMultiplier = reader->Get(TITLE + "FirepowerMultiplier", FirepowerMultiplier);
-		ArmorMultiplier = reader->Get(TITLE + "ArmorMultiplier", ArmorMultiplier);
-		SpeedMultiplier = reader->Get(TITLE + "SpeedMultiplier", SpeedMultiplier);
-		ROFMultiplier = reader->Get(TITLE + "ROFMultiplier", ROFMultiplier);
-		Cloakable = reader->Get(TITLE + "Cloakable", Cloakable);
-		ForceDecloak = reader->Get(TITLE + "ForceDecloak", ForceDecloak);
+	virtual void Read(INIBufferReader* reader, std::string title) override
+	{
+		EffectData::Read(reader, title);
+
+		FirepowerMultiplier = reader->Get(title + "FirepowerMultiplier", FirepowerMultiplier);
+		ArmorMultiplier = reader->Get(title + "ArmorMultiplier", ArmorMultiplier);
+		SpeedMultiplier = reader->Get(title + "SpeedMultiplier", SpeedMultiplier);
+		ROFMultiplier = reader->Get(title + "ROFMultiplier", ROFMultiplier);
+		Cloakable = reader->Get(title + "Cloakable", Cloakable);
+		ForceDecloak = reader->Get(title + "ForceDecloak", ForceDecloak);
 
 		Enable = FirepowerMultiplier != 1.0 || ArmorMultiplier != 1.0 || SpeedMultiplier != 1.0 || ROFMultiplier != 1.0 || Cloakable || ForceDecloak;
 	}
@@ -78,6 +84,5 @@ public:
 		return const_cast<CrateBuffData*>(this)->Serialize(stream);
 	}
 #pragma endregion
-private:
-	inline static std::string TITLE = "Status.";
+
 };

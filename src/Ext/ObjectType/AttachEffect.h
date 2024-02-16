@@ -11,6 +11,8 @@
 
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
+#include <Ext/BulletType/BulletStatus.h>
+#include <Ext/TechnoType/TechnoStatus.h>
 
 #include <Ext/Helper/FLH.h>
 
@@ -52,6 +54,13 @@ public:
 
 	void GetMarks(std::vector<std::string>& marks);
 	void GetAENames(std::vector<std::string>& names);
+
+	/**
+	 *@brief 统计所有的AEBuff
+	 *
+	 * @return CrateBuffData
+	 */
+	CrateBuffData CountAttachStatusMultiplier();
 
 	/**
 	 *@brief 重设车厢间距
@@ -176,6 +185,9 @@ public:
 	}
 #pragma endregion
 private:
+	BulletStatus* GetBulletStatus();
+	TechnoStatus* GetTechnoStatus();
+
 	/**
 	 *@brief 赋予由乘客带来的AE
 	 *

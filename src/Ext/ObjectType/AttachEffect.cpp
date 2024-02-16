@@ -12,8 +12,29 @@
 #include <Ext/Common/PrintTextManager.h>
 
 #include <Ext/EffectType/AttachEffectScript.h>
+#include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/Status/UploadAttachData.h>
 #include <Ext/WeaponType/FeedbackAttachData.h>
+
+BulletStatus* AttachEffect::GetBulletStatus()
+{
+	BulletStatus* status = nullptr;
+	if (pBullet && _parent)
+	{
+		status = _parent->GetComponent<BulletStatus>();
+	}
+	return status;
+}
+
+TechnoStatus* AttachEffect::GetTechnoStatus()
+{
+	TechnoStatus* status = nullptr;
+	if (pTechno && _parent)
+	{
+		status = _parent->GetComponent<TechnoStatus>();
+	}
+	return status;
+}
 
 bool AttachEffect::OwnerIsDead()
 {
@@ -72,6 +93,40 @@ void AttachEffect::GetAENames(std::vector<std::string>& names)
 			names.push_back(ae->AEData.Name);
 		}
 		});
+}
+
+CrateBuffData AttachEffect::CountAttachStatusMultiplier()
+{
+	CrateBuffData multiplier{};
+	// 替身是虚拟炮塔，buff加成取JOJO身上的
+	if (pTechno)
+	{
+		TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno);
+		if (status->AmIStand() && status->StandData.IsVirtualTurret
+			&& !status->MyMasterIsAnim && !IsDead(status->pMyMaster)
+			)
+		{
+			AttachEffect* aem = nullptr;
+			if (TryGetAEManager<TechnoExt>(status->pMyMaster, aem))
+			{
+				return aem->CountAttachStatusMultiplier();
+			}
+		}
+	}
+	// 统计AE加成
+	ForeachChild([&multiplier](Component* c) {
+		auto temp = dynamic_cast<AttachEffectScript*>(c);
+		if (temp && temp->IsActive() && temp->AEData.CrateBuff.Enable)
+		{
+			multiplier.FirepowerMultiplier *= temp->AEData.CrateBuff.FirepowerMultiplier;
+			multiplier.ArmorMultiplier *= temp->AEData.CrateBuff.ArmorMultiplier;
+			multiplier.SpeedMultiplier *= temp->AEData.CrateBuff.SpeedMultiplier;
+			multiplier.ROFMultiplier *= temp->AEData.CrateBuff.ROFMultiplier;
+			multiplier.Cloakable |= temp->AEData.CrateBuff.Cloakable;
+			multiplier.ForceDecloak |= temp->AEData.CrateBuff.ForceDecloak;
+		}
+		});
+	return multiplier;
 }
 
 void AttachEffect::SetLocationSpace(int cabinLength)

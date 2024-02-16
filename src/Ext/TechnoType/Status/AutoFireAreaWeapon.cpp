@@ -4,6 +4,8 @@
 
 #include <Ext/Helper/Scripts.h>
 
+#include <Ext/ObjectType/AttachEffect.h>
+
 AutoFireAreaWeaponData* TechnoStatus::GetAutoAreaData()
 {
 	if (!_autoAreaData)
@@ -51,11 +53,11 @@ void TechnoStatus::OnUpdate_AutoArea()
 				}
 			}
 			int rof = pWeapon->ROF;
-			/* TODO AE
-			if (pTechno.TryGetAEManager(out AttachEffectScript aeManager))
+			AttachEffect* aeManager = nullptr;
+			if (TryGetAEManager<TechnoExt>(pTechno, aeManager))
 			{
-				rof = (int)(rof * aeManager.CountAttachStatusMultiplier().ROFMultiplier);
-			}*/
+				rof = (int)(rof * aeManager->CountAttachStatusMultiplier().ROFMultiplier);
+			}
 			_areaDelayTimer.Start(rof);
 			AbstractClass* pTarget = pTechno;
 			if (data->TargetToGround)

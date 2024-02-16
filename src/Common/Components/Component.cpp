@@ -370,6 +370,8 @@ void Component::Foreach(std::function<void(Component*)> action)
 	int level = 0;
 	int maxLevel = -1;
 	ForeachLevel(action, level, maxLevel);
+
+	OnForeachEnd();
 }
 
 void Component::ForeachLevel(std::function<void(Component*)> action, int& level, int& maxLevel)
@@ -422,4 +424,5 @@ bool Component::IsBreak()
 	}
 	return _break;
 }
+
 #pragma endregion

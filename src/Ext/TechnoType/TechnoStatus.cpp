@@ -4,6 +4,30 @@
 #include <Ext/Common/FireSuperManager.h>
 #include <Ext/Common/PrintTextManager.h>
 
+#include <Ext/ObjectType/AttachEffect.h>
+
+void TechnoStatus::ExtChanged()
+{
+	_absType = AbstractType::None;
+	_locoType = LocoType::None;
+
+	_autoAreaData = nullptr;
+
+	_destroyAnimData = nullptr;
+
+	_crawlingFLHData = nullptr;
+	_transformData = nullptr;
+
+	_spawnData = nullptr;
+	_homingData = nullptr;
+
+	_jjFacingData = nullptr;
+
+	ResetBaseNormal();
+	// 通知其他脚本
+	ResetTrails();
+}
+
 void TechnoStatus::Awake()
 {
 	// 动态附加其他的组件
@@ -27,31 +51,14 @@ void TechnoStatus::ResetTrails()
 	}
 }
 
-void TechnoStatus::OnTransform()
+AttachEffect* TechnoStatus::AEManager()
 {
-	_absType = AbstractType::None;
-	_locoType = LocoType::None;
-
-	_autoAreaData = nullptr;
-
-	_destroyAnimData = nullptr;
-
-	_crawlingFLHData = nullptr;
-	_transformData = nullptr;
-
-	_spawnData = nullptr;
-	_homingData = nullptr;
-
-	_jjFacingData = nullptr;
-
-	ResetBaseNormal();
-	// 通知其他脚本
-	ResetTrails();
-}
-
-bool TechnoStatus::AmIStand()
-{
-	return false;
+	AttachEffect* aeManager = nullptr;
+	if (_parent)
+	{
+		aeManager = _parent->GetComponent<AttachEffect>();
+	}
+	return aeManager;
 }
 
 void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)

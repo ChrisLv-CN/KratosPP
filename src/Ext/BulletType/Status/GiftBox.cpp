@@ -7,6 +7,7 @@
 #include <Ext/Helper/Gift.h>
 #include <Ext/Helper/Scripts.h>
 
+#include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 
 void BulletStatus::InitState_GiftBox()
@@ -166,21 +167,15 @@ void BulletStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 					giftStatus->DisableSelectVoice = false;
 				}
 
-				// 继承AE管理器
-				/* TODO AE
-				AttachEffectScript giftAEM = null;
 				// 附加AE
-				if (null != data.AttachEffects)
+				if (!data.AttachEffects.empty())
 				{
-					if (null == giftAEM)
+					AttachEffect* giftAEM = GetAEManager<TechnoExt>(pGift);
+					if (giftAEM)
 					{
-						giftAEM = pGift.GetAEManegr();
+						giftAEM->Attach(data.AttachEffects, data.AttachChances);
 					}
-					if (null != giftAEM)
-					{
-						giftAEM.Attach(data.AttachEffects, data.AttachChances);
-					}
-				}*/
+				}
 
 				// 强制任务
 				if (data.ForceMission != Mission::None && data.ForceMission != Mission::Move)
