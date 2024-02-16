@@ -1,18 +1,11 @@
-﻿#include "../TechnoStatus.h"
+﻿#include "HealthText.h"
 
-#include <TacticalClass.h>
+#include <Ext/Helper/Scripts.h>
+#include <Ext/Helper/Status.h>
 
 #include <Ext/Common/PrintTextManager.h>
 
-void TechnoStatus::DrawHealthBar(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding)
-{
-	if (!GetHealthTextData().Hidden)
-	{
-		PrintHealthText(barLength, pPos, pBound, isBuilding);
-	}
-}
-
-HealthTextData TechnoStatus::GetHealthTextData()
+HealthTextData HealthText::GetHealthTextData()
 {
 	if (!_healthTextData.IsRead)
 	{
@@ -45,7 +38,7 @@ HealthTextData TechnoStatus::GetHealthTextData()
 	return _healthTextData;
 }
 
-void TechnoStatus::PrintHealthText(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding)
+void HealthText::PrintHealthText(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding)
 {
 	bool isSelected = pTechno->IsSelected;
 	// 根据血量状态获取设置
@@ -177,7 +170,7 @@ void TechnoStatus::PrintHealthText(int barLength, Point2D* pPos, RectangleStruct
 	}
 }
 
-void TechnoStatus::OffsetPosAlign(Point2D& pos, int textWidth, int barWidth, PrintTextAlign align, bool isBuilding, bool useSHP)
+void HealthText::OffsetPosAlign(Point2D& pos, int textWidth, int barWidth, PrintTextAlign align, bool isBuilding, bool useSHP)
 {
 	int offset = barWidth - textWidth;
 	switch (align)
@@ -202,3 +195,21 @@ void TechnoStatus::OffsetPosAlign(Point2D& pos, int textWidth, int barWidth, Pri
 		break;
 	}
 }
+
+void HealthText::Awake()
+{
+	if (GetHealthTextData().Hidden)
+	{
+		Disable();
+	}
+}
+
+void HealthText::DrawHealthBar(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding)
+{
+	if (!GetHealthTextData().Hidden)
+	{
+		PrintHealthText(barLength, pPos, pBound, isBuilding);
+	}
+}
+
+

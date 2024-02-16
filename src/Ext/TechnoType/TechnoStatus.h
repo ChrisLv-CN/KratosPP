@@ -26,7 +26,6 @@
 #include <Ext/ObjectType/State/PaintballState.h>
 #include <Ext/ObjectType/State/TransformData.h>
 
-#include "Status/HealthTextData.h"
 #include "Status/SpawnData.h"
 
 class AttachEffect;
@@ -83,8 +82,6 @@ public:
 	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
 
 	virtual void OnReceiveDamageDestroy() override;
-
-	virtual void DrawHealthBar(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding) override;
 
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
@@ -190,11 +187,6 @@ private:
 	 */
 	void InitExt();
 
-	// 血量数字
-	HealthTextData GetHealthTextData();
-	void PrintHealthText(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding);
-	void OffsetPosAlign(Point2D& pos, int textWidth, int barWidth, PrintTextAlign align, bool isBuilding, bool useSHP);
-
 	// 礼物盒
 	bool IsOnMark_GiftBox();
 	void ReleaseGift(std::vector<std::string> gifts, GiftBoxData data);
@@ -251,9 +243,6 @@ private:
 	DestroyAnimData* _destroyAnimData = nullptr;
 	DestroyAnimData* GetDestroyAnimData();
 	HouseClass* pKillerHouse = nullptr;
-
-	// 血条数字
-	HealthTextData _healthTextData{}; // 个体设置
 
 	// 部署变形
 	DeployToTransformData* _transformData = nullptr;

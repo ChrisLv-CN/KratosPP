@@ -9,6 +9,7 @@
 #include "BaseNormal.h"
 #include "CrawlingFLH.h"
 #include "DamageText.h"
+#include "HealthText.h"
 #include "MissileHoming.h"
 #include "TechnoTrail.h"
 #include "JumpjetFacing.h"
@@ -43,6 +44,7 @@ void TechnoStatus::InitExt()
 {
 	FindOrAttach<AutoFireAreaWeapon>();
 	FindOrAttach<DamageText>();
+	FindOrAttach<HealthText>();
 	if (!IsBuilding())
 	{
 		// 初始化尾巴
