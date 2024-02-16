@@ -27,7 +27,6 @@
 #include <Ext/ObjectType/State/TransformData.h>
 
 #include "Status/BaseNormalData.h"
-#include "Status/CrawlingFLHData.h"
 #include "Status/DamageTextData.h"
 #include "Status/HealthTextData.h"
 #include "Status/SpawnData.h"
@@ -231,7 +230,6 @@ private:
 
 	void OnUpdate_AntiBullet();
 	void OnUpdate_BaseNormal();
-	void OnUpdate_CrawlingFLH();
 	void OnUpdate_DamageText();
 	void OnUpdate_GiftBox();
 	void OnUpdate_Paintball();
@@ -282,10 +280,6 @@ private:
 
 	// 血条数字
 	HealthTextData _healthTextData{}; // 个体设置
-
-	// 卧倒FLH
-	CrawlingFLHData* _crawlingFLHData = nullptr;
-	CrawlingFLHData* GetCrawlingFLHData();
 
 	// 部署变形
 	DeployToTransformData* _transformData = nullptr;

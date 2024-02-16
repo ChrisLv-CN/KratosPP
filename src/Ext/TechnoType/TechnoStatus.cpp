@@ -6,6 +6,7 @@
 #include <Ext/ObjectType/AttachEffect.h>
 
 #include "AutoFireAreaWeapon.h"
+#include "CrawlingFLH.h"
 #include "MissileHoming.h"
 #include "TechnoTrail.h"
 #include "JumpjetFacing.h"
@@ -17,7 +18,6 @@ void TechnoStatus::ExtChanged()
 
 	_destroyAnimData = nullptr;
 
-	_crawlingFLHData = nullptr;
 	_transformData = nullptr;
 
 	_spawnData = nullptr;
@@ -46,6 +46,10 @@ void TechnoStatus::InitExt()
 	{
 		// 初始化尾巴
 		FindOrAttach<TechnoTrail>();
+		if (IsInfantry())
+		{
+			FindOrAttach<CrawlingFLH>();
+		}
 		if (IsJumpjet())
 		{
 			FindOrAttach<JumpjetFacing>();
@@ -125,7 +129,6 @@ void TechnoStatus::OnUpdate()
 			FootClass* pFoot = static_cast<FootClass*>(pTechno);
 			_isMoving = pFoot->GetCurrentSpeed() > 0 && pFoot->Locomotor.get()->Is_Moving();
 			OnUpdate_BaseNormal();
-			OnUpdate_CrawlingFLH();
 			OnUpdate_DeployToTransform();
 		}
 		OnUpdate_Transform();
