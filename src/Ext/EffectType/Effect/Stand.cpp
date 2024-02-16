@@ -110,6 +110,7 @@ void Stand::ExplodesOrDisappear(bool peaceful)
 		}
 	}
 	pStand = nullptr;
+	Deactivate();
 }
 
 void Stand::UpdateStateBullet()
@@ -468,7 +469,10 @@ void Stand::UpdateLocation(LocationMark locationMark)
 void Stand::SetLocation(CoordStruct location)
 {
 	pStand->SetLocation(location);
-	if (!Data.IsTrain && Data.SameMoving && Data.StickOnFloor && !pStand->GetTechnoType()->JumpJet && pTechno->GetHeight() <= 0)
+	if (!Data.IsTrain && Data.SameMoving && Data.StickOnFloor
+		&& !pStand->GetTechnoType()->JumpJet
+		&& pTechno->GetHeight() <= 0
+	)
 	{
 		pStand->SetHeight(0);
 	}
@@ -532,13 +536,23 @@ void Stand::ForceFacing(DirStruct dir)
 	}
 }
 
+void Stand::OnTechnoDelete(EventSystem* sender, Event e, void* args)
+{
+	if (args == pStand)
+	{
+		pStand = nullptr;
+	}
+}
+
 void Stand::Start()
 {
+	EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &Stand::OnTechnoDelete);
 	CreateAndPutStand();
 }
 
 void Stand::End(CoordStruct location)
 {
+	EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &Stand::OnTechnoDelete);
 	if (pStand)
 	{
 		ExplodesOrDisappear(false);

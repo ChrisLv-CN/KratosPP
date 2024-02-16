@@ -5,6 +5,7 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 
+#include "AutoFireAreaWeapon.h"
 #include "MissileHoming.h"
 #include "TechnoTrail.h"
 #include "JumpjetFacing.h"
@@ -13,8 +14,6 @@ void TechnoStatus::ExtChanged()
 {
 	_absType = AbstractType::None;
 	_locoType = LocoType::None;
-
-	_autoAreaData = nullptr;
 
 	_destroyAnimData = nullptr;
 
@@ -42,6 +41,7 @@ void TechnoStatus::Destroy()
 
 void TechnoStatus::InitExt()
 {
+	FindOrAttach<AutoFireAreaWeapon>();
 	if (!IsBuilding())
 	{
 		// 初始化尾巴
@@ -73,7 +73,6 @@ void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
 	{
 		_initStateFlag = true;
 		InitState();
-		OnPut_AutoArea(pLocation, dirType);
 		OnPut_BaseNormarl(pLocation, dirType);
 	}
 }
@@ -131,7 +130,6 @@ void TechnoStatus::OnUpdate()
 		}
 		OnUpdate_Transform();
 
-		OnUpdate_AutoArea();
 		OnUpdate_AntiBullet();
 		OnUpdate_DamageText();
 		OnUpdate_GiftBox();

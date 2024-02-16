@@ -26,7 +26,6 @@
 #include <Ext/ObjectType/State/PaintballState.h>
 #include <Ext/ObjectType/State/TransformData.h>
 
-#include "Status/AutoFireAreaWeaponData.h"
 #include "Status/BaseNormalData.h"
 #include "Status/CrawlingFLHData.h"
 #include "Status/DamageTextData.h"
@@ -120,9 +119,6 @@ public:
 	bool DisableSelectVoice = false;
 
 	bool Freezing = false;
-
-	// 光环武器
-	bool SkipROF = false;
 
 	// 虚单位
 	bool VirtualUnit = false;
@@ -231,11 +227,9 @@ private:
 	void InitState_Paintball();
 	void InitState_Transform();
 
-	void OnPut_AutoArea(CoordStruct* pLocation, DirType dir);
 	void OnPut_BaseNormarl(CoordStruct* pLocation, DirType dir);
 
 	void OnUpdate_AntiBullet();
-	void OnUpdate_AutoArea();
 	void OnUpdate_BaseNormal();
 	void OnUpdate_CrawlingFLH();
 	void OnUpdate_DamageText();
@@ -288,12 +282,6 @@ private:
 
 	// 血条数字
 	HealthTextData _healthTextData{}; // 个体设置
-
-	// 光环武器
-	AutoFireAreaWeaponData* _autoAreaData = nullptr;
-	AutoFireAreaWeaponData* GetAutoAreaData();
-	CDTimerClass _areaInitDelayTimer{};
-	CDTimerClass _areaDelayTimer{};
 
 	// 卧倒FLH
 	CrawlingFLHData* _crawlingFLHData = nullptr;

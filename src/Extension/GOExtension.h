@@ -66,20 +66,6 @@ public:
 				{ c->EnsureDestroy(); });
 		}
 
-		virtual void InvalidatePointer(void* ptr, bool bRemoved) override
-		{
-			if (ptr == this->OwnerObject())
-			{
-#ifdef DEBUG_COMPONENT
-				Debug::Log("[%s]%s [%s]%s Owner is Release, GameObject [%s]%s.\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
-#endif // DEBUG
-				_ownerIsRelease = true;
-				_status = nullptr;
-			}
-			m_GameObject.Foreach([&ptr](Component* c)
-				{ c->InvalidatePointer(ptr); });
-		}
-
 #pragma region Save/Load
 		template <typename T>
 		void Serialize(T& stream)
@@ -134,11 +120,10 @@ public:
 			return m_GameObject.GetComponentInChildren<TScript>();
 		}
 
-
 		template <typename TStatus>
 		TStatus* GetExtStatus()
 		{
-			if (_status == nullptr && !_ownerIsRelease)
+			if (_status == nullptr)
 			{
 				_status = m_GameObject.GetComponentInChildren<TStatus>();
 			}
@@ -157,8 +142,6 @@ public:
 
 		// Status Component
 		Component* _status = nullptr;
-
-		bool _ownerIsRelease = false;
 
 		//----------------------
 		// Scripts

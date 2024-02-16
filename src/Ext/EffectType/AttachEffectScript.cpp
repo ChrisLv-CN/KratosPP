@@ -184,10 +184,13 @@ bool AttachEffectScript::IsAlive()
 		{
 			bool hasDead = false;
 			ForeachChild([&hasDead](Component* c) {
-				hasDead = !c->IsActive();
-				if (hasDead)
+				if (auto e = dynamic_cast<EffectScript*>(c))
 				{
-					c->Break();
+					hasDead = !e->IsActive() || !e->IsAlive();
+					if (hasDead)
+					{
+						c->Break();
+					}
 				}
 				});
 			if (hasDead)

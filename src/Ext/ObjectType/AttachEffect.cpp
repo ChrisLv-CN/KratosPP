@@ -833,20 +833,12 @@ void AttachEffect::ClearLocationMarks()
 	_totalMileage = 0;
 }
 
-void AttachEffect::Awake()
-{
-	EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
-}
-
-void AttachEffect::Destroy()
-{
-	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
-	((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
-}
-
-
 void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 {
+	if (!pObject)
+	{
+		return;
+	}
 	CoordStruct location = _location;
 	if (args)
 	{
@@ -934,8 +926,8 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 						CoordStruct animOffset = this->StackOffset(aeData, offsetData, animMarks, animGroupMarks, animGroupFirstMarks);
 						ae->UpdateAnimOffset(animOffset);
 					}
+					ae->OnGScreenRender(location);
 				}
-				ae->OnGScreenRender(location);
 			}
 			});
 	}

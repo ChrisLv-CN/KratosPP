@@ -107,7 +107,8 @@ public:
 		}
 	}
 
-	virtual void InvalidatePointer(void* ptr, bool bRemoved) = 0;
+	virtual void InvalidatePointer(void* ptr) {};
+	virtual void Detach(void* ptr, bool all) {};
 
 	virtual inline void SaveToStream(ExStreamWriter& Stm)
 	{
@@ -300,26 +301,42 @@ public:
 
 	virtual ~Container() = default;
 
-	void PointerGotInvalid(void* ptr, bool bRemoved)
+	void PointerGotInvalid(void* ptr)
+	{
+		if (!this->InvalidateExtDataIgnorable(ptr))
+			this->InvalidateExtDataPointer(ptr);
+	}
+
+	void ObjectWantDetach(void* ptr, bool all)
 	{
 		//this->InvalidatePointer(ptr, bRemoved);
 
-		if (!this->InvalidateExtDataIgnorable(ptr))
-			this->InvalidateExtDataPointer(ptr, bRemoved);
+		if (!this->DetachExtDataIgnorable(ptr))
+			this->DetachExtDataPointer(ptr, all);
 	}
 
 protected:
-	//virtual void InvalidatePointer(void* ptr, bool bRemoved) { }
 
 	virtual bool InvalidateExtDataIgnorable(void* const ptr) const
 	{
 		return true;
 	}
 
-	void InvalidateExtDataPointer(void* const ptr, bool bRemoved) const
+	void InvalidateExtDataPointer(void* const ptr) const
 	{
 		for (const auto& i : this->Items)
-			i.second->InvalidatePointer(ptr, bRemoved);
+			i.second->InvalidatePointer(ptr);
+	}
+
+	virtual bool DetachExtDataIgnorable(void* const ptr) const
+	{
+		return true;
+	}
+
+	void DetachExtDataPointer(void* const ptr, bool all) const
+	{
+		for (const auto& i : this->Items)
+			i.second->Detach(ptr, all);
 	}
 
 private:

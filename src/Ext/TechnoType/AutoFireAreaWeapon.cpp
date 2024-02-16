@@ -1,4 +1,4 @@
-﻿#include "../TechnoStatus.h"
+﻿#include "AutoFireAreaWeapon.h"
 
 #include <Extension/WeaponTypeExt.h>
 
@@ -6,7 +6,7 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 
-AutoFireAreaWeaponData* TechnoStatus::GetAutoAreaData()
+AutoFireAreaWeaponData* AutoFireAreaWeapon::GetAutoAreaData()
 {
 	if (!_autoAreaData)
 	{
@@ -15,7 +15,26 @@ AutoFireAreaWeaponData* TechnoStatus::GetAutoAreaData()
 	return _autoAreaData;
 }
 
-void TechnoStatus::OnPut_AutoArea(CoordStruct* pLocation, DirType dir)
+void AutoFireAreaWeapon::Setup()
+{
+	_autoAreaData = nullptr;
+	if (!GetAutoAreaData()->Enable)
+	{
+		Disable();
+	}
+}
+
+void AutoFireAreaWeapon::Awake()
+{
+	Setup();
+}
+
+void AutoFireAreaWeapon::ExtChanged()
+{
+	Setup();
+}
+
+void AutoFireAreaWeapon::OnPut(CoordStruct* pLocation, DirType dir)
 {
 	AutoFireAreaWeaponData* data = GetAutoAreaData();
 	if (data->Enable)
@@ -24,7 +43,7 @@ void TechnoStatus::OnPut_AutoArea(CoordStruct* pLocation, DirType dir)
 	}
 }
 
-void TechnoStatus::OnUpdate_AutoArea()
+void AutoFireAreaWeapon::OnUpdate()
 {
 	AutoFireAreaWeaponData* data = GetAutoAreaData();
 	if (data->Enable && _areaInitDelayTimer.Expired() && _areaDelayTimer.Expired())

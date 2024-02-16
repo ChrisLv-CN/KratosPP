@@ -38,9 +38,6 @@ public:
 	bool IsRocket();
 	bool IsBomb();
 
-	virtual void Awake() override;
-	virtual void Destroy() override;
-
 	void TakeDamage(int damage = 0, bool eliminate = true, bool harmless = false, bool checkInterceptable = false);
 
 	void TakeDamage(BulletDamage damageData, bool checkInterceptable = false);
@@ -56,6 +53,11 @@ public:
 	void ResetArcingVelocity(float speedMultiple = 1.0f, bool force = false);
 
 	void DrawVXL_Paintball(REGISTERS* R);
+
+	void OnTechnoDelete(EventSystem* sender, Event e, void* args);
+
+	virtual void Awake() override;
+	virtual void Destroy() override;
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dir) override;
 
@@ -87,11 +89,9 @@ public:
 	bool SpeedChanged = false; // 改变抛射体的速度
 	bool LocationLocked = false; // 锁定抛射体的位置
 
-	virtual void InvalidatePointer(void* ptr) override
+	virtual void OwnerIsRelease(void* ptr) override
 	{
-		AnnounceInvalidPointer(this->pSource, ptr);
-		AnnounceInvalidPointer(this->pSourceHouse, ptr);
-		AnnounceInvalidPointer(this->pFakeTarget, ptr);
+		pSource = nullptr;
 	};
 
 #pragma region Save/Load
@@ -137,6 +137,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
+		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &BulletStatus::OnTechnoDelete);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

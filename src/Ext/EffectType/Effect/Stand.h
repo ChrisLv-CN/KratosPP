@@ -27,6 +27,8 @@ public:
 
 	void UpdateLocation(LocationMark LocationMark);
 
+	void OnTechnoDelete(EventSystem* sender, Event e, void* args);
+
 	virtual void Start() override;
 
 	virtual void End(CoordStruct location) override;
@@ -57,6 +59,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
+		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &Stand::OnTechnoDelete);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

@@ -47,7 +47,10 @@ public:
 	/// </summary>
 	virtual void Destroy() {};
 
-	virtual void InvalidatePointer(void* ptr) {};
+	/// <summary>
+	/// OwnerIsRelease is called when TBase pointer is delete.
+	/// </summary>
+	virtual void OwnerIsRelease(void* ptr) {};
 
 	/// <summary>
 	/// ForeachEnd is called when Component::Foreach is end.

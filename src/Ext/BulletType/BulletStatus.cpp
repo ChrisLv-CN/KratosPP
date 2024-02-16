@@ -37,8 +37,22 @@ bool BulletStatus::IsBomb()
 	return GetBulletType() == BulletType::BOMB;
 }
 
+void BulletStatus::OnTechnoDelete(EventSystem* sender, Event e, void* args)
+{
+	if (args == pSource)
+	{
+		pSource = nullptr;
+	}
+	if (args == pFakeTarget)
+	{
+		pFakeTarget = nullptr;
+	}
+}
+
 void BulletStatus::Awake()
 {
+	EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &BulletStatus::OnTechnoDelete);
+
 	pSource = pBullet->Owner;
 	if (pSource)
 	{
@@ -88,6 +102,8 @@ void BulletStatus::Awake()
 
 void BulletStatus::Destroy()
 {
+	EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &BulletStatus::OnTechnoDelete);
+
 	auto it = std::find(BulletExt::TargetAircraftBullets.begin(), BulletExt::TargetAircraftBullets.end(), pBullet);
 	if (it != BulletExt::TargetAircraftBullets.end())
 	{

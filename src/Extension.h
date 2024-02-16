@@ -12,4 +12,5 @@
 
 
 void ExtTypeRegistryClear(EventSystem* sender, Event e, void* args);
+void DetachAll(EventSystem* sender, Event e, void* args);
 void InvalidatePointer(EventSystem* sender, Event e, void* args);

@@ -21,6 +21,7 @@
 #include <Ext/Common/ExpandAnimsManager.h>
 #include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/ObjectType/State/AntiBulletData.h>
+#include <Ext/TechnoType/AutoFireAreaWeapon.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/Status/SelectWeaponData.h>
 
@@ -46,6 +47,9 @@ DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 DEFINE_HOOK(0x6F4500, TechnoClass_DTOR, 0x5)
 {
 	GET(TechnoClass*, pItem, ECX);
+	// 广播TechnoDelete
+	EventSystems::Logic.Broadcast(Events::TechnoDeleteEvent, pItem);
+	// 从ExtMap中删除
 	TechnoExt::ExtData* ext = TechnoExt::ExtMap.Find(pItem);
 	if (ext)
 	{
@@ -657,8 +661,8 @@ DEFINE_HOOK(0x6FF28F, TechnoClass_Fire_ROFMultiplier, 0x6)
 	GET(TechnoClass*, pTechno, ESI);
 
 	// check skipRof
-	TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno);
-	if (status && status->SkipROF)
+	AutoFireAreaWeapon* autoArea = GetScript<TechnoExt, AutoFireAreaWeapon>(pTechno);
+	if (autoArea && autoArea->SkipROF)
 	{
 		return 0x6FF2BE; // skip ROF
 	}

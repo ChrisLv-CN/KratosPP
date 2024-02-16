@@ -128,11 +128,18 @@ public:
 	 */
 	void FeedbackAttach(WeaponTypeClass* pWeapon);
 
-	virtual void Awake() override;
-
-	virtual void Destroy() override;
-
 	void OnGScreenRender(EventSystem* sender, Event e, void* args);
+
+	virtual void Awake() override
+	{
+		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
+	}
+
+	virtual void Destroy() override
+	{
+		EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
+		((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
+	}
 
 	virtual void OnUpdate() override;
 	virtual void OnUpdateEnd() override;

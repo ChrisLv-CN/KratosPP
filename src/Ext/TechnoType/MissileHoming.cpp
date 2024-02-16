@@ -1,9 +1,8 @@
 ﻿#include "MissileHoming.h"
 
-#include <JumpjetLocomotionClass.h>
+#include <RocketLocomotionClass.h>
 
 #include <Ext/Helper/FLH.h>
-#include <Ext/Helper/Scripts.h>
 
 MissileHomingData* MissileHoming::GetHomingData()
 {

@@ -53,6 +53,28 @@ public:
 	 */
 	void DrawSHP_Paintball(REGISTERS* R);
 
+	void OnTechnoDelete(EventSystem* sender, Event e, void* args)
+	{
+		if (args == pCreater)
+		{
+			pCreater = nullptr;
+		}
+		if (args == pAttachOwner)
+		{
+			pAttachOwner = nullptr;
+		}
+	}
+
+	virtual void Awake() override
+	{
+		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AnimStatus::OnTechnoDelete);
+	}
+
+	virtual void Destroy() override
+	{
+		EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &AnimStatus::OnTechnoDelete);
+	}
+
 	virtual void OnUpdate() override;
 
 	virtual void OnLoop() override;
@@ -64,11 +86,6 @@ public:
 	TechnoClass* pCreater = nullptr;
 	ObjectClass* pAttachOwner = nullptr; // 动画附着的对象
 	CoordStruct Offset = CoordStruct::Empty; // 附着的偏移位置
-
-	virtual void InvalidatePointer(void* ptr) override
-	{
-		AnnounceInvalidPointer(this->pCreater, ptr);
-	};
 
 #pragma region Save/Load
 	template <typename T>
@@ -97,6 +114,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
+		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AnimStatus::OnTechnoDelete);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

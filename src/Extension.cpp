@@ -34,7 +34,11 @@ concept Clearable = requires { T::Clear(); };
 
 template <typename T>
 concept PointerInvalidationSubscribable =
-	requires (void* ptr, bool removed) { T::PointerGotInvalid(ptr, removed); };
+	requires (void* ptr) { T::PointerGotInvalid(ptr); };
+
+template <typename T>
+concept DetachSubscribable =
+	requires (void* ptr, bool all) { T::ObjectWantDetach(ptr, all); };
 
 template <typename T>
 concept GlobalSaveLoadable = requires
@@ -72,12 +76,29 @@ struct ClearAction
 struct InvalidatePointerAction
 {
 	template <typename T>
-	static bool Process(void* ptr, bool removed)
+	static bool Process(void* ptr)
 	{
 		if constexpr (PointerInvalidationSubscribable<T>)
-			T::PointerGotInvalid(ptr, removed);
+			T::PointerGotInvalid(ptr);
 		else if constexpr (HasExtMap<T>)
-			T::ExtMap.PointerGotInvalid(ptr, removed);
+			T::ExtMap.PointerGotInvalid(ptr);
+
+		return true;
+	}
+};
+
+// calls:
+// T::Detach(void*, bool)
+// T::ExtMap.Detach(void*, bool)
+struct DetachAllAction
+{
+	template <typename T>
+	static bool Process(void* ptr, bool all)
+	{
+		if constexpr (DetachSubscribable<T>)
+			T::ObjectWantDetach(ptr, all);
+		else if constexpr (HasExtMap<T>)
+			T::ExtMap.ObjectWantDetach(ptr, all);
 
 		return true;
 	}
@@ -137,9 +158,14 @@ struct TypeRegistry
 		dispatch_mass_action<ClearAction>();
 	}
 
-	__forceinline static void InvalidatePointer(void* ptr, bool removed)
+	__forceinline static void InvalidatePointer(void* ptr)
 	{
-		dispatch_mass_action<InvalidatePointerAction>(ptr, removed);
+		dispatch_mass_action<InvalidatePointerAction>(ptr);
+	}
+
+	__forceinline static void DetachAll(void* ptr, bool all)
+	{
+		dispatch_mass_action<DetachAllAction>(ptr, all);
 	}
 
 	__forceinline static bool LoadGlobals(IStream* pStm)
@@ -189,13 +215,17 @@ void ExtTypeRegistryClear(EventSystem* sender, Event e, void* args)
 {
 	ExtTypeRegistry::Clear();
 }
-
 void InvalidatePointer(EventSystem* sender, Event e, void* args)
 {
+	ExtTypeRegistry::InvalidatePointer(args);
+}
+
+void DetachAll(EventSystem* sender, Event e, void* args)
+{
 	auto const& argsArray = reinterpret_cast<void**>(args);
-	AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
-	bool removed = argsArray[1];
-	ExtTypeRegistry::InvalidatePointer(pInvalid, removed);
+	AbstractClass* pItem = (AbstractClass*)argsArray[0];
+	bool all = argsArray[1];
+	ExtTypeRegistry::DetachAll(pItem, all);
 }
 
 // Ares saves its things at the end of the save
