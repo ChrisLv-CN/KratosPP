@@ -58,6 +58,8 @@ bool IsDeadOrInvisible(TechnoClass* pTechno);
 bool IsCloaked(TechnoClass* pTechno, bool includeCloaking = true);
 bool IsDeadOrInvisibleOrCloaked(TechnoClass* pTechno, bool includeCloaking = true);
 
+bool AmIStand(TechnoClass* pTechno);
+
 double GetROFMulti(TechnoClass* pTechno);
 double GetDamageMulti(TechnoClass* pTechno);
 

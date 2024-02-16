@@ -106,6 +106,15 @@ bool IsDeadOrInvisibleOrCloaked(TechnoClass* pTechno, bool includeCloaking)
 	return IsDeadOrInvisible(pTechno) || IsCloaked(pTechno, includeCloaking);
 }
 
+bool AmIStand(TechnoClass* pTechno)
+{
+	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	{
+		return status->AmIStand();
+	}
+	return false;
+}
+
 double GetROFMulti(TechnoClass* pTechno)
 {
 	if (IsDead(pTechno))

@@ -55,6 +55,4 @@ private:
 	BaseNormalData* _baseNormalData = nullptr;
 	BaseNormalData* GetBaseNormalData();
 
-	bool AmIStand();
-
 };

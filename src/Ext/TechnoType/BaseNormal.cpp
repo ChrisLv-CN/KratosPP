@@ -1,6 +1,7 @@
 ﻿#include "BaseNormal.h"
 
 #include <Ext/Helper/Scripts.h>
+#include <Ext/Helper/Status.h>
 
 #include <Ext/TechnoType/TechnoStatus.h>
 
@@ -27,16 +28,6 @@ void BaseNormal::Setup()
 	}
 }
 
-bool BaseNormal::AmIStand()
-{
-	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status))
-	{
-		return status->AmIStand();
-	}
-	return false;
-}
-
 void BaseNormal::Awake()
 {
 	Setup();
@@ -56,7 +47,7 @@ void BaseNormal::OnPut(CoordStruct* pCoord, DirType dir)
 {
 	if (!IsBuilding() && GetBaseNormalData()->BaseNormal)
 	{
-		if (AmIStand())
+		if (AmIStand(pTechno))
 		{
 			TechnoExt::BaseStandArray[pTechno] = GetBaseNormalData()->EligibileForAllyBuilding;
 		}
