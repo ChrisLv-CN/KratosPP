@@ -10,9 +10,10 @@
 #include "CrawlingFLH.h"
 #include "DamageText.h"
 #include "HealthText.h"
-#include "MissileHoming.h"
-#include "TechnoTrail.h"
 #include "JumpjetFacing.h"
+#include "MissileHoming.h"
+#include "Spawn.h"
+#include "TechnoTrail.h"
 
 void TechnoStatus::ExtChanged()
 {
@@ -22,8 +23,6 @@ void TechnoStatus::ExtChanged()
 	_destroyAnimData = nullptr;
 
 	_transformData = nullptr;
-
-	_spawnData = nullptr;
 
 	// 重新附加其他的组件
 	InitExt();
@@ -45,6 +44,7 @@ void TechnoStatus::InitExt()
 	FindOrAttach<AutoFireAreaWeapon>();
 	FindOrAttach<DamageText>();
 	FindOrAttach<HealthText>();
+	FindOrAttach<Spawn>();
 	if (!IsBuilding())
 	{
 		// 初始化尾巴

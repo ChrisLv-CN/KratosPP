@@ -1,8 +1,10 @@
-﻿#include "../TechnoStatus.h"
+﻿#include "Spawn.h"
 
-#include <Common/INI/INI.h>
+#include <RocketLocomotionClass.h>
 
-SpawnData* TechnoStatus::GetSpawnData()
+#include <Ext/Helper/FLH.h>
+
+SpawnData* Spawn::GetSpawnData()
 {
 	if (!_spawnData)
 	{
@@ -11,7 +13,7 @@ SpawnData* TechnoStatus::GetSpawnData()
 	return _spawnData;
 }
 
-bool TechnoStatus::TryGetSpawnType(int i, std::string& newId)
+bool Spawn::TryGetSpawnType(int i, std::string& newId)
 {
 	if (GetSpawnData()->MultiSpawns)
 	{
@@ -24,4 +26,12 @@ bool TechnoStatus::TryGetSpawnType(int i, std::string& newId)
 	}
 
 	return false;
+}
+
+void Spawn::Awake()
+{
+	if (!pTechno->SpawnManager)
+	{
+		Disable();
+	}
 }

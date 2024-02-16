@@ -26,8 +26,6 @@
 #include <Ext/ObjectType/State/PaintballState.h>
 #include <Ext/ObjectType/State/TransformData.h>
 
-#include "Status/SpawnData.h"
-
 class AttachEffect;
 
 /// @brief base compoment, save the Techno status
@@ -60,9 +58,6 @@ public:
 	void DrawSHP_Paintball_BuildingAnim(REGISTERS* R);
 	void DrawSHP_Colour(REGISTERS* R);
 	void DrawVXL_Paintball(REGISTERS* R, bool isBuilding);
-
-	SpawnData* GetSpawnData();
-	bool TryGetSpawnType(int i, std::string& newId);
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
 
@@ -219,7 +214,6 @@ private:
 	void OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 
-	void OnReceiveDamageDestroy_BaseNormarl();
 	void OnReceiveDamageDestroy_GiftBox();
 	void OnReceiveDamageDestroy_Transform();
 
@@ -247,9 +241,6 @@ private:
 	// 部署变形
 	DeployToTransformData* _transformData = nullptr;
 	DeployToTransformData* GetTransformData();
-
-	// 子机管理器
-	SpawnData* _spawnData = nullptr;
 
 	// 染色状态
 	float _deactivateDimEMP = 0.8f;

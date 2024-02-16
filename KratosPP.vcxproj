@@ -85,9 +85,9 @@
     <ClCompile Include="src\Ext\TechnoType\Status\FireSuper.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Paintball.cpp" />
-    <ClCompile Include="src\Ext\TechnoType\Status\SpawnManager.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Stand.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Transform.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Spawn.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoTrail.cpp" />
     <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
@@ -245,8 +245,8 @@
     <ClInclude Include="src\Ext\TechnoType\MissileHoming.h" />
     <ClInclude Include="src\Ext\TechnoType\MissileHomingData.h" />
     <ClInclude Include="src\Ext\TechnoType\SelectWeaponData.h" />
-    <ClInclude Include="src\Ext\TechnoType\Status\SpawnData.h" />
-    <ClInclude Include="src\Ext\TechnoType\Status\UploadModeAttachData.h" />
+    <ClInclude Include="src\Ext\TechnoType\Spawn.h" />
+    <ClInclude Include="src\Ext\TechnoType\SpawnData.h" />
     <ClInclude Include="src\Ext\TechnoType\TechnoStatus.h" />
     <ClInclude Include="src\Ext\TechnoType\TechnoTrail.h" />
     <ClInclude Include="src\Ext\TechnoType\UploadAttachData.h" />

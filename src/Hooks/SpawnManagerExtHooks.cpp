@@ -16,8 +16,8 @@
 #include <Ext/Helper/Scripts.h>
 
 #include <Ext/ObjectType/AttachFire.h>
-#include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/MissileHoming.h>
+#include <Ext/TechnoType/Spawn.h>
 
 static bool TryFindNewIdInSpwanType(std::string typeId, int index, std::string& newId)
 {
@@ -46,9 +46,9 @@ DEFINE_HOOK(0x6B6D4D, SpawnManagerClass_CreateSpawnNode_CreateAircraft, 0x6)
 	GET_STACK(int, i, 0x20 + 0x4);
 
 	std::string newId{ "" };
-	TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pManager->Owner);
+	Spawn* spawnEx = GetScript<TechnoExt, Spawn>(pManager->Owner);
 	// 如果没有设置SpwanData，就从ini名字中找
-	if (!status || !status->TryGetSpawnType(i, newId))
+	if (!spawnEx || !spawnEx->TryGetSpawnType(i, newId))
 	{
 		GET(TechnoTypeClass*, pType, ECX);
 		std::string typeId{ pType->ID };
@@ -73,9 +73,9 @@ DEFINE_HOOK(0x6B78E4, SpawnManagerClass_Update_CreateAircraft, 0x6)
 	GET(int, i, EBX);
 
 	std::string newId{ "" };
-	TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pManager->Owner);
+	Spawn* spawnEx = GetScript<TechnoExt, Spawn>(pManager->Owner);
 	// 如果没有设置SpwanData，就从ini名字中找
-	if (!status || !status->TryGetSpawnType(i, newId))
+	if (!spawnEx || !spawnEx->TryGetSpawnType(i, newId))
 	{
 		GET(TechnoTypeClass*, pType, ECX);
 		std::string typeId{ pType->ID };
@@ -160,12 +160,12 @@ DEFINE_HOOK(0x6B743E, SpawnManagerClass_Update_PutSpawns, 0x6)
 		}
 	}
 	// 重设子机发射延迟
-	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+	if (Spawn* spawnEx = GetScript<TechnoExt, Spawn>(pTechno))
 	{
 		// 重设子机发射延迟
-		if (status->GetSpawnData()->SpawnDelay > -1)
+		if (spawnEx->GetSpawnData()->SpawnDelay > -1)
 		{
-			pManager->SpawnTimer.Start(status->GetSpawnData()->SpawnDelay);
+			pManager->SpawnTimer.Start(spawnEx->GetSpawnData()->SpawnDelay);
 		}
 	}
 	if (customFLH)
@@ -180,9 +180,9 @@ DEFINE_HOOK(0x6B796A, SpawnManagerClass_Update_PutSpawns_FireOnce, 0x5)
 	GET(SpawnManagerClass*, pManager, ESI);
 	if (pManager->CountDockedSpawns() == 0)
 	{
-		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pManager->Owner))
+		if (Spawn* spawnEx = GetScript<TechnoExt, Spawn>(pManager->Owner))
 		{
-			if (status->GetSpawnData()->SpawnFireOnce)
+			if (spawnEx->GetSpawnData()->SpawnFireOnce)
 			{
 				pManager->Destination = nullptr;
 				pManager->SetTarget(nullptr);
