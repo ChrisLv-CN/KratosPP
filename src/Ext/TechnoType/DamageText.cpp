@@ -1,12 +1,12 @@
-﻿#include "..\TechnoStatus.h"
-
-#include <Common/INI/INI.h>
+﻿#include "DamageText.h"
 
 #include <Ext/Common/PrintTextManager.h>
 
-bool TechnoStatus::SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& damageTextType)
+#include <Ext/Helper/MathEx.h>
+
+bool DamageText::SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& damageTextType)
 {
-	if (!_skipDamageText && pWH && !pTechno->InLimbo && !IsCloaked(pTechno))
+	if (!SkipDamageText && pWH && !pTechno->InLimbo && !IsCloaked(pTechno))
 	{
 		damageTextType = INI::GetConfig<DamageTextData>(INI::Rules, pWH->ID)->Data;
 		return damageTextType->Hidden;
@@ -14,7 +14,7 @@ bool TechnoStatus::SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& da
 	return true;
 }
 
-void TechnoStatus::OrderDamageText(std::wstring text, CoordStruct location, DamageText*& data)
+void DamageText::OrderDamageText(std::wstring text, CoordStruct location, DamageTextEntity*& data)
 {
 	int x = Random::RandomRanged(data->XOffset.X, data->XOffset.Y);
 	int y = Random::RandomRanged(data->YOffset.X, data->YOffset.Y) - 15; // 离地高度
@@ -32,7 +32,16 @@ void TechnoStatus::OrderDamageText(std::wstring text, CoordStruct location, Dama
 	PrintTextManager::AddRollingText(text, location, offset, data->RollSpeed, data->Duration, *data);
 }
 
-void TechnoStatus::OnUpdate_DamageText()
+void DamageText::Awake()
+{
+	DamageTextData* data = INI::GetConfig<DamageTextData>(INI::Rules, INI::SectionAudioVisual)->Data;
+	if (data->Hidden)
+	{
+		Disable();
+	}
+}
+
+void DamageText::OnUpdate()
 {
 	CoordStruct location = pTechno->GetCoords();
 	int frame = Unsorted::CurrentFrame;
@@ -42,7 +51,7 @@ void TechnoStatus::OnUpdate_DamageText()
 		if (frame - it->second.StartFrame >= it->first->Rate)
 		{
 			std::wstring text = L"-" + std::to_wstring(it->second.Value);
-			DamageText* data = it->first;
+			DamageTextEntity* data = it->first;
 			OrderDamageText(text, location, data);
 			it = _damageCache.erase(it);
 		}
@@ -57,7 +66,7 @@ void TechnoStatus::OnUpdate_DamageText()
 		if (frame - it->second.StartFrame >= it->first->Rate)
 		{
 			std::wstring text = L"+" + std::to_wstring(it->second.Value);
-			DamageText* data = it->first;
+			DamageTextEntity* data = it->first;
 			OrderDamageText(text, location, data);
 			it = _repairCache.erase(it);
 		}
@@ -68,7 +77,7 @@ void TechnoStatus::OnUpdate_DamageText()
 	}
 }
 
-void TechnoStatus::OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+void DamageText::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	DamageTextData* whDamageTextType = nullptr;
 	if (SkipDrawDamageText(pWH, whDamageTextType))
@@ -77,10 +86,10 @@ void TechnoStatus::OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeCl
 	}
 	else
 	{
-		_skipDamageText = false;
+		SkipDamageText = false;
 	}
 	std::wstring text{};
-	DamageText* data = nullptr;
+	DamageTextEntity* data = nullptr;
 	int damage = *pRealDamage;
 	int damageValue = 0;
 	int repairValue = 0;
@@ -142,5 +151,4 @@ void TechnoStatus::OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeCl
 			}
 		}
 	}
-};
-
+}

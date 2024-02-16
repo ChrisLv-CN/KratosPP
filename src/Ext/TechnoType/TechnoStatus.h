@@ -26,7 +26,6 @@
 #include <Ext/ObjectType/State/PaintballState.h>
 #include <Ext/ObjectType/State/TransformData.h>
 
-#include "Status/DamageTextData.h"
 #include "Status/HealthTextData.h"
 #include "Status/SpawnData.h"
 
@@ -154,8 +153,6 @@ public:
 			.Process(this->VirtualUnit)
 			.Process(this->Disappear)
 
-			.Process(this->_skipDamageText)
-
 			.Process(this->_deactivateDimEMP)
 			.Process(this->_deactivateDimPowered)
 			.Process(this->_berserkColor2)
@@ -193,10 +190,6 @@ private:
 	 */
 	void InitExt();
 
-	// 伤害数字
-	bool SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& damageTextType);
-	void OrderDamageText(std::wstring text, CoordStruct location, DamageText*& data);
-
 	// 血量数字
 	HealthTextData GetHealthTextData();
 	void PrintHealthText(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding);
@@ -224,18 +217,14 @@ private:
 	void InitState_Transform();
 
 	void OnUpdate_AntiBullet();
-	void OnUpdate_DamageText();
 	void OnUpdate_GiftBox();
 	void OnUpdate_Paintball();
 	void OnUpdate_Transform();
 
 	void OnWarpUpdate_DestroySelf_Stand();
 
-	void OnRemove_BaseNormarl();
-
 	void OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
-	void OnReceiveDamageEnd_DamageText(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 
 	void OnReceiveDamageDestroy_BaseNormarl();
@@ -262,11 +251,6 @@ private:
 	DestroyAnimData* _destroyAnimData = nullptr;
 	DestroyAnimData* GetDestroyAnimData();
 	HouseClass* pKillerHouse = nullptr;
-
-	// 伤害数字
-	bool _skipDamageText = false;
-	std::map<DamageText*, DamageTextCache> _damageCache{};
-	std::map<DamageText*, DamageTextCache> _repairCache{};
 
 	// 血条数字
 	HealthTextData _healthTextData{}; // 个体设置

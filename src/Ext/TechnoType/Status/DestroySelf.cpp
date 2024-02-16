@@ -2,6 +2,8 @@
 
 #include <Common/INI/INI.h>
 
+#include <Ext/TechnoType/DamageText.h>
+
 void TechnoStatus::InitState_DestroySelf()
 {
 	DestroySelfData* data = INI::GetConfig<DestroySelfData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
@@ -24,7 +26,10 @@ void TechnoStatus::OnUpdate_DestroySelf()
 		}
 		else
 		{
-			_skipDamageText = true;
+			if (DamageText* damageText = GetComponent<DamageText>())
+			{
+				damageText->SkipDamageText = true;
+			}
 			pTechno->TakeDamage(pTechno->Health + 1, pTechno->GetTechnoType()->Crewed);
 		}
 	}

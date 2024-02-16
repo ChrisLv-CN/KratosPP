@@ -7,7 +7,7 @@
 
 #include <Ext/Common/PrintTextData.h>
 
-class DamageText : public PrintTextData
+class DamageTextEntity : public PrintTextData
 {
 public:
 	bool Hidden = false;
@@ -18,10 +18,10 @@ public:
 	int RollSpeed = 1;
 	int Duration = 75;
 
-	DamageText() : PrintTextData()
+	DamageTextEntity() : PrintTextData()
 	{ }
 
-	DamageText(bool isDamage) : PrintTextData()
+	DamageTextEntity(bool isDamage) : PrintTextData()
 	{
 		if (isDamage)
 		{
@@ -56,8 +56,8 @@ class DamageTextData : public INIConfig
 public:
 	bool Hidden = false;
 
-	DamageText Damage{ true };
-	DamageText Repair{ false };
+	DamageTextEntity Damage{ true };
+	DamageTextEntity Repair{ false };
 
 	virtual void Read(INIBufferReader* reader) override
 	{

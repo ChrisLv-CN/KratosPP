@@ -8,6 +8,7 @@
 #include "AutoFireAreaWeapon.h"
 #include "BaseNormal.h"
 #include "CrawlingFLH.h"
+#include "DamageText.h"
 #include "MissileHoming.h"
 #include "TechnoTrail.h"
 #include "JumpjetFacing.h"
@@ -41,6 +42,7 @@ void TechnoStatus::Destroy()
 void TechnoStatus::InitExt()
 {
 	FindOrAttach<AutoFireAreaWeapon>();
+	FindOrAttach<DamageText>();
 	if (!IsBuilding())
 	{
 		// 初始化尾巴
@@ -132,7 +134,6 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_Transform();
 
 		OnUpdate_AntiBullet();
-		OnUpdate_DamageText();
 		OnUpdate_GiftBox();
 		OnUpdate_Paintball();
 	}
@@ -178,7 +179,6 @@ void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, D
 		OnReceiveDamageEnd_DestroyAnim(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
 	}
 	OnReceiveDamageEnd_BlackHole(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
-	OnReceiveDamageEnd_DamageText(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
 	OnReceiveDamageEnd_GiftBox(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
 }
 
