@@ -54,6 +54,7 @@ public:
 
 	void GetMarks(std::vector<std::string>& marks);
 	void GetAENames(std::vector<std::string>& names);
+	bool HasStand();
 
 	/**
 	 *@brief 统计所有的AEBuff

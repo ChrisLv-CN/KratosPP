@@ -107,6 +107,8 @@ public:
 
 	bool DisableSelectVoice = false;
 
+	bool CaptureByBlackHole = false;
+	bool Jumping = false;
 	bool Freezing = false;
 
 	// 虚单位

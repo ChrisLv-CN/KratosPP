@@ -95,6 +95,21 @@ void AttachEffect::GetAENames(std::vector<std::string>& names)
 		});
 }
 
+bool AttachEffect::HasStand()
+{
+	bool find = false;
+	ForeachChild([&find](Component* c) {
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c)) {
+			find = ae->AEData.Stand.Enable;
+			if (find)
+			{
+				ae->Break();
+			}
+		}
+		});
+	return find;
+}
+
 CrateBuffData AttachEffect::CountAttachStatusMultiplier()
 {
 	CrateBuffData multiplier{};

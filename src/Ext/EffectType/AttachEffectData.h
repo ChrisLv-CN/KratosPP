@@ -162,6 +162,10 @@ public:
 		{
 			names.insert(Animation.ScriptName);
 		}
+		if (CrateBuff.Enable)
+		{
+			names.insert(CrateBuff.ScriptName);
+		}
 		if (Mark.Enable)
 		{
 			names.insert(Mark.ScriptName);
@@ -219,9 +223,11 @@ public:
 			.Process(this->AttachWithOutTypes)
 			.Process(this->AttachOnceInTechnoType)
 			.Process(this->Inheritable)
-
+			// TODO Save/Load Effects
 			.Process(this->Animation)
+			.Process(this->CrateBuff)
 			.Process(this->Mark)
+			.Process(this->Stand)
 
 			.Success();
 	};

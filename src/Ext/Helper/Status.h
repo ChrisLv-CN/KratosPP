@@ -58,6 +58,8 @@ bool IsDeadOrInvisible(TechnoClass* pTechno);
 bool IsCloaked(TechnoClass* pTechno, bool includeCloaking = true);
 bool IsDeadOrInvisibleOrCloaked(TechnoClass* pTechno, bool includeCloaking = true);
 
+bool IsImmune(TechnoClass* pTechno, bool checkStand = false);
+
 bool AmIStand(TechnoClass* pTechno);
 
 double GetROFMulti(TechnoClass* pTechno);
@@ -68,7 +70,7 @@ void ActiveRGBMode(TechnoClass* pTechno);
 
 bool CanBeBase(TechnoClass* pTechno, bool eligibileForAllyBuilding, int houseIndex, int minX, int maxX, int minY, int maxY);
 
-bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, bool isPassiveAcquire = false);
+bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx = -1, bool isPassiveAcquire = false);
 
 void ClearAllTarget(TechnoClass* pAttacker);
 #pragma endregion

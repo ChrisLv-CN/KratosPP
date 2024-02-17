@@ -10,6 +10,8 @@
 class CrateBuffData : public EffectData
 {
 public:
+	std::string ScriptName = "CrateBuff";
+
 	double FirepowerMultiplier = 1.0;
 	double ArmorMultiplier = 1.0;
 	double SpeedMultiplier = 1.0;

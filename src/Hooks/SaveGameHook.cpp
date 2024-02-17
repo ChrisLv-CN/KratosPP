@@ -20,7 +20,7 @@ public:
 		EventSystems::SaveLoad.AddHandler(Events::LoadGameEvent, INIConstant::LoadGameModeName);
 		EventSystems::SaveLoad.AddHandler(Events::SaveGameEvent, FireSuperManager::SaveSuperQueue);
 		EventSystems::SaveLoad.AddHandler(Events::LoadGameEvent, FireSuperManager::LoadSuperQueue);
-		EventSystems::SaveLoad.AddHandler(Events::LoadGameEvent, TechnoExt::ClearBaseArray);
+		EventSystems::SaveLoad.AddHandler(Events::LoadGameEvent, TechnoExt::ClearAllArray);
 	}
 };
 

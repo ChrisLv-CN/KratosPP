@@ -5,6 +5,7 @@
 #include "GOExtension.h"
 
 #include <Ext/TechnoType/HealthTextData.h>
+#include <Ext/EffectType/Effect/StandData.h>
 
 
 class TechnoExt : public GOExtension<TechnoClass, TechnoExt>
@@ -32,7 +33,7 @@ public:
 	 * @param e
 	 * @param args
 	 */
-	static void ClearBaseArray(EventSystem* sender, Event e, void* args);
+	static void ClearAllArray(EventSystem* sender, Event e, void* args);
 
 	/**
 	 *@brief 储存可以作为基地建造节点的单位.
@@ -45,6 +46,11 @@ public:
 	 * key = 单位, value = 做友军的基地建造节点
 	 */
 	static std::map<TechnoClass*, bool> BaseStandArray;
+
+	static std::map<TechnoClass*, StandData> StandArray;
+	static std::map<TechnoClass*, StandData> ImmuneStandArray;
+
+	static std::vector<TechnoClass*> VirtualUnitArray;
 
 	/**
 	 *@brief 血量数字的全局设置

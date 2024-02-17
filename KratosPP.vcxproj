@@ -107,7 +107,8 @@
     <ClCompile Include="src\Hooks\ParasiteExtHooks.cpp" />
     <ClCompile Include="src\Hooks\PointerExpireHook.cpp" />
     <ClCompile Include="src\Hooks\SaveGameHook.cpp" />
-    <ClCompile Include="src\Hooks\SpawnManagerExtHooks.cpp" />
+    <ClCompile Include="src\Hooks\SpawnManagerExtHook.cpp" />
+    <ClCompile Include="src\Hooks\StandExtHook.cpp" />
     <ClCompile Include="src\Hooks\SuperWeaponTypeHook.cpp" />
     <ClCompile Include="src\Hooks\TechnoExtHook.cpp" />
     <ClCompile Include="src\Hooks\TechnoTypeExtHook.cpp" />

@@ -106,6 +106,25 @@ bool IsDeadOrInvisibleOrCloaked(TechnoClass* pTechno, bool includeCloaking)
 	return IsDeadOrInvisible(pTechno) || IsCloaked(pTechno, includeCloaking);
 }
 
+bool IsImmune(TechnoClass* pTechno, bool checkStand)
+{
+	bool immune = pTechno->GetTechnoType()->Immune;
+	if (!immune && checkStand)
+	{
+		TechnoStatus* status = nullptr;
+		if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand())
+		{
+			immune = status->StandData.Immune;
+		}
+	}
+	if (!immune)
+	{
+        // IsForceShilded不能用于判断是否整处于护盾状态，因为启用一次之后永久为1
+		immune = pTechno->IsIronCurtained();
+	}
+	return immune;
+}
+
 bool AmIStand(TechnoClass* pTechno)
 {
 	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
@@ -187,10 +206,13 @@ bool CanBeBase(TechnoClass* pTechno, bool eligibileForAllyBuilding, int houseInd
 	return false;
 }
 
-bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, bool isPassiveAcquire)
+bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx, bool isPassiveAcquire)
 {
 	bool canAttack = false;
-	int weaponIdx = pAttacker->SelectWeapon(pTarget);
+	if (weaponIdx < 0)
+	{
+		weaponIdx = pAttacker->SelectWeapon(pTarget);
+	}
 	WeaponStruct* pWeaponStruct = pAttacker->GetWeapon(weaponIdx);
 	WeaponTypeClass* pWeapon = nullptr;
 	if (pWeaponStruct && (pWeapon = pWeaponStruct->WeaponType) != nullptr)

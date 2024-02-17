@@ -10,14 +10,24 @@ void TechnoExt::AddGlobalScripts(std::list<std::string>& globalScripts, ExtData*
 	globalScripts.push_back(AttachEffect::ScriptName);
 }
 
-void TechnoExt::ClearBaseArray(EventSystem* sender, Event e, void* args)
+void TechnoExt::ClearAllArray(EventSystem* sender, Event e, void* args)
 {
 	BaseUnitArray.clear();
 	BaseStandArray.clear();
+
+	StandArray.clear();
+	ImmuneStandArray.clear();
+
+	VirtualUnitArray.clear();
 }
+
 
 TechnoExt::ExtContainer TechnoExt::ExtMap{};
 std::map<TechnoClass*, bool> TechnoExt::BaseUnitArray{};
 std::map<TechnoClass*, bool> TechnoExt::BaseStandArray{};
+
+std::map<TechnoClass*, StandData> TechnoExt::StandArray{};
+std::map<TechnoClass*, StandData> TechnoExt::ImmuneStandArray{};
+std::vector<TechnoClass*> TechnoExt::VirtualUnitArray{};
 
 HealthTextControlData TechnoExt::HealthTextControlData{};
