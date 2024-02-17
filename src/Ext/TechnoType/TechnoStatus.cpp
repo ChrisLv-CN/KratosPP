@@ -94,6 +94,7 @@ void TechnoStatus::InitState()
 	InitState_GiftBox();
 	InitState_Paintball();
 	InitState_Transform();
+	InitState_VirtualUnit();
 }
 
 void TechnoStatus::OnUpdate()
@@ -171,6 +172,12 @@ void TechnoStatus::OnTemporalUpdate(TemporalClass* pTemporal)
 
 void TechnoStatus::OnRemove()
 {
+	OnRemove_Stand();
+}
+
+void TechnoStatus::OnReceiveDamage(args_ReceiveDamage* args)
+{
+	OnReceiveDamage_Stand(args);
 }
 
 void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
@@ -191,6 +198,15 @@ void TechnoStatus::OnReceiveDamageDestroy()
 	OnReceiveDamageDestroy_Transform();
 
 	OnReceiveDamageDestroy_GiftBox();
+}
+
+void TechnoStatus::OnRegisterDestruction(TechnoClass* pKiller, int cost, bool& skip)
+{
+	OnRegisterDestruction_Stand(pKiller, cost, skip);
+	if (skip)
+	{
+		return;
+	}
 }
 
 void TechnoStatus::OnFire(AbstractClass* pTarget, int weaponIdx)

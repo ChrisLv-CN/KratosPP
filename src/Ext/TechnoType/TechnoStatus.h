@@ -74,9 +74,13 @@ public:
 
 	virtual void OnRemove() override;
 
+	virtual void OnReceiveDamage(args_ReceiveDamage* args) override;
+
 	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
 
 	virtual void OnReceiveDamageDestroy() override;
+
+	virtual void OnRegisterDestruction(TechnoClass* pKiller, int cost, bool& skip);
 
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
@@ -204,6 +208,10 @@ private:
 	void InitState_GiftBox();
 	void InitState_Paintball();
 	void InitState_Transform();
+	void InitState_VirtualUnit();
+
+	void OnPut_Stand(CoordStruct* pCoord, DirType dirType);
+	void OnRemove_Stand();
 
 	void OnUpdate_AntiBullet();
 	void OnUpdate_GiftBox();
@@ -212,12 +220,16 @@ private:
 
 	void OnWarpUpdate_DestroySelf_Stand();
 
+	void OnReceiveDamage_Stand(args_ReceiveDamage* args);
+
 	void OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 	void OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
 
 	void OnReceiveDamageDestroy_GiftBox();
 	void OnReceiveDamageDestroy_Transform();
+
+	void OnRegisterDestruction_Stand(TechnoClass* pKiller, int cost, bool& skip);
 
 	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 

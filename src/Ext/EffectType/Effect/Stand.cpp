@@ -15,19 +15,18 @@
 void Stand::CreateAndPutStand()
 {
 	CoordStruct location = pObject->GetCoords();
-	pStand = CreateAndPutTechno(Data.Type, AE->pSourceHouse, location);
+	TechnoTypeClass* pType = TechnoTypeClass::Find(Data.Type.c_str());
+	if (pType)
+	{
+		pStand = static_cast<TechnoClass*>(pType->CreateObject(AE->pSourceHouse));
+	}
 	if (pStand)
 	{
-		if (pObject->InLimbo)
-		{
-			pStand->Limbo();
-		}
 		// 初始化设置
 		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pStand))
 		{
 			status->VirtualUnit = Data.VirtualUnit;
 			status->StandData = Data;
-
 			// 设置替身的所有者
 			if (pTechno)
 			{
@@ -64,6 +63,15 @@ void Stand::CreateAndPutStand()
 		// only computer units can hunt
 		Mission mission = canGuard ? Mission::Guard : Mission::Hunt;
 		pStand->QueueMission(mission, false);
+		// 放出地图
+		if (!pObject->InLimbo)
+		{
+			if (!TryPutTechno(pStand, location))
+			{
+				End(location);
+				return;
+			}
+		}
 		// 移动到指定的位置
 		LocationMark locationMark = GetRelativeLocation(pObject, Data.Offset);
 		if (!locationMark.IsEmpty())
