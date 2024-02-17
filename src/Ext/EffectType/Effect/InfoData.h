@@ -195,52 +195,49 @@ public:
 		EffectData::Read(reader, title);
 
 		std::string watch = reader->Get<std::string>(title + "Watch", "");
-		if (IsNotNone(watch))
-		{
 
-			Duration.Read(reader, title + "Duration.", watch);
-			Delay.Read(reader, title + "Delay.", watch);
-			InitDelay.Read(reader, title + "InitDelay.", watch);
-			Stack.Read(reader, title + "Stack.", watch);
+		Duration.Read(reader, title + "Duration.", watch);
+		Delay.Read(reader, title + "Delay.", watch);
+		InitDelay.Read(reader, title + "InitDelay.", watch);
+		Stack.Read(reader, title + "Stack.", watch);
 
-			Health.Read(reader, title + "Health.", watch);
-			Ammo.Read(reader, title + "Ammo.", watch);
-			Reload.Read(reader, title + "Reload.", watch);
-			ROF.Read(reader, title + "ROF.", watch);
+		Health.Read(reader, title + "Health.", watch);
+		Ammo.Read(reader, title + "Ammo.", watch);
+		Reload.Read(reader, title + "Reload.", watch);
+		ROF.Read(reader, title + "ROF.", watch);
 
-			ID.Read(reader, title + "ID.", watch);
-			Armor.Read(reader, title + "Armor.", watch);
-			Mission.Read(reader, title + "Mission.", watch);
+		ID.Read(reader, title + "ID.", watch);
+		Armor.Read(reader, title + "Armor.", watch);
+		Mission.Read(reader, title + "Mission.", watch);
 
-			Target.Read(reader, title + "Target.", watch);
-			Dest.Read(reader, title + "Dest.", watch);
-			Location.Read(reader, title + "Location.", watch);
-			Cell.Read(reader, title + "Cell.", watch);
-			BodyDir.Read(reader, title + "BodyDir.", watch);
-			TurretDir.Read(reader, title + "TurretDir.", watch);
+		Target.Read(reader, title + "Target.", watch);
+		Dest.Read(reader, title + "Dest.", watch);
+		Location.Read(reader, title + "Location.", watch);
+		Cell.Read(reader, title + "Cell.", watch);
+		BodyDir.Read(reader, title + "BodyDir.", watch);
+		TurretDir.Read(reader, title + "TurretDir.", watch);
 
-			Enable = Duration.Mode != InfoMode::NONE
-				|| Delay.Mode != InfoMode::NONE
-				|| InitDelay.Mode != InfoMode::NONE
-				|| Stack.Mode != InfoMode::NONE
+		Enable = Duration.Mode != InfoMode::NONE
+			|| Delay.Mode != InfoMode::NONE
+			|| InitDelay.Mode != InfoMode::NONE
+			|| Stack.Mode != InfoMode::NONE
 
-				|| Health.Mode != InfoMode::NONE
-				|| Ammo.Mode != InfoMode::NONE
-				|| Reload.Mode != InfoMode::NONE
-				|| ROF.Mode != InfoMode::NONE
+			|| Health.Mode != InfoMode::NONE
+			|| Ammo.Mode != InfoMode::NONE
+			|| Reload.Mode != InfoMode::NONE
+			|| ROF.Mode != InfoMode::NONE
 
-				|| ID.Mode != InfoMode::NONE
-				|| Armor.Mode != InfoMode::NONE
-				|| Mission.Mode != InfoMode::NONE
+			|| ID.Mode != InfoMode::NONE
+			|| Armor.Mode != InfoMode::NONE
+			|| Mission.Mode != InfoMode::NONE
 
-				|| Target.Mode != InfoMode::NONE
-				|| Dest.Mode != InfoMode::NONE
-				|| Location.Mode != InfoMode::NONE
-				|| Cell.Mode != InfoMode::NONE
-				|| BodyDir.Mode != InfoMode::NONE
-				|| TurretDir.Mode != InfoMode::NONE
-				;
-		}
+			|| Target.Mode != InfoMode::NONE
+			|| Dest.Mode != InfoMode::NONE
+			|| Location.Mode != InfoMode::NONE
+			|| Cell.Mode != InfoMode::NONE
+			|| BodyDir.Mode != InfoMode::NONE
+			|| TurretDir.Mode != InfoMode::NONE
+			;
 	}
 
 #pragma region save/load

@@ -2,6 +2,10 @@
 
 #include "FilterData.h"
 
+#include <Ext/Helper/Status.h>
+
+#include <Extension/WarheadTypeExt.h>
+
 class AttachFireData : public FilterData
 {
 public:
@@ -156,12 +160,11 @@ public:
 					}
 				}
 				// 检查标记
-				/* TODO
-				if (!IsOnMark(pTargetTechno))
+				if (!IsOnMark(pTargetTechno, *this))
 				{
 					canFire = false;
 					break;
-				}*/
+				}
 				// 检查名单
 				if (!CanAffectType(pTargetTechno->GetTechnoType()->ID))
 				{
@@ -169,23 +172,24 @@ public:
 					break;
 				}
 				// 检查护甲
-				/* TODO
+				bool forceFire = true;
+				bool retaliate = true;
+				bool passiveAcquire = true;
 				if (CheckVersus && pWeapon->Warhead
-					&& (GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWeapon->Warhead)->GetVersus(pTargetTechno->GetTechnoType()->Armor, out bool forceFire, out bool retaliate, out bool passiveAcquire) == 0.0 || !forceFire)
+					&& (GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWeapon->Warhead)->GetVersus(pTargetTechno->GetTechnoType()->Armor, forceFire, retaliate, passiveAcquire) == 0.0 || !forceFire)
 				)
 				{
 					// 护甲为零，终止发射
 					canFire = false;
 					break;
-				}*/
+				}
 				// 检查所属
-				/* TODO
 				HouseClass* pTargetHouse = pTargetTechno->Owner;
-				if (!pAttackingHouse.CanAffectHouse(pTargetHouse, AffectsOwner, AffectsAllies, AffectsEnemies, AffectsCivilian))
+				if (!CanAffectHouse(pAttackingHouse, pTargetHouse))
 				{
 					// 不可对该所属攻击，终止发射
 					canFire = false;
-				}*/
+				}
 				break;
 			}
 		}

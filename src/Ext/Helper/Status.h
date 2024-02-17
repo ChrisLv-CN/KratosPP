@@ -13,6 +13,8 @@ class BulletStatus;
 class CommonStatus;
 class TechnoStatus;
 
+class FilterData;
+
 #pragma region AnimClass
 AnimClass* SetAnimOwner(AnimClass* pAnim, HouseClass* pHouse);
 AnimClass* SetAnimOwner(AnimClass* pAnim, TechnoClass* pTechno);
@@ -69,6 +71,8 @@ void SetExtraSparkleAnim(TechnoClass* pTechno, AnimClass*& pAnim);
 void ActiveRGBMode(TechnoClass* pTechno);
 
 bool CanBeBase(TechnoClass* pTechno, bool eligibileForAllyBuilding, int houseIndex, int minX, int maxX, int minY, int maxY);
+
+bool IsOnMark(TechnoClass* pTechno, FilterData data);
 
 bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx = -1, bool isPassiveAcquire = false);
 

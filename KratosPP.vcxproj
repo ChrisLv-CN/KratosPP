@@ -55,6 +55,7 @@
     <ClCompile Include="src\Ext\EffectType\EffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\Animation.cpp" />
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuff.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\Info.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\Mark.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\Stand.cpp" />
     <ClCompile Include="src\Ext\Helper\CastEx.cpp" />
@@ -195,6 +196,8 @@
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuff.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\Info.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\InfoData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\Mark.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\MarkData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\OffsetData.h" />

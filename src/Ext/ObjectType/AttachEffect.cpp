@@ -593,7 +593,7 @@ bool AttachEffect::IsOnMark(FilterData data)
 {
 	std::vector<std::string> marks;
 	GetMarks(marks);
-	return data.IsOnMark(marks);
+	return data.OnMark(marks);
 }
 
 bool AttachEffect::HasContradiction(AttachEffectData data)

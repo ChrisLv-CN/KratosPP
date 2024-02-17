@@ -12,7 +12,9 @@
 #include <BulletClass.h>
 
 #include <Common/INI/INIConfig.h>
+
 #include <Ext/Helper/CastEx.h>
+#include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
 
 class FilterData : public INIConfig
@@ -179,7 +181,7 @@ public:
 		return false;
 	}
 
-	bool IsOnMark(std::vector<std::string> marks)
+	bool OnMark(std::vector<std::string> marks)
 	{
 		bool mark = marks.empty();
 		if (!mark)
