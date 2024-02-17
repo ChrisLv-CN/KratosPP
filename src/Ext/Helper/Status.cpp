@@ -393,9 +393,9 @@ bool IsCivilian(HouseClass* pHouse)
 {
 	return !pHouse || pHouse->Defeated || !pHouse->Type
 		|| pHouse->Type->MultiplayPassive;
-	// || HouseClass.NEUTRAL == pHouse->Type->Base.ID // 自然也算平民吗？
-	// || HouseClass.CIVILIAN == pHouse->Type->Base.ID
-	// || HouseClass.SPECIAL == pHouse->Type->Base.ID; // 被狙掉驾驶员的阵营是Special
+	// || HouseClass.NEUTRAL == pHouse->Type->ID // 自然也算平民吗？
+	// || HouseClass.CIVILIAN == pHouse->Type->ID
+	// || HouseClass.SPECIAL == pHouse->Type->ID; // 被狙掉驾驶员的阵营是Special
 }
 
 Relation GetRelation(HouseClass* pHosue, HouseClass* pTargetHouse)

@@ -2,7 +2,7 @@
 
 #include <Ext/ObjectType/FilterData.h>
 
-enum class AffectWho
+enum class AffectWho : int
 {
 	MASTER = 0, STAND = 1, ALL = 2,
 };

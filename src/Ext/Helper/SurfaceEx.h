@@ -106,3 +106,43 @@ static bool DrawLine(Surface* pSurface, Point2D point1, Point2D point2, int dwCo
 	}
 	return false;
 }
+
+static void DrawCrosshair(Surface* pSurface, CoordStruct sourcePos, int length, ColorStruct color, RectangleStruct bounds = {}, bool dashed = true, bool blink = false)
+{
+	CoordStruct p1 = sourcePos + CoordStruct{ length, 0, 0 };
+	CoordStruct p2 = sourcePos + CoordStruct{ -length, 0, 0 };
+	CoordStruct p3 = sourcePos + CoordStruct{ 0, length, 0 };
+	CoordStruct p4 = sourcePos + CoordStruct{ 0, -length, 0 };
+	if (dashed)
+	{
+		DrawDashedLine(pSurface, ToClientPos(p1), ToClientPos(p2), color, bounds, blink);
+		DrawDashedLine(pSurface, ToClientPos(p3), ToClientPos(p4), color, bounds, blink);
+	}
+	else
+	{
+		DrawLine(pSurface, ToClientPos(p1), ToClientPos(p2), color, bounds);
+		DrawLine(pSurface, ToClientPos(p3), ToClientPos(p4), color, bounds);
+	}
+}
+
+static void DrawCell(Surface* pSurface, CoordStruct sourcePos, ColorStruct color, RectangleStruct bounds = {}, bool dashed = true, bool blink = false, int length = 128)
+{
+	CoordStruct p1 = sourcePos + CoordStruct{ length, length, 0 };
+	CoordStruct p2 = sourcePos + CoordStruct{ -length, length, 0 };
+	CoordStruct p3 = sourcePos + CoordStruct{ -length, -length, 0 };
+	CoordStruct p4 = sourcePos + CoordStruct{ length, -length, 0 };
+	if (dashed)
+	{
+		DrawDashedLine(pSurface, ToClientPos(p1), ToClientPos(p2), color, bounds);
+		DrawDashedLine(pSurface, ToClientPos(p2), ToClientPos(p3), color, bounds);
+		DrawDashedLine(pSurface, ToClientPos(p3), ToClientPos(p4), color, bounds);
+		DrawDashedLine(pSurface, ToClientPos(p4), ToClientPos(p1), color, bounds);
+	}
+	else
+	{
+		DrawLine(pSurface, ToClientPos(p1), ToClientPos(p2), color, bounds);
+		DrawLine(pSurface, ToClientPos(p2), ToClientPos(p3), color, bounds);
+		DrawLine(pSurface, ToClientPos(p3), ToClientPos(p4), color, bounds);
+		DrawLine(pSurface, ToClientPos(p4), ToClientPos(p1), color, bounds);
+	}
+}

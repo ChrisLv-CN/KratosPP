@@ -39,6 +39,9 @@ public:
 	bool PowerOff = false; // 停电状态
 
 	std::vector<int> PassengerIds{}; // 乘客持有的AEMode ID
+	std::map<std::string, CDTimerClass> DisableDelayTimers{};
+	std::map<std::string, int> AEStacks{};
+
 
 	bool InBuilding();
 	bool InSelling();
@@ -165,8 +168,8 @@ public:
 			.Process(this->PowerOff)
 			.Process(this->PassengerIds)
 
-			.Process(this->_disableDelayTimers)
-			.Process(this->_aeStacks)
+			.Process(this->DisableDelayTimers)
+			.Process(this->AEStacks)
 
 			.Process(this->_ownerIsDead)
 			.Process(this->_attachOnceFlag)
@@ -252,9 +255,6 @@ private:
 	bool UpdateTrainStandLocation(AttachEffectScript* ae, int& markIndex);
 	CoordStruct MarkLocation();
 	void ClearLocationMarks();
-
-	std::map<std::string, CDTimerClass> _disableDelayTimers{};
-	std::map<std::string, int> _aeStacks{};
 
 	bool _ownerIsDead = false;
 

@@ -113,7 +113,7 @@ void Stand::ExplodesOrDisappear(bool peaceful)
 		{
 			// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {Type.Type} 移除, 没有发现EXT");
 			pStand->Limbo();
-			// pStand->Base.UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
+			// pStand->UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
 			pStand->TakeDamage(pStand->Health + 1, false);
 		}
 	}
@@ -219,9 +219,9 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 			// Pointer<FootClass> pPassenger = pTechno->Passengers.FirstPassenger;
 			// if (!pPassenger.IsNull)
 			// {
-			//     Pointer<TechnoTypeClass> pType = pPassenger->Base.Type;
-			//     Pointer<TechnoClass> pNew = pType->Base.CreateObject(AE.pSourceHouse).Convert<TechnoClass>();
-			//     pNew->Base.Put(default, DirType.N);
+			//     Pointer<TechnoTypeClass> pType = pPassenger->Type;
+			//     Pointer<TechnoClass> pNew = pType->CreateObject(AE.pSourceHouse).Convert<TechnoClass>();
+			//     pNew->Put(default, DirType.N);
 			//     Logger.Log($"{Game.CurrentFrame} 把jojo的乘客塞进替身里");
 			//     pStand->Passengers.AddPassenger(pNew.Convert<FootClass>());
 			// }
@@ -587,8 +587,8 @@ void Stand::OnGScreenRender(CoordStruct location)
 			{
 				// Stand same tilter
 				// rocker Squid capture ship
-				// pStand->AngleRotatedForwards = pMaster->Base.AngleRotatedForwards;
-				// pStand->AngleRotatedSideways = pMaster->Base.AngleRotatedSideways;
+				// pStand->AngleRotatedForwards = pMaster->AngleRotatedForwards;
+				// pStand->AngleRotatedSideways = pMaster->AngleRotatedSideways;
 
 				if (Data.SameTilter)
 				{

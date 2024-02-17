@@ -9,6 +9,7 @@
 // TODO Effects
 #include "Effect/AnimationData.h"
 #include "Effect/MarkData.h"
+#include "Effect/InfoData.h"
 #include "Effect/StandData.h"
 #include "Effect/CrateBuffData.h"
 
@@ -93,6 +94,7 @@ public:
 	// TODO Effects
 	AnimationData Animation{};
 	CrateBuffData CrateBuff{};
+	InfoData Info{};
 	MarkData Mark{};
 	StandData Stand{};
 
@@ -123,6 +125,7 @@ public:
 			// TODO Read Effects
 			Animation.Read(reader);
 			CrateBuff.Read(reader);
+			Info.Read(reader);
 			Mark.Read(reader);
 			Stand.Read(reader);
 
@@ -165,6 +168,10 @@ public:
 		if (CrateBuff.Enable)
 		{
 			names.insert(CrateBuff.ScriptName);
+		}
+		if (Info.Enable)
+		{
+			names.insert(Info.ScriptName);
 		}
 		if (Mark.Enable)
 		{
@@ -226,6 +233,7 @@ public:
 			// TODO Save/Load Effects
 			.Process(this->Animation)
 			.Process(this->CrateBuff)
+			.Process(this->Info)
 			.Process(this->Mark)
 			.Process(this->Stand)
 

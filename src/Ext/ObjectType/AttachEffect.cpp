@@ -5,9 +5,11 @@
 
 #include <Common/INI/INI.h>
 
+#include <Ext/Helper/DrawEx.h>
 #include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
+#include <Ext/Helper/SurfaceEx.h>
 #include <Ext/Helper/Weapon.h>
 #include <Ext/Common/PrintTextManager.h>
 
@@ -604,8 +606,8 @@ bool AttachEffect::HasContradiction(AttachEffectData data)
 bool AttachEffect::IsOnDelay(AttachEffectData data)
 {
 	std::string name = data.Name;
-	auto it = _disableDelayTimers.find(name);
-	if (it != _disableDelayTimers.end())
+	auto it = DisableDelayTimers.find(name);
+	if (it != DisableDelayTimers.end())
 	{
 		return it->second.InProgress();
 	}
@@ -615,14 +617,14 @@ bool AttachEffect::IsOnDelay(AttachEffectData data)
 void AttachEffect::StartDelay(AttachEffectData data)
 {
 	std::string name = data.Name;
-	auto it = _disableDelayTimers.find(name);
-	if (it == _disableDelayTimers.end() || it->second.Expired())
+	auto it = DisableDelayTimers.find(name);
+	if (it == DisableDelayTimers.end() || it->second.Expired())
 	{
 		int delay = GetRandomValue(data.RandomDelay, data.Delay);
 		if (delay > 0)
 		{
 			CDTimerClass timer{ delay };
-			_disableDelayTimers[name] = timer;
+			DisableDelayTimers[name] = timer;
 		}
 	}
 }
@@ -630,27 +632,27 @@ void AttachEffect::StartDelay(AttachEffectData data)
 void AttachEffect::AddStackCount(AttachEffectData data)
 {
 	std::string name = data.Name;
-	auto it = _aeStacks.find(name);
-	if (it != _aeStacks.end())
+	auto it = AEStacks.find(name);
+	if (it != AEStacks.end())
 	{
 		it->second++;
 	}
 	else
 	{
-		_aeStacks[name] = 1;
+		AEStacks[name] = 1;
 	}
 }
 
 void AttachEffect::ReduceStackCount(AttachEffectData data)
 {
 	std::string name = data.Name;
-	auto it = _aeStacks.find(name);
-	if (it != _aeStacks.end())
+	auto it = AEStacks.find(name);
+	if (it != AEStacks.end())
 	{
 		it->second--;
 		if (it->second < 1)
 		{
-			_aeStacks.erase(it);
+			AEStacks.erase(it);
 		}
 	}
 }
@@ -660,8 +662,8 @@ bool AttachEffect::StackNotFull(AttachEffectData data)
 	if (data.MaxStack > 0)
 	{
 		std::string name = data.Name;
-		auto it = _aeStacks.find(name);
-		if (it != _aeStacks.end())
+		auto it = AEStacks.find(name);
+		if (it != AEStacks.end())
 		{
 			return it->second < data.MaxStack;
 		}
@@ -889,7 +891,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 		}
 		// 打印叠层信息
 		Point2D pos2 = ToClientPos(location);
-		for (auto it = _aeStacks.begin(); it != _aeStacks.end(); it++)
+		for (auto it = AEStacks.begin(); it != AEStacks.end(); it++)
 		{
 			std::string log;
 			log.append(it->first).append(" : ").append(std::to_string(it->second)).append("\n");

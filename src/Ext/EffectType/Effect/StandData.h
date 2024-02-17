@@ -8,7 +8,7 @@
 #include "EffectData.h"
 #include "OffsetData.h"
 
-enum class StandTargeting
+enum class StandTargeting : int
 {
 	BOTH = 0, LAND = 1, AIR = 2,
 };

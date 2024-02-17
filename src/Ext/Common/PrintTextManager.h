@@ -28,8 +28,8 @@ public:
 
 	static void Print(std::wstring text, ColorStruct houseColor, PrintTextData data, Point2D pos, DSurface* pSurface, bool isBuilding = false);
 
-	static void PrintText(std::string text, ColorStruct houseColor, Point2D pos);
-	static void PrintText(std::string text, ColorStruct houseColor, CoordStruct location);
+	static void PrintText(std::string text, ColorStruct houseColor, Point2D pos, PrintTextData data = {});
+	static void PrintText(std::string text, ColorStruct houseColor, CoordStruct location, PrintTextData data = {});
 #pragma region Rolling Text
 	static void Clear(EventSystem* sender, Event e, void* args);
 

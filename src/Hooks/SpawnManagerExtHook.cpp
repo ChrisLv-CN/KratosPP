@@ -126,7 +126,6 @@ DEFINE_HOOK(0x6B743E, SpawnManagerClass_Update_PutSpawns, 0x6)
 						// 找到一个子机发射器
 						spawner = true;
 						weaponIdx = i;
-						// Logger.Log($"{Game.CurrentFrame} [{pTechno->Type->Base.Base.ID}]{pTechno} Weapon {i} / {weaponCount} = [{pWeapon->WeaponType->Base.ID}]");
 						break;
 					}
 				}
@@ -146,7 +145,6 @@ DEFINE_HOOK(0x6B743E, SpawnManagerClass_Update_PutSpawns, 0x6)
 				if (count > 1)
 				{
 					index = count - pManager->CountDockedSpawns() - 1;
-					// Logger.Log($"{Game.CurrentFrame} [{pTechno->Type->Base.Base.ID}]{pTechno} 发射子机 {index} - {pManager->DrawState()}/{count}");
 				}
 				auto it = pFire->SpawnerBurstFLH.find(index);
 				customFLH = it != pFire->SpawnerBurstFLH.end();
