@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include <algorithm>
 #include <string>
 #include <format>
 #include <vector>
+#include <set>
 #include <map>
 
 #include <TechnoClass.h>

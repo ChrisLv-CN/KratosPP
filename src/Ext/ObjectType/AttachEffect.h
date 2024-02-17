@@ -132,6 +132,20 @@ public:
 	 */
 	void FeedbackAttach(WeaponTypeClass* pWeapon);
 
+	/**
+	 *@brief 关闭并移除一组AE
+	 *
+	 * @param aeTypes AE的名称
+	 */
+	void DetachByName(std::vector<std::string> aeTypes);
+
+	/**
+	 *@brief 关闭并移除一个AE
+	 *
+	 * @param token 令牌
+	 */
+	void DetachByToken(std::string token);
+
 	void OnGScreenRender(EventSystem* sender, Event e, void* args);
 
 	virtual void Awake() override

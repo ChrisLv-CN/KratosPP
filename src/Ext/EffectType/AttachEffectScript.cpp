@@ -106,6 +106,12 @@ void AttachEffectScript::ResetEffectsDuration()
 		});
 }
 
+void AttachEffectScript::TimeToDie()
+{
+	_immortal = false;
+	_lifeTimer.Stop();
+}
+
 void AttachEffectScript::SetupLifeTimer()
 {
 	if (!_immortal)

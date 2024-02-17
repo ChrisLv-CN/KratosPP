@@ -143,7 +143,25 @@ void TechnoStatus::OnReceiveDamageDestroy_GiftBox()
 
 bool TechnoStatus::IsOnMark_GiftBox()
 {
-	// TODO AE isOnMark
+	std::vector<std::string> marks = GiftBoxState.Data.OnlyOpenWhenMarks;
+	if (!marks.empty())
+	{
+		if (AttachEffect* aem = AEManager())
+		{
+			std::vector<std::string> aeMarks{};
+			aem->GetMarks(aeMarks);
+			if (!aeMarks.empty())
+			{
+				// 取交集
+				std::set<std::string> m(marks.begin(), marks.end());
+				std::set<std::string> t(aeMarks.begin(), aeMarks.end());
+				std::set<std::string> v;
+				std::set_intersection(m.begin(), m.end(), t.begin(), t.end(), std::inserter(v, v.begin()));
+				return !v.empty();
+			}
+		}
+		return false;
+	}
 	return true;
 }
 

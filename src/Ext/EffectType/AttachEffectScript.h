@@ -64,6 +64,7 @@ class AttachEffectScript : public ObjectScript, public IAEScript
 public:
 	OBJECT_SCRIPT(AttachEffectScript);
 
+	std::string Token = GetUUID();
 	AttachEffectData AEData{};
 
 	AttachEffect* _aeManager = nullptr;
@@ -88,6 +89,8 @@ public:
 	void MergeDuration(int otherDuration);
 	void ForceStartLifeTimer(int timeLeft);
 	void ResetEffectsDuration();
+
+	void TimeToDie();
 
 	bool IsSameGroup(AttachEffectData otherType);
 	void GetMarks(std::vector<std::string>& marks);
@@ -138,6 +141,7 @@ public:
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
+			.Process(this->Token)
 			.Process(this->AEData)
 			.Process(this->pSource)
 			.Process(this->pSourceHouse)
