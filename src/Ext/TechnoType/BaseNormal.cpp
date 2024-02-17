@@ -77,7 +77,7 @@ void BaseNormal::OnRemove()
 	auto it2 = TechnoExt::BaseUnitArray.find(pTechno);
 	if (it2 != TechnoExt::BaseUnitArray.end())
 	{
-		TechnoExt::BaseUnitArray.erase(it);
+		TechnoExt::BaseUnitArray.erase(it2);
 	}
 }
 
