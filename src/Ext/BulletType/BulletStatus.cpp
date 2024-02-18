@@ -86,10 +86,10 @@ void BulletStatus::Awake()
 	this->damage.Damage = health;
 	if (TechnoStatus* sourceStatue = GetStatus<TechnoExt, TechnoStatus>(pSource))
 	{
-		if (sourceStatue->AntiBulletState.IsActive())
+		if (sourceStatue->AntiBulletState->IsActive())
 		{
-			damage.Eliminate = sourceStatue->AntiBulletState.Data.OneShotOneKill;
-			damage.Harmless = sourceStatue->AntiBulletState.Data.Harmless;
+			damage.Eliminate = sourceStatue->AntiBulletState->Data.OneShotOneKill;
+			damage.Harmless = sourceStatue->AntiBulletState->Data.Harmless;
 		}
 	}
 
