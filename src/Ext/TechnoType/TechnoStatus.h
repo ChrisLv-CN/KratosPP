@@ -20,13 +20,14 @@
 #include <Ext/Common/PrintTextData.h>
 #include <Ext/EffectType/Effect/CrateBuffData.h>
 #include <Ext/EffectType/Effect/StandData.h>
-#include <Ext/ObjectType/State/AntiBulletState.h>
-#include <Ext/ObjectType/State/DestroyAnimData.h>
-#include <Ext/ObjectType/State/DestroySelfState.h>
-#include <Ext/ObjectType/State/FireSuperData.h>
-#include <Ext/ObjectType/State/GiftBoxState.h>
-#include <Ext/ObjectType/State/PaintballState.h>
-#include <Ext/ObjectType/State/TransformData.h>
+
+#include <Ext/StateType/State/AntiBullet.h>
+#include <Ext/StateType/State/DestroyAnim.h>
+#include <Ext/StateType/State/DestroySelf.h>
+#include <Ext/StateType/State/FireSuper.h>
+#include <Ext/StateType/State/GiftBox.h>
+#include <Ext/StateType/State/Paintball.h>
+#include <Ext/StateType/State/Transform.h>
 
 class AttachEffect;
 
@@ -35,12 +36,6 @@ class TechnoStatus : public TechnoScript
 {
 public:
 	TECHNO_SCRIPT(TechnoStatus);
-
-	virtual void Awake() override;
-
-	virtual void Destroy() override;
-
-	virtual void ExtChanged() override;
 
 	bool AmIStand();
 
@@ -61,7 +56,11 @@ public:
 	void DrawSHP_Colour(REGISTERS* R);
 	void DrawVXL_Paintball(REGISTERS* R, bool isBuilding);
 
-	virtual void OnPut(CoordStruct* pLocation, DirType dirType) override;
+	virtual void Awake() override;
+
+	virtual void Destroy() override;
+
+	virtual void ExtChanged() override;
 
 	virtual void OnUpdate() override;
 
@@ -73,6 +72,8 @@ public:
 	virtual void OnWarpUpdate() override;
 
 	virtual void OnTemporalUpdate(TemporalClass* pTemporal) override;
+
+	virtual void OnPut(CoordStruct* pCoord, DirType dirType) override;
 
 	virtual void OnRemove() override;
 
@@ -89,14 +90,13 @@ public:
 	virtual void OnSelect(bool& selectable) override;
 
 	// 状态机
-	AntiBulletState AntiBulletState{};
-	State<CrateBuffData> CrateBuffState{};
-	State<DestroyAnimData> DestroyAnimState{};
-	DestroySelfState DestroySelfState{};
-	State<FireSuperData> FireSuperState{};
-	GiftBoxState GiftBoxState{};
-	PaintballState PaintballState{};
-	State<TransformData> TransformState{};
+	GET_STATE(AntiBullet);
+	GET_STATE(DestroyAnim);
+	GET_STATE(DestroySelf);
+	GET_STATE(FireSuper);
+	GET_STATE(GiftBox);
+	GET_STATE(Paintball);
+	GET_STATE(Transform);
 
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
@@ -126,23 +126,10 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(this->AntiBulletState)
-			.Process(this->CrateBuffState)
-			.Process(this->DestroyAnimState)
-			.Process(this->DestroySelfState)
-			.Process(this->FireSuperState)
-			.Process(this->GiftBoxState)
-			.Process(this->PaintballState)
-			.Process(this->TransformState)
-
-			.Process(this->_initStateFlag)
-
 			.Process(this->CrateBuff)
 			.Process(this->StandData)
 			.Process(this->pMyMaster)
 			.Process(this->MyMasterIsSpawned)
-
-			.Process(this->pKillerHouse)
 
 			.Process(this->DisableVoxelCache)
 
@@ -185,6 +172,12 @@ private:
 	AttachEffect* AEManager();
 
 	/**
+	 *@brief 初始化所需的状态机
+	 *
+	 */
+	void InitState();
+
+	/**
 	 *@brief 从TechnoType中读取扩展的ini标签，并初始化相应的component
 	 *
 	 */
@@ -200,19 +193,8 @@ private:
 	// 变形
 	void ChangeTechnoTypeTo(TechnoTypeClass* pNewType);
 
-	void InitState();
-
-	void InitState_AntiBullet();
-	void InitState_CrateBuff();
-	void InitState_DestroyAnim();
-	void InitState_DestroySelf();
-	void InitState_FireSuper();
-	void InitState_GiftBox();
-	void InitState_Paintball();
-	void InitState_Transform();
-	void InitState_VirtualUnit();
-
 	void OnPut_Stand(CoordStruct* pCoord, DirType dirType);
+
 	void OnRemove_Stand();
 
 	void OnUpdate_AntiBullet();
@@ -238,21 +220,13 @@ private:
 	bool OnSelect_VirtualUnit();
 	bool OnSelect_Deselect();
 
-	bool _initStateFlag = false;
+	// 阿伟死了，DestroySelfState干的
+	bool _isDead = false;
 
 	Mission _lastMission = Mission::Guard;
 
 	CoordStruct _location{};
 	bool _isMoving = false;
-
-	// Buff
-	CrateBuffData* _crateBuffData = nullptr;
-	CrateBuffData* GetCrateBuffData();
-
-	// 死亡动画
-	DestroyAnimData* _destroyAnimData = nullptr;
-	DestroyAnimData* GetDestroyAnimData();
-	HouseClass* pKillerHouse = nullptr;
 
 	// 部署变形
 	DeployToTransformData* _transformData = nullptr;

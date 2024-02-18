@@ -31,11 +31,11 @@ void Stand::CreateAndPutStand()
 			if (pTechno)
 			{
 				status->pMyMaster = pTechno;
-				// TODO 同阵营同步状态机，比如染色
+				// 同阵营同步状态机，比如染色
 				TechnoStatus* masterStatus = nullptr;
 				if (pTechno->Owner == AE->pSourceHouse && TryGetStatus<TechnoExt>(pTechno, masterStatus))
 				{
-
+					status->_Paintball = masterStatus->PaintballState;
 				}
 				if (IsAircraft())
 				{
@@ -95,11 +95,11 @@ void Stand::ExplodesOrDisappear(bool peaceful)
 	if (TryGetStatus<TechnoExt>(pStand, standStatus))
 	{
 		// Logger.Log($"{Game.CurrentFrame} 阿伟 [{Data.Type}]{pStand} 要死了 explodes = {explodes}");
-		standStatus->DestroySelfState.DestroyNow(!explodes);
+		standStatus->DestroySelfState->DestroyNow(!explodes);
 		// 如果替身处于Limbo状态，OnUpdate不会执行，需要手动触发
 		if (masterIsRocket || pStand->InLimbo)
 		{
-			standStatus->OnUpdate_DestroySelf();
+			standStatus->OnUpdate();
 		}
 	}
 	else

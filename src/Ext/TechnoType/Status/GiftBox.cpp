@@ -20,16 +20,6 @@ DeployToTransformData* TechnoStatus::GetTransformData()
 	return _transformData;
 }
 
-void TechnoStatus::InitState_GiftBox()
-{
-	// 读取单位身上的礼盒设置
-	GiftBoxData* data = INI::GetConfig<GiftBoxData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
-	if (data->Enable)
-	{
-		GiftBoxState.Enable(*data);
-	}
-}
-
 void TechnoStatus::OnUpdate_DeployToTransform()
 {
 	if (GetTransformData()->Enable)
@@ -38,51 +28,50 @@ void TechnoStatus::OnUpdate_DeployToTransform()
 			|| (IsUnit() && static_cast<UnitClass*>(pTechno)->Deployed))
 		{
 			// 步兵或载具部署完毕，开始变形
-			GiftBoxState.Enable(*GetTransformData());
+			GiftBoxState->Start(*GetTransformData());
 		}
 	}
 }
 
 void TechnoStatus::OnUpdate_GiftBox()
 {
-	GiftBoxState.Update(pTechno->Veterancy.IsElite());
 	// 记录单位的状态
-	if (GiftBoxState.IsActive())
+	if (GiftBoxState->IsActive())
 	{
 		// 记录盒子的状态
-		GiftBoxState.IsSelected = pTechno->IsSelected;
-		GiftBoxState.Group = pTechno->Group;
+		GiftBoxState->IsSelected = pTechno->IsSelected;
+		GiftBoxState->Group = pTechno->Group;
 		// 记录朝向
-		GiftBoxState.BodyDir = pTechno->PrimaryFacing.Current();
-		GiftBoxState.TurretDir = pTechno->SecondaryFacing.Current();
+		GiftBoxState->BodyDir = pTechno->PrimaryFacing.Current();
+		GiftBoxState->TurretDir = pTechno->SecondaryFacing.Current();
 		// JJ有单独的Facing
 		if (IsJumpjet())
 		{
 			FootClass* pFoot = static_cast<FootClass*>(pTechno);
-			GiftBoxState.BodyDir = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get())->LocomotionFacing.Current();
-			GiftBoxState.TurretDir = GiftBoxState.BodyDir;
+			GiftBoxState->BodyDir = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get())->LocomotionFacing.Current();
+			GiftBoxState->TurretDir = GiftBoxState->BodyDir;
 		}
 
 		// 准备开盒
-		if (GiftBoxState.CanOpen() && IsOnMark_GiftBox() && !GiftBoxState.Data.OpenWhenDestroyed && !GiftBoxState.Data.OpenWhenHealthPercent)
+		if (GiftBoxState->CanOpen() && IsOnMark_GiftBox() && !GiftBoxState->Data.OpenWhenDestroyed && !GiftBoxState->Data.OpenWhenHealthPercent)
 		{
 			// 开盒
-			GiftBoxState.IsOpen = true;
+			GiftBoxState->IsOpen = true;
 			// 释放礼物
-			std::vector<std::string> gifts = GiftBoxState.GetGiftList();
+			std::vector<std::string> gifts = GiftBoxState->GetGiftList();
 			if (!gifts.empty())
 			{
-				ReleaseGift(gifts, GiftBoxState.Data);
+				ReleaseGift(gifts, GiftBoxState->Data);
 			}
 		}
 
 		// 重置或者销毁盒子
-		if (GiftBoxState.IsOpen)
+		if (GiftBoxState->IsOpen)
 		{
-			if (GiftBoxState.Data.Remove)
+			if (GiftBoxState->Data.Remove)
 			{
-				GiftBoxState.Disable();
-				if (GiftBoxState.Data.Destroy)
+				GiftBoxState->Disable();
+				if (GiftBoxState->Data.Destroy)
 				{
 					pTechno->TakeDamage(pTechno->Health + 1, pTechno->GetTechnoType()->Crewed);
 				}
@@ -95,7 +84,7 @@ void TechnoStatus::OnUpdate_GiftBox()
 			}
 			else
 			{
-				GiftBoxState.ResetGiftBox();
+				GiftBoxState->ResetGiftBox();
 			}
 		}
 	}
@@ -105,21 +94,21 @@ void TechnoStatus::OnUpdate_GiftBox()
 void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	if (damageState != DamageState::NowDead && IsDeadOrInvisible(pTechno)
-		&& GiftBoxState.CanOpen() && GiftBoxState.Data.OpenWhenHealthPercent
+		&& GiftBoxState->CanOpen() && GiftBoxState->Data.OpenWhenHealthPercent
 		&& IsOnMark_GiftBox()
 		)
 	{
 		// 计算血量百分比是否达到开启条件
 		double healthPercent = pTechno->GetHealthPercentage();
-		if (healthPercent <= GiftBoxState.Data.OpenHealthPercent)
+		if (healthPercent <= GiftBoxState->Data.OpenHealthPercent)
 		{
 			// 开盒
-			GiftBoxState.IsOpen = true;
+			GiftBoxState->IsOpen = true;
 			// 释放礼物
-			std::vector<std::string> gifts = GiftBoxState.GetGiftList();
+			std::vector<std::string> gifts = GiftBoxState->GetGiftList();
 			if (!gifts.empty())
 			{
-				ReleaseGift(gifts, GiftBoxState.Data);
+				ReleaseGift(gifts, GiftBoxState->Data);
 			}
 			// 此处不重置或销毁，而是进入下一帧的Update事件中重置或销毁
 		}
@@ -128,22 +117,22 @@ void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass
 
 void TechnoStatus::OnReceiveDamageDestroy_GiftBox()
 {
-	if (GiftBoxState.IsActive() && GiftBoxState.Data.OpenWhenDestroyed && IsOnMark_GiftBox())
+	if (GiftBoxState->IsActive() && GiftBoxState->Data.OpenWhenDestroyed && IsOnMark_GiftBox())
 	{
 		// 开盒
-		GiftBoxState.IsOpen = true;
+		GiftBoxState->IsOpen = true;
 		// 释放礼物
-		std::vector<std::string> gifts = GiftBoxState.GetGiftList();
+		std::vector<std::string> gifts = GiftBoxState->GetGiftList();
 		if (!gifts.empty())
 		{
-			ReleaseGift(gifts, GiftBoxState.Data);
+			ReleaseGift(gifts, GiftBoxState->Data);
 		}
 	}
 }
 
 bool TechnoStatus::IsOnMark_GiftBox()
 {
-	std::vector<std::string> marks = GiftBoxState.Data.OnlyOpenWhenMarks;
+	std::vector<std::string> marks = GiftBoxState->Data.OnlyOpenWhenMarks;
 	if (!marks.empty())
 	{
 		if (AttachEffect* aem = AEManager())
@@ -242,23 +231,23 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				if (data.IsTransform)
 				{
 					// 同步朝向
-					pGift->PrimaryFacing.SetCurrent(GiftBoxState.BodyDir);
-					pGift->SecondaryFacing.SetCurrent(GiftBoxState.TurretDir);
+					pGift->PrimaryFacing.SetCurrent(GiftBoxState->BodyDir);
+					pGift->SecondaryFacing.SetCurrent(GiftBoxState->TurretDir);
 					// JJ有单独的Facing
 					if (giftStatus->IsJumpjet())
 					{
 						FootClass* pGiftFoot = static_cast<FootClass*>(pGift);
 						JumpjetLocomotionClass* pLoco = static_cast<JumpjetLocomotionClass*>(pGiftFoot->Locomotor.get());
-						pLoco->LocomotionFacing.SetCurrent(GiftBoxState.BodyDir);
+						pLoco->LocomotionFacing.SetCurrent(GiftBoxState->BodyDir);
 					}
 					// 同步编队
-					pGift->Group = GiftBoxState.Group;
+					pGift->Group = GiftBoxState->Group;
 					// 同步箱子属性
 					giftStatus->CrateBuff = CrateBuff;
 				}
 
 				// 同步选中状态
-				if (GiftBoxState.IsSelected)
+				if (GiftBoxState->IsSelected)
 				{
 					giftStatus->DisableSelectVoice = true;
 					pGift->Select();

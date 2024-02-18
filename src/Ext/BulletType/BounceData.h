@@ -9,7 +9,6 @@
 
 #include <Ext/EffectType/Effect/EffectData.h>
 #include <Ext/Helper/CastEx.h>
-#include <Ext/Helper/Physics.h>
 
 
 class BounceData : public EffectData

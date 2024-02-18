@@ -1,20 +1,19 @@
 ﻿#pragma once
 
-#include "State.h"
+#include <GeneralDefinitions.h>
+#include <HouseClass.h>
+
+#include "../StateScript.h"
 #include "AntiBulletData.h"
 
-class AntiBulletState : public State<AntiBulletData>
+#include <Ext/TechnoType/DamageText.h>
+
+class AntiBullet : public StateScript<AntiBulletData>
 {
 public:
-	bool CanSearchBullet()
-	{
-		bool can = _delayTimer.Expired();
-		if (can)
-		{
-			_delayTimer.Start(Data.Rate);
-		}
-		return can;
-	}
+	STATE_SCRIPT(AntiBullet, AntiBulletData);
+
+	bool CanSearchBullet();
 
 #pragma region save/load
 	template <typename T>
@@ -27,13 +26,13 @@ public:
 
 	virtual bool Load(ExStreamReader& stream, bool registerForChange)
 	{
-		State<AntiBulletData>::Load(stream, registerForChange);
+		StateScript<AntiBulletData>::Load(stream, registerForChange);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const
 	{
-		State<AntiBulletData>::Save(stream);
-		return const_cast<AntiBulletState*>(this)->Serialize(stream);
+		StateScript<AntiBulletData>::Save(stream);
+		return const_cast<AntiBullet*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:

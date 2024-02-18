@@ -18,6 +18,8 @@
 
 #include <Ext/Helper/Status.h>
 
+#include <Ext/BulletType/Trajectory/TrajectoryData.h>
+
 /// @brief 所有的脚本都位于GameObject下
 class ScriptComponent : public Component
 {
@@ -256,6 +258,51 @@ class BulletScript : public ScriptComponent, public IBulletScript
 {
 public:
 	SCRIPT_COMPONENT(BulletScript, BulletClass, BulletExt, pBullet);
+
+	BulletType GetBulletType()
+	{
+		if (_bulletType == BulletType::UNKNOWN)
+		{
+			_bulletType = WhatAmI(pBullet);
+			if (_bulletType != BulletType::ROCKET && trajectoryData->IsStraight())
+			{
+				_bulletType = BulletType::ROCKET;
+			}
+		}
+		return _bulletType;
+	}
+
+	bool IsArcing()
+	{
+		return GetBulletType() == BulletType::ARCING;
+	}
+	bool IsMissile()
+	{
+		return GetBulletType() == BulletType::MISSILE;
+	}
+	bool IsRocket()
+	{
+		return GetBulletType() == BulletType::ROCKET;
+	}
+	bool IsBomb()
+	{
+		return GetBulletType() == BulletType::BOMB;
+	}
+
+protected:
+	// 抛射体类型
+	BulletType _bulletType = BulletType::UNKNOWN;
+	// 弹道配置
+	TrajectoryData* _trajectoryData = nullptr;
+	TrajectoryData* GetTrajectoryData()
+	{
+		if (!_trajectoryData)
+		{
+			_trajectoryData = INI::GetConfig<TrajectoryData>(INI::Rules, pBullet->GetType()->ID)->Data;
+		}
+		return _trajectoryData;
+	}
+	__declspec(property(get = GetTrajectoryData)) TrajectoryData* trajectoryData;
 };
 
 class AnimScript : public ScriptComponent, public IAnimScript
@@ -276,8 +323,8 @@ public:
 	SCRIPT_COMPONENT(EBoltScript, EBolt, EBoltExt, pBolt);
 };
 
-#define DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TSCRIPT) \
-	CLASS_NAME() : TSCRIPT() \
+#define DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, ...) \
+	CLASS_NAME() : __VA_ARGS__() \
 	{ \
 		this->Name = ScriptName; \
 	} \

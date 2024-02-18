@@ -1,4 +1,4 @@
-﻿#include "../BulletStatus.h"
+﻿#include "StraightTrajectory.h"
 
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/Weapon.h>
@@ -6,62 +6,82 @@
 
 #include <Extension/WeaponTypeExt.h>
 
-#include <CellClass.h>
-#include <MapClass.h>
+#include "../BulletStatus.h"
 
-void BulletStatus::InitState_Trajectory_Straight()
+void StraightTrajectory::ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos)
+{
+	CoordStruct sourcePos = pBullet->GetCoords();
+	pBullet->SourceCoords = sourcePos;
+	Setup();
+}
+
+void StraightTrajectory::Setup()
 {
 	// 直线弹道
-    CoordStruct sourcePos = pBullet->SourceCoords;
-    CoordStruct targetPos = pBullet->TargetCoords;
+	CoordStruct sourcePos = pBullet->SourceCoords;
+	CoordStruct targetPos = pBullet->TargetCoords;
 
-    // 绝对直线，重设目标坐标
-    if (trajectoryData->AbsolutelyStraight && pBullet->Owner)
-    {
-        double distance = targetPos.DistanceFrom(sourcePos);
-        DirStruct facing = pBullet->Owner->GetRealFacing().Current();
+	TrajectoryData* trajectoryData = INI::GetConfig<TrajectoryData>(INI::Rules, pBullet->GetType()->ID)->Data;
+	// 绝对直线，重设目标坐标
+	if (trajectoryData->AbsolutelyStraight && pBullet->Owner)
+	{
+		double distance = targetPos.DistanceFrom(sourcePos);
+		DirStruct facing = pBullet->Owner->GetRealFacing().Current();
 		targetPos = GetFLHAbsoluteCoords(sourcePos, CoordStruct{ (int)distance, 0, 0 }, facing);
-        pBullet->TargetCoords = targetPos;
+		pBullet->TargetCoords = targetPos;
 
-        // BulletEffectHelper.BlueLine(pBullet->SourceCoords, pBullet->TargetCoords, 1, 90);
-    }
-    // 重设速度
-    BulletVelocity velocity = pBullet->Velocity;
-    bool reset = true;
-    if (pBullet->WeaponType)
+		// BulletEffectHelper.BlueLine(pBullet->SourceCoords, pBullet->TargetCoords, 1, 90);
+	}
+	// 重设速度
+	BulletVelocity velocity = pBullet->Velocity;
+	bool reset = true;
+	if (pBullet->WeaponType)
 	{
 		WeaponTypeExt::TypeData* weaponTypeData = WeaponTypeExt::GetData<WeaponTypeExt::TypeData>(pBullet->WeaponType);
 		if (weaponTypeData->RadialFire)
-        {
-            BulletVelocity sourceV = ToVelocity(sourcePos);
-            BulletVelocity targetV = sourceV + velocity;
+		{
+			BulletVelocity sourceV = ToVelocity(sourcePos);
+			BulletVelocity targetV = sourceV + velocity;
 			CoordStruct forward = GetForwardCoords(sourceV, targetV, pBullet->Speed);
 			CoordStruct offset = forward - sourcePos;
 			velocity = ToVelocity(offset);
-            if (pBullet->Type->Level)
-            {
-                velocity.Z = 0;
-            }
-            reset = false;
-        }
-    }
-    if (reset)
-    {
-        velocity = RecalculateBulletVelocity(pBullet, sourcePos, targetPos);
+			if (pBullet->Type->Level)
+			{
+				velocity.Z = 0;
+			}
+			reset = false;
+		}
+	}
+	if (reset)
+	{
+		velocity = RecalculateBulletVelocity(pBullet, sourcePos, targetPos);
 	}
 	// 记录下导弹的速度，之后在Update时用该速度重写抛射体
 	straightBullet = { sourcePos, targetPos, velocity };
 
-    // 设置触碰引信
-    if (pBullet->Type->Proximity)
-    {
-        ActiveProximity();
-    }
-};
+	// 设置触碰引信
+	if (pBullet->Type->Proximity)
+	{
+		dynamic_cast<BulletStatus*>(_parent)->ActiveProximity();
+	}
+}
 
-void BulletStatus::OnUpdate_Trajectory_Straight()
+void StraightTrajectory::Awake()
 {
-	if (!CaptureByBlackHole)
+	if (!IsRocket())
+	{
+		Disable();
+	}
+}
+
+void StraightTrajectory::OnPut(CoordStruct* pCoord, DirType dirType)
+{
+	Setup();
+}
+
+void StraightTrajectory::OnUpdate()
+{
+	if (!dynamic_cast<BulletStatus*>(_parent)->CaptureByBlackHole)
 	{
 		// 强制修正速度
 		pBullet->Velocity = straightBullet.Velocity;
@@ -107,4 +127,4 @@ void BulletStatus::OnUpdate_Trajectory_Straight()
 			}
 		}
 	}
-};
+}

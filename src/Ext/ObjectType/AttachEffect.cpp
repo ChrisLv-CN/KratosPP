@@ -14,6 +14,7 @@
 #include <Ext/Common/PrintTextManager.h>
 
 #include <Ext/EffectType/AttachEffectScript.h>
+#include <Ext/BulletType/BulletStatus.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/UploadAttachData.h>
 #include <Ext/WeaponType/FeedbackAttachData.h>
@@ -901,16 +902,21 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 		///						|__ EffectScript#2
 		if (_gameObject)
 		{
-			std::vector<std::string> names;
+			std::vector<Component::ComponentState> states;
 			int level = 0;
-			_gameObject->PrintNames(names, level);
+			_gameObject->GetComponentStates(states, level);
 			Point2D pos = ToClientPos(location);
-			for (std::string& n : names)
+			for (Component::ComponentState& state : states)
 			{
-				std::string log{ n };
+				std::string log{ state.Name };
 				log.append("\n");
 				pos.Y += offsetZ;
-				PrintTextManager::PrintText(log, Colors::Green, pos);
+				ColorStruct color = Colors::Green;
+				if (!state.Active)
+				{
+					color = Colors::Red;
+				}
+				PrintTextManager::PrintText(log, color, pos);
 			}
 		}
 		// 打印叠层信息

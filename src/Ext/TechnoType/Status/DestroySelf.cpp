@@ -4,21 +4,12 @@
 
 #include <Ext/TechnoType/DamageText.h>
 
-void TechnoStatus::InitState_DestroySelf()
-{
-	DestroySelfData* data = INI::GetConfig<DestroySelfData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
-	if (data->Enable)
-	{
-		DestroySelfState.Enable(*data);
-	}
-}
-
 void TechnoStatus::OnUpdate_DestroySelf()
 {
-	if (DestroySelfState.AmIDead() && !IsDead(pTechno))
+	if (DestroySelfState->AmIDead() && !IsDead(pTechno))
 	{
 		// 啊我死了
-		if (DestroySelfState.Data.Peaceful)
+		if (DestroySelfState->Data.Peaceful)
 		{
 			pTechno->Limbo();
 			pTechno->Health = 0;
@@ -26,12 +17,15 @@ void TechnoStatus::OnUpdate_DestroySelf()
 		}
 		else
 		{
-			if (DamageText* damageText = GetComponent<DamageText>())
+			if (DamageText* damageText = GetComponentInParent<DamageText>())
 			{
 				damageText->SkipDamageText = true;
 			}
 			pTechno->TakeDamage(pTechno->Health + 1, pTechno->GetTechnoType()->Crewed);
 		}
+		_isDead = true;
+		// 重要，击杀自己后中断所有后续循环
+		Break();
 	}
 }
 

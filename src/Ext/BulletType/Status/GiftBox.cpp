@@ -10,56 +10,45 @@
 #include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 
-void BulletStatus::InitState_GiftBox()
-{
-	// 读取单位身上的礼盒设置
-	GiftBoxData* data = INI::GetConfig<GiftBoxData>(INI::Rules, pBullet->Type->ID)->Data;
-	if (data->Enable)
-	{
-		GiftBoxState.Enable(*data);
-	}
-}
-
 void BulletStatus::OnUpdate_GiftBox()
 {
 	TechnoClass* pTechno = pBullet->Owner;
 	if (pTechno)
 	{
-		GiftBoxState.Update(pTechno->Veterancy.IsElite());
 		// 记录盒子的状态
-		GiftBoxState.IsSelected = pTechno->IsSelected;
-		GiftBoxState.Group = pTechno->Group;
+		GiftBoxState->IsSelected = pTechno->IsSelected;
+		GiftBoxState->Group = pTechno->Group;
 	}
-	if (GiftBoxState.IsActive())
+	if (GiftBoxState->IsActive())
 	{
 		// 记录朝向
-		GiftBoxState.BodyDir = Facing(pBullet);
-		GiftBoxState.TurretDir = GiftBoxState.BodyDir;
+		GiftBoxState->BodyDir = Facing(pBullet);
+		GiftBoxState->TurretDir = GiftBoxState->BodyDir;
 		// 准备开盒
-		if (GiftBoxState.CanOpen() && IsOnMark_GiftBox() && !GiftBoxState.Data.OpenWhenDestroyed && !GiftBoxState.Data.OpenWhenHealthPercent)
+		if (GiftBoxState->CanOpen() && IsOnMark_GiftBox() && !GiftBoxState->Data.OpenWhenDestroyed && !GiftBoxState->Data.OpenWhenHealthPercent)
 		{
 			// 开盒
-			GiftBoxState.IsOpen = true;
+			GiftBoxState->IsOpen = true;
 			// 释放礼物
-			std::vector<std::string> gifts = GiftBoxState.GetGiftList();
+			std::vector<std::string> gifts = GiftBoxState->GetGiftList();
 			if (!gifts.empty())
 			{
-				ReleaseGift(gifts, GiftBoxState.Data);
+				ReleaseGift(gifts, GiftBoxState->Data);
 			}
 		}
 
 		// 重置或者销毁盒子
-		if (GiftBoxState.IsOpen)
+		if (GiftBoxState->IsOpen)
 		{
-			if (GiftBoxState.Data.Remove)
+			if (GiftBoxState->Data.Remove)
 			{
-				GiftBoxState.Disable();
-				bool harmless = !GiftBoxState.Data.Destroy;
+				GiftBoxState->Disable();
+				bool harmless = !GiftBoxState->Data.Destroy;
 				life.Detonate(harmless);
 			}
 			else
 			{
-				GiftBoxState.ResetGiftBox();
+				GiftBoxState->ResetGiftBox();
 			}
 		}
 	}
@@ -68,15 +57,15 @@ void BulletStatus::OnUpdate_GiftBox()
 
 bool BulletStatus::OnDetonate_GiftBox(CoordStruct* pCoords)
 {
-	if (GiftBoxState.IsActive() && GiftBoxState.Data.OpenWhenDestroyed && IsOnMark_GiftBox())
+	if (GiftBoxState->IsActive() && GiftBoxState->Data.OpenWhenDestroyed && IsOnMark_GiftBox())
 	{
 		// 开盒
-		GiftBoxState.IsOpen = true;
+		GiftBoxState->IsOpen = true;
 		// 释放礼物
-		std::vector<std::string> gifts = GiftBoxState.GetGiftList();
+		std::vector<std::string> gifts = GiftBoxState->GetGiftList();
 		if (!gifts.empty())
 		{
-			ReleaseGift(gifts, GiftBoxState.Data);
+			ReleaseGift(gifts, GiftBoxState->Data);
 		}
 	}
 	return false;
@@ -84,7 +73,25 @@ bool BulletStatus::OnDetonate_GiftBox(CoordStruct* pCoords)
 
 bool BulletStatus::IsOnMark_GiftBox()
 {
-	// TODO AE isOnMark
+	std::vector<std::string> marks = GiftBoxState->Data.OnlyOpenWhenMarks;
+	if (!marks.empty())
+	{
+		if (AttachEffect* aem = AEManager())
+		{
+			std::vector<std::string> aeMarks{};
+			aem->GetMarks(aeMarks);
+			if (!aeMarks.empty())
+			{
+				// 取交集
+				std::set<std::string> m(marks.begin(), marks.end());
+				std::set<std::string> t(aeMarks.begin(), aeMarks.end());
+				std::set<std::string> v;
+				std::set_intersection(m.begin(), m.end(), t.begin(), t.end(), std::inserter(v, v.begin()));
+				return !v.empty();
+			}
+		}
+		return false;
+	}
 	return true;
 }
 
@@ -146,21 +153,21 @@ void BulletStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				if (data.IsTransform)
 				{
 					// 同步朝向
-					pGift->PrimaryFacing.SetCurrent(GiftBoxState.BodyDir);
-					pGift->SecondaryFacing.SetCurrent(GiftBoxState.TurretDir);
+					pGift->PrimaryFacing.SetCurrent(GiftBoxState->BodyDir);
+					pGift->SecondaryFacing.SetCurrent(GiftBoxState->TurretDir);
 					// JJ有单独的Facing
 					if (giftStatus->IsJumpjet())
 					{
 						FootClass* pGiftFoot = static_cast<FootClass*>(pGift);
 						JumpjetLocomotionClass* pLoco = static_cast<JumpjetLocomotionClass*>(pGiftFoot->Locomotor.get());
-						pLoco->LocomotionFacing.SetCurrent(GiftBoxState.BodyDir);
+						pLoco->LocomotionFacing.SetCurrent(GiftBoxState->BodyDir);
 					}
 					// 同步编队
-					pGift->Group = GiftBoxState.Group;
+					pGift->Group = GiftBoxState->Group;
 				}
 
 				// 同步选中状态
-				if (GiftBoxState.IsSelected)
+				if (GiftBoxState->IsSelected)
 				{
 					giftStatus->DisableSelectVoice = true;
 					pGift->Select();

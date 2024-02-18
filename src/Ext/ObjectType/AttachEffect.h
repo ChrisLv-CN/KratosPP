@@ -11,8 +11,6 @@
 
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
-#include <Ext/BulletType/BulletStatus.h>
-#include <Ext/TechnoType/TechnoStatus.h>
 
 #include <Ext/Helper/FLH.h>
 
@@ -20,6 +18,8 @@
 #include <Ext/EffectType/AttachEffectTypeData.h>
 
 class AttachEffectScript;
+class BulletStatus;
+class TechnoStatus;
 
 /// @brief AEManager, sub-component is AttachEffectScript, and AttachEffectScript 's sub-component is EffectScript
 /// GameObject

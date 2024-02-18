@@ -2,7 +2,7 @@
 
 #include <Common/INI/INIConfig.h>
 
-#include <Ext/ObjectType/State/FireSuperData.h>
+#include <Ext/StateType/State/FireSuperData.h>
 
 enum class PlaySuperWeaponMode
 {

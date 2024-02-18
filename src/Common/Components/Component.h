@@ -148,7 +148,15 @@ public:
 	void AttachToComponent(Component* component);
 	void DetachFromParent(bool disable = true);
 
-	void PrintNames(std::vector<std::string>& names, int& level);
+#ifdef DEBUG
+	struct ComponentState
+	{
+	public:
+		std::string Name;
+		bool Active;
+	};
+	void GetComponentStates(std::vector<ComponentState>& states, int& level);
+#endif
 
 #pragma region Foreach
 	/// <summary>
@@ -179,7 +187,7 @@ public:
 	template <typename TComponent>
 	TComponent* GetComponentInParent()
 	{
-		Component* c = nullptr;
+		TComponent* c = nullptr;
 		// find first level
 		for (Component* children : _children)
 		{

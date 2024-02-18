@@ -229,9 +229,9 @@ DEFINE_HOOK(0x4683E2, BulletClass_DrawSHP_Colour, 0x5)
 	{
 		bool changeColor = false;
 		bool changeBright = false;
-		if (status->PaintballState.NeedPaint(changeColor, changeBright) && changeColor)
+		if (status->PaintballState->NeedPaint(changeColor, changeBright) && changeColor)
 		{
-			R->Stack(0, status->PaintballState.Data.Color2);
+			R->Stack(0, status->PaintballState->Data.Color2);
 		}
 	}
 	return 0;
@@ -244,9 +244,9 @@ DEFINE_HOOK(0x4683E7, BulletClass_DrawSHP_Bright, 0x9)
 	{
 		bool changeColor = false;
 		bool changeBright = false;
-		if (status->PaintballState.NeedPaint(changeColor, changeBright) && changeBright)
+		if (status->PaintballState->NeedPaint(changeColor, changeBright) && changeBright)
 		{
-			R->Stack(0, GetBright(1000, status->PaintballState.Data.BrightMultiplier));
+			R->Stack(0, GetBright(1000, status->PaintballState->Data.BrightMultiplier));
 		}
 	}
 	return 0;

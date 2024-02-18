@@ -8,14 +8,6 @@ bool TechnoStatus::AmIStand()
 	return pMyMaster || MyMasterIsAnim || StandData.Enable;
 }
 
-void TechnoStatus::InitState_VirtualUnit()
-{
-	if (INI::GetSection(INI::Rules, pTechno->GetTechnoType()->ID)->Get("VirtualUnit", false))
-	{
-		VirtualUnit = true;
-	}
-}
-
 void TechnoStatus::OnPut_Stand(CoordStruct* pCoord, DirType dirType)
 {
 	if (AmIStand())

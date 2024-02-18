@@ -11,8 +11,8 @@
 #include <Common/Components/ScriptComponent.h>
 #include <Extension/AnimExt.h>
 
-#include <Ext/ObjectType/State/PaintballData.h>
 #include <Ext/EffectType/Effect/OffsetData.h>
+#include <Ext/StateType/State/PaintballData.h>
 #include "AnimDamageData.h"
 #include "ExpireAnimData.h"
 #include "PlaySuperData.h"

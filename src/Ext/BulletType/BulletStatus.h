@@ -16,14 +16,17 @@
 #include <Common/INI/INIConfig.h>
 
 #include <Ext/Helper/CastEx.h>
+#include <Ext/Helper/MathEx.h>
 
-#include <Ext/ObjectType/State/BounceData.h>
-#include <Ext/ObjectType/State/DestroySelfState.h>
-#include <Ext/ObjectType/State/GiftBoxState.h>
-#include <Ext/ObjectType/State/PaintballState.h>
+#include <Ext/StateType/State/DestroySelf.h>
+#include <Ext/StateType/State/GiftBox.h>
+#include <Ext/StateType/State/Paintball.h>
+
 #include "BulletStatusData.h"
 #include "Status/ProximityData.h"
 #include "Trajectory/TrajectoryData.h"
+
+class AttachEffect;
 
 /// @brief base compoment, save the Techno status
 class BulletStatus : public BulletScript
@@ -31,30 +34,17 @@ class BulletStatus : public BulletScript
 public:
 	BULLET_SCRIPT(BulletStatus);
 
-	BulletType GetBulletType();
-
-	bool IsArcing();
-	bool IsMissile();
-	bool IsRocket();
-	bool IsBomb();
-
 	void TakeDamage(int damage = 0, bool eliminate = true, bool harmless = false, bool checkInterceptable = false);
 
 	void TakeDamage(BulletDamage damageData, bool checkInterceptable = false);
 
 	void ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos);
 
-	/**
-	 *@brief 重新计算Arcing抛射体的出膛向量，精确命中目标位置
-	 *
-	 * @param speedMultiple 速度倍率，主要用于弹跳
-	 * @param force 强制重新计算
-	 */
-	void ResetArcingVelocity(float speedMultiple = 1.0f, bool force = false);
-
 	void DrawVXL_Paintball(REGISTERS* R);
 
 	void OnTechnoDelete(EventSystem* sender, Event e, void* args);
+
+	void ActiveProximity();
 
 	virtual void Awake() override;
 	virtual void Destroy() override;
@@ -68,16 +58,16 @@ public:
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
 	// 状态机
-	State<BounceData> BounceState{};
-	DestroySelfState DestroySelfState{};
-	GiftBoxState GiftBoxState{};
-	PaintballState PaintballState{};
+	GET_STATE(GiftBox);
+	GET_STATE(DestroySelf);
+	GET_STATE(Paintball);
 
 	TechnoClass* pSource = nullptr;
 	HouseClass* pSourceHouse = nullptr;
 
 	ObjectClass* pFakeTarget = nullptr;
 
+	// 生命值和伤害值
 	BulletLife life = {};
 	BulletDamage damage = {};
 
@@ -99,11 +89,6 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(this->BounceState)
-			.Process(this->DestroySelfState)
-			.Process(this->GiftBoxState)
-			.Process(this->PaintballState)
-
 			.Process(this->pSource)
 			.Process(this->pSourceHouse)
 			.Process(this->pFakeTarget)
@@ -116,17 +101,6 @@ public:
 			.Process(this->LocationLocked)
 
 			.Process(this->_initFlag)
-			// 弹道控制
-			.Process(this->_arcingTrajectoryInitFlag)
-			// 弹跳
-			.Process(this->_bounceData)
-			.Process(this->_isBounceSplit)
-			.Process(this->_bounceIndex)
-			.Process(this->_bounceTargetPos)
-			.Process(this->_bounceSpeedMultiple)
-			// 直线
-			.Process(this->straightBullet)
-			.Process(this->_resetTargetFlag)
 			// 碰撞引信
 			.Process(this->proximity)
 			.Process(this->_activeProximity)
@@ -148,12 +122,9 @@ public:
 #pragma endregion
 
 private:
-	/**
-	 *@brief 获取一个移动方向上的随机倍率
-	 *
-	 */
-	void ShakeVelocity();
-	void ActiveProximity();
+	AttachEffect* AEManager();
+
+	void InitState();
 
 	// 礼物盒
 	bool IsOnMark_GiftBox();
@@ -162,25 +133,9 @@ private:
 	// 反抛射体
 	void CanAffectAndDamageBullet(BulletClass* pTarget, WarheadTypeClass* pWH);
 
-	// 生成弹跳子抛射体
-	void SetBounceData(BounceData bounceData);
-	bool SpawnSplitCannon();
-
-	void InitState_Trajectory_Missile();
-	void InitState_Trajectory_Straight();
-
 	void InitState_BlackHole();
-	void InitState_Bounce();
-	void InitState_DestroySelf();
 	void InitState_ECM();
-	void InitState_GiftBox();
-	void InitState_Paintball();
 	void InitState_Proximity();
-
-	void OnUpdate_Trajectory_Arcing();
-	void OnUpdate_Trajectory_Bounce();
-	void OnUpdate_Trajectory_Straight();
-	void OnUpdate_Trajectory_Decroy();
 
 	void OnUpdate_DestroySelf();
 
@@ -194,35 +149,14 @@ private:
 	void OnUpdateEnd_Proximity(CoordStruct& sourcePos);
 
 	bool OnDetonate_AntiBullet(CoordStruct* pCoords);
-	bool OnDetonate_Bounce(CoordStruct* pCoords);
 	bool OnDetonate_GiftBox(CoordStruct* pCoords);
 	bool OnDetonate_SelfLaunch(CoordStruct* pCoords);
-
-	// 抛射体类型
-	BulletType _bulletType = BulletType::UNKNOWN;
-	// 弹道配置
-	TrajectoryData* _trajectoryData = nullptr;
-	TrajectoryData* GetTrajectoryData();
-	__declspec(property(get = GetTrajectoryData)) TrajectoryData* trajectoryData;
 
 	bool _initFlag = false;
 
 	bool _targetToAircraftFlag = false;
 
-	// 弹道控制
-	bool _arcingTrajectoryInitFlag = false;
-	bool _missileShakeVelocityFlag = false;
-
-	// 弹跳
-	BounceData _bounceData{};
 	bool _isBounceSplit = false; // 是弹跳抛射体分裂的子抛射体
-	int _bounceIndex = 0; // 第几号子抛射体
-	CoordStruct _bounceTargetPos = CoordStruct::Empty;
-	float _bounceSpeedMultiple = 1.0f;
-
-	// 直线
-	StraightBullet straightBullet{};
-	bool _resetTargetFlag = false;
 
 	// 碰撞引信配置
 	ProximityData* _proximityData = nullptr;

@@ -188,7 +188,7 @@ void ActiveRGBMode(TechnoClass* pTechno)
 	{
 		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
 		{
-			status->PaintballState.RGBIsPower();
+			status->PaintballState->RGBIsPower();
 		}
 	}
 }

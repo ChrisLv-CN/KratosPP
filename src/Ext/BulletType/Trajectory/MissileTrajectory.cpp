@@ -1,29 +1,19 @@
-﻿#include "../BulletStatus.h"
+﻿#include "MissileTrajectory.h"
 
 #include <Ext/Helper/FLH.h>
+#include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Weapon.h>
 #include <Ext/Helper/Scripts.h>
 
-void BulletStatus::ShakeVelocity()
+void MissileTrajectory::Awake()
 {
-	if (!_missileShakeVelocityFlag)
+	if (!IsMissile())
 	{
-		_missileShakeVelocityFlag = true;
-		// 晃动的出膛方向
-		if (trajectoryData->ShakeVelocity != 0)
-		{
-			BulletVelocity velocity = pBullet->Velocity;
-			double shakeX = Random::RandomDouble() * trajectoryData->ShakeVelocity;
-			double shakeY = Random::RandomDouble() * trajectoryData->ShakeVelocity;
-			double shakeZ = Random::RandomDouble();
-			pBullet->Velocity.X *= shakeX;
-			pBullet->Velocity.Y *= shakeY;
-			pBullet->Velocity.Z *= shakeZ;
-		}
+		Disable();
 	}
-	}
+}
 
-void BulletStatus::InitState_Trajectory_Missile()
+void MissileTrajectory::OnPut(CoordStruct* pCoord, DirType dirType)
 {
 	// 高抛导弹
 	if (pBullet->WeaponType && pBullet->WeaponType->Lobber)
@@ -46,9 +36,19 @@ void BulletStatus::InitState_Trajectory_Missile()
 		}
 	}
 
-
+	// 晃动的出膛方向
+	if (trajectoryData->ShakeVelocity != 0)
+	{
+		BulletVelocity velocity = pBullet->Velocity;
+		double shakeX = Random::RandomDouble() * trajectoryData->ShakeVelocity;
+		double shakeY = Random::RandomDouble() * trajectoryData->ShakeVelocity;
+		double shakeZ = Random::RandomDouble();
+		pBullet->Velocity.X *= shakeX;
+		pBullet->Velocity.Y *= shakeY;
+		pBullet->Velocity.Z *= shakeZ;
+	}
 }
 
 // TODO 热诱弹
-void BulletStatus::OnUpdate_Trajectory_Decroy() {};
+void MissileTrajectory::OnUpdate() {};
 

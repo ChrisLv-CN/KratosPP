@@ -1,41 +1,17 @@
 ﻿#include "BulletStatus.h"
 
 #include <Extension/WarheadTypeExt.h>
+
 #include <Ext/Helper/Scripts.h>
+
+#include <Ext/BulletType/Trajectory/ArcingTrajectory.h>
+#include <Ext/BulletType/Trajectory/MissileTrajectory.h>
+#include <Ext/BulletType/Trajectory/StraightTrajectory.h>
+
+#include "Bounce.h"
+
+#include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/TechnoType/TechnoStatus.h>
-
-BulletType BulletStatus::GetBulletType()
-{
-	if (_bulletType == BulletType::UNKNOWN)
-	{
-		_bulletType = WhatAmI(pBullet);
-		if (_bulletType != BulletType::ROCKET && trajectoryData->IsStraight())
-		{
-			_bulletType = BulletType::ROCKET;
-		}
-	}
-	return _bulletType;
-}
-
-bool BulletStatus::IsArcing()
-{
-	return GetBulletType() == BulletType::ARCING;
-}
-
-bool BulletStatus::IsMissile()
-{
-	return GetBulletType() == BulletType::MISSILE;
-}
-
-bool BulletStatus::IsRocket()
-{
-	return GetBulletType() == BulletType::ROCKET;
-}
-
-bool BulletStatus::IsBomb()
-{
-	return GetBulletType() == BulletType::BOMB;
-}
 
 void BulletStatus::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 {
@@ -46,6 +22,38 @@ void BulletStatus::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	if (args == pFakeTarget)
 	{
 		pFakeTarget = nullptr;
+	}
+}
+
+AttachEffect* BulletStatus::AEManager()
+{
+	AttachEffect* aeManager = nullptr;
+	if (_parent)
+	{
+		aeManager = _parent->GetComponent<AttachEffect>();
+	}
+	return aeManager;
+}
+
+void BulletStatus::InitState()
+{
+	FindOrAttach<DestroySelf>();
+	FindOrAttach<GiftBox>();
+	FindOrAttach<Paintball>();
+
+	// 根据类型分配弹道控制
+	switch (GetBulletType())
+	{
+	case BulletType::ARCING:
+		FindOrAttach<ArcingTrajectory>();
+		FindOrAttach<Bounce>();
+		break;
+	case BulletType::MISSILE:
+		FindOrAttach<MissileTrajectory>();
+		break;
+	case BulletType::ROCKET:
+		FindOrAttach<StraightTrajectory>();
+		break;
 	}
 }
 
@@ -98,6 +106,9 @@ void BulletStatus::Awake()
 		this->SubjectToGround = !IsArcing() && !IsRocket() && !trajectoryData->IsStraight();
 		break;
 	}
+
+	// 初始化状态机
+	InitState();
 }
 
 void BulletStatus::Destroy()
@@ -140,17 +151,19 @@ void BulletStatus::ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos)
 	}
 	pBullet->TargetCoords = targetPos;
 	// 重设弹道
-	if (IsArcing())
+	switch (GetBulletType())
 	{
-		CoordStruct sourcePos = pBullet->GetCoords();
-		pBullet->SourceCoords = sourcePos;
-		ResetArcingVelocity(1.0f, true);
-	}
-	else if (IsRocket())
-	{
-		CoordStruct sourcePos = pBullet->GetCoords();
-		pBullet->SourceCoords = sourcePos;
-		InitState_Trajectory_Straight();
+	case BulletType::ARCING:
+		if (ArcingTrajectory* at = GetComponent<ArcingTrajectory>())
+		{
+			at->ResetTarget(pNewTarget, targetPos);
+		}
+		break;
+	case BulletType::ROCKET:
+		if (StraightTrajectory* st = GetComponent<StraightTrajectory>())
+		{
+			st->ResetTarget(pNewTarget, targetPos);
+		}
 	}
 }
 
@@ -160,21 +173,18 @@ void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 	{
 		_initFlag = true;
 		InitState_BlackHole();
-		InitState_Bounce();
-		InitState_DestroySelf();
-		InitState_GiftBox();
-		InitState_Paintball();
+		// InitState_Bounce();
 		InitState_Proximity();
-		// 弹道初始化
-		if (IsMissile())
-		{
-			InitState_ECM();
-			InitState_Trajectory_Missile();
-		}
-		else if (IsRocket())
-		{
-			InitState_Trajectory_Straight();
-		}
+		// // 弹道初始化
+		// if (IsMissile())
+		// {
+		// 	InitState_ECM();
+		// 	InitState_Trajectory_Missile();
+		// }
+		// else if (IsRocket())
+		// {
+		// 	InitState_Trajectory_Straight();
+		// }
 	}
 	// 是否是对飞行器攻击
 	AbstractClass* pTarget = nullptr;
@@ -200,19 +210,6 @@ void BulletStatus::OnUpdate()
 			BulletExt::TargetAircraftBullets.push_back(pBullet);
 		}
 	}
-	// 弹道
-	if (IsArcing())
-	{
-		OnUpdate_Trajectory_Arcing();
-		OnUpdate_Trajectory_Bounce();
-	}
-	else if (IsRocket())
-	{
-		OnUpdate_Trajectory_Straight();
-	}
-	// 热诱弹
-	OnUpdate_Trajectory_Decroy();
-
 	// 自毁
 	OnUpdate_DestroySelf();
 
@@ -220,7 +217,7 @@ void BulletStatus::OnUpdate()
 	// 潜地
 	if (!life.IsDetonate && !HasPreImpactAnim(pBullet->WH))
 	{
-		if ((SubjectToGround || _isBounceSplit) && pBullet->GetHeight() < 0)
+		if ((SubjectToGround || GetComponent<Bounce>()) && pBullet->GetHeight() < 0)
 		{
 			// 抛射体潜入地下，重新设置目标参数，并手动引爆
 			CoordStruct targetPos = location;
@@ -255,6 +252,8 @@ void BulletStatus::OnUpdate()
 			pBullet->Detonate(location);
 		}
 		pBullet->UnInit();
+		//重要，击杀自己后中断所有后续循环
+		Break();
 		return;
 	}
 	if (life.Health <= 0)
@@ -301,10 +300,6 @@ void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 		{
 			return;
 		}
-		if ((skip = OnDetonate_Bounce(pCoords)) == true)
-		{
-			return;
-		}
 		if ((skip = OnDetonate_GiftBox(pCoords)) == true)
 		{
 			return;
@@ -317,15 +312,4 @@ void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 };
 
 bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords) { return false; };
-
-
-TrajectoryData* BulletStatus::GetTrajectoryData()
-{
-	if (!_trajectoryData)
-	{
-		_trajectoryData = INI::GetConfig<TrajectoryData>(INI::Rules, pBullet->GetType()->ID)->Data;
-	}
-	return _trajectoryData;
-}
-
 

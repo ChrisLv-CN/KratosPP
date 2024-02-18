@@ -29,8 +29,9 @@ DEFINE_HOOK(0x6FA45D, TechnoClass_Update_NotHuman_ClearTarget_Stand, 0x6)
 
 DEFINE_HOOK(0x5F6B90, ObjectClass_InAir_SkipCheckIsOnMap, 0x5)
 {
-	GET(TechnoClass*, pTechno, ECX);
-	if (AmIStand(pTechno))
+	GET(ObjectClass*, pObject, ECX);
+	TechnoClass* pTechno = nullptr;
+	if (CastToTechno(pObject, pTechno) && AmIStand(pTechno))
 	{
 		return 0x5F6B97;
 	}

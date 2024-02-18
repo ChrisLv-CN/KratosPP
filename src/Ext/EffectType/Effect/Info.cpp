@@ -30,7 +30,6 @@ void Info::OnGScreenRenderEnd(CoordStruct location)
 			// 循环遍历AE
 			int duration = -1;
 			int initDelay = -1;
-			bool fond = false;
 
 			aem->ForeachChild([&](Component* c) {
 				if (AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c))

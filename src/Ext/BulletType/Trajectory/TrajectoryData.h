@@ -4,9 +4,6 @@
 
 #include <Common/INI/INIConfig.h>
 
-#include <Ext/Helper/Weapon.h>
-
-
 enum class SubjectToGroundType
 {
 	AUTO = 0,
@@ -90,19 +87,5 @@ public:
 	bool IsStraight()
 	{
 		return Straight || AbsolutelyStraight;
-	}
-};
-
-/// @brief 直线导弹的状态数据
-struct StraightBullet
-{
-public:
-	CoordStruct sourcePos;
-	CoordStruct targetPos;
-	BulletVelocity Velocity;
-
-	void ResetVelocity(BulletClass* pBullet)
-	{
-		this->Velocity = RecalculateBulletVelocity(pBullet, sourcePos, targetPos);
 	}
 };

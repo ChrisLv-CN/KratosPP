@@ -1,21 +1,15 @@
 ﻿#include "../TechnoStatus.h"
 
-void TechnoStatus::InitState_Transform()
-{
-	pSourceType = pTechno->GetTechnoType();
-	pTargetType = pSourceType;
-}
-
 void TechnoStatus::OnUpdate_Transform()
 {
 	if (!_transformLocked)
 	{
 		// 执行变形逻辑
-		if (TransformState.IsActive())
+		if (TransformState->IsActive())
 		{
-			if (!_hasBeenChanged || _changeToType != TransformState.Data.TransformToType)
+			if (!_hasBeenChanged || _changeToType != TransformState->Data.TransformToType)
 			{
-				_changeToType = TransformState.Data.TransformToType;
+				_changeToType = TransformState->Data.TransformToType;
 				TechnoTypeClass* pTargetType = nullptr;
 				if (IsNotNone(_changeToType) && (pTargetType = TechnoTypeClass::Find(_changeToType.c_str())) != nullptr)
 				{
@@ -24,7 +18,7 @@ void TechnoStatus::OnUpdate_Transform()
 				}
 				else
 				{
-					TransformState.Disable();
+					TransformState->Deactivate();
 				}
 			}
 		}

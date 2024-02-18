@@ -335,7 +335,9 @@ void Component::DetachFromParent(bool disable)
 	}
 }
 
-void Component::PrintNames(std::vector<std::string>& names, int& level)
+#ifdef DEBUG
+
+void Component::GetComponentStates(std::vector<ComponentState>& states, int& level)
 {
 	// 自己
 	std::string name = "";
@@ -355,12 +357,15 @@ void Component::PrintNames(std::vector<std::string>& names, int& level)
 	{
 		name.append("#").append(this->Tag);
 	}
-	names.push_back(name);
-	ForeachChild([&names, &level](Component* c) {
+	ComponentState state{ name, IsActive() };
+	states.push_back(state);
+	ForeachChild([&states, &level](Component* c) {
 		int l = level + 1;
-		c->PrintNames(names, l);
+		c->GetComponentStates(states, l);
 		});
 }
+
+#endif // DEBUG
 
 #pragma region Foreach
 

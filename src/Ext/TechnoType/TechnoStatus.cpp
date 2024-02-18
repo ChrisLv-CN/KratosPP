@@ -1,5 +1,6 @@
 ﻿#include "TechnoStatus.h"
 
+#include <Ext/Common/CommonStatus.h>
 #include <Ext/Common/FireSuperManager.h>
 #include <Ext/Common/PrintTextManager.h>
 
@@ -15,56 +16,6 @@
 #include "Spawn.h"
 #include "TechnoTrail.h"
 
-void TechnoStatus::ExtChanged()
-{
-	_absType = AbstractType::None;
-	_locoType = LocoType::None;
-
-	_destroyAnimData = nullptr;
-
-	_transformData = nullptr;
-
-	// 重新附加其他的组件
-	InitExt();
-}
-
-void TechnoStatus::Awake()
-{
-	// 动态附加其他的组件
-	InitExt();
-}
-
-void TechnoStatus::Destroy()
-{
-	((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
-}
-
-void TechnoStatus::InitExt()
-{
-	FindOrAttach<AutoFireAreaWeapon>();
-	FindOrAttach<DamageText>();
-	FindOrAttach<HealthText>();
-	FindOrAttach<Spawn>();
-	if (!IsBuilding())
-	{
-		// 初始化尾巴
-		FindOrAttach<TechnoTrail>();
-		FindOrAttach<BaseNormal>();
-		if (IsInfantry())
-		{
-			FindOrAttach<CrawlingFLH>();
-		}
-		if (IsJumpjet())
-		{
-			FindOrAttach<JumpjetFacing>();
-		}
-		if (IsRocket())
-		{
-			FindOrAttach<MissileHoming>();
-		}
-	}
-}
-
 AttachEffect* TechnoStatus::AEManager()
 {
 	AttachEffect* aeManager = nullptr;
@@ -75,33 +26,95 @@ AttachEffect* TechnoStatus::AEManager()
 	return aeManager;
 }
 
-void TechnoStatus::OnPut(CoordStruct* pLocation, DirType dirType)
+void TechnoStatus::InitState()
 {
-	if (!_initStateFlag)
+	pSourceType = pTechno->GetTechnoType();
+	pTargetType = pSourceType;
+
+	_deactivateDimEMP = AudioVisual::Data()->DeactivateDimEMP;
+	_deactivateDimPowered = AudioVisual::Data()->DeactivateDimPowered;
+
+	if (INI::GetSection(INI::Rules, pTechno->GetTechnoType()->ID)->Get("VirtualUnit", false))
 	{
-		_initStateFlag = true;
-		InitState();
+		VirtualUnit = true;
+	}
+
+	FindOrAttach<AntiBullet>();
+	FindOrAttach<DestroyAnim>();
+	FindOrAttach<DestroySelf>();
+	FindOrAttach<FireSuper>();
+	FindOrAttach<GiftBox>();
+	FindOrAttach<Paintball>();
+	FindOrAttach<Transform>();
+}
+
+void TechnoStatus::InitExt()
+{
+	_gameObject->FindOrAttach<AutoFireAreaWeapon>();
+	_gameObject->FindOrAttach<DamageText>();
+	_gameObject->FindOrAttach<HealthText>();
+	_gameObject->FindOrAttach<Spawn>();
+	if (!IsBuilding())
+	{
+		// 初始化尾巴
+		_gameObject->FindOrAttach<TechnoTrail>();
+		_gameObject->FindOrAttach<BaseNormal>();
+		if (IsInfantry())
+		{
+			_gameObject->FindOrAttach<CrawlingFLH>();
+		}
+		if (IsJumpjet())
+		{
+			_gameObject->FindOrAttach<JumpjetFacing>();
+		}
+		if (IsRocket())
+		{
+			_gameObject->FindOrAttach<MissileHoming>();
+		}
 	}
 }
 
-void TechnoStatus::InitState()
+void TechnoStatus::Awake()
 {
-	InitState_AntiBullet();
-	InitState_CrateBuff();
-	InitState_DestroyAnim();
-	InitState_DestroySelf();
-	InitState_FireSuper();
-	InitState_GiftBox();
-	InitState_Paintball();
-	InitState_Transform();
-	InitState_VirtualUnit();
+	// 初始化状态机
+	InitState();
+	// 动态附加其他的组件
+	InitExt();
+}
+
+void TechnoStatus::Destroy()
+{
+	((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
+}
+
+void TechnoStatus::ExtChanged()
+{
+	_absType = AbstractType::None;
+	_locoType = LocoType::None;
+
+	// 重新附加其他的组件
+	InitExt();
+}
+
+void TechnoStatus::OnPut(CoordStruct* pCoord, DirType dirType)
+{
+	OnPut_Stand(pCoord, dirType);
+}
+
+void TechnoStatus::OnRemove()
+{
+	OnRemove_Stand();
 }
 
 void TechnoStatus::OnUpdate()
 {
 	OnUpdate_DestroySelf();
-	if (!IsDead(pTechno))
+	if (!_isDead && !IsDead(pTechno))
 	{
+		if (pTechno->IsSelected)
+		{
+			PaintballState->RGBIsPower();
+		}
 		switch (pTechno->CurrentMission)
 		{
 		case Mission::Move:
@@ -144,7 +157,7 @@ void TechnoStatus::OnUpdate()
 
 void TechnoStatus::OnUpdateEnd()
 {
-	if (!IsDeadOrInvisible(pTechno))
+	if (!_isDead && !IsDeadOrInvisible(pTechno))
 	{
 		this->_lastMission = pTechno->CurrentMission;
 	}
@@ -170,11 +183,6 @@ void TechnoStatus::OnTemporalUpdate(TemporalClass* pTemporal)
 	}
 }
 
-void TechnoStatus::OnRemove()
-{
-	OnRemove_Stand();
-}
-
 void TechnoStatus::OnReceiveDamage(args_ReceiveDamage* args)
 {
 	OnReceiveDamage_Stand(args);
@@ -191,7 +199,10 @@ void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, D
 	OnReceiveDamageEnd_GiftBox(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
 }
 
-void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) {};
+void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+{
+
+};
 
 void TechnoStatus::OnReceiveDamageDestroy()
 {

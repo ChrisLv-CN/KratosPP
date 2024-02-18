@@ -6,24 +6,6 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 
-CrateBuffData* TechnoStatus::GetCrateBuffData()
-{
-	if (!_crateBuffData)
-	{
-		_crateBuffData = INI::GetConfig<CrateBuffData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
-	}
-	return _crateBuffData;
-}
-
-void TechnoStatus::InitState_CrateBuff()
-{
-	CrateBuffData* data = GetCrateBuffData();
-	if (data->Enable)
-	{
-		CrateBuffState.Enable(*data);
-	}
-}
-
 void TechnoStatus::RecalculateStatus()
 {
 	if (!IsDead(pTechno))

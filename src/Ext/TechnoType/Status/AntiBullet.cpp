@@ -51,26 +51,18 @@ bool TechnoStatus::WeaponNoAA(int weaponIdx)
 	return true;
 }
 
-void TechnoStatus::InitState_AntiBullet()
-{
-	AntiBulletData* data = INI::GetConfig<AntiBulletData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
-	if (data->Enable)
-	{
-		AntiBulletState.Enable(*data);
-	}
-}
-
 void TechnoStatus::OnUpdate_AntiBullet()
 {
-	if (!IsDeadOrInvisible(pTechno) && AntiBulletState.IsActive())
+	if (!IsDeadOrInvisible(pTechno) && AntiBulletState->IsActive())
 	{
-		AntiBulletData data = AntiBulletState.Data;
+		AntiBulletData data = AntiBulletState->Data;
 		// 没有乘客也没有防空武器，关闭反抛射体搜索
 		if (!data.Self || WeaponNoAA(data.Weapon) && (!data.ForPassengers || pTechno->GetTechnoType()->Passengers <= 0))
 		{
-			AntiBulletState.Disable();
+			AntiBulletState->End();
+			return;
 		}
-		if (AntiBulletState.CanSearchBullet())
+		if (AntiBulletState->CanSearchBullet())
 		{
 			double scanRange = data.Range;
 			if (pTechno->Veterancy.IsElite())
