@@ -5,6 +5,7 @@
 
 #include <Extension/GOExtension.h>
 
+class AttachEffectTypeData;
 class AttachEffect;
 
 template <typename TExt, typename TScript, typename TBase>
@@ -78,6 +79,34 @@ template <typename TExt, typename TBase>
 static AttachEffect* GetAEManager(TBase* p)
 {
 	return GetScript<TExt, AttachEffect>(p);
+}
+
+template <typename TypeExt, typename TBase>
+static bool TryGetAEData(TBase* pWH, AttachEffectTypeData*& data)
+{
+	if (pWH != nullptr)
+	{
+		auto* typeExt = TypeExt::ExtMap.Find(pWH);
+		if (typeExt)
+		{
+			data = typeExt->pTypeAEData;
+			if (!data)
+			{
+				data = INI::GetConfig<AttachEffectTypeData>(INI::Rules, pWH->ID)->Data;
+				typeExt->pTypeAEData = data;
+			}
+			return data != nullptr;
+		}
+	}
+	return false;
+}
+
+template <typename TypeExt, typename TBase>
+static AttachEffectTypeData* GetAEData(TBase* p)
+{
+	AttachEffectTypeData* data = nullptr;
+	TryGetAEData<TypeExt>(p, data);
+	return data;
 }
 
 template <typename TypeExt, typename TypeData, typename TBase>

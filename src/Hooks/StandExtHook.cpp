@@ -88,7 +88,7 @@ DEFINE_HOOK(0x6FC749, TechnoClass_CanFire_WhichLayer_Stand, 0x5)
 			TechnoClass* pTechno = nullptr;
 			if (CastToTechno(pTarget, pTechno) && AmIStand(pTechno))
 			{
-				if (pTechno->InAir)
+				if (pTechno->IsInAir())
 				{
 					return inAir;
 				}
@@ -237,7 +237,7 @@ DEFINE_HOOK(0x4DB7F7, FootClass_In_Which_Layer_Stand, 0x6)
 		Layer layer = status->StandData.DrawLayer;
 		if (layer == Layer::None)
 		{
-			layer = pTechno->InAir ? Layer::Top : Layer::Air;
+			layer = pTechno->IsInAir() ? Layer::Top : Layer::Air;
 		}
 		// R->ECX((DWORD)layer);
 		// return 0x4DB803; //Get Error

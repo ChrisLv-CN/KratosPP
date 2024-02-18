@@ -276,6 +276,54 @@ bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx, bo
 	return canAttack;
 }
 
+
+int GetRealDamage(Armor armor, int damage, WarheadTypeClass* pWH, bool ignoreArmor, int distance)
+{
+	int realDamage = damage;
+	if (!ignoreArmor)
+	{
+		// 计算实际伤害
+		if (realDamage > 0)
+		{
+			realDamage = MapClass::GetTotalDamage(damage, pWH, armor, distance);
+		}
+		else
+		{
+			realDamage = -MapClass::GetTotalDamage(-damage, pWH, armor, distance);
+		}
+	}
+	return realDamage;
+}
+
+bool CanDamageMe(TechnoClass* pTechno, int damage, int distanceFromEpicenter, WarheadTypeClass* pWH, int& realDamage, bool effectsRequireDamage)
+{
+	// 计算实际伤害
+	realDamage = GetRealDamage(pTechno->GetType()->Armor, damage, pWH, false, distanceFromEpicenter);
+	WarheadTypeExt::TypeData* data = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
+	if (damage == 0)
+	{
+		return data->AllowZeroDamage;
+	}
+	else
+	{
+		if (data->EffectsRequireVerses)
+		{
+			// 必须要可以造成伤害
+			if (MapClass::GetTotalDamage(RulesClass::Instance->MaxDamage, pWH, pTechno->GetType()->Armor, 0) == 0)
+			{
+				// 弹头无法对该类型护甲造成伤害
+				return false;
+			}
+			// 伤害非零，当EffectsRequireDamage=yes时，必须至少造成1点实际伤害
+			if (effectsRequireDamage || data->EffectsRequireDamage)
+			{
+				return realDamage != 0;
+			}
+		}
+	}
+	return true;
+}
+
 void ClearAllTarget(TechnoClass* pAttacker)
 {
 	if (pAttacker)

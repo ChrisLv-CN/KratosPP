@@ -449,7 +449,7 @@ void AttachEffect::FeedbackAttach(WeaponTypeClass* pWeapon)
 							}
 							// 检查是否可以影响并赋予AE
 							if (data.CanAffectType(tempTechno)
-								&& (data.AffectInAir || !tempTechno->InAir)
+								&& (data.AffectInAir || !tempTechno->IsInAir())
 								// && (e.AffectStand || !AmIStand(tempTechno))
 								&& tempAEM->IsOnMark(data)
 								)
@@ -504,7 +504,7 @@ void AttachEffect::AttachUploadAE()
 						UploadAttachEntity e = it->second;
 						if (e.Enable
 							&& e.CanAffectType(pTechno)
-							&& (e.AffectInAir || !pTechno->InAir)
+							&& (e.AffectInAir || !pTechno->IsInAir())
 							// && (e.AffectStand || !AmIStand(pTechno))
 							&& this->IsOnMark(e)
 							)

@@ -3,6 +3,8 @@
 #include <cmath>
 #include <functional>
 #include <string>
+#include <vector>
+#include <map>
 
 #include <GeneralDefinitions.h>
 #include <HouseClass.h>
@@ -111,12 +113,78 @@ void FindObject(DynamicVectorClass<TBase*>* array, std::function<void(TBase*)> f
 }
 
 /**
+ *@brief 从列表中检索一个符合条件的对象，目标对象为ObjectClass的派生
+ *
+ * @tparam TBase 目标类型
+ * @param array 列表
+ * @param func 查找到后的回调函数
+ * @param location 查找的位置
+ * @param maxSpread 最大范围
+ * @param minSpread 最小范围
+ * @param fullAirspace 忽略高度，圆柱形判定
+ * @param pHouse 比较的阵营
+ * @param owner 包括自己人
+ * @param allied 包括友军
+ * @param enemies 包括敌军
+ * @param civilian 包括平民
+ */
+template <typename TBase>
+void FindObject(std::vector<TBase*> array, std::function<bool(TBase*)> func,
+	CoordStruct location, double maxSpread, double minSpread = 0, bool fullAirspace = false,
+	HouseClass* pHouse = nullptr,
+	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true)
+{
+	// 最大搜索范围小于0，搜索全部，等于0，搜索1格范围
+	double maxRange = (maxSpread > 0 ? maxSpread : (maxSpread == 0 ? 1 : 0)) * 256;
+	double minRange = (minSpread <= 0 ? 0 : minSpread) * 256;
+	for (TBase* pBase : array)
+	{
+		// 分离类型
+		ObjectClass* pObject = static_cast<ObjectClass*>(pBase);
+		if (pObject && Finder::Hit(pObject, location, maxRange, minRange, fullAirspace, pHouse, owner, allied, enemies, civilian))
+		{
+			if (func(pBase))
+			{
+				break;
+			}
+		}
+	}
+}
+
+template <typename TBase>
+void FindObject(std::vector<TBase*> array, std::function<void(TBase*)> func,
+	HouseClass* pHouse = nullptr,
+	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true)
+{
+	FindObject<TBase>(array, func, CoordStruct::Empty, 0, 0, pHouse, owner, allied, enemies, civilian);
+}
+
+/**
  *@brief 随机搜索一个阵营里的单位
  *
  * @param pHouse 阵营
  * @return TechnoClass* 搜索到的单位
  */
 TechnoClass* FindRandomTechno(HouseClass* pHouse);
+
+/**
+ *@brief 按照CellSpread搜索一个点附近的单位
+ *
+ * @param location 中心位置
+ * @param spread 搜索范围
+ * @param fullAirspace 圆柱形搜索
+ * @param includeInAir 包含空中单位
+ * @param ignoreBuildingOuter 忽略建筑的外扩格子
+ * @param pHouse 所属
+ * @param owner 包含自身阵营
+ * @param allied 包含友军
+ * @param enemies 包含敌人
+ * @param civilian 包含平民
+ * @return std::vector<TechnoClass*>
+ */
+std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
+	HouseClass* pHouse = nullptr,
+	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true);
 
 /**
  *@brief 搜索爆炸位置物体并附加AE
@@ -128,4 +196,27 @@ TechnoClass* FindRandomTechno(HouseClass* pHouse);
  * @param pAttackingHouse 攻击者所属
  */
 void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
+
+struct DamageGroup
+{
+public:
+	TechnoClass* pTarget;
+	double Distance;
+};
+
+/**
+ *@brief 查找爆炸位置的替身或者虚拟单位并对其造成伤害
+ *
+ * @param location 爆炸位置
+ * @param damage 伤害
+ * @param pWH 弹头
+ * @param pAttacker 攻击者
+ * @param pAttackingHouse 攻击者所属
+ * @param exclude 排除
+ */
+void FindAndDamageStandOrVUnit(CoordStruct location, int damage,
+	WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse, ObjectClass* exclude = nullptr);
+
+bool CheckAndMarkTarget(TechnoClass* pTarget, double spread, CoordStruct location, int damage, ObjectClass* pAttacker,
+	WarheadTypeClass* pWH, HouseClass* pAttackingHouse, DamageGroup& damageGroup);
 

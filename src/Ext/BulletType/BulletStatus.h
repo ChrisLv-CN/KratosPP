@@ -47,6 +47,7 @@ public:
 	void ActiveProximity();
 
 	virtual void Awake() override;
+
 	virtual void Destroy() override;
 
 	virtual void OnPut(CoordStruct* pLocation, DirType dir) override;

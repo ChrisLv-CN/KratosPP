@@ -10,6 +10,7 @@
 
 #include <Common/INI/INI.h>
 
+#include <Ext/Helper/StringEx.h>
 #include <Ext/Helper/Scripts.h>
 
 #include "TypeExtension.h"

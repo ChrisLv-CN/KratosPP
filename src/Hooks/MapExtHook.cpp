@@ -11,6 +11,7 @@
 #include <Extension/TechnoExt.h>
 #include <Extension/TechnoTypeExt.h>
 
+#include <Ext/Helper/Finder.h>
 #include <Ext/Helper/Scripts.h>
 
 #include <Ext/Common/CommonStatus.h>
@@ -19,6 +20,31 @@
 #include <Ext/TechnoType/BuildingRangeData.h>
 
 #pragma region Crate buff
+DEFINE_HOOK(0x489280, MapClass_DamageArea, 0x6)
+{
+	GET(CoordStruct*, pLocation, ECX);
+	GET(int, damage, EDX);
+	GET_STACK(ObjectClass*, pAttacker, 0x4);
+	GET_STACK(WarheadTypeClass*, pWH, 0x8);
+	GET_STACK(bool, affectsTiberium, 0xC);
+	GET_STACK(HouseClass*, pAttackingHouse, 0x10);
+	if (pWH)
+	{
+		// 抛射体爆炸OnDetonate()后会调用该事件
+		// Find and Attach Effects.
+		FindAndAttachEffect(*pLocation, damage, pWH, pAttacker, pAttackingHouse);
+		// Find all stand, check distance and blown it up.
+		// TechnoStatusScript.FindAndDamageStandOrVUnit(pLocation.Data, damage, pAttacker, pWH, pAttackingHouse);
+		// Those action won't effects Stand.
+		// TechnoClass* pTechno = nullptr;
+		// TechnoStatus* status = nullptr;
+		// if (!pAttacker && CastToTechno(pAttacker, pTechno) && TryGetStatus<TechnoExt>(pTechno, status))
+		// {
+		// 	status->Teleport(pLocation, pWH);
+		// }
+	}
+	return 0;
+}
 
 /*
 	generic crate-handler file

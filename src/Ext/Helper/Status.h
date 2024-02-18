@@ -76,6 +76,10 @@ bool IsOnMark(TechnoClass* pTechno, FilterData data);
 
 bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx = -1, bool isPassiveAcquire = false);
 
+int GetRealDamage(Armor armor, int damage, WarheadTypeClass* pWH, bool ignoreArmor = true, int distance = 0);
+
+bool CanDamageMe(TechnoClass* pTechno, int damage, int distanceFromEpicenter, WarheadTypeClass* pWH, int& realDamage, bool effectsRequireDamage = false);
+
 void ClearAllTarget(TechnoClass* pAttacker);
 #pragma endregion
 

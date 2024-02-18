@@ -141,13 +141,13 @@ void Stand::UpdateStateBullet()
 	switch (Data.Targeting)
 	{
 	case StandTargeting::LAND:
-		if (pStand->InAir)
+		if (pStand->IsInAir())
 		{
 			ClearAllTarget(pStand);
 		}
 		break;
 	case StandTargeting::AIR:
-		if (!pStand->InAir)
+		if (!pStand->IsInAir())
 		{
 			ClearAllTarget(pStand);
 		}
@@ -361,13 +361,13 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 	switch (Data.Targeting)
 	{
 	case StandTargeting::LAND:
-		if (pStand->InAir)
+		if (pStand->IsInAir())
 		{
 			ClearAllTarget(pStand);
 		}
 		break;
 	case StandTargeting::AIR:
-		if (!pStand->InAir)
+		if (!pStand->IsInAir())
 		{
 			ClearAllTarget(pStand);
 		}

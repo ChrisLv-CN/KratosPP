@@ -9,6 +9,8 @@
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
 
+class AttachEffectTypeData;
+
 template <typename TBase, typename TExt>
 class TypeExtension
 {
@@ -53,6 +55,9 @@ public:
 		};
 
 		INIReader* pTypeData = nullptr;
+
+		// AE配置缓存，只是弹头用
+		AttachEffectTypeData* pTypeAEData = nullptr;
 
 	private:
 		template <typename T>

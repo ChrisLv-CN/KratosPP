@@ -1,12 +1,24 @@
 ﻿#include "Finder.h"
-#include "CastEx.h"
-#include "MathEx.h"
-#include "Status.h"
 
+#include <algorithm>
 #include <string>
 #include <vector>
+#include <map>
+#include <set>
 
 #include <Utilities/Debug.h>
+
+#include <Extension/TechnoExt.h>
+#include <Extension/WarheadTypeExt.h>
+
+#include "CastEx.h"
+#include "MathEx.h"
+#include "Scripts.h"
+#include "Status.h"
+
+#include <Ext/EffectType/AttachEffectData.h>
+#include <Ext/EffectType/AttachEffectTypeData.h>
+#include <Ext/TechnoType/TechnoStatus.h>
 
 double Finder::DistanceFrom(CoordStruct sourcePos, CoordStruct targetPos, bool fullAirspace)
 {
@@ -30,7 +42,7 @@ bool Finder::InRange(CoordStruct location, CoordStruct targetLocation,
 	{
 		distance *= 0.5;
 	}
-	return distance >= minRange && distance <= maxRange;
+	return !isinf(distance) && distance >= minRange && distance <= maxRange;
 }
 
 bool Finder::Hit(ObjectClass* pObject,
@@ -126,7 +138,201 @@ TechnoClass* FindRandomTechno(HouseClass* pHouse)
 	return nullptr;
 }
 
+std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
+	HouseClass* pHouse,
+	bool owner, bool allied, bool enemies, bool civilian)
+{
+	std::set<TechnoClass*> pTechnoSet;
+
+	// the quick way. only look at stuff residing on the very cells we are affecting.
+	CellStruct cellCoords = MapClass::Instance->GetCellAt(location)->MapCoords;
+	size_t range = static_cast<size_t>(spread + 0.99);
+	for (CellSpreadEnumerator it(range); it; ++it) {
+		CellClass* pCell = MapClass::Instance->GetCellAt(*it + cellCoords);
+		// find all Techno in cell
+		for (NextObject obj(pCell->GetContent()); obj; ++obj) {
+			if (TechnoClass* pTechno = abstract_cast<TechnoClass*>(*obj)) {
+				pTechnoSet.insert(pTechno);
+			}
+		}
+		// Get JJ
+		if (includeInAir && pCell && pCell->Jumpjet)
+		{
+			if (TechnoClass* pTechno = abstract_cast<TechnoClass*>(pCell->Jumpjet)) {
+				pTechnoSet.insert(pTechno);
+			}
+		}
+	}
+
+	// flying objects are not included normally
+	if (includeInAir) {
+		// the not quite so fast way. skip everything not in the air.
+		for (FootClass*& pTechno : *FootClass::Array) {
+			if (pTechno->GetHeight() > 0) {
+				// rough estimation
+				if (pTechno->Location.DistanceFrom(location) <= spread * Unsorted::LeptonsPerCell) {
+					pTechnoSet.insert(pTechno);
+				}
+			}
+		}
+	}
+
+	// 筛选并去掉不可用项目
+	std::vector<TechnoClass*> pTechnoList;
+	for(TechnoClass* pTechno : pTechnoSet)
+	{
+		CoordStruct targetPos = pTechno->GetCoords();
+		double dist = Finder::DistanceFrom(targetPos, location, fullAirspace);
+
+		bool checkDistance = true;
+		AbstractType absType = pTechno->WhatAmI();
+		switch (absType)
+		{
+		case AbstractType::Building:
+		{
+			BuildingClass* pBuilding = static_cast<BuildingClass*>(pTechno);
+			if (pBuilding->Type->InvisibleInGame) {
+				continue;
+			}
+			if (!ignoreBuildingOuter)
+			{
+				checkDistance = false;
+			}
+			break;
+		}
+		case AbstractType::Aircraft:
+			if (pTechno->IsInAir())
+			{
+				dist *= 0.5;
+			}
+			break;
+		}
+
+		if (!checkDistance || dist <= spread * Unsorted::LeptonsPerCell)
+		{
+			pTechnoList.push_back(pTechno);
+		}
+	}
+	return pTechnoList;
+}
+
 void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
-	// TODO FindAndAttachEffect
+	AttachEffectTypeData* aeTypeData = GetAEData<WarheadTypeExt>(pWH);
+	if (aeTypeData->Enable)
+	{
+		bool fullAirspace = aeTypeData->AttachFullAirspace;
+		bool findTechno = false;
+		bool findBullet = false;
+		// 快速检索是否需要查找单位或者抛射体清单
+		for (std::string ae : aeTypeData->AttachEffectTypes)
+		{
+			AttachEffectData* aeData = INI::GetConfig<AttachEffectData>(INI::Rules, ae.c_str())->Data;
+			findTechno |= aeData->AffectTechno;
+			findBullet |= aeData->AffectBullet;
+		}
+
+		WarheadTypeExt::TypeData* warheadTypeData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
+		if (findTechno)
+		{
+			double cellSpread = pWH->CellSpread;
+			bool affectInAir = warheadTypeData->AffectInAir;
+			// 检索爆炸范围内的单位类型
+			std::vector<TechnoClass*> pTechnoList = GetCellSpreadTechnos(location, cellSpread, fullAirspace, affectInAir, false);
+			// 排序准备和替身的并集
+			std::sort(pTechnoList.begin(), pTechnoList.end());
+			std::set<TechnoClass*> pTargetList;
+			// 检索爆炸范围内的替身
+			if (warheadTypeData->AffectStand)
+			{
+				// 检索爆炸范围内的替身
+				std::vector<TechnoClass*> pStandArray;
+				for (auto standExt : TechnoExt::StandArray)
+				{
+					pStandArray.push_back(standExt.first);
+				}
+				std::set<TechnoClass*> pStandList;
+				// 过滤掉不在范围内的
+				FindObject<TechnoClass>(pStandArray, [&pStandList, &affectInAir](TechnoClass* pTarget)->bool
+					{
+						if (affectInAir || !pTarget->IsInAir())
+						{
+							pStandList.insert(pTarget);
+						}
+						return false;
+					}, location, (double)pWH->CellSpread);
+				// 合并搜索到的单位和替身清单并去重
+				std::set_union(pTechnoList.begin(), pTechnoList.end(), pStandList.begin(), pStandList.end(), std::inserter(pTargetList, pTargetList.begin()));
+			}
+			else
+			{
+				pTargetList.insert(pTechnoList.begin(), pTechnoList.end());
+			}
+			// Logger.Log($"{Game.CurrentFrame} 弹头[{pWH->Base.ID}] {pWH} 爆炸半径{pWH->CellSpread}, 影响的单位{pTechnoList.Count()}个，附加AE [{string.Join(", ", aeTypeData.AttachEffectTypes)}]");
+			for (TechnoClass* pTarget : pTargetList)
+			{
+				// 检查死亡，过滤掉发射者
+				if (IsDeadOrInvisible(pTarget) || (!warheadTypeData->AffectShooter && pTarget == pAttacker))
+				{
+					continue;
+				}
+				// 过滤替身和虚单位
+				TechnoStatus* status = nullptr;
+				if (!warheadTypeData->AffectStand && TryGetStatus<TechnoExt>(pTarget, status) && (status->AmIStand() || status->VirtualUnit))
+				{
+					continue;
+				}
+				int distanceFromEpicenter = (int)location.DistanceFrom(pTarget->GetCoords());
+				HouseClass* pTargetHouse = pTarget->Owner;
+				// 可影响可伤害
+				int realDamage = 0;
+				if (CanAffectHouse(pAttackingHouse, pTargetHouse, warheadTypeData->AffectsOwner, warheadTypeData->AffectsAllies, warheadTypeData->AffectsEnemies)// 检查所属权限
+					&& CanDamageMe(pTarget, damage, (int)distanceFromEpicenter, pWH, realDamage)// 检查护甲
+					)
+				{
+					// 赋予AE
+					AttachEffect* aeManager = nullptr;
+					if (TryGetAEManager<TechnoExt>(pTarget, aeManager))
+					{
+						aeManager->Attach(aeTypeData->AttachEffectTypes, aeTypeData->AttachEffectChances, false, pAttacker, pAttackingHouse, location);
+					}
+				}
+			}
+		}
+
+		// 检索爆炸范围内的抛射体类型
+		if (findBullet)
+		{
+			FindObject<BulletClass>(BulletClass::Array.get(), [&](BulletClass* pTarget)->bool {
+				if (!IsDeadOrInvisible(pTarget) && (warheadTypeData->AffectShooter || pTarget != pAttacker))
+				{
+					// 可影响
+					HouseClass* pTargetSourceHouse = GetSourceHouse(pTarget);
+					if (CanAffectHouse(pAttackingHouse, pTargetSourceHouse, warheadTypeData->AffectsOwner, warheadTypeData->AffectsAllies, warheadTypeData->AffectsEnemies))
+					{
+						// 赋予AE
+						AttachEffect* aeManager = nullptr;
+						if (TryGetAEManager<BulletExt>(pTarget, aeManager))
+						{
+							aeManager->Attach(aeTypeData->AttachEffectTypes, aeTypeData->AttachEffectChances, false, pAttacker, pAttackingHouse, location);
+						}
+					}
+				}
+				return false;
+				}, location, pWH->CellSpread, 0, fullAirspace);
+		}
+	}
 }
+
+void FindAndDamageStandOrVUnit(CoordStruct location, int damage,
+	WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse, ObjectClass* exclude)
+{
+	
+}
+
+bool CheckAndMarkTarget(TechnoClass* pTarget, double spread, CoordStruct location, int damage, ObjectClass* pAttacker,
+	WarheadTypeClass* pWH, HouseClass* pAttackingHouse, DamageGroup& damageGroup)
+{
+	return false;
+}
+
