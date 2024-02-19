@@ -70,6 +70,16 @@ public:
 		INIT_STATE(Paintball);
 	}
 
+	template <typename T>
+	bool TryGetState(IStateScript*& state)
+	{
+		if (false) {}
+		TRY_GET_STATE(GiftBox)
+		TRY_GET_STATE(DestroySelf)
+		TRY_GET_STATE(DestroySelf)
+		return state != nullptr;
+	}
+
 	TechnoClass* pSource = nullptr;
 	HouseClass* pSourceHouse = nullptr;
 

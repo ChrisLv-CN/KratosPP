@@ -18,44 +18,49 @@
 
 #include "StateEffectScript.h"
 
+#include <Ext/StateType/State/AntiBulletData.h>
+#include <Ext/StateType/State/DestroyAnimData.h>
+#include <Ext/StateType/State/DestroySelfData.h>
+#include <Ext/StateType/State/FireSuperData.h>
+#include <Ext/StateType/State/GiftBoxData.h>
 #include <Ext/StateType/State/PaintballData.h>
+#include <Ext/StateType/State/TransformData.h>
 
 
-class PaintballEffect : public StateEffect<PaintballData>
-{
-public:
-	STATE_EFFECT_SCRIPT(Paintball);
+#define STATE_EFFECT_DEFINE(STATE_NAME) \
+class STATE_NAME ## Effect : public StateEffect<STATE_NAME ## Data> \
+{ \
+public: \
+	STATE_EFFECT_SCRIPT(STATE_NAME); \
+	virtual IStateScript* GetState(TechnoStatus* status) override \
+	{ \
+		IStateScript* state = nullptr; \
+		if (status) \
+		{ \
+			status->TryGetState<STATE_NAME ## State>(state); \
+		} \
+		return state; \
+	} \
+	virtual IStateScript* GetState(BulletStatus* status) override \
+	{ \
+		IStateScript* state = nullptr; \
+		if (status) \
+		{ \
+			status->TryGetState<STATE_NAME ## State>(state); \
+		} \
+		return state; \
+	} \
+}; \
 
-	// PaintballEffect() : StateEffect<PaintballData>() { this->Name = ScriptName; }
+// TODO Add State effects
 
-	// inline static std::string ScriptName = "PaintballEffect";
-
-	// static Component* Create() { return static_cast<Component*>(new PaintballEffect()); }
-
-	// inline static int g_temp_PaintballEffect = ComponentFactory::GetInstance().Register("PaintballEffect", PaintballEffect::Create);
-
-	// virtual PaintballData GetData() override { return AEData.Paintball; }
-	// __declspec(property(get = GetData)) PaintballData* Data;
-
-	virtual IStateScript* GetState(TechnoStatus* status) override
-	{
-		if (status)
-		{
-			return status->Paintball;
-		}
-		return nullptr;
-	}
-
-	virtual IStateScript* GetState(BulletStatus* status) override
-	{
-		if (status)
-		{
-			return status->Paintball;
-		}
-		return nullptr;
-	}
-};
-
+STATE_EFFECT_DEFINE(AntiBullet);
+STATE_EFFECT_DEFINE(DestroyAnim);
+STATE_EFFECT_DEFINE(DestroySelf);
+STATE_EFFECT_DEFINE(FireSuper);
+STATE_EFFECT_DEFINE(GiftBox);
+STATE_EFFECT_DEFINE(Paintball);
+STATE_EFFECT_DEFINE(Transform);
 
 
 

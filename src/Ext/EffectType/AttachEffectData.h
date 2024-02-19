@@ -12,8 +12,15 @@
 #include "Effect/InfoData.h"
 #include "Effect/StandData.h"
 #include "Effect/CrateBuffData.h"
-
+// State Effects
+#include <Ext/StateType/State/AntiBulletData.h>
+#include <Ext/StateType/State/DestroyAnimData.h>
+#include <Ext/StateType/State/DestroySelfData.h>
+#include <Ext/StateType/State/FireSuperData.h>
+#include <Ext/StateType/State/GiftBoxData.h>
 #include <Ext/StateType/State/PaintballData.h>
+#include <Ext/StateType/State/TransformData.h>
+
 
 enum class CumulativeMode
 {
@@ -119,7 +126,13 @@ public:
 	EFFECT_VAR_DEFINE(Mark);
 	EFFECT_VAR_DEFINE(Stand);
 	// State Effects
+	EFFECT_VAR_DEFINE(AntiBullet);
+	EFFECT_VAR_DEFINE(DestroyAnim);
+	EFFECT_VAR_DEFINE(DestroySelf);
+	EFFECT_VAR_DEFINE(FireSuper);
+	EFFECT_VAR_DEFINE(GiftBox);
 	EFFECT_VAR_DEFINE(Paintball);
+	EFFECT_VAR_DEFINE(Transform);
 
 	void ReadEffects(INIBufferReader* reader)
 	{
@@ -129,7 +142,13 @@ public:
 		EFFECT_VAR_READ(Mark);
 		EFFECT_VAR_READ(Stand);
 		// State Effects
+		EFFECT_VAR_READ(AntiBullet);
+		EFFECT_VAR_READ(DestroyAnim);
+		EFFECT_VAR_READ(DestroySelf);
+		EFFECT_VAR_READ(FireSuper);
+		EFFECT_VAR_READ(GiftBox);
 		EFFECT_VAR_READ(Paintball);
+		EFFECT_VAR_READ(Transform);
 	}
 
 	std::set<std::string> GetScriptNames()
@@ -141,7 +160,13 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Mark);
 		EFFECT_VAR_SCRIPT_NAME(Stand);
 		// State Effects
+		EFFECT_VAR_SCRIPT_NAME(AntiBullet);
+		EFFECT_VAR_SCRIPT_NAME(DestroyAnim);
+		EFFECT_VAR_SCRIPT_NAME(DestroySelf);
+		EFFECT_VAR_SCRIPT_NAME(FireSuper);
+		EFFECT_VAR_SCRIPT_NAME(GiftBox);
 		EFFECT_VAR_SCRIPT_NAME(Paintball);
+		EFFECT_VAR_SCRIPT_NAME(Transform);
 
 		return names;
 	}
@@ -156,7 +181,13 @@ public:
 			EFFECT_VAR_PROCESS(Mark)
 			EFFECT_VAR_PROCESS(Stand)
 			// State Effects
+			EFFECT_VAR_PROCESS(AntiBullet)
+			EFFECT_VAR_PROCESS(DestroyAnim)
+			EFFECT_VAR_PROCESS(DestroySelf)
+			EFFECT_VAR_PROCESS(FireSuper)
+			EFFECT_VAR_PROCESS(GiftBox)
 			EFFECT_VAR_PROCESS(Paintball)
+			EFFECT_VAR_PROCESS(Transform)
 			;
 	}
 

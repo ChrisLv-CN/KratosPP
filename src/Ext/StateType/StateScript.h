@@ -40,6 +40,10 @@ public:
 #define INIT_STATE(STATE_NAME) \
 	FindOrAttach<STATE_NAME ## State>(); \
 
+#define TRY_GET_STATE(STATE_NAME) \
+	else if (dynamic_cast<T*>(STATE_NAME)) \
+		state = STATE_NAME; \
+
 template <typename TData>
 class StateScript : public ObjectScript, public IStateScript
 {

@@ -109,6 +109,20 @@ public:
 		INIT_STATE(Transform);
 	}
 
+	template <typename T>
+	bool TryGetState(IStateScript*& state)
+	{
+		if (false) {}
+		TRY_GET_STATE(AntiBullet)
+		TRY_GET_STATE(DestroyAnim)
+		TRY_GET_STATE(DestroySelf)
+		TRY_GET_STATE(FireSuper)
+		TRY_GET_STATE(GiftBox)
+		TRY_GET_STATE(Paintball)
+		TRY_GET_STATE(Transform)
+		return state != nullptr;
+	}
+
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
 	// 替身的配置
