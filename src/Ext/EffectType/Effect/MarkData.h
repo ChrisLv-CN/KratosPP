@@ -8,7 +8,7 @@
 class MarkData : public EffectData
 {
 public:
-	std::string ScriptName = "Mark";
+	EFFECT_DATA(Mark);
 
 	std::vector<std::string> Names{};
 

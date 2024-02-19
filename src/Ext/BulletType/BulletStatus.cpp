@@ -37,9 +37,7 @@ AttachEffect* BulletStatus::AEManager()
 
 void BulletStatus::InitState()
 {
-	FindOrAttach<DestroySelf>();
-	FindOrAttach<GiftBox>();
-	FindOrAttach<Paintball>();
+	AttachState();
 
 	// 根据类型分配弹道控制
 	switch (GetBulletType())
@@ -86,10 +84,10 @@ void BulletStatus::Awake()
 	this->damage.Damage = health;
 	if (TechnoStatus* sourceStatue = GetStatus<TechnoExt, TechnoStatus>(pSource))
 	{
-		if (sourceStatue->AntiBulletState->IsActive())
+		if (sourceStatue->AntiBullet->IsActive())
 		{
-			damage.Eliminate = sourceStatue->AntiBulletState->Data.OneShotOneKill;
-			damage.Harmless = sourceStatue->AntiBulletState->Data.Harmless;
+			damage.Eliminate = sourceStatue->AntiBullet->Data.OneShotOneKill;
+			damage.Harmless = sourceStatue->AntiBullet->Data.Harmless;
 		}
 	}
 

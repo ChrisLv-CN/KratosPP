@@ -13,57 +13,70 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 
-#define STATE_SCRIPT(CLASS_NAME, STATE_DATA) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, StateScript<STATE_DATA>) \
-
-#define GET_STATE(CLASS_NAME) \
-	CLASS_NAME* _ ## CLASS_NAME = nullptr; \
-	CLASS_NAME* Get ## CLASS_NAME() \
-	{ \
-		if (!_ ## CLASS_NAME) \
-		{ \
-			_ ## CLASS_NAME = GetComponent<CLASS_NAME>(); \
-		} \
-		return _ ## CLASS_NAME; \
-	} \
-	__declspec(property(get = Get ## CLASS_NAME)) CLASS_NAME* CLASS_NAME ## State; \
-
-template <typename TData>
-class StateScript : public ObjectScript
+class IStateScript
 {
 public:
-	void Start(TData& data, int duration = -1, std::string token = "")
+	virtual void Start(EffectData* data, int duration = -1, std::string token = "") {};
+	virtual void End(std::string token = "") {};
+	virtual void Replace(EffectData* data, int duration = -1, std::string token = "") {};
+	virtual void ResetDuration(int duration, std::string token = "") {};
+};
+
+#define STATE_SCRIPT(STATE_NAME) \
+	DECLARE_DYNAMIC_SCRIPT(STATE_NAME ## State, StateScript<STATE_NAME ## Data>) \
+
+#define GET_STATE(STATE_NAME) \
+	STATE_NAME ## State * _ ## STATE_NAME = nullptr; \
+	STATE_NAME ## State * Get ## STATE_NAME() \
+	{ \
+		if (!_ ## STATE_NAME) \
+		{ \
+			_ ## STATE_NAME = GetComponent<STATE_NAME ## State>(); \
+		} \
+		return _ ## STATE_NAME; \
+	} \
+	__declspec(property(get = Get ## STATE_NAME)) STATE_NAME ## State* STATE_NAME; \
+
+#define INIT_STATE(STATE_NAME) \
+	FindOrAttach<STATE_NAME ## State>(); \
+
+template <typename TData>
+class StateScript : public ObjectScript, public IStateScript
+{
+public:
+	virtual void Start(EffectData* data, int duration = -1, std::string token = "") override
 	{
-
-		Data = data;
-		Token = token;
-
-		if (duration != 0)
+		if (TData* pData = dynamic_cast<TData*>(data))
 		{
-			Activate();
+			Data = *pData;
+			Token = token;
+
+			if (duration != 0)
+			{
+				Activate();
+			}
+			else
+			{
+				Deactivate();
+			}
+			ResetDuration(duration);
+			_frame = Unsorted::CurrentFrame;
+			_reset = true;
+			OnStart();
 		}
-		else
-		{
-			Deactivate();
-		}
-		ResetDuration(duration);
-		_frame = Unsorted::CurrentFrame;
-		_reset = true;
-		OnStart();
 	}
 
-	void End(std::string token = "")
+	virtual void End(std::string token = "") override
 	{
 		if (token.empty() || token == Token)
 		{
 			Deactivate();
 			_immortal = false;
 			_lifeTimer.Stop();
-
 			// 如果有，关闭AE
 			if (!Token.empty())
 			{
-				if (AttachEffect* aem = _parent->GetComponent<AttachEffect>())
+				if (AttachEffect* aem = _gameObject->GetComponent<AttachEffect>())
 				{
 					aem->DetachByToken(Token);
 				}
@@ -72,7 +85,7 @@ public:
 		}
 	}
 
-	void Replace(TData& data, int duration = -1, std::string token = "")
+	virtual void Replace(EffectData* data, int duration = -1, std::string token = "") override
 	{
 		End();
 		Start(data, duration, token);
@@ -99,7 +112,7 @@ public:
 		return IsActive();
 	}
 
-	void ResetDuration(int duration, std::string token = "")
+	virtual void ResetDuration(int duration, std::string token = "") override
 	{
 		if (token.empty() || token == Token)
 		{
@@ -162,11 +175,11 @@ public:
 		{
 			if (replace)
 			{
-				Replace(*data);
+				Replace(data);
 			}
 			else
 			{
-				Start(*data);
+				Start(data);
 			}
 		}
 	}

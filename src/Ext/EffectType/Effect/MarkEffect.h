@@ -7,7 +7,7 @@
 #include <AnimClass.h>
 
 #include "../EffectScript.h"
-#include "AnimationData.h"
+#include "MarkData.h"
 
 
 /// @brief EffectScript
@@ -20,29 +20,17 @@
 ///						|__ EffectScript#0
 ///						|__ EffectScript#1
 ///						|__ EffectScript#2
-class Animation : public EffectScript
+class MarkEffect : public EffectScript
 {
 public:
-	EFFECT_SCRIPT(Animation, AnimationData);
-
-	void UpdateLocationOffset(CoordStruct offset);
+	EFFECT_SCRIPT(Mark);
 
 	virtual void Start() override;
-
-	virtual void End(CoordStruct location) override;
-
-	virtual void OnPut(CoordStruct* pCoord, DirType faceDir) override;
-	virtual void OnUpdate() override;
-	virtual void OnRemove() override;
-	virtual void OnReceiveDamage(args_ReceiveDamage* args) override;
 
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
-			.Process(this->pIdleAnim)
-			.Process(this->animFlags)
-			.Process(this->ownerIsCloak)
 			.Success();
 	};
 
@@ -54,16 +42,8 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
 		Component::Save(stream);
-		return const_cast<Animation*>(this)->Serialize(stream);
+		return const_cast<MarkEffect*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:
-	AnimClass* pIdleAnim = nullptr;
-	BlitterFlags animFlags = BlitterFlags::None;
-	bool ownerIsCloak = false;
-
-	void CreateIdleAnim(bool force = false, CoordStruct location = CoordStruct::Empty);
-
-	void KillIdleAnim();
-
 };

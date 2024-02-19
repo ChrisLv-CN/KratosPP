@@ -7,24 +7,24 @@
 void TechnoStatus::OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	// 记录下击杀方
-	DestroyAnimState->pKillerHouse = pAttackingHouse ? pAttackingHouse : HouseClass::FindSpecial();
+	DestroyAnim->pKillerHouse = pAttackingHouse ? pAttackingHouse : HouseClass::FindSpecial();
 	// 读取弹头的击杀设置
 	DestroyAnimData* data = INI::GetConfig<DestroyAnimData>(INI::Rules, pWH->ID)->Data;
 	if (data->Enable && data->CanAffectType(pTechno))
 	{
-		DestroyAnimState->Replace(*data);
+		DestroyAnim->Replace(data);
 	}
 };
 
 
 bool TechnoStatus::PlayDestroyAnims()
 {
-	if (DestroyAnimState->IsActive())
+	if (DestroyAnim->IsActive())
 	{
-		DestroyAnimData data = DestroyAnimState->Data;
+		DestroyAnimData data = DestroyAnim->Data;
 		if (data.Enable && data.CanAffectType(pTechno))
 		{
-			HouseClass* pKillerHouse = DestroyAnimState->pKillerHouse;
+			HouseClass* pKillerHouse = DestroyAnim->pKillerHouse;
 			if (!pKillerHouse)
 			{
 				pKillerHouse = pTechno->Owner;

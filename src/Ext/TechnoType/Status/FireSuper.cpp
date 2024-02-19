@@ -6,18 +6,18 @@
 
 void TechnoStatus::OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx)
 {
-	if (FireSuperState->IsActive())
+	if (FireSuper->IsActive())
 	{
-		FireSuperEntity data = FireSuperState->Data.Data;
+		FireSuperEntity data = FireSuper->Data.Data;
 		if (pTechno->Veterancy.IsElite())
 		{
-			data = FireSuperState->Data.EliteData;
+			data = FireSuper->Data.EliteData;
 		}
 		if (data.Enable && (data.WeaponIndex < 0 || data.WeaponIndex == weaponIdx))
 		{
 			HouseClass* pHouse = pTechno->Owner;
 			// 检查平民
-			if (!FireSuperState->Data.DeactiveWhenCivilian || !IsCivilian(pHouse))
+			if (!FireSuper->Data.DeactiveWhenCivilian || !IsCivilian(pHouse))
 			{
 				CoordStruct targetPos = data.ToTarget ? pTarget->GetCoords() : pTechno->GetCoords();
 				FireSuperManager::Launch(pHouse, targetPos, data);

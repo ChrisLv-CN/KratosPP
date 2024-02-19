@@ -18,9 +18,9 @@
 #include <Ext/Helper/CastEx.h>
 #include <Ext/Helper/MathEx.h>
 
-#include <Ext/StateType/State/DestroySelf.h>
-#include <Ext/StateType/State/GiftBox.h>
-#include <Ext/StateType/State/Paintball.h>
+#include <Ext/StateType/State/DestroySelfState.h>
+#include <Ext/StateType/State/GiftBoxState.h>
+#include <Ext/StateType/State/PaintballState.h>
 
 #include "BulletStatusData.h"
 #include "Status/ProximityData.h"
@@ -62,6 +62,13 @@ public:
 	GET_STATE(GiftBox);
 	GET_STATE(DestroySelf);
 	GET_STATE(Paintball);
+
+	void AttachState()
+	{
+		INIT_STATE(GiftBox);
+		INIT_STATE(DestroySelf);
+		INIT_STATE(Paintball);
+	}
 
 	TechnoClass* pSource = nullptr;
 	HouseClass* pSourceHouse = nullptr;

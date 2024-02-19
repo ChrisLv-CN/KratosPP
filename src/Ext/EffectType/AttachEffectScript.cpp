@@ -4,8 +4,8 @@
 #include <Ext/Common/PrintTextManager.h>
 
 #include "EffectScript.h"
-#include "Effect/Animation.h"
-#include "Effect/Stand.h"
+#include "Effect/AnimationEffect.h"
+#include "Effect/StandEffect.h"
 
 int AttachEffectScript::GetDuration()
 {
@@ -31,7 +31,7 @@ bool AttachEffectScript::TryGetInitDelayTimeLeft(int& timeLeft)
 bool AttachEffectScript::TryGetDurationTimeLeft(int& timeLeft)
 {
 	timeLeft = -1;
-	if (_immortal)
+	if (!_immortal)
 	{
 		timeLeft = _lifeTimer.GetTimeLeft();
 	}
@@ -102,7 +102,7 @@ void AttachEffectScript::ResetDuration()
 void AttachEffectScript::ResetEffectsDuration()
 {
 	ForeachChild([](Component* c) {
-		if (auto cc = dynamic_cast<EffectScript*>(c)) { cc->ResetDuration(); }
+		if (auto cc = dynamic_cast<IAEScript*>(c)) { cc->ResetDuration(); }
 		});
 }
 
@@ -147,7 +147,7 @@ bool AttachEffectScript::OwnerIsDead()
 
 void AttachEffectScript::UpdateStandLocation(LocationMark locationMark)
 {
-	if (Stand* c = GetComponent<Stand>())
+	if (StandEffect* c = GetComponent<StandEffect>())
 	{
 		c->UpdateLocation(locationMark);
 	}
@@ -155,7 +155,7 @@ void AttachEffectScript::UpdateStandLocation(LocationMark locationMark)
 
 void AttachEffectScript::UpdateAnimOffset(CoordStruct offset)
 {
-	if (Animation* c = GetComponent<Animation>())
+	if (AnimationEffect* c = GetComponent<AnimationEffect>())
 	{
 		c->UpdateLocationOffset(offset);
 	}
@@ -263,21 +263,21 @@ void AttachEffectScript::End(CoordStruct location)
 		return;
 	}
 	ForeachChild([&location](Component* c) {
-		if (auto cc = dynamic_cast<EffectScript*>(c)) { cc->End(location); }
+		if (auto cc = dynamic_cast<IAEScript*>(c)) { cc->End(location); }
 		});
 }
 
 void AttachEffectScript::OnGScreenRender(CoordStruct location)
 {
 	ForeachChild([&location](Component* c) {
-		if (auto cc = dynamic_cast<EffectScript*>(c)) { cc->OnGScreenRender(location); }
+		if (auto cc = dynamic_cast<IAEScript*>(c)) { cc->OnGScreenRender(location); }
 		});
 }
 
 void AttachEffectScript::OnGScreenRenderEnd(CoordStruct location)
 {
 	ForeachChild([&location](Component* c) {
-		if (auto cc = dynamic_cast<EffectScript*>(c)) { cc->OnGScreenRenderEnd(location); }
+		if (auto cc = dynamic_cast<IAEScript*>(c)) { cc->OnGScreenRenderEnd(location); }
 		});
 }
 

@@ -13,25 +13,29 @@
 #include <Common/Components/ScriptComponent.h>
 #include <Common/EventSystems/EventSystem.h>
 
+#include "Effect/EffectData.h"
 #include "AttachEffectData.h"
 #include "AttachEffectScript.h"
 
 
-#define EFFECT_SCRIPT(CLASS_NAME, EFFECT_DATA) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, EffectScript) \
+#define EFFECT_SCRIPT_BASE(EFFECT_NAME, BASE_NAME) \
+	DECLARE_DYNAMIC_SCRIPT(EFFECT_NAME ## Effect, BASE_NAME) \
 	\
-	EFFECT_DATA GetData() \
+	virtual EFFECT_NAME ## Data* GetData() override \
 	{ \
-		return AEData.CLASS_NAME; \
+		return &AEData.EFFECT_NAME; \
 	} \
-	__declspec(property(get = GetData)) EFFECT_DATA Data; \
+	__declspec(property(get = GetData)) EFFECT_NAME ## Data* Data; \
+
+#define EFFECT_SCRIPT(EFFECT_NAME) \
+	EFFECT_SCRIPT_BASE(EFFECT_NAME, EffectScript) \
 
 class EffectScript : public ObjectScript, public IAEScript
 {
 public:
-	OBJECT_SCRIPT(EffectScript);
 
-	std::string Token{ "" };
+	virtual EffectData* GetData() { return nullptr; };
+
 	AttachEffectData AEData{};
 
 	AttachEffectScript* _ae = nullptr;
@@ -42,7 +46,6 @@ public:
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
-			.Process(this->Token)
 			.Process(this->AEData)
 			.Success();
 	};

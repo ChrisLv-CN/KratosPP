@@ -8,10 +8,10 @@
 
 #include <Ext/TechnoType/DamageText.h>
 
-class FireSuper : public StateScript<FireSuperData>
+class FireSuperState : public StateScript<FireSuperData>
 {
 public:
-	STATE_SCRIPT(FireSuper, FireSuperData);
+	STATE_SCRIPT(FireSuper);
 
 	virtual void Awake() override
 	{
@@ -35,7 +35,7 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const
 	{
 		StateScript<FireSuperData>::Save(stream);
-		return const_cast<FireSuper*>(this)->Serialize(stream);
+		return const_cast<FireSuperState*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:

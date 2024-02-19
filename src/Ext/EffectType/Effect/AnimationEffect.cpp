@@ -1,4 +1,4 @@
-﻿#include "Animation.h"
+﻿#include "AnimationEffect.h"
 
 #include <AnimTypeClass.h>
 
@@ -10,7 +10,7 @@
 
 #include <Ext/AnimType/AnimStatus.h>
 
-void Animation::UpdateLocationOffset(CoordStruct offset)
+void AnimationEffect::UpdateLocationOffset(CoordStruct offset)
 {
 	AnimStatus* animStatus = nullptr;
 	if (pIdleAnim && TryGetStatus<AnimExt, AnimStatus>(pIdleAnim, animStatus))
@@ -20,21 +20,21 @@ void Animation::UpdateLocationOffset(CoordStruct offset)
 
 }
 
-void Animation::CreateIdleAnim(bool force, CoordStruct location)
+void AnimationEffect::CreateIdleAnim(bool force, CoordStruct location)
 {
 	if (pIdleAnim)
 	{
 		KillIdleAnim();
 	}
-	if (!force && (!Data.IdleAnim.Enable || IsDeadOrInvisible(pObject) || (Data.IdleAnim.RemoveInCloak && ownerIsCloak)))
+	if (!force && (!Data->IdleAnim.Enable || IsDeadOrInvisible(pObject) || (Data->IdleAnim.RemoveInCloak && ownerIsCloak)))
 	{
 		return;
 	}
 	// 创建动画
-	AnimTypeClass* pAnimType = AnimTypeClass::Find(Data.IdleAnim.Type.c_str());
+	AnimTypeClass* pAnimType = AnimTypeClass::Find(Data->IdleAnim.Type.c_str());
 	if (pAnimType)
 	{
-		OffsetData offsetData = Data.IdleAnim.Offset;
+		OffsetData offsetData = Data->IdleAnim.Offset;
 		if (location.IsEmpty())
 		{
 			location = GetRelativeLocation(pObject, offsetData).Location;
@@ -51,7 +51,7 @@ void Animation::CreateIdleAnim(bool force, CoordStruct location)
 			SetAnimOwner(pIdleAnim, pTechno);
 			SetAnimCreater(pIdleAnim, pTechno);
 		}
-		ShowAnim(pIdleAnim, Data.IdleAnim.Visibility);
+		ShowAnim(pIdleAnim, Data->IdleAnim.Visibility);
 		// 记录动画的渲染参数
 		animFlags = pIdleAnim->AnimFlags;
 		// 设置动画的附着对象，由动画自身去位移
@@ -60,7 +60,7 @@ void Animation::CreateIdleAnim(bool force, CoordStruct location)
 	}
 }
 
-void Animation::KillIdleAnim()
+void AnimationEffect::KillIdleAnim()
 {
 	if (pIdleAnim)
 	{
@@ -71,14 +71,14 @@ void Animation::KillIdleAnim()
 	}
 }
 
-void Animation::Start() {
+void AnimationEffect::Start() {
 	// 激活动画
-	if (Data.ActiveAnim.Enable)
+	if (Data->ActiveAnim.Enable)
 	{
-		AnimTypeClass* pAnimType = AnimTypeClass::Find(Data.ActiveAnim.Type.c_str());
+		AnimTypeClass* pAnimType = AnimTypeClass::Find(Data->ActiveAnim.Type.c_str());
 		if (pAnimType)
 		{
-			OffsetData offsetData = Data.ActiveAnim.Offset;
+			OffsetData offsetData = Data->ActiveAnim.Offset;
 			CoordStruct location = GetRelativeLocation(pObject, offsetData).Location;
 			AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, location);
 			if (pBullet)
@@ -97,17 +97,17 @@ void Animation::Start() {
 	CreateIdleAnim();
 }
 
-void Animation::End(CoordStruct location)
+void AnimationEffect::End(CoordStruct location)
 {
 	KillIdleAnim();
-	if (Data.DoneAnim.Enable)
+	if (Data->DoneAnim.Enable)
 	{
-		AnimTypeClass* pAnimType = AnimTypeClass::Find(Data.DoneAnim.Type.c_str());
+		AnimTypeClass* pAnimType = AnimTypeClass::Find(Data->DoneAnim.Type.c_str());
 		if (pAnimType)
 		{
 			if (pObject)
 			{
-				OffsetData offsetData = Data.DoneAnim.Offset;
+				OffsetData offsetData = Data->DoneAnim.Offset;
 				location = GetRelativeLocation(pObject, offsetData).Location;
 			}
 			AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, location);
@@ -128,12 +128,12 @@ void Animation::End(CoordStruct location)
 	}
 }
 
-void Animation::OnPut(CoordStruct* pCoords, DirType faceDir)
+void AnimationEffect::OnPut(CoordStruct* pCoords, DirType faceDir)
 {
 	CreateIdleAnim(true, *pCoords);
 }
 
-void Animation::OnUpdate()
+void AnimationEffect::OnUpdate()
 {
 	if (pTechno && AE && !AE->OwnerIsDead())
 	{
@@ -144,11 +144,11 @@ void Animation::OnUpdate()
 			if (ownerIsCloak)
 			{
 				ownerIsCloak = false;
-				if (Data.IdleAnim.RemoveInCloak)
+				if (Data->IdleAnim.RemoveInCloak)
 				{
 					CreateIdleAnim();
 				}
-				else if (pIdleAnim && Data.IdleAnim.TranslucentInCloak)
+				else if (pIdleAnim && Data->IdleAnim.TranslucentInCloak)
 				{
 					// 恢复不透明
 					pIdleAnim->AnimFlags = animFlags;
@@ -160,11 +160,11 @@ void Animation::OnUpdate()
 			if (!ownerIsCloak)
 			{
 				ownerIsCloak = true;
-				if (Data.IdleAnim.RemoveInCloak)
+				if (Data->IdleAnim.RemoveInCloak)
 				{
 					KillIdleAnim();
 				}
-				else if (pIdleAnim && Data.IdleAnim.TranslucentInCloak)
+				else if (pIdleAnim && Data->IdleAnim.TranslucentInCloak)
 				{
 					// 半透明
 					pIdleAnim->AnimFlags |= BlitterFlags::TransLucent50;
@@ -175,20 +175,20 @@ void Animation::OnUpdate()
 	}
 }
 
-void Animation::OnRemove()
+void AnimationEffect::OnRemove()
 {
 	KillIdleAnim();
 }
 
-void Animation::OnReceiveDamage(args_ReceiveDamage* args)
+void AnimationEffect::OnReceiveDamage(args_ReceiveDamage* args)
 {
 	// 受击动画
-	if (Data.HitAnim.Enable)
+	if (Data->HitAnim.Enable)
 	{
-		AnimTypeClass* pAnimType = AnimTypeClass::Find(Data.HitAnim.Type.c_str());
+		AnimTypeClass* pAnimType = AnimTypeClass::Find(Data->HitAnim.Type.c_str());
 		if (pAnimType)
 		{
-			OffsetData offsetData = Data.HitAnim.Offset;
+			OffsetData offsetData = Data->HitAnim.Offset;
 			CoordStruct location = GetRelativeLocation(pObject, offsetData).Location;
 			AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, location);
 			if (pBullet)
@@ -201,7 +201,7 @@ void Animation::OnReceiveDamage(args_ReceiveDamage* args)
 				SetAnimOwner(pAnim, pTechno);
 				SetAnimCreater(pAnim, pTechno);
 			}
-			ShowAnim(pAnim, Data.IdleAnim.Visibility);
+			ShowAnim(pAnim, Data->IdleAnim.Visibility);
 			// 设置动画的附着对象，由动画自身去位移
 			AnimStatus* status = GetStatus<AnimExt, AnimStatus>(pAnim);
 			status->AttachToObject(pObject, offsetData);

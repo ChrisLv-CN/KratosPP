@@ -13,6 +13,8 @@
 #include "Effect/StandData.h"
 #include "Effect/CrateBuffData.h"
 
+#include <Ext/StateType/State/PaintballData.h>
+
 enum class CumulativeMode
 {
 	NO = 0, YES = 1, ATTACKER = 2, HOUSE = 3,
@@ -60,6 +62,25 @@ enum class AttachOwnerType
 	TECHONO = 0, BULLET = 1,
 };
 
+// 定义变量
+#define EFFECT_VAR_DEFINE(EFFECT_DATA_NAME) \
+	EFFECT_DATA_NAME ## Data EFFECT_DATA_NAME{}; \
+
+// 从ini中读取内容
+#define EFFECT_VAR_READ(EFFECT_DATA_NAME) \
+	EFFECT_DATA_NAME.Read(reader); \
+
+// 读取脚本名称
+#define EFFECT_VAR_SCRIPT_NAME(EFFECT_DATA_NAME) \
+	if (EFFECT_DATA_NAME.Enable) \
+	{ \
+		names.insert(EFFECT_DATA_NAME.GetEffectScriptName()); \
+	} \
+
+// 保存读取
+#define EFFECT_VAR_PROCESS(EFFECT_DATA_NAME) \
+	.Process(this->EFFECT_DATA_NAME) \
+
 class AttachEffectData : public FilterData
 {
 public:
@@ -92,11 +113,52 @@ public:
 	bool Inheritable = true; // 是否可以被礼盒礼物继承
 
 	// TODO Effects
-	AnimationData Animation{};
-	CrateBuffData CrateBuff{};
-	InfoData Info{};
-	MarkData Mark{};
-	StandData Stand{};
+	EFFECT_VAR_DEFINE(Animation);
+	EFFECT_VAR_DEFINE(CrateBuff);
+	EFFECT_VAR_DEFINE(Info);
+	EFFECT_VAR_DEFINE(Mark);
+	EFFECT_VAR_DEFINE(Stand);
+	// State Effects
+	EFFECT_VAR_DEFINE(Paintball);
+
+	void ReadEffects(INIBufferReader* reader)
+	{
+		EFFECT_VAR_READ(Animation);
+		EFFECT_VAR_READ(CrateBuff);
+		EFFECT_VAR_READ(Info);
+		EFFECT_VAR_READ(Mark);
+		EFFECT_VAR_READ(Stand);
+		// State Effects
+		EFFECT_VAR_READ(Paintball);
+	}
+
+	std::set<std::string> GetScriptNames()
+	{
+		std::set<std::string> names{};
+		EFFECT_VAR_SCRIPT_NAME(Animation);
+		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
+		EFFECT_VAR_SCRIPT_NAME(Info);
+		EFFECT_VAR_SCRIPT_NAME(Mark);
+		EFFECT_VAR_SCRIPT_NAME(Stand);
+		// State Effects
+		EFFECT_VAR_SCRIPT_NAME(Paintball);
+
+		return names;
+	}
+
+	template <typename T>
+	void ProcessEffects(T& stream)
+	{
+		stream
+			EFFECT_VAR_PROCESS(Animation)
+			EFFECT_VAR_PROCESS(CrateBuff)
+			EFFECT_VAR_PROCESS(Info)
+			EFFECT_VAR_PROCESS(Mark)
+			EFFECT_VAR_PROCESS(Stand)
+			// State Effects
+			EFFECT_VAR_PROCESS(Paintball)
+			;
+	}
 
 	AttachEffectData() : FilterData()
 	{
@@ -122,12 +184,7 @@ public:
 
 			FilterData::Read(reader, title);
 
-			// TODO Read Effects
-			Animation.Read(reader);
-			CrateBuff.Read(reader);
-			Info.Read(reader);
-			Mark.Read(reader);
-			Stand.Read(reader);
+			ReadEffects(reader);
 
 			HoldDuration = Duration <= 0;
 			HoldDuration = reader->Get("HoldDuration", HoldDuration);
@@ -157,33 +214,6 @@ public:
 		}
 	}
 
-	// TODO Get Effects ScriptName
-	std::set<std::string> GetScriptNames()
-	{
-		std::set<std::string> names{};
-		if (Animation.Enable)
-		{
-			names.insert(Animation.ScriptName);
-		}
-		if (CrateBuff.Enable)
-		{
-			names.insert(CrateBuff.ScriptName);
-		}
-		if (Info.Enable)
-		{
-			names.insert(Info.ScriptName);
-		}
-		if (Mark.Enable)
-		{
-			names.insert(Mark.ScriptName);
-		}
-		if (Stand.Enable)
-		{
-			names.insert(Stand.ScriptName);
-		}
-		return names;
-	}
-
 	bool HasContradiction(std::vector<std::string> AENames)
 	{
 		bool has = !AttachWithOutTypes.empty() && !AENames.empty();
@@ -203,7 +233,7 @@ public:
 	template <typename T>
 	bool Serialize(T& stream)
 	{
-		return stream
+		stream
 			.Process(this->Name)
 
 			.Process(this->Duration)
@@ -229,15 +259,9 @@ public:
 
 			.Process(this->AttachWithOutTypes)
 			.Process(this->AttachOnceInTechnoType)
-			.Process(this->Inheritable)
-			// TODO Save/Load Effects
-			.Process(this->Animation)
-			.Process(this->CrateBuff)
-			.Process(this->Info)
-			.Process(this->Mark)
-			.Process(this->Stand)
-
-			.Success();
+			.Process(this->Inheritable);
+		ProcessEffects(stream);
+		return stream.Success();
 	};
 
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override

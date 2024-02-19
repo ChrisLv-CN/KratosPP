@@ -53,16 +53,16 @@ bool TechnoStatus::WeaponNoAA(int weaponIdx)
 
 void TechnoStatus::OnUpdate_AntiBullet()
 {
-	if (!IsDeadOrInvisible(pTechno) && AntiBulletState->IsActive())
+	if (!IsDeadOrInvisible(pTechno) && AntiBullet->IsActive())
 	{
-		AntiBulletData data = AntiBulletState->Data;
+		AntiBulletData data = AntiBullet->Data;
 		// 没有乘客也没有防空武器，关闭反抛射体搜索
 		if (!data.Self || WeaponNoAA(data.Weapon) && (!data.ForPassengers || pTechno->GetTechnoType()->Passengers <= 0))
 		{
-			AntiBulletState->End();
+			AntiBullet->End();
 			return;
 		}
-		if (AntiBulletState->CanSearchBullet())
+		if (AntiBullet->CanSearchBullet())
 		{
 			double scanRange = data.Range;
 			if (pTechno->Veterancy.IsElite())

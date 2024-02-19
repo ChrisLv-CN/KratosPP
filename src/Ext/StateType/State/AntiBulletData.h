@@ -12,6 +12,8 @@
 class AntiBulletData : public EffectData
 {
 public:
+	EFFECT_DATA(AntiBullet);
+
 	int Weapon = -1;
 	bool OneShotOneKill = true;
 	bool Harmless = false;

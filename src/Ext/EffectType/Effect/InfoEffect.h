@@ -4,9 +4,10 @@
 #include <vector>
 
 #include <GeneralDefinitions.h>
+#include <AnimClass.h>
 
 #include "../EffectScript.h"
-#include "CrateBuffData.h"
+#include "InfoData.h"
 
 
 /// @brief EffectScript
@@ -19,10 +20,12 @@
 ///						|__ EffectScript#0
 ///						|__ EffectScript#1
 ///						|__ EffectScript#2
-class CrateBuff : public EffectScript
+class InfoEffect : public EffectScript
 {
 public:
-	EFFECT_SCRIPT(CrateBuff, CrateBuffData);
+	EFFECT_SCRIPT(Info);
+
+	virtual void OnGScreenRenderEnd(CoordStruct location) override;
 
 #pragma region Save/Load
 	template <typename T>
@@ -39,8 +42,12 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
 		Component::Save(stream);
-		return const_cast<CrateBuff*>(this)->Serialize(stream);
+		return const_cast<InfoEffect*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:
+	void PrintInfoNumber(int number, ColorStruct houseColor, Point2D pos, InfoEntity data);
+	void PrintInfoText(std::string text, ColorStruct houseColor, Point2D pos, InfoEntity data);
+
+	void OffsetAlign(Point2D& pos, std::string text, InfoEntity data);
 };

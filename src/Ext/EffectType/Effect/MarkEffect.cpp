@@ -1,15 +1,15 @@
-﻿#include "Mark.h"
+﻿#include "MarkEffect.h"
 
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
 
-void Mark::Start()
+void MarkEffect::Start()
 {
-	if (Data.Enable)
+	if (Data->Enable)
 	{
 		std::string marks;
-		std::vector<std::string> m = Data.Names;
+		std::vector<std::string> m = Data->Names;
 		for (auto it = m.begin(); it != m.end();)
 		{
 			std::string mark = *it;

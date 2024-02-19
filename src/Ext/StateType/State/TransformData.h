@@ -12,6 +12,8 @@
 class TransformData : public EffectData
 {
 public:
+	EFFECT_DATA(Transform);
+
 	std::string TransformToType{ "" };
 
 	virtual void Read(INIBufferReader* reader) override

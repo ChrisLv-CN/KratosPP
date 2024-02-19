@@ -5,10 +5,10 @@
 
 #include <Ext/TechnoType/DamageText.h>
 
-class DestroySelf : public StateScript<DestroySelfData>
+class DestroySelfState : public StateScript<DestroySelfData>
 {
 public:
-	STATE_SCRIPT(DestroySelf, DestroySelfData);
+	STATE_SCRIPT(DestroySelf);
 
 	bool AmIDead();
 
@@ -16,7 +16,7 @@ public:
 
 	virtual void OnStart() override;
 
-	DestroySelf& operator=(const DestroySelf& other)
+	DestroySelfState& operator=(const DestroySelfState& other)
 	{
 		if (this != &other)
 		{
@@ -47,7 +47,7 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const
 	{
 		StateScript<DestroySelfData>::Save(stream);
-		return const_cast<DestroySelf*>(this)->Serialize(stream);
+		return const_cast<DestroySelfState*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:

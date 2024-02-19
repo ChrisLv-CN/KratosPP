@@ -8,10 +8,10 @@
 
 #include <Ext/TechnoType/DamageText.h>
 
-class Paintball : public StateScript<PaintballData>
+class PaintballState : public StateScript<PaintballData>
 {
 public:
-	STATE_SCRIPT(Paintball, PaintballData);
+	STATE_SCRIPT(Paintball);
 
 	void RGBIsPower();
 
@@ -21,7 +21,7 @@ public:
 
 	virtual void OnUpdate() override;
 
-	Paintball& operator=(const Paintball& other)
+	PaintballState& operator=(const PaintballState& other)
 	{
 		if (this != &other)
 		{
@@ -52,7 +52,7 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const
 	{
 		StateScript<PaintballData>::Save(stream);
-		return const_cast<Paintball*>(this)->Serialize(stream);
+		return const_cast<PaintballState*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:

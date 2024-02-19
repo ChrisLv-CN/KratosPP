@@ -64,7 +64,7 @@ public:
 class AnimationData : public EffectData
 {
 public:
-	std::string ScriptName = "Animation";
+	EFFECT_DATA(Animation);
 
 	AnimationEntity IdleAnim{}; // 持续动画
 	AnimationEntity ActiveAnim{}; // 激活时播放的动画

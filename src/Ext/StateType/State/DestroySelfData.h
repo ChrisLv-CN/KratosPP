@@ -12,6 +12,8 @@
 class DestroySelfData : public EffectData
 {
 public:
+	EFFECT_DATA(DestroySelf);
+
 	int Delay = -1;
 	bool Peaceful = false;
 

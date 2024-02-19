@@ -4,32 +4,35 @@
 #include <HouseClass.h>
 
 #include "../StateScript.h"
-#include "TransformData.h"
+#include "DestroyAnimData.h"
 
 #include <Ext/TechnoType/DamageText.h>
 
-class Transform : public StateScript<TransformData>
+class DestroyAnimState : public StateScript<DestroyAnimData>
 {
 public:
-	STATE_SCRIPT(Transform, TransformData);
+	STATE_SCRIPT(DestroyAnim);
+
+	HouseClass* pKillerHouse = nullptr;
 
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(pKillerHouse)
 			.Success();
 	};
 
 	virtual bool Load(ExStreamReader& stream, bool registerForChange)
 	{
-		StateScript<TransformData>::Load(stream, registerForChange);
+		StateScript<DestroyAnimData>::Load(stream, registerForChange);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const
 	{
-		StateScript<TransformData>::Save(stream);
-		return const_cast<Transform*>(this)->Serialize(stream);
+		StateScript<DestroyAnimData>::Save(stream);
+		return const_cast<DestroyAnimState*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:

@@ -151,7 +151,7 @@ public:
 class InfoData : public EffectData
 {
 public:
-	std::string ScriptName = "Info";
+	EFFECT_DATA(Info);
 
 	InfoEntity Duration{};
 	InfoEntity Delay{};

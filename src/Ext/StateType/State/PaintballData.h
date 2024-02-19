@@ -9,6 +9,8 @@
 class PaintballData : public EffectData
 {
 public:
+	EFFECT_DATA(Paintball);
+
 	ColorStruct Color = Colors::Empty;
 	bool IsHouseColor = false; // 使用所属色
 	float BrightMultiplier = 1.0f; // 亮度系数

@@ -5,11 +5,11 @@ void TechnoStatus::OnUpdate_Transform()
 	if (!_transformLocked)
 	{
 		// 执行变形逻辑
-		if (TransformState->IsActive())
+		if (Transform->IsActive())
 		{
-			if (!_hasBeenChanged || _changeToType != TransformState->Data.TransformToType)
+			if (!_hasBeenChanged || _changeToType != Transform->Data.TransformToType)
 			{
-				_changeToType = TransformState->Data.TransformToType;
+				_changeToType = Transform->Data.TransformToType;
 				TechnoTypeClass* pTargetType = nullptr;
 				if (IsNotNone(_changeToType) && (pTargetType = TechnoTypeClass::Find(_changeToType.c_str())) != nullptr)
 				{
@@ -18,7 +18,7 @@ void TechnoStatus::OnUpdate_Transform()
 				}
 				else
 				{
-					TransformState->Deactivate();
+					Transform->Deactivate();
 				}
 			}
 		}

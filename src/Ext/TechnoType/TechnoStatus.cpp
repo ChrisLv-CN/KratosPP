@@ -38,14 +38,7 @@ void TechnoStatus::InitState()
 	{
 		VirtualUnit = true;
 	}
-
-	FindOrAttach<AntiBullet>();
-	FindOrAttach<DestroyAnim>();
-	FindOrAttach<DestroySelf>();
-	FindOrAttach<FireSuper>();
-	FindOrAttach<GiftBox>();
-	FindOrAttach<Paintball>();
-	FindOrAttach<Transform>();
+	AttachState();
 }
 
 void TechnoStatus::InitExt()
@@ -111,11 +104,6 @@ void TechnoStatus::OnUpdate()
 	OnUpdate_DestroySelf();
 	if (!_isDead && !IsDead(pTechno))
 	{
-		if (pTechno->IsSelected && !rgbFlag)
-		{
-			rgbFlag = true;
-			PaintballState->RGBIsPower();
-		}
 		switch (pTechno->CurrentMission)
 		{
 		case Mission::Move:

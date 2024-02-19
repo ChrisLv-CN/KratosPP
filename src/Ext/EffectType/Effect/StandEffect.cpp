@@ -1,4 +1,4 @@
-﻿#include "Stand.h"
+﻿#include "StandEffect.h"
 
 #include <DriveLocomotionClass.h>
 #include <MechLocomotionClass.h>
@@ -12,10 +12,10 @@
 
 #include <Ext/TechnoType/TechnoStatus.h>
 
-void Stand::CreateAndPutStand()
+void StandEffect::CreateAndPutStand()
 {
 	CoordStruct location = pObject->GetCoords();
-	TechnoTypeClass* pType = TechnoTypeClass::Find(Data.Type.c_str());
+	TechnoTypeClass* pType = TechnoTypeClass::Find(Data->Type.c_str());
 	if (pType)
 	{
 		pStand = static_cast<TechnoClass*>(pType->CreateObject(AE->pSourceHouse));
@@ -25,8 +25,8 @@ void Stand::CreateAndPutStand()
 		// 初始化设置
 		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pStand))
 		{
-			status->VirtualUnit = Data.VirtualUnit;
-			status->StandData = Data;
+			status->VirtualUnit = Data->VirtualUnit;
+			status->StandData = *Data;
 			// 设置替身的所有者
 			if (pTechno)
 			{
@@ -35,7 +35,7 @@ void Stand::CreateAndPutStand()
 				TechnoStatus* masterStatus = nullptr;
 				if (pTechno->Owner == AE->pSourceHouse && TryGetStatus<TechnoExt>(pTechno, masterStatus))
 				{
-					status->_Paintball = masterStatus->PaintballState;
+					status->_Paintball = masterStatus->Paintball;
 				}
 				if (IsAircraft())
 				{
@@ -73,7 +73,7 @@ void Stand::CreateAndPutStand()
 			}
 		}
 		// 移动到指定的位置
-		LocationMark locationMark = GetRelativeLocation(pObject, Data.Offset);
+		LocationMark locationMark = GetRelativeLocation(pObject, Data->Offset);
 		if (!locationMark.IsEmpty())
 		{
 			SetLocation(locationMark.Location);
@@ -81,21 +81,21 @@ void Stand::CreateAndPutStand()
 		}
 		// 攻击来源
 		TechnoClass* pSource = AE->pSource;
-		if (Data.AttackSource && !IsDeadOrInvisible(pSource) && CanAttack(pStand, pSource))
+		if (Data->AttackSource && !IsDeadOrInvisible(pSource) && CanAttack(pStand, pSource))
 		{
 			pStand->SetTarget(pSource);
 		}
 	}
 }
 
-void Stand::ExplodesOrDisappear(bool peaceful)
+void StandEffect::ExplodesOrDisappear(bool peaceful)
 {
-	bool explodes = !peaceful && (Data.Explodes || notBeHuman || (masterIsRocket && Data.ExplodesWithRocket)) && !pStand->BeingWarpedOut && !pStand->WarpingOut;
+	bool explodes = !peaceful && (Data->Explodes || notBeHuman || (masterIsRocket && Data->ExplodesWithRocket)) && !pStand->BeingWarpedOut && !pStand->WarpingOut;
 	TechnoStatus* standStatus = nullptr;
 	if (TryGetStatus<TechnoExt>(pStand, standStatus))
 	{
-		// Logger.Log($"{Game.CurrentFrame} 阿伟 [{Data.Type}]{pStand} 要死了 explodes = {explodes}");
-		standStatus->DestroySelfState->DestroyNow(!explodes);
+		// Logger.Log($"{Game.CurrentFrame} 阿伟 [{Data->Type}]{pStand} 要死了 explodes = {explodes}");
+		standStatus->DestroySelf->DestroyNow(!explodes);
 		// 如果替身处于Limbo状态，OnUpdate不会执行，需要手动触发
 		if (masterIsRocket || pStand->InLimbo)
 		{
@@ -121,16 +121,16 @@ void Stand::ExplodesOrDisappear(bool peaceful)
 	Deactivate();
 }
 
-void Stand::UpdateStateBullet()
+void StandEffect::UpdateStateBullet()
 {
 	// synch target
 	RemoveStandIllegalTarget();
 	AbstractClass* pTarget = pBullet->Target;
-	if (pTarget && Data.SameTarget)
+	if (pTarget && Data->SameTarget)
 	{
 		pStand->SetTarget(pTarget);
 	}
-	if (!pTarget && Data.SameLoseTarget)
+	if (!pTarget && Data->SameLoseTarget)
 	{
 		pStand->SetTarget(pTarget);
 		if (pStand->SpawnManager)
@@ -138,7 +138,7 @@ void Stand::UpdateStateBullet()
 			pStand->SpawnManager->Destination = pTarget;
 		}
 	}
-	switch (Data.Targeting)
+	switch (Data->Targeting)
 	{
 	case StandTargeting::LAND:
 		if (pStand->IsInAir())
@@ -155,9 +155,9 @@ void Stand::UpdateStateBullet()
 	}
 }
 
-void Stand::UpdateStateTechno(bool masterIsDead)
+void StandEffect::UpdateStateTechno(bool masterIsDead)
 {
-	if (pTechno->IsSinking && Data.RemoveAtSinking)
+	if (pTechno->IsSinking && Data->RemoveAtSinking)
 	{
 		ExplodesOrDisappear(true);
 		return;
@@ -170,7 +170,7 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 	// reset state
 	pStand->UpdatePlacement(PlacementType::Remove);
 
-	if (Data.SameHouse)
+	if (Data->SameHouse)
 	{
 		pStand->SetOwningHouse(pTechno->Owner);
 	}
@@ -186,7 +186,7 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 		pStand->CloakState = pTechno->CloakState;
 		pStand->WarpingOut = pTechno->WarpingOut; // 超时空传送冻结
 		// 替身不是强制攻击jojo的超时空兵替身
-		if (!Data.ForceAttackMaster || !pStand->TemporalImUsing)
+		if (!Data->ForceAttackMaster || !pStand->TemporalImUsing)
 		{
 			pStand->BeingWarpedOut = pTechno->BeingWarpedOut; // 被超时空兵冻结
 		}
@@ -201,20 +201,20 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 		pStand->ShouldLoseTargetNow = pTechno->ShouldLoseTargetNow;
 
 		// synch status
-		if (Data.IsVirtualTurret)
+		if (Data->IsVirtualTurret)
 		{
 			pStand->FirepowerMultiplier = pTechno->FirepowerMultiplier;
 			pStand->ArmorMultiplier = pTechno->ArmorMultiplier;
 		}
 
 		// synch ammo
-		if (Data.SameAmmo)
+		if (Data->SameAmmo)
 		{
 			pStand->Ammo = pTechno->Ammo;
 		}
 
 		// synch Passengers
-		if (Data.SamePassengers)
+		if (Data->SamePassengers)
 		{
 			// Pointer<FootClass> pPassenger = pTechno->Passengers.FirstPassenger;
 			// if (!pPassenger.IsNull)
@@ -230,11 +230,11 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 		// synch Promote
 		if (pStand->GetTechnoType()->Trainable)
 		{
-			if (Data.PromoteFromSpawnOwner && masterIsSpawned && !IsDead(pTechno->SpawnOwner))
+			if (Data->PromoteFromSpawnOwner && masterIsSpawned && !IsDead(pTechno->SpawnOwner))
 			{
 				pStand->Veterancy = pTechno->SpawnOwner->Veterancy;
 			}
-			else if (Data.PromoteFromMaster)
+			else if (Data->PromoteFromMaster)
 			{
 				pStand->Veterancy = pTechno->Veterancy;
 			}
@@ -269,8 +269,8 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 	}
 
 	// check fire
-	bool powerOff = Data.Powered && AE->AEManager->PowerOff;
-	bool canFire = !powerOff && (Data.MobileFire || !masterIsMoving);
+	bool powerOff = Data->Powered && AE->AEManager->PowerOff;
+	bool canFire = !powerOff && (Data->MobileFire || !masterIsMoving);
 	if (canFire)
 	{
 		// synch mission
@@ -294,7 +294,7 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 	}
 
 	// synch target
-	if (Data.ForceAttackMaster)
+	if (Data->ForceAttackMaster)
 	{
 		if (!powerOff && !masterIsDead)
 		{
@@ -340,14 +340,14 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 			AbstractClass* pTarget = pTechno->Target;
 			if (pTarget)
 			{
-				if (Data.SameTarget && canFire && CanAttack(pStand, pTarget))
+				if (Data->SameTarget && canFire && CanAttack(pStand, pTarget))
 				{
 					pStand->SetTarget(pTarget);
 				}
 			}
 			else
 			{
-				if (Data.SameLoseTarget || !canFire)
+				if (Data->SameLoseTarget || !canFire)
 				{
 					ClearAllTarget(pStand);
 				}
@@ -358,7 +358,7 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 			onStopCommand = false;
 		}
 	}
-	switch (Data.Targeting)
+	switch (Data->Targeting)
 	{
 	case StandTargeting::LAND:
 		if (pStand->IsInAir())
@@ -375,7 +375,7 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 	}
 
 	// synch Moving anim
-	if (Data.IsTrain || Data.SameMoving)
+	if (Data->IsTrain || Data->SameMoving)
 	{
 		FootClass* pFoot = dynamic_cast<FootClass*>(pStand);
 		ILocomotion* loco = pFoot->Locomotor.get();
@@ -389,7 +389,7 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 			{
 				if (_isMoving)
 				{
-					if (!Data.IsTrain)
+					if (!Data->IsTrain)
 					{
 						// 移动前，设置替身的朝向与JOJO相同
 						pStand->PrimaryFacing.SetCurrent(pTechno->PrimaryFacing.Current());
@@ -454,7 +454,7 @@ void Stand::UpdateStateTechno(bool masterIsDead)
 	}
 }
 
-void Stand::RemoveStandIllegalTarget()
+void StandEffect::RemoveStandIllegalTarget()
 {
 	AbstractClass* pTarget = pStand->Target;
 	if (pTarget && !CanAttack(pStand, pTarget))
@@ -463,7 +463,7 @@ void Stand::RemoveStandIllegalTarget()
 	}
 }
 
-void Stand::UpdateLocation(LocationMark locationMark)
+void StandEffect::UpdateLocation(LocationMark locationMark)
 {
 	if (!locationMark.Location.IsEmpty() && !_isMoving)
 	{
@@ -474,10 +474,10 @@ void Stand::UpdateLocation(LocationMark locationMark)
 	SetFacing(locationMark.Dir, false);
 }
 
-void Stand::SetLocation(CoordStruct location)
+void StandEffect::SetLocation(CoordStruct location)
 {
 	pStand->SetLocation(location);
-	if (!Data.IsTrain && Data.SameMoving && Data.StickOnFloor
+	if (!Data->IsTrain && Data->SameMoving && Data->StickOnFloor
 		&& !pStand->GetTechnoType()->JumpJet
 		&& pTechno->GetHeight() <= 0
 	)
@@ -487,18 +487,18 @@ void Stand::SetLocation(CoordStruct location)
 	pStand->SetFocus(nullptr);
 }
 
-void Stand::SetFacing(DirStruct dir, bool forceSetTurret)
+void StandEffect::SetFacing(DirStruct dir, bool forceSetTurret)
 {
-	if (!Data.FreeDirection)
+	if (!Data->FreeDirection)
 	{
-		if (pStand->HasTurret() || Data.LockDirection)
+		if (pStand->HasTurret() || Data->LockDirection)
 		{
 			// 替身有炮塔直接转身体
 			pStand->PrimaryFacing.SetCurrent(dir);
 		}
 
 		// 检查是否需要同步转炮塔
-		if ((!pStand->Target || Data.LockDirection) && !pStand->GetTechnoType()->TurretSpins)
+		if ((!pStand->Target || Data->LockDirection) && !pStand->GetTechnoType()->TurretSpins)
 		{
 			// Logger.Log("设置替身{0}炮塔的朝向", Type.Type);
 			if (forceSetTurret)
@@ -526,7 +526,7 @@ void Stand::SetFacing(DirStruct dir, bool forceSetTurret)
 	}
 }
 
-void Stand::ForceFacing(DirStruct dir)
+void StandEffect::ForceFacing(DirStruct dir)
 {
 	pStand->PrimaryFacing.SetCurrent(dir);
 	if (pStand->HasTurret())
@@ -544,7 +544,7 @@ void Stand::ForceFacing(DirStruct dir)
 	}
 }
 
-void Stand::OnTechnoDelete(EventSystem* sender, Event e, void* args)
+void StandEffect::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 {
 	if (args == pStand)
 	{
@@ -552,22 +552,22 @@ void Stand::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	}
 }
 
-void Stand::Start()
+void StandEffect::Start()
 {
-	EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &Stand::OnTechnoDelete);
+	EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &StandEffect::OnTechnoDelete);
 	CreateAndPutStand();
 }
 
-void Stand::End(CoordStruct location)
+void StandEffect::End(CoordStruct location)
 {
-	EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &Stand::OnTechnoDelete);
+	EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &StandEffect::OnTechnoDelete);
 	if (pStand)
 	{
 		ExplodesOrDisappear(false);
 	}
 }
 
-bool Stand::IsAlive()
+bool StandEffect::IsAlive()
 {
 	if (IsDead(pStand))
 	{
@@ -576,27 +576,27 @@ bool Stand::IsAlive()
 	return true;
 }
 
-void Stand::OnGScreenRender(CoordStruct location)
+void StandEffect::OnGScreenRender(CoordStruct location)
 {
 	if (!standIsBuilding && IsFoot())
 	{
 		// synch tilt
-		if (!Data.IsTrain)
+		if (!Data->IsTrain)
 		{
-			if (Data.SameTilter)
+			if (Data->SameTilter)
 			{
 				// Stand same tilter
 				// rocker Squid capture ship
 				// pStand->AngleRotatedForwards = pMaster->AngleRotatedForwards;
 				// pStand->AngleRotatedSideways = pMaster->AngleRotatedSideways;
 
-				if (Data.SameTilter)
+				if (Data->SameTilter)
 				{
 					float forwards = pTechno->AngleRotatedForwards;
 					float sideways = pTechno->AngleRotatedSideways;
 					float t = 0.0;
 					// 计算方向
-					switch (Data.Offset.Direction)
+					switch (Data->Offset.Direction)
 					{
 					case 0: // 正前 N
 						break;
@@ -653,7 +653,7 @@ void Stand::OnGScreenRender(CoordStruct location)
 	}
 }
 
-void Stand::OnPut(CoordStruct* pCoord, DirType dirType)
+void StandEffect::OnPut(CoordStruct* pCoord, DirType dirType)
 {
 	if (pStand->InLimbo)
 	{
@@ -665,7 +665,7 @@ void Stand::OnPut(CoordStruct* pCoord, DirType dirType)
 	}
 }
 
-void Stand::OnRemove()
+void StandEffect::OnRemove()
 {
 	if (!AE->OwnerIsDead())
 	{
@@ -673,7 +673,7 @@ void Stand::OnRemove()
 	}
 }
 
-void Stand::OnUpdate()
+void StandEffect::OnUpdate()
 {
 	if (pTechno)
 	{
@@ -685,7 +685,7 @@ void Stand::OnUpdate()
 	}
 }
 
-void Stand::OnWarpUpdate()
+void StandEffect::OnWarpUpdate()
 {
 	if (pTechno)
 	{
@@ -697,16 +697,16 @@ void Stand::OnWarpUpdate()
 	}
 }
 
-void Stand::OnTemporalEliminate(TemporalClass* pTemporal)
+void StandEffect::OnTemporalEliminate(TemporalClass* pTemporal)
 {
 	End(pObject->GetCoords());
 }
 
-void Stand::OnReceiveDamageDestroy()
+void StandEffect::OnReceiveDamageDestroy()
 {
 	onReceiveDamageDestroy = true;
 	// 我不做人了JOJO
-	notBeHuman = Data.ExplodesWithMaster;
+	notBeHuman = Data->ExplodesWithMaster;
 	if (pTechno)
 	{
 		// 沉没，坠机，不销毁替身
@@ -719,7 +719,7 @@ void Stand::OnReceiveDamageDestroy()
 	}
 }
 
-void Stand::OnGuardCommand()
+void StandEffect::OnGuardCommand()
 {
 	if (!pStand->IsSelected)
 	{
@@ -730,7 +730,7 @@ void Stand::OnGuardCommand()
 	}
 }
 
-void Stand::OnStopCommand()
+void StandEffect::OnStopCommand()
 {
 	ClearAllTarget(pStand);
 	onStopCommand = true;
@@ -744,11 +744,11 @@ void Stand::OnStopCommand()
 	}
 }
 
-void Stand::OnRocketExplosion()
+void StandEffect::OnRocketExplosion()
 {
 	if (!onReceiveDamageDestroy)
 	{
-		ExplodesOrDisappear(Data.ExplodesWithMaster);
+		ExplodesOrDisappear(Data->ExplodesWithMaster);
 	}
 
 }

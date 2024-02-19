@@ -59,6 +59,8 @@ public:
 	void GetAENames(std::vector<std::string>& names);
 	bool HasStand();
 
+	void AEStateToStand(EffectData* pData, int duration, std::string token, bool resetDuration);
+
 	/**
 	 *@brief 统计所有的AEBuff
 	 *

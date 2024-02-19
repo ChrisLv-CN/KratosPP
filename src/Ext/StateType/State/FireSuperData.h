@@ -79,6 +79,8 @@ public:
 class FireSuperData : public EffectData
 {
 public:
+	EFFECT_DATA(FireSuper);
+
 	FireSuperEntity Data;
 	FireSuperEntity EliteData;
 

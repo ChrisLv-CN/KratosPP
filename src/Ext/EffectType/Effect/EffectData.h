@@ -33,9 +33,21 @@ inline bool Parser<AffectWho>::TryParse(const char* pValue, AffectWho* outValue)
 	}
 }
 
+#define EFFECT_DATA(DATA_NAME) \
+	virtual std::string GetEffectScriptName() override \
+	{ \
+		return std::string{ #DATA_NAME } + "Effect"; \
+	} \
+	virtual std::string GetStateScriptName() override \
+	{ \
+		return std::string{ #DATA_NAME } + "State"; \
+	} \
+
 class EffectData : public FilterData
 {
 public:
+	virtual std::string GetEffectScriptName() { return ""; };
+	virtual std::string GetStateScriptName() { return ""; };
 
 	int TriggeredTimes = -1; // 触发次数
 	bool Powered = false; // 建筑需要使用电力

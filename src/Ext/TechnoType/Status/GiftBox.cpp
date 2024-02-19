@@ -28,7 +28,7 @@ void TechnoStatus::OnUpdate_DeployToTransform()
 			|| (IsUnit() && static_cast<UnitClass*>(pTechno)->Deployed))
 		{
 			// 步兵或载具部署完毕，开始变形
-			GiftBoxState->Start(*GetTransformData());
+			GiftBox->Start(GetTransformData());
 		}
 	}
 }
@@ -36,42 +36,42 @@ void TechnoStatus::OnUpdate_DeployToTransform()
 void TechnoStatus::OnUpdate_GiftBox()
 {
 	// 记录单位的状态
-	if (GiftBoxState->IsActive())
+	if (GiftBox->IsActive())
 	{
 		// 记录盒子的状态
-		GiftBoxState->IsSelected = pTechno->IsSelected;
-		GiftBoxState->Group = pTechno->Group;
+		GiftBox->IsSelected = pTechno->IsSelected;
+		GiftBox->Group = pTechno->Group;
 		// 记录朝向
-		GiftBoxState->BodyDir = pTechno->PrimaryFacing.Current();
-		GiftBoxState->TurretDir = pTechno->SecondaryFacing.Current();
+		GiftBox->BodyDir = pTechno->PrimaryFacing.Current();
+		GiftBox->TurretDir = pTechno->SecondaryFacing.Current();
 		// JJ有单独的Facing
 		if (IsJumpjet())
 		{
 			FootClass* pFoot = static_cast<FootClass*>(pTechno);
-			GiftBoxState->BodyDir = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get())->LocomotionFacing.Current();
-			GiftBoxState->TurretDir = GiftBoxState->BodyDir;
+			GiftBox->BodyDir = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get())->LocomotionFacing.Current();
+			GiftBox->TurretDir = GiftBox->BodyDir;
 		}
 
 		// 准备开盒
-		if (GiftBoxState->CanOpen() && IsOnMark_GiftBox() && !GiftBoxState->Data.OpenWhenDestroyed && !GiftBoxState->Data.OpenWhenHealthPercent)
+		if (GiftBox->CanOpen() && IsOnMark_GiftBox() && !GiftBox->Data.OpenWhenDestroyed && !GiftBox->Data.OpenWhenHealthPercent)
 		{
 			// 开盒
-			GiftBoxState->IsOpen = true;
+			GiftBox->IsOpen = true;
 			// 释放礼物
-			std::vector<std::string> gifts = GiftBoxState->GetGiftList();
+			std::vector<std::string> gifts = GiftBox->GetGiftList();
 			if (!gifts.empty())
 			{
-				ReleaseGift(gifts, GiftBoxState->Data);
+				ReleaseGift(gifts, GiftBox->Data);
 			}
 		}
 
 		// 重置或者销毁盒子
-		if (GiftBoxState->IsOpen)
+		if (GiftBox->IsOpen)
 		{
-			if (GiftBoxState->Data.Remove)
+			if (GiftBox->Data.Remove)
 			{
-				GiftBoxState->Disable();
-				if (GiftBoxState->Data.Destroy)
+				GiftBox->Disable();
+				if (GiftBox->Data.Destroy)
 				{
 					pTechno->TakeDamage(pTechno->Health + 1, pTechno->GetTechnoType()->Crewed);
 				}
@@ -84,7 +84,7 @@ void TechnoStatus::OnUpdate_GiftBox()
 			}
 			else
 			{
-				GiftBoxState->ResetGiftBox();
+				GiftBox->ResetGiftBox();
 			}
 		}
 	}
@@ -94,21 +94,21 @@ void TechnoStatus::OnUpdate_GiftBox()
 void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	if (damageState != DamageState::NowDead && IsDeadOrInvisible(pTechno)
-		&& GiftBoxState->CanOpen() && GiftBoxState->Data.OpenWhenHealthPercent
+		&& GiftBox->CanOpen() && GiftBox->Data.OpenWhenHealthPercent
 		&& IsOnMark_GiftBox()
 		)
 	{
 		// 计算血量百分比是否达到开启条件
 		double healthPercent = pTechno->GetHealthPercentage();
-		if (healthPercent <= GiftBoxState->Data.OpenHealthPercent)
+		if (healthPercent <= GiftBox->Data.OpenHealthPercent)
 		{
 			// 开盒
-			GiftBoxState->IsOpen = true;
+			GiftBox->IsOpen = true;
 			// 释放礼物
-			std::vector<std::string> gifts = GiftBoxState->GetGiftList();
+			std::vector<std::string> gifts = GiftBox->GetGiftList();
 			if (!gifts.empty())
 			{
-				ReleaseGift(gifts, GiftBoxState->Data);
+				ReleaseGift(gifts, GiftBox->Data);
 			}
 			// 此处不重置或销毁，而是进入下一帧的Update事件中重置或销毁
 		}
@@ -117,22 +117,22 @@ void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass
 
 void TechnoStatus::OnReceiveDamageDestroy_GiftBox()
 {
-	if (GiftBoxState->IsActive() && GiftBoxState->Data.OpenWhenDestroyed && IsOnMark_GiftBox())
+	if (GiftBox->IsActive() && GiftBox->Data.OpenWhenDestroyed && IsOnMark_GiftBox())
 	{
 		// 开盒
-		GiftBoxState->IsOpen = true;
+		GiftBox->IsOpen = true;
 		// 释放礼物
-		std::vector<std::string> gifts = GiftBoxState->GetGiftList();
+		std::vector<std::string> gifts = GiftBox->GetGiftList();
 		if (!gifts.empty())
 		{
-			ReleaseGift(gifts, GiftBoxState->Data);
+			ReleaseGift(gifts, GiftBox->Data);
 		}
 	}
 }
 
 bool TechnoStatus::IsOnMark_GiftBox()
 {
-	std::vector<std::string> marks = GiftBoxState->Data.OnlyOpenWhenMarks;
+	std::vector<std::string> marks = GiftBox->Data.OnlyOpenWhenMarks;
 	if (!marks.empty())
 	{
 		if (AttachEffect* aem = AEManager())
@@ -231,23 +231,23 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				if (data.IsTransform)
 				{
 					// 同步朝向
-					pGift->PrimaryFacing.SetCurrent(GiftBoxState->BodyDir);
-					pGift->SecondaryFacing.SetCurrent(GiftBoxState->TurretDir);
+					pGift->PrimaryFacing.SetCurrent(GiftBox->BodyDir);
+					pGift->SecondaryFacing.SetCurrent(GiftBox->TurretDir);
 					// JJ有单独的Facing
 					if (giftStatus->IsJumpjet())
 					{
 						FootClass* pGiftFoot = static_cast<FootClass*>(pGift);
 						JumpjetLocomotionClass* pLoco = static_cast<JumpjetLocomotionClass*>(pGiftFoot->Locomotor.get());
-						pLoco->LocomotionFacing.SetCurrent(GiftBoxState->BodyDir);
+						pLoco->LocomotionFacing.SetCurrent(GiftBox->BodyDir);
 					}
 					// 同步编队
-					pGift->Group = GiftBoxState->Group;
+					pGift->Group = GiftBox->Group;
 					// 同步箱子属性
 					giftStatus->CrateBuff = CrateBuff;
 				}
 
 				// 同步选中状态
-				if (GiftBoxState->IsSelected)
+				if (GiftBox->IsSelected)
 				{
 					giftStatus->DisableSelectVoice = true;
 					pGift->Select();
@@ -320,7 +320,7 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 					giftAEM = giftGO->GetComponent<AttachEffect>();
 					AttachEffect* boxAEM = boxGO->GetComponent<AttachEffect>();
 					// 将当前的GiftBox的AE关闭，如果有的话
-					boxAEM->DetachByToken(GiftBoxState->Token);
+					boxAEM->DetachByToken(GiftBox->Token);
 					// AE管理器脱离
 					boxAEM->DetachFromParent(false);
 					giftAEM->DetachFromParent(false);
@@ -410,13 +410,13 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 
 void TechnoStatus::InheritedStatsTo(TechnoStatus*& heir)
 {
-	*heir->AntiBulletState = *AntiBulletState;
-	*heir->DestroyAnimState = *DestroyAnimState;
-	*heir->DestroySelfState = *DestroySelfState;
-	*heir->FireSuperState = *FireSuperState;
+	*heir->AntiBullet = *AntiBullet;
+	*heir->DestroyAnim = *DestroyAnim;
+	*heir->DestroySelf = *DestroySelf;
+	*heir->FireSuper = *FireSuper;
 	// *heir->GiftBox = *this->GiftBox;
-	*heir->PaintballState = *PaintballState;
-	*heir->TransformState = *TransformState;
+	*heir->Paintball = *Paintball;
+	*heir->Transform = *Transform;
 	// 状态机
 	// GET_STATE(AntiBullet);
 	// GET_STATE(DestroyAnim);

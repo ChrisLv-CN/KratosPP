@@ -1,8 +1,8 @@
-﻿#include "Paintball.h"
+﻿#include "PaintballState.h"
 
 #include <Ext/Helper/MathEx.h>
 
-void Paintball::RGBIsPower()
+void PaintballState::RGBIsPower()
 {
 	if (!_rgbMode)
 	{
@@ -12,7 +12,7 @@ void Paintball::RGBIsPower()
 	{
 		PaintballData rgb;
 		rgb.SetColor(Colors::Red);
-		Start(rgb);
+		Start(&rgb);
 	}
 	if (_rgbTimer.Expired())
 	{
@@ -40,7 +40,7 @@ void Paintball::RGBIsPower()
 	Reset();
 }
 
-bool Paintball::NeedPaint(bool& changeColor, bool& changeBright)
+bool PaintballState::NeedPaint(bool& changeColor, bool& changeBright)
 {
 	changeColor = false;
 	changeBright = false;
@@ -52,7 +52,7 @@ bool Paintball::NeedPaint(bool& changeColor, bool& changeBright)
 	return changeColor || changeBright;
 }
 
-void Paintball::OnInitState(bool replace)
+void PaintballState::OnInitState(bool replace)
 {
 	PaintballData* data = GetInitData();
 	if (data->Enable)
@@ -65,7 +65,7 @@ void Paintball::OnInitState(bool replace)
 	}
 }
 
-void Paintball::OnUpdate()
+void PaintballState::OnUpdate()
 {
 #ifdef DEBUG
 	StateScript<PaintballData>::OnUpdate();

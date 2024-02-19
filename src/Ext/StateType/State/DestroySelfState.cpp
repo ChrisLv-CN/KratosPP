@@ -1,24 +1,24 @@
-﻿#include "DestroySelf.h"
+﻿#include "DestroySelfState.h"
 
 
-bool DestroySelf::AmIDead()
+bool DestroySelfState::AmIDead()
 {
 	return IsActive() && (GoDie || Timeup());
 }
 
-void DestroySelf::DestroyNow(bool peaceful)
+void DestroySelfState::DestroyNow(bool peaceful)
 {
 	// 强制开启状态机
 	DestroySelfData data;
 	data.Enable = true;
 	data.Delay = 0;
 	data.Peaceful = peaceful;
-	Start(data);
+	Start(&data);
 	// 狗带
 	GoDie = true;
 }
 
-void DestroySelf::ExtendLife()
+void DestroySelfState::ExtendLife()
 {
 	GoDie = false;
 	_delay = Data.Delay;
@@ -29,13 +29,13 @@ void DestroySelf::ExtendLife()
 	}
 }
 
-bool DestroySelf::Timeup()
+bool DestroySelfState::Timeup()
 {
 	GoDie = _delay <= 0 || _delayTimer.Expired();
 	return GoDie;
 }
 
-void DestroySelf::OnStart()
+void DestroySelfState::OnStart()
 {
 	ExtendLife();
 }

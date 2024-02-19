@@ -1,6 +1,6 @@
-﻿#include "AntiBullet.h"
+﻿#include "AntiBulletState.h"
 
-bool AntiBullet::CanSearchBullet()
+bool AntiBulletState::CanSearchBullet()
 {
 	bool can = _delayTimer.Expired();
 	if (can)

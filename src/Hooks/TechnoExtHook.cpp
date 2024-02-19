@@ -599,10 +599,10 @@ DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon_AntiMissile, 0xA)
 			{
 				if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
 				{
-					if (status->AntiBulletState->IsActive())
+					if (status->AntiBullet->IsActive())
 					{
 						// 自己捕获的目标，按设置选择武器
-						if (status->AntiBulletState->Data.Weapon == 1)
+						if (status->AntiBullet->Data.Weapon == 1)
 						{
 							return 0x6F3807; // 返回副武器
 						}

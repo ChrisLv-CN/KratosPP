@@ -8,14 +8,14 @@
 
 #include <Ext/TechnoType/DamageText.h>
 
-class AntiBullet : public StateScript<AntiBulletData>
+class AntiBulletState : public StateScript<AntiBulletData>
 {
 public:
-	STATE_SCRIPT(AntiBullet, AntiBulletData);
+	STATE_SCRIPT(AntiBullet);
 
 	bool CanSearchBullet();
 
-	AntiBullet& operator=(const AntiBullet& other)
+	AntiBulletState& operator=(const AntiBulletState& other)
 	{
 		if (this != &other)
 		{
@@ -42,7 +42,7 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const
 	{
 		StateScript<AntiBulletData>::Save(stream);
-		return const_cast<AntiBullet*>(this)->Serialize(stream);
+		return const_cast<AntiBulletState*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:

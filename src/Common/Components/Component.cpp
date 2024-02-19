@@ -384,7 +384,8 @@ void Component::ForeachLevel(std::function<void(Component*)> action, int& level,
 	// 执行自身
 	if (IsEnable() && IsActive())
 	{
-		action(this);
+		Component* _this = this;
+		action(_this);
 		int nextLevel = level + 1;
 		if (maxLevel < 0 || nextLevel < maxLevel)
 		{

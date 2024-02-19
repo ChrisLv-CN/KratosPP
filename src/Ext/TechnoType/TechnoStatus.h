@@ -21,13 +21,13 @@
 #include <Ext/EffectType/Effect/CrateBuffData.h>
 #include <Ext/EffectType/Effect/StandData.h>
 
-#include <Ext/StateType/State/AntiBullet.h>
-#include <Ext/StateType/State/DestroyAnim.h>
-#include <Ext/StateType/State/DestroySelf.h>
-#include <Ext/StateType/State/FireSuper.h>
-#include <Ext/StateType/State/GiftBox.h>
-#include <Ext/StateType/State/Paintball.h>
-#include <Ext/StateType/State/Transform.h>
+#include <Ext/StateType/State/AntiBulletState.h>
+#include <Ext/StateType/State/DestroyAnimState.h>
+#include <Ext/StateType/State/DestroySelfState.h>
+#include <Ext/StateType/State/FireSuperState.h>
+#include <Ext/StateType/State/GiftBoxState.h>
+#include <Ext/StateType/State/PaintballState.h>
+#include <Ext/StateType/State/TransformState.h>
 
 class AttachEffect;
 
@@ -97,6 +97,17 @@ public:
 	GET_STATE(GiftBox);
 	GET_STATE(Paintball);
 	GET_STATE(Transform);
+
+	void AttachState()
+	{
+		INIT_STATE(AntiBullet);
+		INIT_STATE(DestroyAnim);
+		INIT_STATE(DestroySelf);
+		INIT_STATE(FireSuper);
+		INIT_STATE(GiftBox);
+		INIT_STATE(Paintball);
+		INIT_STATE(Transform);
+	}
 
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
@@ -250,6 +261,4 @@ private:
 
 	// EMP动画
 	AnimClass* pExtraSparkleAnim = nullptr;
-
-	bool rgbFlag = false;
 };

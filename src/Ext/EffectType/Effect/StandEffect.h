@@ -20,10 +20,10 @@
 ///						|__ EffectScript#0
 ///						|__ EffectScript#1
 ///						|__ EffectScript#2
-class Stand : public EffectScript
+class StandEffect : public EffectScript
 {
 public:
-	EFFECT_SCRIPT(Stand, StandData);
+	EFFECT_SCRIPT(Stand);
 
 	void UpdateLocation(LocationMark LocationMark);
 
@@ -48,6 +48,8 @@ public:
 
 	virtual void OnRocketExplosion() override;
 
+	TechnoClass* pStand = nullptr;
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
@@ -59,18 +61,16 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &Stand::OnTechnoDelete);
+		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &StandEffect::OnTechnoDelete);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
 		Component::Save(stream);
-		return const_cast<Stand*>(this)->Serialize(stream);
+		return const_cast<StandEffect*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:
-	TechnoClass* pStand = nullptr;
-
     bool masterIsRocket = false;
     bool masterIsSpawned = false;
 	bool standIsBuilding = false;

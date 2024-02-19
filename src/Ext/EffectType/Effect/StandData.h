@@ -42,7 +42,7 @@ inline bool Parser<StandTargeting>::TryParse(const char* pValue, StandTargeting*
 class StandData : public EffectData
 {
 public:
-	std::string ScriptName = "Stand";
+	EFFECT_DATA(Stand);
 
 	std::string Type{ "" }; // 替身类型
 	OffsetData Offset{}; // 替身相对位置

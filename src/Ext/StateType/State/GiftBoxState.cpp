@@ -1,14 +1,14 @@
-﻿#include "GiftBox.h"
+﻿#include "GiftBoxState.h"
 
 #include <Ext/Helper/MathEx.h>
 
-bool GiftBox::CanOpen()
+bool GiftBoxState::CanOpen()
 {
 	return IsActive() && !IsOpen && Timeup() && GetGiftData().Enable;
 }
 
 
-void GiftBox::ResetGiftBox()
+void GiftBoxState::ResetGiftBox()
 {
 	GiftBoxEntity data = GetGiftData();
 	IsOpen = false;
@@ -19,7 +19,7 @@ void GiftBox::ResetGiftBox()
 	}
 }
 
-std::vector<std::string> GiftBox::GetGiftList()
+std::vector<std::string> GiftBoxState::GetGiftList()
 {
 	GiftBoxEntity data = GetGiftData();
 	std::vector<std::string> gifts{};
@@ -86,12 +86,12 @@ std::vector<std::string> GiftBox::GetGiftList()
 	return gifts;
 }
 
-void GiftBox::OnStart()
+void GiftBoxState::OnStart()
 {
 	ResetGiftBox();
 }
 
-void GiftBox::OnUpdate()
+void GiftBoxState::OnUpdate()
 {
 #ifdef DEBUG
 	StateScript<GiftBoxData>::OnUpdate();

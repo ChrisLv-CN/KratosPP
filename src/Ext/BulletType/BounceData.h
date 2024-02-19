@@ -14,6 +14,8 @@
 class BounceData : public EffectData
 {
 public:
+	EFFECT_DATA(Bounce);
+
 	double Chance = 0; // 发生弹跳的概率
 
 	double Elasticity = 0.5; // 弹性衰减系数

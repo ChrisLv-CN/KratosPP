@@ -6,10 +6,10 @@
 
 void TechnoStatus::OnUpdate_DestroySelf()
 {
-	if (DestroySelfState->AmIDead() && !IsDead(pTechno))
+	if (DestroySelf->AmIDead() && !IsDead(pTechno))
 	{
 		// 啊我死了
-		if (DestroySelfState->Data.Peaceful)
+		if (DestroySelf->Data.Peaceful)
 		{
 			pTechno->Limbo();
 			pTechno->Health = 0;

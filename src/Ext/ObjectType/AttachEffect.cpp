@@ -14,10 +14,19 @@
 #include <Ext/Common/PrintTextManager.h>
 
 #include <Ext/EffectType/AttachEffectScript.h>
+#include <Ext/EffectType/Effect/StandEffect.h>
 #include <Ext/BulletType/BulletStatus.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/UploadAttachData.h>
 #include <Ext/WeaponType/FeedbackAttachData.h>
+
+#include <Ext/StateType/State/AntiBulletData.h>
+#include <Ext/StateType/State/DestroyAnimData.h>
+#include <Ext/StateType/State/DestroySelfData.h>
+#include <Ext/StateType/State/FireSuperData.h>
+#include <Ext/StateType/State/GiftBoxData.h>
+#include <Ext/StateType/State/PaintballData.h>
+#include <Ext/StateType/State/TransformData.h>
 
 BulletStatus* AttachEffect::GetBulletStatus()
 {
@@ -111,6 +120,61 @@ bool AttachEffect::HasStand()
 		}
 		});
 	return find;
+}
+
+#define GET_STAND_STATE(CLASS_NAME) \
+ 			else if (dynamic_cast<CLASS_NAME ## Data*>(pData)) \
+			{ \
+				state = status->CLASS_NAME; \
+			} \
+
+void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string token, bool resetDuration)
+{
+	ForeachChild([&pData,&duration,&token,&resetDuration](Component* c) {
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c)) {
+			if (ae->AEData.Stand.Enable)
+			{
+				if (StandEffect* standEffect = ae->GetComponent<StandEffect>())
+				{
+					TechnoStatus* status = nullptr;
+					if (TryGetStatus<TechnoExt>(standEffect->pStand, status))
+					{
+						IStateScript* state = nullptr;
+						// TODO Get stand's state
+
+						// 状态机
+						// GET_STATE(AntiBullet);
+						// GET_STATE(DestroyAnim);
+						// GET_STATE(DestroySelf);
+						// GET_STATE(FireSuper);
+						// GET_STATE(GiftBox);
+						// GET_STATE(Paintball);
+						// GET_STATE(Transform);
+
+						if (state) { }
+						GET_STAND_STATE(AntiBullet)
+						GET_STAND_STATE(DestroyAnim)
+						GET_STAND_STATE(DestroySelf)
+						GET_STAND_STATE(FireSuper)
+						GET_STAND_STATE(GiftBox)
+						GET_STAND_STATE(Paintball)
+						GET_STAND_STATE(Transform)
+						if (state)
+						{
+							if (resetDuration)
+							{
+								state->ResetDuration(duration, token);
+							}
+							else
+							{
+								state->Replace(pData, duration, token);
+							}
+						}
+					}
+				}
+			}
+		}
+		});
 }
 
 CrateBuffData AttachEffect::CountAttachStatusMultiplier()
@@ -394,7 +458,7 @@ void AttachEffect::Attach(AttachEffectData data,
 		{
 			AddStackCount(data); // 叠层计数
 			// 初始化AE
-			AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
+			auto ae = dynamic_cast<AttachEffectScript*>(c);
 			ae->AEData = data;
 			// 激活AE
 			ae->EnsureAwaked();
@@ -549,7 +613,7 @@ void AttachEffect::AttachGroupAE()
 void AttachEffect::DetachByName(std::vector<std::string> aeTypes)
 {
 	ForeachChild([&aeTypes](Component* c) {
-		AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
+		auto ae = dynamic_cast<AttachEffectScript*>(c);
 		// 通过Token关闭掉AE
 		if (ae && std::find(aeTypes.begin(), aeTypes.end(), ae->AEData.Name) != aeTypes.end())
 		{
@@ -563,7 +627,7 @@ void AttachEffect::DetachByToken(std::string token)
 	if (!token.empty())
 	{
 		ForeachChild([&token](Component* c) {
-			AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
+			auto ae = dynamic_cast<AttachEffectScript*>(c);
 			// 通过Token关闭掉AE
 			if (ae && ae->Token == token)
 			{
@@ -576,24 +640,26 @@ void AttachEffect::DetachByToken(std::string token)
 void AttachEffect::CheckDurationAndDisable()
 {
 	CoordStruct location = _location;
-	ForeachChild([&location, this](Component* c) {
-		AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
-		// 执行IsAlive时，检查AE的生命状态，失效的AE会在这里被标记为Deactivate
-		if (ae && !ae->IsAlive())
+	ForeachChild([&](Component* c) {
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
 		{
-			AttachEffectData data = ae->AEData;
-			// 加入冷却计时器
-			this->StartDelay(data);
-			// 结束AE
-			ae->End(location);
-			// Deactivate的组件不会再执行Foreach事件，标记为失效，以便父组件将其删除
-			ae->Disable();
-			this->ReduceStackCount(data);
-			// 添加NextAE
-			std::string nextAE = data.Next;
-			if (IsNotNone(nextAE) && IsDeadOrInvisible(pObject))
+			// 执行IsAlive时，检查AE的生命状态，失效的AE会在这里被标记为Deactivate
+			if (!ae->IsAlive())
 			{
-				Attach(nextAE, false, ae->pSource, ae->pSourceHouse);
+				AttachEffectData data = ae->AEData;
+				// 加入冷却计时器
+				StartDelay(data);
+				// 结束AE
+				ae->End(location);
+				ReduceStackCount(data);
+				// Deactivate的组件不会再执行Foreach事件，标记为失效，以便父组件将其删除
+				ae->Disable();
+				// 添加NextAE
+				std::string nextAE = data.Next;
+				if (IsNotNone(nextAE) && !IsDeadOrInvisible(pObject))
+				{
+					Attach(nextAE, false, ae->pSource, ae->pSourceHouse);
+				}
 			}
 		}
 		});
@@ -789,9 +855,9 @@ int AttachEffect::FindInsertIndex(AttachEffectData data)
 			{
 				// Find the first same group cabin
 				int i = 0;
-				for (Component* c : _children)
+				for (Component*& c : _children)
 				{
-					AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
+					auto ae = dynamic_cast<AttachEffectScript*>(c);
 					if (ae && ae->IsActive() && ae->AEData.Stand.Enable && ae->AEData.Stand.IsTrain)
 					{
 						if (ae->AEData.Stand.CabinGroup == data.Stand.CabinGroup)
@@ -952,7 +1018,8 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 		// 火车的位置索引
 		int markIndex = 0;
 		ForeachChild([&](Component* c) {
-			if (auto ae = dynamic_cast<AttachEffectScript*>(c)) {
+			if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+			{
 				if (ae->IsAlive())
 				{
 					AttachEffectData aeData = ae->AEData;

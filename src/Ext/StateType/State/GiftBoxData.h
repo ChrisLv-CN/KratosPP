@@ -65,6 +65,8 @@ public:
 class GiftBoxData : public EffectData
 {
 public:
+	EFFECT_DATA(GiftBox);
+
 	bool ForceTransform = false;
 
 	GiftBoxEntity Data{};

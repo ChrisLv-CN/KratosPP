@@ -41,6 +41,8 @@ inline bool Parser<WreckOwner>::TryParse(const char* pValue, WreckOwner* outValu
 class DestroyAnimData : public EffectData
 {
 public:
+	EFFECT_DATA(DestroyAnim);
+
 	std::vector<std::string> Anims{};
 	bool Random = false;
 	bool PlayInAir = false;

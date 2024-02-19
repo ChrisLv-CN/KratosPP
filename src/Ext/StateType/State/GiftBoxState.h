@@ -8,10 +8,10 @@
 
 #include <Ext/TechnoType/DamageText.h>
 
-class GiftBox : public StateScript<GiftBoxData>
+class GiftBoxState : public StateScript<GiftBoxData>
 {
 public:
-	STATE_SCRIPT(GiftBox, GiftBoxData);
+	STATE_SCRIPT(GiftBox);
 
 	bool CanOpen();
 
@@ -41,7 +41,7 @@ public:
 
 	int Group = -1;
 
-	GiftBox& operator=(const GiftBox& other)
+	GiftBoxState& operator=(const GiftBoxState& other)
 	{
 		if (this != &other)
 		{
@@ -83,7 +83,7 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const
 	{
 		StateScript<GiftBoxData>::Save(stream);
-		return const_cast<GiftBox*>(this)->Serialize(stream);
+		return const_cast<GiftBoxState*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:
