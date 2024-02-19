@@ -41,6 +41,23 @@ public:
 
 	int Group = -1;
 
+	GiftBox& operator=(const GiftBox& other)
+	{
+		if (this != &other)
+		{
+			StateScript<GiftBoxData>::operator=(other);
+			IsOpen = other.IsOpen;
+			IsSelected = other.IsSelected;
+			BodyDir = other.BodyDir;
+			TurretDir = other.TurretDir;
+			Group = other.Group;
+			_isElite = other._isElite;
+			_delay = other._delay;
+			_delayTimer = other._delayTimer;
+		}
+		return *this;
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

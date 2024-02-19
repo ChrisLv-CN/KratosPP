@@ -52,6 +52,19 @@ bool Paintball::NeedPaint(bool& changeColor, bool& changeBright)
 	return changeColor || changeBright;
 }
 
+void Paintball::OnInitState(bool replace)
+{
+	PaintballData* data = GetInitData();
+	if (data->Enable)
+	{
+		StateScript<PaintballData>::OnInitState(replace);
+	}
+	else if (_rgbMode)
+	{
+		RGBIsPower();
+	}
+}
+
 void Paintball::OnUpdate()
 {
 #ifdef DEBUG

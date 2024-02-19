@@ -32,9 +32,6 @@ template <typename TData>
 class StateScript : public ObjectScript
 {
 public:
-	std::string Token{ "" };
-	TData Data{};
-
 	void Start(TData& data, int duration = -1, std::string token = "")
 	{
 
@@ -178,6 +175,20 @@ public:
 	{
 		return INI::GetConfig<TData>(INI::Rules, pObject->GetType()->ID)->Data;
 	};
+
+	StateScript<TData>& operator=(const StateScript<TData>& other)
+	{
+		if (this != &other)
+		{
+			Component::operator=(other);
+			Token = other.Token;
+			Data = other.Data;
+		}
+		return *this;
+	}
+
+	std::string Token{ "" };
+	TData Data{};
 
 #pragma region Save/Load
 	template <typename T>

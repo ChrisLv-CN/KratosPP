@@ -186,6 +186,7 @@ private:
 	// 礼物盒
 	bool IsOnMark_GiftBox();
 	void ReleaseGift(std::vector<std::string> gifts, GiftBoxData data);
+	void InheritedStatsTo(TechnoStatus*& heir);
 
 	// 反抛射体
 	bool WeaponNoAA(int weaponIdx);
@@ -249,4 +250,6 @@ private:
 
 	// EMP动画
 	AnimClass* pExtraSparkleAnim = nullptr;
+
+	bool rgbFlag = false;
 };

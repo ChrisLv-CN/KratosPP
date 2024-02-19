@@ -311,29 +311,27 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				if (inheritAE)
 				{
 					inheritAE = false;
-					//TODO 继承除了GiftBox之外的状态机
-					// InheritedStatsTo(giftStatus);
-					// 将礼物盒的AE管理器脱离，并交换给礼物
-					if (TryGetAEManager<TechnoExt>(pGift, giftAEM))
-					{
-						Component* giftGO = giftAEM->GetParent();
-
-						AttachEffect* boxAEM = AEManager();
-						Component* boxGO = boxAEM->GetParent();
-
-						boxAEM->DetachFromParent(false);
-						giftAEM->DetachFromParent(false);
-
-						// TODO 将当前的GiftBox的AE关闭，如果有的话
-						// 从状态机中获取生效的AE并关闭
-
-						giftGO->AddComponent(boxAEM);
-						boxGO->AddComponent(giftAEM);
-
-						giftAEM = boxAEM;
-					}
+					// 复制除了giftBox之外的状态机
+					InheritedStatsTo(giftStatus);
+					// 获取根组件
+					Component* giftGO = giftStatus->GetParent();
+					Component* boxGO = this->GetParent();
+					// 交换AE管理器
+					giftAEM = giftGO->GetComponent<AttachEffect>();
+					AttachEffect* boxAEM = boxGO->GetComponent<AttachEffect>();
+					// 将当前的GiftBox的AE关闭，如果有的话
+					boxAEM->DetachByToken(GiftBoxState->Token);
+					// AE管理器脱离
+					boxAEM->DetachFromParent(false);
+					giftAEM->DetachFromParent(false);
+					// 交换
+					giftGO->AddComponent(boxAEM);
+					boxGO->AddComponent(giftAEM);
+					// 修改变量
+					giftAEM = boxAEM;
+					// 发出类型变更的通知
+					dynamic_cast<GameObject*>(giftGO)->ExtChanged = true;
 				}
-
 				// 附加新的AE
 				if (!data.AttachEffects.empty())
 				{
@@ -408,4 +406,23 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 			}
 		}
 	}
+}
+
+void TechnoStatus::InheritedStatsTo(TechnoStatus*& heir)
+{
+	*heir->AntiBulletState = *AntiBulletState;
+	*heir->DestroyAnimState = *DestroyAnimState;
+	*heir->DestroySelfState = *DestroySelfState;
+	*heir->FireSuperState = *FireSuperState;
+	// *heir->GiftBox = *this->GiftBox;
+	*heir->PaintballState = *PaintballState;
+	*heir->TransformState = *TransformState;
+	// 状态机
+	// GET_STATE(AntiBullet);
+	// GET_STATE(DestroyAnim);
+	// GET_STATE(DestroySelf);
+	// GET_STATE(FireSuper);
+	// GET_STATE(GiftBox);
+	// GET_STATE(Paintball);
+	// GET_STATE(Transform);
 }

@@ -560,14 +560,17 @@ void AttachEffect::DetachByName(std::vector<std::string> aeTypes)
 
 void AttachEffect::DetachByToken(std::string token)
 {
-	ForeachChild([&token](Component* c) {
-		AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
-		// 通过Token关闭掉AE
-		if (ae && ae->Token == token)
-		{
-			ae->TimeToDie();
-		}
-		});
+	if (!token.empty())
+	{
+		ForeachChild([&token](Component* c) {
+			AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
+			// 通过Token关闭掉AE
+			if (ae && ae->Token == token)
+			{
+				ae->TimeToDie();
+			}
+			});
+	}
 }
 
 void AttachEffect::CheckDurationAndDisable()

@@ -241,6 +241,21 @@ public:
 	Component* GetParent();
 #pragma endregion
 
+	Component& operator=(const Component& other)
+	{
+		if (this != &other)
+		{
+			Name = other.Name;
+			Tag = other.Tag;
+			// 只赋值控制位，不赋值上下层关系
+			_awaked = other._awaked;
+			_disable = other._disable;
+			_active = other._active;
+			_break = other._break;
+		}
+		return *this;
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream, bool isLoad)

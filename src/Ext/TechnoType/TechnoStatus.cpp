@@ -111,8 +111,9 @@ void TechnoStatus::OnUpdate()
 	OnUpdate_DestroySelf();
 	if (!_isDead && !IsDead(pTechno))
 	{
-		if (pTechno->IsSelected)
+		if (pTechno->IsSelected && !rgbFlag)
 		{
+			rgbFlag = true;
 			PaintballState->RGBIsPower();
 		}
 		switch (pTechno->CurrentMission)

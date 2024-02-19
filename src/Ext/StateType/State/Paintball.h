@@ -17,7 +17,21 @@ public:
 
 	bool NeedPaint(bool& changeColor, bool& changeBright);
 
+	virtual void OnInitState(bool replace) override;
+
 	virtual void OnUpdate() override;
+
+	Paintball& operator=(const Paintball& other)
+	{
+		if (this != &other)
+		{
+			StateScript<PaintballData>::operator=(other);
+			_rgbMode = other._rgbMode;
+			_rgbIdx = other._rgbIdx;
+			_rgbTimer = other._rgbTimer;
+		}
+		return *this;
+	}
 
 #pragma region save/load
 	template <typename T>

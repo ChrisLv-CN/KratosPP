@@ -15,6 +15,16 @@ public:
 
 	bool CanSearchBullet();
 
+	AntiBullet& operator=(const AntiBullet& other)
+	{
+		if (this != &other)
+		{
+			StateScript<AntiBulletData>::operator=(other);
+			_delayTimer = other._delayTimer;
+		}
+		return *this;
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

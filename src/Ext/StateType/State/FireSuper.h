@@ -13,6 +13,12 @@ class FireSuper : public StateScript<FireSuperData>
 public:
 	STATE_SCRIPT(FireSuper, FireSuperData);
 
+	virtual void Awake() override
+	{
+		StateScript<FireSuperData>::Awake();
+		Tag = GetUUID();
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

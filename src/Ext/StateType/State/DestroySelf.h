@@ -16,6 +16,18 @@ public:
 
 	virtual void OnStart() override;
 
+	DestroySelf& operator=(const DestroySelf& other)
+	{
+		if (this != &other)
+		{
+			StateScript<DestroySelfData>::operator=(other);
+			GoDie = other.GoDie;
+			_delay = other._delay;
+			_delayTimer = other._delayTimer;
+		}
+		return *this;
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
