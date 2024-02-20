@@ -79,6 +79,7 @@ bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx = -
 int GetRealDamage(Armor armor, int damage, WarheadTypeClass* pWH, bool ignoreArmor = true, int distance = 0);
 
 bool CanDamageMe(TechnoClass* pTechno, int damage, int distanceFromEpicenter, WarheadTypeClass* pWH, int& realDamage, bool effectsRequireDamage = false);
+bool CanAffectMe(TechnoClass* pTechno, HouseClass* pAttackingHouse, WarheadTypeClass* pWH);
 
 void ClearAllTarget(TechnoClass* pAttacker);
 #pragma endregion

@@ -274,7 +274,7 @@ void FindTechnoOnMark(std::function<void(TechnoClass*, AttachEffect*)> func,
 		}
 		// 去除替身和虚单位
 		TechnoStatus* status = nullptr;
-		if (TryGetStatus<TechnoExt>(pTarget, status) && (status->AmIStand() || status->VirtualUnit))
+		if (!data.AffectStand && TryGetStatus<TechnoExt>(pTarget, status) && (status->AmIStand() || status->VirtualUnit))
 		{
 			continue;
 		}
@@ -309,7 +309,7 @@ void FindBulletOnMark(std::function<void(BulletClass*, AttachEffect*)> func,
 	std::set<BulletClass*> pBulletSet;
 	FindObject<BulletClass>(BulletClass::Array.get(), [&](BulletClass* pTarget)->bool {
 		if (IsDeadOrInvisible(pTarget) && (data.AffectSelf || pTarget != exclude) && data.CanAffectType(pTarget)) pBulletSet.insert(pTarget); return false;
-		} , location, maxSpread, minSpread, fullAirspace, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
+		}, location, maxSpread, minSpread, fullAirspace, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
 	// 去除不符合的目标
 	for (BulletClass* pTarget : pBulletSet)
 	{
@@ -433,12 +433,69 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 void FindAndDamageStandOrVUnit(CoordStruct location, int damage,
 	WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse, ObjectClass* exclude)
 {
+	double distance = pWH->CellSpread * Unsorted::LeptonsPerCell;
+	WarheadTypeExt::TypeData* warheadTypeData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
+	bool affectInAir = warheadTypeData->AffectInAir;
+
+	std::map<TechnoClass*, DamageGroup> targets;
+	// 检索爆炸范围内的替身
+	for (auto standExt : TechnoExt::StandArray)
+	{
+		TechnoClass* pTarget = standExt.first;
+		StandData data = standExt.second;
+		DamageGroup damageGroup{};
+		if (!data.Immune && pTarget != exclude
+			&& CheckAndMarkTarget(pTarget, distance, location, damage, pAttacker, pWH, pAttackingHouse, damageGroup))
+		{
+			targets[pTarget] = damageGroup;
+		}
+	}
+	// 检索爆炸范围内的虚单位
+	for (auto pTarget : TechnoExt::VirtualUnitArray)
+	{
+		auto it = targets.find(pTarget);
+		DamageGroup damageGroup{};
+		if (it == targets.end() && pTarget != exclude
+			&& CheckAndMarkTarget(pTarget, distance, location, damage, pAttacker, pWH, pAttackingHouse, damageGroup))
+		{
+			targets[pTarget] = damageGroup;
+		}
+	}
+	// 炸了它
+	for (auto t : targets)
+	{
+		TechnoClass* pTarget = t.first;
+		DamageGroup damageGroup = t.second;
+		t.first->ReceiveDamage(&damage, damageGroup.Distance, pWH, pAttacker, false, false, pAttackingHouse);
+	}
 
 }
 
-bool CheckAndMarkTarget(TechnoClass* pTarget, double spread, CoordStruct location, int damage, ObjectClass* pAttacker,
+bool CheckAndMarkTarget(TechnoClass* pTarget, double distance, CoordStruct location, int damage, ObjectClass* pAttacker,
 	WarheadTypeClass* pWH, HouseClass* pAttackingHouse, DamageGroup& damageGroup)
 {
+	if (pTarget && pTarget->GetType() && !IsImmune(pTarget))
+	{
+		// 检查距离
+		CoordStruct targetPos = pTarget->GetCoords();
+		double dist = targetPos.DistanceFrom(location);
+		if (pTarget->WhatAmI() == AbstractType::Aircraft)
+		{
+			dist *= 0.5;
+		}
+		if (!isinf(dist) && dist <= distance)
+		{
+			int realDamage = 0;
+			// 找到一个在范围内的目标，检查弹头是否可以影响该目标
+			if (CanAffectMe(pTarget, pAttackingHouse, pWH)
+				&& CanDamageMe(pTarget, damage, dist, pWH, realDamage))
+			{
+				damageGroup.pTarget = pTarget;
+				damageGroup.Distance = dist;
+				return true;
+			}
+		}
+	}
 	return false;
 }
 

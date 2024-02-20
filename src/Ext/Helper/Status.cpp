@@ -324,6 +324,14 @@ bool CanDamageMe(TechnoClass* pTechno, int damage, int distanceFromEpicenter, Wa
 	return true;
 }
 
+bool CanAffectMe(TechnoClass* pTechno, HouseClass* pAttackingHouse, WarheadTypeClass* pWH)
+{
+	HouseClass* pHouse = pTechno->Owner;
+	WarheadTypeExt::TypeData* whData = nullptr;
+	return TryGetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH, whData)
+		&& CanAffectHouse(pHouse, pAttackingHouse, whData->AffectsOwner, whData->AffectsAllies, whData->AffectsEnemies);
+}
+
 void ClearAllTarget(TechnoClass* pAttacker)
 {
 	if (pAttacker)

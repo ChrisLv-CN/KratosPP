@@ -229,6 +229,6 @@ public:
 void FindAndDamageStandOrVUnit(CoordStruct location, int damage,
 	WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse, ObjectClass* exclude = nullptr);
 
-bool CheckAndMarkTarget(TechnoClass* pTarget, double spread, CoordStruct location, int damage, ObjectClass* pAttacker,
+bool CheckAndMarkTarget(TechnoClass* pTarget, double distance, CoordStruct location, int damage, ObjectClass* pAttacker,
 	WarheadTypeClass* pWH, HouseClass* pAttackingHouse, DamageGroup& damageGroup);
 

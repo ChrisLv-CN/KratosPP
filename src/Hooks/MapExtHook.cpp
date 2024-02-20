@@ -34,7 +34,7 @@ DEFINE_HOOK(0x489280, MapClass_DamageArea, 0x6)
 		// Find and Attach Effects.
 		FindAndAttachEffect(*pLocation, damage, pWH, pAttacker, pAttackingHouse);
 		// Find all stand, check distance and blown it up.
-		// TechnoStatusScript.FindAndDamageStandOrVUnit(pLocation.Data, damage, pAttacker, pWH, pAttackingHouse);
+		FindAndDamageStandOrVUnit(*pLocation, damage, pWH, pAttacker, pAttackingHouse);
 		// Those action won't effects Stand.
 		// TechnoClass* pTechno = nullptr;
 		// TechnoStatus* status = nullptr;
