@@ -137,7 +137,7 @@ bool AttachEffect::HasStand()
 
 void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string token, bool resetDuration)
 {
-	ForeachChild([&pData,&duration,&token,&resetDuration](Component* c) {
+	ForeachChild([&pData, &duration, &token, &resetDuration](Component* c) {
 		if (auto ae = dynamic_cast<AttachEffectScript*>(c)) {
 			if (ae->AEData.Stand.Enable)
 			{
@@ -158,25 +158,25 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 						// GET_STATE(Paintball);
 						// GET_STATE(Transform);
 
-						if (state) { }
+						if (state) {}
 						GET_STAND_STATE(AntiBullet)
-						GET_STAND_STATE(DestroyAnim)
-						GET_STAND_STATE(DestroySelf)
-						GET_STAND_STATE(FireSuper)
-						GET_STAND_STATE(GiftBox)
-						GET_STAND_STATE(Paintball)
-						GET_STAND_STATE(Transform)
-						if (state)
-						{
-							if (resetDuration)
+							GET_STAND_STATE(DestroyAnim)
+							GET_STAND_STATE(DestroySelf)
+							GET_STAND_STATE(FireSuper)
+							GET_STAND_STATE(GiftBox)
+							GET_STAND_STATE(Paintball)
+							GET_STAND_STATE(Transform)
+							if (state)
 							{
-								state->ResetDuration(duration, token);
+								if (resetDuration)
+								{
+									state->ResetDuration(duration, token);
+								}
+								else
+								{
+									state->Replace(pData, duration, token, ae->AEData.ReceiverOwn, ae->pSourceHouse);
+								}
 							}
-							else
-							{
-								state->Replace(pData, duration, token, ae->AEData.ReceiverOwn, ae->pSourceHouse);
-							}
-						}
 					}
 				}
 			}
@@ -216,6 +216,28 @@ CrateBuffData AttachEffect::CountAttachStatusMultiplier()
 		}
 		});
 	return multiplier;
+}
+
+ImmuneData AttachEffect::GetImmuneData()
+{
+	ImmuneData data{};
+	// 统计AE加成
+	ForeachChild([&data](Component* c) {
+		auto temp = dynamic_cast<AttachEffectScript*>(c);
+		if (temp && temp->IsActive() && temp->AEData.Immune.Enable)
+		{
+			data.Psionics |= temp->AEData.Immune.Psionics;
+			data.PsionicWeapons |= temp->AEData.Immune.PsionicWeapons;
+			data.Radiation |= temp->AEData.Immune.Radiation;
+			data.Poison |= temp->AEData.Immune.Poison;
+			data.EMP |= temp->AEData.Immune.EMP;
+			data.Parasite |= temp->AEData.Immune.Parasite;
+			data.Temporal |= temp->AEData.Immune.Temporal;
+			data.IsLocomotor |= temp->AEData.Immune.IsLocomotor;
+		}
+		});
+	data.CheckEnable();
+	return data;
 }
 
 void AttachEffect::SetLocationSpace(int cabinLength)

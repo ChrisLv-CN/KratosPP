@@ -30,7 +30,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(SkipDamageText)
+			.Process(this->SkipDamageText)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override

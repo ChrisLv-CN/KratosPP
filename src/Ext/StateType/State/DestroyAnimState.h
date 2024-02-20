@@ -20,7 +20,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(pKillerHouse)
+			.Process(this->pKillerHouse)
 			.Success();
 	};
 

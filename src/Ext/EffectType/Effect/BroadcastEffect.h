@@ -31,8 +31,8 @@ public:
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
-			.Process(_count)
-			.Process(_delayTimer)
+			.Process(this->_count)
+			.Process(this->_delayTimer)
 			.Success();
 	};
 

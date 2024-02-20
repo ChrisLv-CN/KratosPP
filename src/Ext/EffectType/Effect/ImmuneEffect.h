@@ -4,10 +4,10 @@
 #include <vector>
 
 #include <GeneralDefinitions.h>
-#include <AnimClass.h>
+#include <SpecificStructures.h>
 
 #include "../EffectScript.h"
-#include "StackData.h"
+#include "ImmuneData.h"
 
 
 /// @brief EffectScript
@@ -20,19 +20,19 @@
 ///						|__ EffectScript#0
 ///						|__ EffectScript#1
 ///						|__ EffectScript#2
-class StackEffect : public EffectScript
+class ImmuneEffect : public EffectScript
 {
 public:
-	EFFECT_SCRIPT(Stack);
+	EFFECT_SCRIPT(Immune);
 
 	virtual void OnUpdate() override;
-	virtual void OnWarpUpdate() override;
+
+	virtual void OnReceiveDamage(args_ReceiveDamage* args) override;
 
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
-			.Process(this->_count)
 			.Success();
 	};
 
@@ -44,12 +44,10 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
 		Component::Save(stream);
-		return const_cast<StackEffect*>(this)->Serialize(stream);
+		return const_cast<ImmuneEffect*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:
-	void Watch();
-	bool CanActive(int stacks);
 
-	int _count = 0;
+	void ImmuneLogic();
 };

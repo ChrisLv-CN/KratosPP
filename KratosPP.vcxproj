@@ -57,6 +57,7 @@
     <ClCompile Include="src\Ext\EffectType\Effect\AnimationEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\BroadcastEffect.cpp" />
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
+    <ClInclude Include="src\Ext\EffectType\Effect\ImmuneEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\InfoEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\MarkEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\RevengeEffect.cpp" />
@@ -217,6 +218,8 @@
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\ImmuneData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\ImmuneEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\InfoData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\InfoEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\MarkData.h" />

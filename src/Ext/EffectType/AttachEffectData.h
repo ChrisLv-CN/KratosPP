@@ -10,6 +10,7 @@
 #include "Effect/AnimationData.h"
 #include "Effect/BroadcastData.h"
 #include "Effect/MarkData.h"
+#include "Effect/ImmuneData.h"
 #include "Effect/InfoData.h"
 #include "Effect/RevengeData.h"
 #include "Effect/StackData.h"
@@ -126,6 +127,7 @@ public:
 	EFFECT_VAR_DEFINE(Animation);
 	EFFECT_VAR_DEFINE(Broadcast);
 	EFFECT_VAR_DEFINE(CrateBuff);
+	EFFECT_VAR_DEFINE(Immune);
 	EFFECT_VAR_DEFINE(Info);
 	EFFECT_VAR_DEFINE(Mark);
 	EFFECT_VAR_DEFINE(Revenge);
@@ -145,6 +147,7 @@ public:
 		EFFECT_VAR_READ(Animation);
 		EFFECT_VAR_READ(Broadcast);
 		EFFECT_VAR_READ(CrateBuff);
+		EFFECT_VAR_READ(Immune);
 		EFFECT_VAR_READ(Info);
 		EFFECT_VAR_READ(Mark);
 		EFFECT_VAR_READ(Revenge);
@@ -166,6 +169,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Animation);
 		EFFECT_VAR_SCRIPT_NAME(Broadcast);
 		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
+		EFFECT_VAR_SCRIPT_NAME(Immune);
 		EFFECT_VAR_SCRIPT_NAME(Info);
 		EFFECT_VAR_SCRIPT_NAME(Mark);
 		EFFECT_VAR_SCRIPT_NAME(Revenge);
@@ -190,6 +194,7 @@ public:
 			EFFECT_VAR_PROCESS(Animation)
 			EFFECT_VAR_PROCESS(Broadcast)
 			EFFECT_VAR_PROCESS(CrateBuff)
+			EFFECT_VAR_PROCESS(Immune)
 			EFFECT_VAR_PROCESS(Info)
 			EFFECT_VAR_PROCESS(Mark)
 			EFFECT_VAR_PROCESS(Revenge)

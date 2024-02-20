@@ -232,6 +232,69 @@ DEFINE_HOOK(0x701F9A, TechnoClass_ReceiveDamage_SkipAllReaction, 0x6)
 	return 0x70202E;
 }
 
+#pragma region ImmuneToOOXX
+// Ares hook in 471C96 and return 471D2E
+DEFINE_HOOK(0x471D2E, CaptureManagerClass_Is_Controllable, 0x7)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AttachEffect* aem = nullptr;
+	if (TryGetAEManager<TechnoExt>(pTechno, aem) && aem->GetImmuneData().Psionics)
+	{
+		return 0x471D35;
+	}
+	return 0;
+}
+
+// Ares skip this whole function, here can do anything.
+DEFINE_HOOK(0x53B233, IonStormClass_Dominator_Activate, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AttachEffect* aem = nullptr;
+	if (TryGetAEManager<TechnoExt>(pTechno, aem) && aem->GetImmuneData().Psionics)
+	{
+		return 0x53B364;
+	}
+	return 0;
+}
+
+/* Cannot hook in those address, Not Ares or Phobos */
+/* Modify Damage number in AE's ReceiveDamage function
+DEFINE_HOOK(0x701C45, TechnoClass_ReceiveDamage_PsionicWeapons, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AttachEffect* aem = nullptr;
+	if (TryGetAEManager<TechnoExt>(pTechno, aem) && aem->GetImmuneData().PsionicWeapons)
+	{
+		return 0x701C4F;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x701C08, TechnoClass_ReceiveDamage_Radiation, 0xA)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AttachEffect* aem = nullptr;
+	if (TryGetAEManager<TechnoExt>(pTechno, aem) && aem->GetImmuneData().Radiation)
+	{
+		return 0x701C1C;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x701C78, TechnoClass_ReceiveDamage_Poison, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AttachEffect* aem = nullptr;
+	if (TryGetAEManager<TechnoExt>(pTechno, aem) && aem->GetImmuneData().Poison)
+	{
+		return 0x701C82;
+	}
+	return 0;
+}
+
+*/
+#pragma endregion
+
 DEFINE_HOOK(0x701DFF, TechnoClass_ReceiveDamageEnd, 0x7)
 {
 	GET(TechnoClass*, pThis, ESI);

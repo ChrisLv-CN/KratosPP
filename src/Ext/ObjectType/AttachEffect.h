@@ -70,6 +70,13 @@ public:
 	CrateBuffData CountAttachStatusMultiplier();
 
 	/**
+	 *@brief 读取所有生效的免疫Buff
+	 *
+	 * @return ImmuneData
+	 */
+	ImmuneData GetImmuneData();
+
+	/**
 	 *@brief 重设车厢间距
 	 *
 	 * @param cabinLength 车厢间距

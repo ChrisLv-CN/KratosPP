@@ -25,7 +25,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(_healthTextData)
+			.Process(this->_healthTextData)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
