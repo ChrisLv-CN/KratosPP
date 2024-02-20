@@ -23,7 +23,6 @@
 #include <Ext/StateType/State/AntiBulletData.h>
 #include <Ext/StateType/State/DestroyAnimData.h>
 #include <Ext/StateType/State/DestroySelfData.h>
-#include <Ext/StateType/State/FireSuperData.h>
 #include <Ext/StateType/State/GiftBoxData.h>
 #include <Ext/StateType/State/PaintballData.h>
 #include <Ext/StateType/State/TransformData.h>
@@ -155,7 +154,6 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 						// GET_STATE(AntiBullet);
 						// GET_STATE(DestroyAnim);
 						// GET_STATE(DestroySelf);
-						// GET_STATE(FireSuper);
 						// GET_STATE(GiftBox);
 						// GET_STATE(Paintball);
 						// GET_STATE(Transform);
@@ -164,7 +162,6 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 						GET_STAND_STATE(AntiBullet)
 							GET_STAND_STATE(DestroyAnim)
 							GET_STAND_STATE(DestroySelf)
-							GET_STAND_STATE(FireSuper)
 							GET_STAND_STATE(GiftBox)
 							GET_STAND_STATE(Paintball)
 							GET_STAND_STATE(Transform)

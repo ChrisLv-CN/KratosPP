@@ -29,6 +29,8 @@ public:
 	int WeaponIndex = -1;
 	bool ToTarget = true;
 
+	int Reload = -1;
+
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{
 		Supers = reader->GetList(title + "Types", Supers);
@@ -42,6 +44,8 @@ public:
 		RealLaunch = reader->Get(title + "RealLaunch", RealLaunch);
 		WeaponIndex = reader->Get(title + "Weapon", WeaponIndex);
 		ToTarget = reader->Get(title + "ToTarget", ToTarget);
+
+		Reload = reader->Get(title + "Reload", Reload);
 
 		Enable = !Supers.empty();
 	}
@@ -62,6 +66,7 @@ public:
 			.Process(this->RealLaunch)
 			.Process(this->WeaponIndex)
 			.Process(this->ToTarget)
+			.Process(this->Reload)
 			.Success();
 	};
 
@@ -84,12 +89,19 @@ public:
 	FireSuperEntity Data{};
 	FireSuperEntity EliteData{};
 
+
 	virtual void Read(INIBufferReader* reader) override
 	{
-		EffectData::Read(reader, TITLE);
+		EffectData::Read(reader);
+		Read(reader, TITLE);
+	}
+
+	virtual void Read(INIBufferReader* reader, std::string title) override
+	{
+		EffectData::Read(reader, title);
 
 		FireSuperEntity data;
-		data.Read(reader, TITLE);
+		data.Read(reader, title);
 		if (!data.Supers.empty())
 		{
 			Data = data;
@@ -97,7 +109,7 @@ public:
 		}
 
 		FireSuperEntity eliteData;
-		eliteData.Read(reader, TITLE + "Elite");
+		eliteData.Read(reader, title + "Elite");
 		if (!eliteData.Supers.empty())
 		{
 			EliteData = eliteData;
@@ -127,7 +139,6 @@ public:
 		return const_cast<FireSuperData*>(this)->Serialize(stream);
 	}
 #pragma endregion
-
-protected:
+	protected:
 	inline static std::string TITLE = "FireSuperWeapon.";
 };

@@ -21,7 +21,6 @@
 #include <Ext/StateType/State/AntiBulletData.h>
 #include <Ext/StateType/State/DestroyAnimData.h>
 #include <Ext/StateType/State/DestroySelfData.h>
-#include <Ext/StateType/State/FireSuperData.h>
 #include <Ext/StateType/State/GiftBoxData.h>
 #include <Ext/StateType/State/PaintballData.h>
 #include <Ext/StateType/State/TransformData.h>
@@ -57,7 +56,6 @@ public: \
 STATE_EFFECT_DEFINE(AntiBullet);
 STATE_EFFECT_DEFINE(DestroyAnim);
 STATE_EFFECT_DEFINE(DestroySelf);
-STATE_EFFECT_DEFINE(FireSuper);
 STATE_EFFECT_DEFINE(GiftBox);
 STATE_EFFECT_DEFINE(Paintball);
 STATE_EFFECT_DEFINE(Transform);

@@ -24,7 +24,6 @@
 #include <Ext/StateType/State/AntiBulletState.h>
 #include <Ext/StateType/State/DestroyAnimState.h>
 #include <Ext/StateType/State/DestroySelfState.h>
-#include <Ext/StateType/State/FireSuperState.h>
 #include <Ext/StateType/State/GiftBoxState.h>
 #include <Ext/StateType/State/PaintballState.h>
 #include <Ext/StateType/State/TransformState.h>
@@ -83,9 +82,7 @@ public:
 
 	virtual void OnReceiveDamageDestroy() override;
 
-	virtual void OnRegisterDestruction(TechnoClass* pKiller, int cost, bool& skip);
-
-	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
+	virtual void OnRegisterDestruction(TechnoClass* pKiller, int cost, bool& skip) override;
 
 	virtual void OnSelect(bool& selectable) override;
 
@@ -93,7 +90,6 @@ public:
 	GET_STATE(AntiBullet);
 	GET_STATE(DestroyAnim);
 	GET_STATE(DestroySelf);
-	GET_STATE(FireSuper);
 	GET_STATE(GiftBox);
 	GET_STATE(Paintball);
 	GET_STATE(Transform);
@@ -103,7 +99,6 @@ public:
 		INIT_STATE(AntiBullet);
 		INIT_STATE(DestroyAnim);
 		INIT_STATE(DestroySelf);
-		INIT_STATE(FireSuper);
 		INIT_STATE(GiftBox);
 		INIT_STATE(Paintball);
 		INIT_STATE(Transform);
@@ -116,7 +111,6 @@ public:
 		TRY_GET_STATE(AntiBullet)
 		TRY_GET_STATE(DestroyAnim)
 		TRY_GET_STATE(DestroySelf)
-		TRY_GET_STATE(FireSuper)
 		TRY_GET_STATE(GiftBox)
 		TRY_GET_STATE(Paintball)
 		TRY_GET_STATE(Transform)
@@ -241,8 +235,6 @@ private:
 	void OnReceiveDamageDestroy_Transform();
 
 	void OnRegisterDestruction_Stand(TechnoClass* pKiller, int cost, bool& skip);
-
-	void OnFire_FireSuper(AbstractClass* pTarget, int weaponIdx);
 
 	bool OnSelect_VirtualUnit();
 	bool OnSelect_Deselect();

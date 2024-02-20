@@ -210,11 +210,6 @@ void TechnoStatus::OnRegisterDestruction(TechnoClass* pKiller, int cost, bool& s
 	}
 }
 
-void TechnoStatus::OnFire(AbstractClass* pTarget, int weaponIdx)
-{
-	OnFire_FireSuper(pTarget, weaponIdx);
-}
-
 void TechnoStatus::OnSelect(bool& selectable)
 {
 	selectable = OnSelect_VirtualUnit();

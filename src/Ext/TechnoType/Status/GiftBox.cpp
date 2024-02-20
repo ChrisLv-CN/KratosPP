@@ -409,7 +409,6 @@ void TechnoStatus::InheritedStatsTo(TechnoStatus*& heir)
 	*heir->AntiBullet = *AntiBullet;
 	*heir->DestroyAnim = *DestroyAnim;
 	*heir->DestroySelf = *DestroySelf;
-	*heir->FireSuper = *FireSuper;
 	// *heir->GiftBox = *this->GiftBox;
 	*heir->Paintball = *Paintball;
 	*heir->Transform = *Transform;
@@ -417,7 +416,6 @@ void TechnoStatus::InheritedStatsTo(TechnoStatus*& heir)
 	// GET_STATE(AntiBullet);
 	// GET_STATE(DestroyAnim);
 	// GET_STATE(DestroySelf);
-	// GET_STATE(FireSuper);
 	// GET_STATE(GiftBox);
 	// GET_STATE(Paintball);
 	// GET_STATE(Transform);

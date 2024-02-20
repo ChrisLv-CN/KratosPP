@@ -10,6 +10,7 @@
 #include "Effect/AnimationData.h"
 #include "Effect/BroadcastData.h"
 #include "Effect/CrateBuffData.h"
+#include "Effect/FireSuperData.h"
 #include "Effect/ImmuneData.h"
 #include "Effect/InfoData.h"
 #include "Effect/MarkData.h"
@@ -21,7 +22,6 @@
 #include <Ext/StateType/State/AntiBulletData.h>
 #include <Ext/StateType/State/DestroyAnimData.h>
 #include <Ext/StateType/State/DestroySelfData.h>
-#include <Ext/StateType/State/FireSuperData.h>
 #include <Ext/StateType/State/GiftBoxData.h>
 #include <Ext/StateType/State/PaintballData.h>
 #include <Ext/StateType/State/TransformData.h>
@@ -128,6 +128,7 @@ public:
 	EFFECT_VAR_DEFINE(Animation);
 	EFFECT_VAR_DEFINE(Broadcast);
 	EFFECT_VAR_DEFINE(CrateBuff);
+	EFFECT_VAR_DEFINE(FireSuper);
 	EFFECT_VAR_DEFINE(Immune);
 	EFFECT_VAR_DEFINE(Info);
 	EFFECT_VAR_DEFINE(Mark);
@@ -139,7 +140,6 @@ public:
 	EFFECT_VAR_DEFINE(AntiBullet);
 	EFFECT_VAR_DEFINE(DestroyAnim);
 	EFFECT_VAR_DEFINE(DestroySelf);
-	EFFECT_VAR_DEFINE(FireSuper);
 	EFFECT_VAR_DEFINE(GiftBox);
 	EFFECT_VAR_DEFINE(Paintball);
 	EFFECT_VAR_DEFINE(Transform);
@@ -149,6 +149,7 @@ public:
 		EFFECT_VAR_READ(Animation);
 		EFFECT_VAR_READ(Broadcast);
 		EFFECT_VAR_READ(CrateBuff);
+		EFFECT_VAR_READ(FireSuper);
 		EFFECT_VAR_READ(Immune);
 		EFFECT_VAR_READ(Info);
 		EFFECT_VAR_READ(Mark);
@@ -160,7 +161,6 @@ public:
 		EFFECT_VAR_READ(AntiBullet);
 		EFFECT_VAR_READ(DestroyAnim);
 		EFFECT_VAR_READ(DestroySelf);
-		EFFECT_VAR_READ(FireSuper);
 		EFFECT_VAR_READ(GiftBox);
 		EFFECT_VAR_READ(Paintball);
 		EFFECT_VAR_READ(Transform);
@@ -172,6 +172,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Animation);
 		EFFECT_VAR_SCRIPT_NAME(Broadcast);
 		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
+		EFFECT_VAR_SCRIPT_NAME(FireSuper);
 		EFFECT_VAR_SCRIPT_NAME(Immune);
 		EFFECT_VAR_SCRIPT_NAME(Info);
 		EFFECT_VAR_SCRIPT_NAME(Mark);
@@ -183,7 +184,6 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(AntiBullet);
 		EFFECT_VAR_SCRIPT_NAME(DestroyAnim);
 		EFFECT_VAR_SCRIPT_NAME(DestroySelf);
-		EFFECT_VAR_SCRIPT_NAME(FireSuper);
 		EFFECT_VAR_SCRIPT_NAME(GiftBox);
 		EFFECT_VAR_SCRIPT_NAME(Paintball);
 		EFFECT_VAR_SCRIPT_NAME(Transform);
@@ -198,6 +198,7 @@ public:
 			EFFECT_VAR_PROCESS(Animation)
 			EFFECT_VAR_PROCESS(Broadcast)
 			EFFECT_VAR_PROCESS(CrateBuff)
+			EFFECT_VAR_PROCESS(FireSuper)
 			EFFECT_VAR_PROCESS(Immune)
 			EFFECT_VAR_PROCESS(Info)
 			EFFECT_VAR_PROCESS(Mark)
@@ -209,7 +210,6 @@ public:
 			EFFECT_VAR_PROCESS(AntiBullet)
 			EFFECT_VAR_PROCESS(DestroyAnim)
 			EFFECT_VAR_PROCESS(DestroySelf)
-			EFFECT_VAR_PROCESS(FireSuper)
 			EFFECT_VAR_PROCESS(GiftBox)
 			EFFECT_VAR_PROCESS(Paintball)
 			EFFECT_VAR_PROCESS(Transform)

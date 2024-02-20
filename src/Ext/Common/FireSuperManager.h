@@ -11,7 +11,7 @@
 #include <Common/EventSystems/EventSystem.h>
 #include <Ext/Helper/MathEx.h>
 
-#include <Ext/StateType/State/FireSuperData.h>
+#include <Ext/EffectType/Effect/FireSuperData.h>
 
 class FireSuperManager
 {

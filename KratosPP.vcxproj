@@ -57,6 +57,7 @@
     <ClCompile Include="src\Ext\EffectType\Effect\AnimationEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\BroadcastEffect.cpp" />
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
+    <ClInclude Include="src\Ext\EffectType\Effect\FireSuperEffect.cpp" />
     <ClInclude Include="src\Ext\EffectType\Effect\ImmuneEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\InfoEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\MarkEffect.cpp" />
@@ -84,7 +85,6 @@
     <ClCompile Include="src\Ext\StateType\State\AntiBulletState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroyAnimState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroySelfState.cpp" />
-    <ClCompile Include="src\Ext\StateType\State\FireSuperState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\GiftBoxState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\PaintballState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\TransformState.cpp" />
@@ -99,7 +99,6 @@
     <ClCompile Include="src\Ext\TechnoType\Status\CrateBuff.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\DestroyAnim.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\DestroySelf.cpp" />
-    <ClCompile Include="src\Ext\TechnoType\Status\FireSuper.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Paintball.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Stand.cpp" />
@@ -220,6 +219,8 @@
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\FireSuperData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\FireSuperEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\ImmuneData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\ImmuneEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\InfoData.h" />
@@ -260,8 +261,6 @@
     <ClInclude Include="src\Ext\StateType\State\DestroyAnimState.h" />
     <ClInclude Include="src\Ext\StateType\State\DestroySelfData.h" />
     <ClInclude Include="src\Ext\StateType\State\DestroySelfState.h" />
-    <ClInclude Include="src\Ext\StateType\State\FireSuperData.h" />
-    <ClInclude Include="src\Ext\StateType\State\FireSuperState.h" />
     <ClInclude Include="src\Ext\StateType\State\GiftBoxData.h" />
     <ClInclude Include="src\Ext\StateType\State\GiftBoxState.h" />
     <ClInclude Include="src\Ext\StateType\State\PaintballData.h" />
