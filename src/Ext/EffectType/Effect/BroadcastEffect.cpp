@@ -5,6 +5,31 @@
 #include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
 
+void BroadcastEffect::FindAndAttach(BroadcastEntity data, HouseClass* pHouse)
+{
+	CoordStruct location = pObject->GetCoords();
+	// 搜索单位
+	if (Data->AffectTechno)
+	{
+		FindTechnoOnMark([&](TechnoClass* pTarget, AttachEffect* aeManager)
+		{
+			// 赋予AE
+			aeManager->Attach(data.Types, data.AttachChances, pObject);
+			return false;
+		}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
+	}
+	// 搜索抛射体
+	if (Data->AffectBullet)
+	{
+		FindBulletOnMark([&](BulletClass* pTarget, AttachEffect* aeManager)
+		{
+			// 赋予AE
+			aeManager->Attach(data.Types, data.AttachChances, pObject);
+			return false;
+		}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
+	}
+}
+
 void BroadcastEffect::OnUpdate()
 {
 	if (!AE->OwnerIsDead())
@@ -46,38 +71,11 @@ void BroadcastEffect::OnUpdate()
 				if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
 				{
 					// Logger.Log($"{Game.CurrentFrame} 广播了 {count}次 >= {Data.TriggeredTimes}，结束AE");
-					End({});
+					End(CoordStruct::Empty);
 				}
 				_delayTimer.Start(data.Rate);
 				FindAndAttach(data, pHouse);
 			}
 		}
-	}
-}
-
-void BroadcastEffect::FindAndAttach(BroadcastEntity data, HouseClass* pHouse)
-{
-	CoordStruct location = pObject->GetCoords();
-	double cellSpread = data.RangeMax;
-	// Logger.Log($"{Game.CurrentFrame} 搜索范围{cellSpread}内的单位，赋予效果[{string.Join(",", data.Types)}]");
-	// 搜索单位
-	if (Data->AffectTechno)
-	{
-		FindTechnoOnMark([&](TechnoClass* pTarget, AttachEffect* aeManager)
-		{
-			// 赋予AE
-			aeManager->Attach(data.Types, data.AttachChances, pObject);
-			return false;
-		}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
-	}
-	// 搜索抛射体
-	if (Data->AffectBullet)
-	{
-		FindBulletOnMark([&](BulletClass* pTarget, AttachEffect* aeManager)
-		{
-			// 赋予AE
-			aeManager->Attach(data.Types, data.AttachChances, pObject);
-			return false;
-		}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
 	}
 }

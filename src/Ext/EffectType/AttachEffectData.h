@@ -11,6 +11,7 @@
 #include "Effect/BroadcastData.h"
 #include "Effect/MarkData.h"
 #include "Effect/InfoData.h"
+#include "Effect/StackData.h"
 #include "Effect/StandData.h"
 #include "Effect/CrateBuffData.h"
 // State Effects
@@ -126,6 +127,7 @@ public:
 	EFFECT_VAR_DEFINE(CrateBuff);
 	EFFECT_VAR_DEFINE(Info);
 	EFFECT_VAR_DEFINE(Mark);
+	EFFECT_VAR_DEFINE(Stack);
 	EFFECT_VAR_DEFINE(Stand);
 	// State Effects
 	EFFECT_VAR_DEFINE(AntiBullet);
@@ -143,6 +145,7 @@ public:
 		EFFECT_VAR_READ(CrateBuff);
 		EFFECT_VAR_READ(Info);
 		EFFECT_VAR_READ(Mark);
+		EFFECT_VAR_READ(Stack);
 		EFFECT_VAR_READ(Stand);
 		// State Effects
 		EFFECT_VAR_READ(AntiBullet);
@@ -162,6 +165,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
 		EFFECT_VAR_SCRIPT_NAME(Info);
 		EFFECT_VAR_SCRIPT_NAME(Mark);
+		EFFECT_VAR_SCRIPT_NAME(Stack);
 		EFFECT_VAR_SCRIPT_NAME(Stand);
 		// State Effects
 		EFFECT_VAR_SCRIPT_NAME(AntiBullet);
@@ -184,6 +188,7 @@ public:
 			EFFECT_VAR_PROCESS(CrateBuff)
 			EFFECT_VAR_PROCESS(Info)
 			EFFECT_VAR_PROCESS(Mark)
+			EFFECT_VAR_PROCESS(Stack)
 			EFFECT_VAR_PROCESS(Stand)
 			// State Effects
 			EFFECT_VAR_PROCESS(AntiBullet)
@@ -215,12 +220,13 @@ public:
 		int druation = reader->Get("Duration", Duration);
 		if (druation != 0)
 		{
-			Enable = true;
 			Duration = druation;
 
 			FilterData::Read(reader, title);
 
 			ReadEffects(reader);
+
+			Enable = !GetScriptNames().empty();
 
 			HoldDuration = Duration <= 0;
 			HoldDuration = reader->Get("HoldDuration", HoldDuration);

@@ -621,7 +621,7 @@ void AttachEffect::DetachByName(std::vector<std::string> aeTypes)
 {
 	ForeachChild([&aeTypes](Component* c) {
 		auto ae = dynamic_cast<AttachEffectScript*>(c);
-		// 通过Token关闭掉AE
+		// 通过名字关闭掉AE
 		if (ae && std::find(aeTypes.begin(), aeTypes.end(), ae->AEData.Name) != aeTypes.end())
 		{
 			ae->TimeToDie();

@@ -45,7 +45,7 @@ public:
 			case AffectWho::STAND:
 				AEStateToStand(true);
 				// 关闭AE
-				End({});
+				End(CoordStruct::Empty);
 				break;
 			default:
 				State->ResetDuration(AE->GetDuration(), AE->Token);
@@ -68,7 +68,7 @@ public:
 			case AffectWho::STAND:
 				AEStateToStand(false);
 				// 关闭AE
-				End({});
+				End(CoordStruct::Empty);
 				break;
 			default:
 				State->Replace(pData, AE->GetDuration(), AE->Token, AEData.ReceiverOwn, AE->pSourceHouse);
