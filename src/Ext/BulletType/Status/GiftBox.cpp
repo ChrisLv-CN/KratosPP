@@ -98,10 +98,10 @@ bool BulletStatus::IsOnMark_GiftBox()
 void BulletStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 {
 	HouseClass* pHouse = pSourceHouse;
-	// TODO AE ReceiverOwn
-	if (false)
+	// AE ReceiverOwn
+	if (!GiftBox->ReceiverOwn && GiftBox->pAEHouse != nullptr)
 	{
-
+		pHouse = GiftBox->pAEHouse;
 	}
 	CoordStruct location = pBullet->GetCoords();
 	// 获取投送单位的位置

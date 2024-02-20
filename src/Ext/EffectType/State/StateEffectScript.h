@@ -63,7 +63,7 @@ public:
 			switch (pData->AffectWho)
 			{
 			case AffectWho::MASTER:
-				State->Replace(pData, AE->GetDuration(), AE->Token);
+				State->Replace(pData, AE->GetDuration(), AE->Token, AEData.ReceiverOwn, AE->pSourceHouse);
 				break;
 			case AffectWho::STAND:
 				AEStateToStand(false);
@@ -71,7 +71,7 @@ public:
 				End({});
 				break;
 			default:
-				State->Replace(pData, AE->GetDuration(), AE->Token);
+				State->Replace(pData, AE->GetDuration(), AE->Token, AEData.ReceiverOwn, AE->pSourceHouse);
 				AEStateToStand(false);
 				break;
 			}

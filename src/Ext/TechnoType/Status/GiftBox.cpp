@@ -156,15 +156,11 @@ bool TechnoStatus::IsOnMark_GiftBox()
 
 void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 {
-	HouseClass* pHouse = nullptr;
-	// TODO AE ReceiverOwn
-	if (false)
+	HouseClass* pHouse = pTechno->Owner;
+	// AE ReceiverOwn
+	if (!GiftBox->ReceiverOwn && GiftBox->pAEHouse != nullptr)
 	{
-
-	}
-	else
-	{
-		pHouse = pTechno->Owner;
+		pHouse = GiftBox->pAEHouse;
 	}
 	CoordStruct location;
 	if (data.RealCoords)

@@ -5,6 +5,7 @@
 #include <map>
 
 #include <GeneralStructures.h>
+#include <HouseClass.h>
 
 #include <Utilities/Debug.h>
 
@@ -16,9 +17,9 @@
 class IStateScript
 {
 public:
-	virtual void Start(EffectData* data, int duration = -1, std::string token = "") {};
+	virtual void Start(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) {};
 	virtual void End(std::string token = "") {};
-	virtual void Replace(EffectData* data, int duration = -1, std::string token = "") {};
+	virtual void Replace(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) {};
 	virtual void ResetDuration(int duration, std::string token = "") {};
 };
 
@@ -48,12 +49,21 @@ template <typename TData>
 class StateScript : public ObjectScript, public IStateScript
 {
 public:
-	virtual void Start(EffectData* data, int duration = -1, std::string token = "") override
+	virtual void Start(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) override
 	{
 		if (TData* pData = dynamic_cast<TData*>(data))
 		{
 			Data = *pData;
 			Token = token;
+			ReceiverOwn = receiverOwn;
+			if (receiverOwn)
+			{
+				pAEHouse = nullptr;
+			}
+			else
+			{
+				pAEHouse = pTargetHouse;
+			}
 
 			if (duration != 0)
 			{
@@ -89,10 +99,10 @@ public:
 		}
 	}
 
-	virtual void Replace(EffectData* data, int duration = -1, std::string token = "") override
+	virtual void Replace(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) override
 	{
 		End();
-		Start(data, duration, token);
+		Start(data, duration, token, receiverOwn, pTargetHouse);
 	}
 
 	virtual void OnStart() {};
@@ -206,6 +216,8 @@ public:
 
 	std::string Token{ "" };
 	TData Data{};
+	bool ReceiverOwn = true;
+	HouseClass* pAEHouse = nullptr;
 
 #pragma region Save/Load
 	template <typename T>
@@ -213,6 +225,8 @@ public:
 		return stream
 			.Process(this->Token)
 			.Process(this->Data)
+			.Process(this->ReceiverOwn)
+			.Process(this->pAEHouse)
 
 			.Process(this->_duration)
 			.Process(this->_immortal)
