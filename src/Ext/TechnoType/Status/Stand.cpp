@@ -1,6 +1,11 @@
 ﻿#include "../TechnoStatus.h"
 
+#include <Extension/WarheadTypeExt.h>
+
 #include <Ext/Helper/Scripts.h>
+
+#include <Ext/EffectType/AttachEffectScript.h>
+#include <Ext/EffectType/Effect/StandEffect.h>
 
 bool TechnoStatus::AmIStand()
 {
@@ -57,7 +62,56 @@ void TechnoStatus::OnRemove_Stand()
 void TechnoStatus::OnReceiveDamage_Stand(args_ReceiveDamage* args)
 {
 	// 无视防御的真实伤害不做任何分摊
-	// TODO 伤害分摊
+	WarheadTypeExt::TypeData* whData = nullptr;
+	if (!args->IgnoreDefenses && !MyMasterIsAnim && TryGetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(args->WH, whData) && whData->IgnoreStandShareDamage)
+	{
+		if (pMyMaster)
+		{
+			// I'm stand
+			if (*args->Damage >= 0 || StandData.AllowShareRepair)
+			{
+				if (StandData.Immune)
+				{
+					*args->Damage = 0;
+				}
+				else if (StandData.DamageToMaster > 0 && !IsDeadOrInvisible(pMyMaster))
+				{
+					// 伤害分摊给jojo
+					int damage = *args->Damage;
+					int to = (int)(damage * StandData.DamageToMaster);
+					*args->Damage = damage - to;
+					pMyMaster->ReceiveDamage(&to, args->DistanceToEpicenter, args->WH, args->Attacker, args->IgnoreDefenses, args->PreventsPassengerEscape, args->SourceHouse);
+				}
+			}
+		}
+		else
+		{
+			// I'm master
+			int damage = *args->Damage;
+			AttachEffect* aem = AEManager();
+			aem->ForeachChild([&](Component* c) {
+				if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+				{
+					if (ae->AEData.Stand.Enable
+						&& ae->AEData.Stand.Immune
+						&& (damage >= 0 || ae->AEData.Stand.AllowShareRepair)
+						&& ae->AEData.Stand.DamageFromMaster > 0)
+					{
+						if (StandEffect* standEffect = ae->GetComponent<StandEffect>())
+						{
+							if (!IsDead(standEffect->pStand))
+							{
+								int to = (int)(damage * standEffect->Data->DamageFromMaster);
+								damage -= to;
+								standEffect->pStand->ReceiveDamage(&to, args->DistanceToEpicenter, args->WH, args->Attacker, args->IgnoreDefenses, args->PreventsPassengerEscape, args->SourceHouse);
+							}
+						}
+					}
+				}
+				});
+			*args->Damage = damage;
+		}
+	}
 }
 
 void TechnoStatus::OnRegisterDestruction_Stand(TechnoClass* pKiller, int cost, bool& skip)

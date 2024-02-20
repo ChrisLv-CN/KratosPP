@@ -108,7 +108,8 @@ std::vector<std::string> AttachEffect::GetMarks()
 void AttachEffect::GetAENames(std::vector<std::string>& names)
 {
 	ForeachChild([&names](Component* c) {
-		if (auto ae = dynamic_cast<AttachEffectScript*>(c)) {
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+		{
 			names.push_back(ae->AEData.Name);
 		}
 		});
@@ -118,7 +119,8 @@ bool AttachEffect::HasStand()
 {
 	bool find = false;
 	ForeachChild([&find](Component* c) {
-		if (auto ae = dynamic_cast<AttachEffectScript*>(c)) {
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+		{
 			find = ae->AEData.Stand.Enable;
 			if (find)
 			{
@@ -1149,7 +1151,25 @@ void AttachEffect::OnRemove()
 
 void AttachEffect::CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, bool& ceaseFire)
 {
-	// TODO 目标免疫超时空和磁电，不能攻击
+	if (pTarget && pWeapon && pWeapon->Warhead)
+	{
+		// 如果目标免疫超时空和磁电，不能攻击
+		TechnoClass* pTargetTechno = nullptr;
+		AttachEffect* aem = nullptr;
+		if (CastToTechno(pTarget, pTargetTechno) && TryGetAEManager<TechnoExt>(pTargetTechno, aem))
+		{
+			ImmuneData data = aem->GetImmuneData();
+			if (data.Enable)
+			{
+				// 免疫超时空和磁电
+				if ((pWeapon->Warhead->Temporal && data.Temporal)
+					|| (pWeapon->Warhead->IsLocomotor && data.IsLocomotor))
+				{
+					ceaseFire = true;
+				}
+			}
+		}
+	}
 }
 
 void AttachEffect::OnFire(AbstractClass* pTarget, int weaponIdx)

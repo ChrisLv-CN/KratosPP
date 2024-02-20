@@ -6,7 +6,7 @@
 #include <set>
 
 #include <Ext/ObjectType/FilterData.h>
-// TODO Effects
+// TODO Add new Effects
 #include "Effect/AnimationData.h"
 #include "Effect/BroadcastData.h"
 #include "Effect/MarkData.h"
@@ -123,7 +123,7 @@ public:
 	bool AttachOnceInTechnoType = false; // 写在TechnoType上只在创建时赋予一次
 	bool Inheritable = true; // 是否可以被礼盒礼物继承
 
-	// TODO Effects
+	// TODO Add new Effects
 	EFFECT_VAR_DEFINE(Animation);
 	EFFECT_VAR_DEFINE(Broadcast);
 	EFFECT_VAR_DEFINE(CrateBuff);
