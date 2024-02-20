@@ -1,4 +1,13 @@
 ﻿#include "Status.h"
+
+#include <FootClass.h>
+#include <Interfaces.h>
+#include <DriveLocomotionClass.h>
+#include <MechLocomotionClass.h>
+#include <ShipLocomotionClass.h>
+#include <WalkLocomotionClass.h>
+
+
 #include "CastEx.h"
 #include "Scripts.h"
 
@@ -352,6 +361,59 @@ void ClearAllTarget(TechnoClass* pAttacker)
 		{
 			pAttacker->TemporalImUsing->LetGo();
 		}
+	}
+}
+
+void ForceStopMoving(FootClass* pFoot)
+{
+	// 清除移动目的地
+	pFoot->Focus = nullptr;
+	pFoot->SetDestination(nullptr, true);
+	pFoot->Destination = nullptr;
+	pFoot->LastDestination = nullptr;
+	// 清除寻路目的地
+	// LocomotionClass.ChangeLocomotorTo(pFoot, LocomotionClass.Jumpjet);
+	ILocomotion* pLoco = pFoot->Locomotor.get();
+	pLoco->Mark_All_Occupation_Bits((int)PlacementType::Remove); // 清除HeadTo的占领
+	if (pLoco->Apparent_Speed() > 0)
+	{
+		GUID locoId = pFoot->GetTechnoType()->Locomotor;
+		ForceStopMoving(pLoco, locoId);
+	}
+}
+
+void ForceStopMoving(ILocomotion* pLoco, GUID locoId)
+{
+	pLoco->Stop_Moving();
+	pLoco->Mark_All_Occupation_Bits((int)PlacementType::Remove);
+	if (locoId == LocomotionClass::CLSIDs::Drive)
+	{
+		DriveLocomotionClass* loco = static_cast<DriveLocomotionClass*>(pLoco);
+		loco->Destination = CoordStruct::Empty;
+		loco->HeadToCoord = CoordStruct::Empty;
+		loco->IsDriving = false;
+	}
+	else if (locoId == LocomotionClass::CLSIDs::Ship)
+	{
+		ShipLocomotionClass* loco = static_cast<ShipLocomotionClass*>(pLoco);
+		loco->Destination = CoordStruct::Empty;
+		loco->HeadToCoord = CoordStruct::Empty;
+		loco->IsDriving = false;
+	}
+	else if (locoId == LocomotionClass::CLSIDs::Walk)
+	{
+		WalkLocomotionClass* loco = static_cast<WalkLocomotionClass*>(pLoco);
+		loco->Destination = CoordStruct::Empty;
+		loco->HeadToCoord = CoordStruct::Empty;
+		loco->IsMoving = false;
+		loco->IsReallyMoving = false;
+	}
+	else if (locoId == LocomotionClass::CLSIDs::Mech)
+	{
+		MechLocomotionClass* loco = static_cast<MechLocomotionClass*>(pLoco);
+		loco->Destination = CoordStruct::Empty;
+		loco->HeadToCoord = CoordStruct::Empty;
+		loco->IsMoving = false;
 	}
 }
 #pragma endregion

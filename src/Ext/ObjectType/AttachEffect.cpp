@@ -160,8 +160,10 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 
 						if (state) {}
 						GET_STAND_STATE(AntiBullet)
+							GET_STAND_STATE(Deselect)
 							GET_STAND_STATE(DestroyAnim)
 							GET_STAND_STATE(DestroySelf)
+							GET_STAND_STATE(Freeze)
 							GET_STAND_STATE(GiftBox)
 							GET_STAND_STATE(Paintball)
 							GET_STAND_STATE(Transform)

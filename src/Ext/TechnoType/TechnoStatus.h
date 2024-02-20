@@ -26,6 +26,7 @@
 #include <Ext/StateType/State/DeselectState.h>
 #include <Ext/StateType/State/DestroyAnimState.h>
 #include <Ext/StateType/State/DestroySelfState.h>
+#include <Ext/StateType/State/FreezeState.h>
 #include <Ext/StateType/State/GiftBoxState.h>
 #include <Ext/StateType/State/PaintballState.h>
 #include <Ext/StateType/State/TransformState.h>
@@ -94,6 +95,7 @@ public:
 	STATE_VAR_DEFINE(Deselect);
 	STATE_VAR_DEFINE(DestroyAnim);
 	STATE_VAR_DEFINE(DestroySelf);
+	STATE_VAR_DEFINE(Freeze);
 	STATE_VAR_DEFINE(GiftBox);
 	STATE_VAR_DEFINE(Paintball);
 	STATE_VAR_DEFINE(Transform);
@@ -104,6 +106,7 @@ public:
 		STATE_VAR_INIT(Deselect);
 		STATE_VAR_INIT(DestroyAnim);
 		STATE_VAR_INIT(DestroySelf);
+		STATE_VAR_INIT(Freeze);
 		STATE_VAR_INIT(GiftBox);
 		STATE_VAR_INIT(Paintball);
 		STATE_VAR_INIT(Transform);
@@ -117,6 +120,7 @@ public:
 			STATE_VAR_TRYGET(Deselect)
 			STATE_VAR_TRYGET(DestroyAnim)
 			STATE_VAR_TRYGET(DestroySelf)
+			STATE_VAR_TRYGET(Freeze)
 			STATE_VAR_TRYGET(GiftBox)
 			STATE_VAR_TRYGET(Paintball)
 			STATE_VAR_TRYGET(Transform)
@@ -140,6 +144,8 @@ public:
 
 	bool CaptureByBlackHole = false;
 	bool Jumping = false;
+
+	// 冻结
 	bool Freezing = false;
 
 	// 虚单位
@@ -163,9 +169,10 @@ public:
 			.Process(this->Freezing)
 
 			.Process(this->VirtualUnit)
-
 			.Process(this->Disappear)
+
 			.Process(this->_disableSelectable)
+			.Process(this->_cantMoveFlag)
 
 			.Process(this->_deactivateDimEMP)
 			.Process(this->_deactivateDimPowered)
@@ -227,6 +234,7 @@ private:
 
 	void OnUpdate_AntiBullet();
 	void OnUpdate_Deselect();
+	void OnUpdate_Freeze();
 	void OnUpdate_GiftBox();
 	void OnUpdate_Paintball();
 	void OnUpdate_Transform();
@@ -258,6 +266,8 @@ private:
 
 	// 选择状态
 	bool _disableSelectable = false;
+	// 冻结状态
+	bool _cantMoveFlag = false;
 
 	// 部署变形
 	DeployToTransformData* _transformData = nullptr;

@@ -436,7 +436,6 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 					{
 						status->StandIsMoving = false;
 					}
-					// loco.ForceStopMoving();
 					if (locoId == LocomotionClass::CLSIDs::Walk)
 					{
 						WalkLocomotionClass* pLoco = static_cast<WalkLocomotionClass*>(loco);

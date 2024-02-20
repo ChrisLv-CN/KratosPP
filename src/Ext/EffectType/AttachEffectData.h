@@ -23,6 +23,7 @@
 #include <Ext/StateType/State/DeselectData.h>
 #include <Ext/StateType/State/DestroyAnimData.h>
 #include <Ext/StateType/State/DestroySelfData.h>
+#include <Ext/StateType/State/FreezeData.h>
 #include <Ext/StateType/State/GiftBoxData.h>
 #include <Ext/StateType/State/PaintballData.h>
 #include <Ext/StateType/State/TransformData.h>
@@ -142,6 +143,7 @@ public:
 	EFFECT_VAR_DEFINE(Deselect);
 	EFFECT_VAR_DEFINE(DestroyAnim);
 	EFFECT_VAR_DEFINE(DestroySelf);
+	EFFECT_VAR_DEFINE(Freeze);
 	EFFECT_VAR_DEFINE(GiftBox);
 	EFFECT_VAR_DEFINE(Paintball);
 	EFFECT_VAR_DEFINE(Transform);
@@ -164,6 +166,7 @@ public:
 		EFFECT_VAR_READ(Deselect);
 		EFFECT_VAR_READ(DestroyAnim);
 		EFFECT_VAR_READ(DestroySelf);
+		EFFECT_VAR_READ(Freeze);
 		EFFECT_VAR_READ(GiftBox);
 		EFFECT_VAR_READ(Paintball);
 		EFFECT_VAR_READ(Transform);
@@ -188,6 +191,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Deselect);
 		EFFECT_VAR_SCRIPT_NAME(DestroyAnim);
 		EFFECT_VAR_SCRIPT_NAME(DestroySelf);
+		EFFECT_VAR_SCRIPT_NAME(Freeze);
 		EFFECT_VAR_SCRIPT_NAME(GiftBox);
 		EFFECT_VAR_SCRIPT_NAME(Paintball);
 		EFFECT_VAR_SCRIPT_NAME(Transform);
@@ -216,6 +220,7 @@ public:
 			EFFECT_VAR_PROCESS(DestroyAnim)
 			EFFECT_VAR_PROCESS(DestroySelf)
 			EFFECT_VAR_PROCESS(GiftBox)
+			EFFECT_VAR_PROCESS(Freeze)
 			EFFECT_VAR_PROCESS(Paintball)
 			EFFECT_VAR_PROCESS(Transform)
 			;

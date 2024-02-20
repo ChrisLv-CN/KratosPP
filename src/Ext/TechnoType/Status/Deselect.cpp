@@ -6,7 +6,8 @@
 
 void TechnoStatus::OnUpdate_Deselect()
 {
-	if (_disableSelectable = Deselect->IsActive())
+	_disableSelectable = Deselect->IsActive();
+	if (_disableSelectable)
 	{
 		Disappear = Deselect->Data.Disappear;
 	}

@@ -5,6 +5,7 @@
 #include <BulletClass.h>
 #include <HouseClass.h>
 #include <TechnoClass.h>
+#include <FootClass.h>
 
 #include <Ext/AnimType/RelationData.h>
 
@@ -82,6 +83,8 @@ bool CanDamageMe(TechnoClass* pTechno, int damage, int distanceFromEpicenter, Wa
 bool CanAffectMe(TechnoClass* pTechno, HouseClass* pAttackingHouse, WarheadTypeClass* pWH);
 
 void ClearAllTarget(TechnoClass* pAttacker);
+void ForceStopMoving(FootClass* pTechno);
+void ForceStopMoving(ILocomotion* ploco, GUID locoId);
 #pragma endregion
 
 #pragma region BulletClass
