@@ -56,6 +56,7 @@ public:
 	int Count();
 
 	void GetMarks(std::vector<std::string>& marks);
+	std::vector<std::string> GetMarks();
 	void GetAENames(std::vector<std::string>& names);
 	bool HasStand();
 

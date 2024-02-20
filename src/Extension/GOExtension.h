@@ -58,12 +58,19 @@ public:
 
 		~ExtData() override
 		{
+			try
+			{
 #ifdef DEBUG_COMPONENT
-			Debug::Log("[%s]%s [%s]%s  calling GameObject [%s]%s destroy all component.\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
+				Debug::Log("[%s]%s [%s]%s  calling GameObject [%s]%s destroy all component.\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
 #endif // DEBUG
-			// delete *m_GameObject;
-			m_GameObject.ForeachChild([](Component* c)
-				{ c->EnsureDestroy(); });
+				// delete *m_GameObject;
+				m_GameObject.ForeachChild([](Component* c)
+					{ c->EnsureDestroy(); });
+			}
+			catch (const std::exception& e)
+			{
+				Debug::Log("~GOExtension() throw exception: %s \n", e.what());
+			}
 		}
 
 #pragma region Save/Load

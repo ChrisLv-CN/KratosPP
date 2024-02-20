@@ -55,6 +55,7 @@
     <ClCompile Include="src\Ext\EffectType\AttachEffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\EffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\AnimationEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\BroadcastEffect.cpp" />
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\InfoEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\MarkEffect.cpp" />
@@ -209,6 +210,8 @@
     <ClInclude Include="src\Ext\EffectType\EffectScript.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\AnimationData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\AnimationEffect.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\BroadcastData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\BroadcastEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />

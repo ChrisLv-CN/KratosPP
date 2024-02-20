@@ -98,6 +98,13 @@ void AttachEffect::GetMarks(std::vector<std::string>& marks)
 		});
 }
 
+std::vector<std::string> AttachEffect::GetMarks()
+{
+	std::vector<std::string> marks{};
+	GetMarks(marks);
+	return marks;
+}
+
 void AttachEffect::GetAENames(std::vector<std::string>& names)
 {
 	ForeachChild([&names](Component* c) {

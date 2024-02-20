@@ -43,7 +43,7 @@ public:
 		WeaponIndex = reader->Get(title + "Weapon", WeaponIndex);
 		ToTarget = reader->Get(title + "ToTarget", ToTarget);
 
-		Enable = Supers.size() > 0;
+		Enable = !Supers.empty();
 	}
 
 #pragma region save/load
@@ -81,8 +81,8 @@ class FireSuperData : public EffectData
 public:
 	EFFECT_DATA(FireSuper);
 
-	FireSuperEntity Data;
-	FireSuperEntity EliteData;
+	FireSuperEntity Data{};
+	FireSuperEntity EliteData{};
 
 	virtual void Read(INIBufferReader* reader) override
 	{

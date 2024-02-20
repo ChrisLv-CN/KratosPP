@@ -13,6 +13,10 @@
 #include <TechnoClass.h>
 #include <WarheadTypeClass.h>
 
+#include <Ext/ObjectType/FilterData.h>
+
+class AttachEffect;
+
 namespace Finder
 {
 	/**
@@ -87,8 +91,8 @@ void FindObject(DynamicVectorClass<TBase*>* array, std::function<bool(TBase*)> f
 	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true)
 {
 	// 最大搜索范围小于0，搜索全部，等于0，搜索1格范围
-	double maxRange = (maxSpread > 0 ? maxSpread : (maxSpread == 0 ? 1 : 0)) * 256;
-	double minRange = (minSpread <= 0 ? 0 : minSpread) * 256;
+	double maxRange = (maxSpread > 0 ? maxSpread : (maxSpread == 0 ? 1 : 0)) * Unsorted::LeptonsPerCell;
+	double minRange = (minSpread <= 0 ? 0 : minSpread) * Unsorted::LeptonsPerCell;
 	for (int i = array->Count - 1; i >= 0; i--)
 	{
 		TBase* pBase = array->GetItem(i);
@@ -105,11 +109,11 @@ void FindObject(DynamicVectorClass<TBase*>* array, std::function<bool(TBase*)> f
 }
 
 template <typename TBase>
-void FindObject(DynamicVectorClass<TBase*>* array, std::function<void(TBase*)> func,
+void FindAllObject(DynamicVectorClass<TBase*>* array, std::function<bool(TBase*)> func,
 	HouseClass* pHouse = nullptr,
 	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true)
 {
-	FindObject<TBase>(array, func, CoordStruct::Empty, 0, 0, pHouse, owner, allied, enemies, civilian);
+	FindObject<TBase>(array, func, CoordStruct::Empty, -1, 0, false, pHouse, owner, allied, enemies, civilian);
 }
 
 /**
@@ -152,11 +156,11 @@ void FindObject(std::vector<TBase*> array, std::function<bool(TBase*)> func,
 }
 
 template <typename TBase>
-void FindObject(std::vector<TBase*> array, std::function<void(TBase*)> func,
+void FindAllObject(std::vector<TBase*> array, std::function<bool(TBase*)> func,
 	HouseClass* pHouse = nullptr,
 	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true)
 {
-	FindObject<TBase>(array, func, CoordStruct::Empty, 0, 0, pHouse, owner, allied, enemies, civilian);
+	FindObject<TBase>(array, func, CoordStruct::Empty, -1, 0, false, pHouse, owner, allied, enemies, civilian);
 }
 
 /**
@@ -185,6 +189,14 @@ TechnoClass* FindRandomTechno(HouseClass* pHouse);
 std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
 	HouseClass* pHouse = nullptr,
 	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true);
+
+void FindTechnoOnMark(std::function<void(TechnoClass*, AttachEffect*)> func,
+	CoordStruct location, double maxSpread, double minSpread, bool fullAirspace,
+	HouseClass* pHouse, FilterData data, ObjectClass* exclude);
+
+void FindBulletOnMark(std::function<void(BulletClass*, AttachEffect*)> func,
+	CoordStruct location, double maxSpread, double minSpread, bool fullAirspace,
+	HouseClass* pHouse, FilterData data, ObjectClass* exclude);
 
 /**
  *@brief 搜索爆炸位置物体并附加AE

@@ -8,6 +8,7 @@
 #include <Ext/ObjectType/FilterData.h>
 // TODO Effects
 #include "Effect/AnimationData.h"
+#include "Effect/BroadcastData.h"
 #include "Effect/MarkData.h"
 #include "Effect/InfoData.h"
 #include "Effect/StandData.h"
@@ -121,6 +122,7 @@ public:
 
 	// TODO Effects
 	EFFECT_VAR_DEFINE(Animation);
+	EFFECT_VAR_DEFINE(Broadcast);
 	EFFECT_VAR_DEFINE(CrateBuff);
 	EFFECT_VAR_DEFINE(Info);
 	EFFECT_VAR_DEFINE(Mark);
@@ -137,6 +139,7 @@ public:
 	void ReadEffects(INIBufferReader* reader)
 	{
 		EFFECT_VAR_READ(Animation);
+		EFFECT_VAR_READ(Broadcast);
 		EFFECT_VAR_READ(CrateBuff);
 		EFFECT_VAR_READ(Info);
 		EFFECT_VAR_READ(Mark);
@@ -155,6 +158,7 @@ public:
 	{
 		std::set<std::string> names{};
 		EFFECT_VAR_SCRIPT_NAME(Animation);
+		EFFECT_VAR_SCRIPT_NAME(Broadcast);
 		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
 		EFFECT_VAR_SCRIPT_NAME(Info);
 		EFFECT_VAR_SCRIPT_NAME(Mark);
@@ -176,6 +180,7 @@ public:
 	{
 		stream
 			EFFECT_VAR_PROCESS(Animation)
+			EFFECT_VAR_PROCESS(Broadcast)
 			EFFECT_VAR_PROCESS(CrateBuff)
 			EFFECT_VAR_PROCESS(Info)
 			EFFECT_VAR_PROCESS(Mark)

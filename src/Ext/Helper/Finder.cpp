@@ -6,6 +6,13 @@
 #include <map>
 #include <set>
 
+#include <TechnoClass.h>
+#include <BuildingClass.h>
+#include <InfantryClass.h>
+#include <UnitClass.h>
+#include <AircraftClass.h>
+#include <BulletClass.h>
+
 #include <Utilities/Debug.h>
 
 #include <Extension/TechnoExt.h>
@@ -16,9 +23,12 @@
 #include "Scripts.h"
 #include "Status.h"
 
+#include <Ext/BulletType/BulletStatus.h>
+#include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/EffectType/AttachEffectData.h>
 #include <Ext/EffectType/AttachEffectTypeData.h>
 #include <Ext/TechnoType/TechnoStatus.h>
+
 
 double Finder::DistanceFrom(CoordStruct sourcePos, CoordStruct targetPos, bool fullAirspace)
 {
@@ -179,7 +189,7 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spre
 
 	// 筛选并去掉不可用项目
 	std::vector<TechnoClass*> pTechnoList;
-	for(TechnoClass* pTechno : pTechnoSet)
+	for (TechnoClass* pTechno : pTechnoSet)
 	{
 		CoordStruct targetPos = pTechno->GetCoords();
 		double dist = Finder::DistanceFrom(targetPos, location, fullAirspace);
@@ -215,6 +225,102 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spre
 	}
 	return pTechnoList;
 }
+void FindTechnoOnMark(std::function<void(TechnoClass*, AttachEffect*)> func,
+	CoordStruct location, double maxSpread, double minSpread, bool fullAirspace,
+	HouseClass* pHouse, FilterData data, ObjectClass* exclude)
+{
+	std::vector<TechnoClass*> pTechnoList;
+	if (maxSpread <= 0)
+	{
+		// 搜索全部单位
+		std::set<TechnoClass*> pTechnoSet;
+		if (data.AffectBuilding)
+		{
+			FindAllObject<BuildingClass>(BuildingClass::Array.get(), [&](BuildingClass* pTarget)->bool {
+				if (!pTarget->Type->InvisibleInGame) pTechnoSet.insert(pTarget); return false;
+				}, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
+		}
+		if (data.AffectInfantry)
+		{
+			FindAllObject<InfantryClass>(InfantryClass::Array.get(), [&](InfantryClass* pTarget)->bool {
+				if (data.AffectInAir || !pTarget->IsInAir()) pTechnoSet.insert(pTarget); return false;
+				}, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
+		}
+		if (data.AffectUnit)
+		{
+			FindAllObject<UnitClass>(UnitClass::Array.get(), [&](UnitClass* pTarget)->bool {
+				if (data.AffectInAir || !pTarget->IsInAir()) pTechnoSet.insert(pTarget); return false;
+				}, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
+		}
+		if (data.AffectAircraft)
+		{
+			FindAllObject<AircraftClass>(AircraftClass::Array.get(), [&](AircraftClass* pTarget)->bool {
+				if (data.AffectInAir || !pTarget->IsInAir()) pTechnoSet.insert(pTarget); return false;
+				}, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
+		}
+		pTechnoList.assign(pTechnoSet.begin(), pTechnoSet.end());
+	}
+	else
+	{
+		// 小范围搜索
+		pTechnoList = GetCellSpreadTechnos(location, maxSpread, fullAirspace, data.AffectInAir, true, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
+	}
+	// 去除不符合的目标
+	for (TechnoClass* pTarget : pTechnoList)
+	{
+		if (IsDeadOrInvisible(pTarget) || (!data.AffectSelf && pTarget == exclude))
+		{
+			continue;
+		}
+		// 去除替身和虚单位
+		TechnoStatus* status = nullptr;
+		if (TryGetStatus<TechnoExt>(pTarget, status) && (status->AmIStand() || status->VirtualUnit))
+		{
+			continue;
+		}
+		// 检查最小距离
+		if (minSpread > 0)
+		{
+			double distance = Finder::DistanceFrom(pTarget->GetCoords(), location, fullAirspace);
+			if (!fullAirspace && pTarget->IsInAir() && pTarget->WhatAmI() == AbstractType::Aircraft)
+			{
+				distance *= 0.5;
+			}
+			if (distance < minSpread * Unsorted::LeptonsPerCell)
+			{
+				continue;
+			}
+		}
+		// 可影响
+		AttachEffect* aeManager = nullptr;
+		if (data.CanAffectType(pTarget) && TryGetAEManager<TechnoExt>(pTarget, aeManager) && data.OnMark(aeManager->GetMarks()))
+		{
+			// 执行动作
+			func(pTarget, aeManager);
+		}
+	}
+}
+
+
+void FindBulletOnMark(std::function<void(BulletClass*, AttachEffect*)> func,
+	CoordStruct location, double maxSpread, double minSpread, bool fullAirspace,
+	HouseClass* pHouse, FilterData data, ObjectClass* exclude)
+{
+	std::set<BulletClass*> pBulletSet;
+	FindObject<BulletClass>(BulletClass::Array.get(), [&](BulletClass* pTarget)->bool {
+		if (IsDeadOrInvisible(pTarget) && (data.AffectSelf || pTarget != exclude) && data.CanAffectType(pTarget)) pBulletSet.insert(pTarget); return false;
+		} , location, maxSpread, minSpread, fullAirspace, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
+	// 去除不符合的目标
+	for (BulletClass* pTarget : pBulletSet)
+	{
+		AttachEffect* aeManager = nullptr;
+		if (TryGetAEManager<BulletExt>(pTarget, aeManager))
+		{
+			func(pTarget, aeManager);
+		}
+	}
+}
+
 
 void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
@@ -327,7 +433,7 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 void FindAndDamageStandOrVUnit(CoordStruct location, int damage,
 	WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse, ObjectClass* exclude)
 {
-	
+
 }
 
 bool CheckAndMarkTarget(TechnoClass* pTarget, double spread, CoordStruct location, int damage, ObjectClass* pAttacker,

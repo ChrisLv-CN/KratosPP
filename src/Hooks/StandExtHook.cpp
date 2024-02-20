@@ -97,6 +97,7 @@ DEFINE_HOOK(0x6FC749, TechnoClass_CanFire_WhichLayer_Stand, 0x5)
 		}
 		catch (const std::exception& e)
 		{
+			Debug::Log("TechnoClass_CanFire_WhichLayer_Stand throw exception: %s \n", e.what());
 		}
 		return inAir;
 	}

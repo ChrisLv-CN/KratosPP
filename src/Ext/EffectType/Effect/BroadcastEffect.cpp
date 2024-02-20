@@ -1,0 +1,83 @@
+﻿#include "BroadcastEffect.h"
+
+#include <Ext/Helper/Finder.h>
+#include <Ext/Helper/FLH.h>
+#include <Ext/Helper/Scripts.h>
+#include <Ext/Helper/Status.h>
+
+void BroadcastEffect::OnUpdate()
+{
+	if (!AE->OwnerIsDead())
+	{
+		if (Data->Powered && AE->AEManager->PowerOff)
+		{
+			// 需要电力，但是没电
+			return;
+		}
+		BroadcastEntity data = Data->Data;
+		HouseClass* pHouse = nullptr;
+		if (pTechno)
+		{
+			pHouse = pTechno->Owner;
+			if (pTechno->Veterancy.IsElite())
+			{
+				data = Data->EliteData;
+			}
+		}
+		else if (pBullet)
+		{
+			pHouse = GetSourceHouse(pBullet);
+		}
+		else
+		{
+			return;
+		}
+
+		// 检查平民
+		if (Data->DeactiveWhenCivilian && IsCivilian(pHouse))
+		{
+			return;
+		}
+		if (data.Enable)
+		{
+			if (_delayTimer.Expired())
+			{
+				// 检查次数
+				if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
+				{
+					// Logger.Log($"{Game.CurrentFrame} 广播了 {count}次 >= {Data.TriggeredTimes}，结束AE");
+					End({});
+				}
+				_delayTimer.Start(data.Rate);
+				FindAndAttach(data, pHouse);
+			}
+		}
+	}
+}
+
+void BroadcastEffect::FindAndAttach(BroadcastEntity data, HouseClass* pHouse)
+{
+	CoordStruct location = pObject->GetCoords();
+	double cellSpread = data.RangeMax;
+	// Logger.Log($"{Game.CurrentFrame} 搜索范围{cellSpread}内的单位，赋予效果[{string.Join(",", data.Types)}]");
+	// 搜索单位
+	if (Data->AffectTechno)
+	{
+		FindTechnoOnMark([&](TechnoClass* pTarget, AttachEffect* aeManager)
+		{
+			// 赋予AE
+			aeManager->Attach(data.Types, data.AttachChances, pObject);
+			return false;
+		}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
+	}
+	// 搜索抛射体
+	if (Data->AffectBullet)
+	{
+		FindBulletOnMark([&](BulletClass* pTarget, AttachEffect* aeManager)
+		{
+			// 赋予AE
+			aeManager->Attach(data.Types, data.AttachChances, pObject);
+			return false;
+		}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
+	}
+}
