@@ -406,17 +406,14 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 
 void TechnoStatus::InheritedStatsTo(TechnoStatus*& heir)
 {
+	// TODO inherited state
 	*heir->AntiBullet = *AntiBullet;
+	*heir->Deselect = *Deselect;
 	*heir->DestroyAnim = *DestroyAnim;
 	*heir->DestroySelf = *DestroySelf;
+	*heir->Freeze = *Freeze;
 	// *heir->GiftBox = *this->GiftBox;
 	*heir->Paintball = *Paintball;
+	*heir->Scatter = *Scatter;
 	*heir->Transform = *Transform;
-	// 状态机
-	// STATE_VAR_DEFINE(AntiBullet);
-	// STATE_VAR_DEFINE(DestroyAnim);
-	// STATE_VAR_DEFINE(DestroySelf);
-	// STATE_VAR_DEFINE(GiftBox);
-	// STATE_VAR_DEFINE(Paintball);
-	// STATE_VAR_DEFINE(Transform);
 }

@@ -26,6 +26,7 @@
 #include <Ext/StateType/State/FreezeData.h>
 #include <Ext/StateType/State/GiftBoxData.h>
 #include <Ext/StateType/State/PaintballData.h>
+#include <Ext/StateType/State/ScatterData.h>
 #include <Ext/StateType/State/TransformData.h>
 
 
@@ -146,6 +147,7 @@ public:
 	EFFECT_VAR_DEFINE(Freeze);
 	EFFECT_VAR_DEFINE(GiftBox);
 	EFFECT_VAR_DEFINE(Paintball);
+	EFFECT_VAR_DEFINE(Scatter);
 	EFFECT_VAR_DEFINE(Transform);
 
 	void ReadEffects(INIBufferReader* reader)
@@ -169,6 +171,7 @@ public:
 		EFFECT_VAR_READ(Freeze);
 		EFFECT_VAR_READ(GiftBox);
 		EFFECT_VAR_READ(Paintball);
+		EFFECT_VAR_READ(Scatter);
 		EFFECT_VAR_READ(Transform);
 	}
 
@@ -194,6 +197,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Freeze);
 		EFFECT_VAR_SCRIPT_NAME(GiftBox);
 		EFFECT_VAR_SCRIPT_NAME(Paintball);
+		EFFECT_VAR_SCRIPT_NAME(Scatter);
 		EFFECT_VAR_SCRIPT_NAME(Transform);
 
 		return names;
@@ -222,6 +226,7 @@ public:
 			EFFECT_VAR_PROCESS(GiftBox)
 			EFFECT_VAR_PROCESS(Freeze)
 			EFFECT_VAR_PROCESS(Paintball)
+			EFFECT_VAR_PROCESS(Scatter)
 			EFFECT_VAR_PROCESS(Transform)
 			;
 	}

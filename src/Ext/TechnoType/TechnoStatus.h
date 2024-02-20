@@ -29,6 +29,7 @@
 #include <Ext/StateType/State/FreezeState.h>
 #include <Ext/StateType/State/GiftBoxState.h>
 #include <Ext/StateType/State/PaintballState.h>
+#include <Ext/StateType/State/ScatterState.h>
 #include <Ext/StateType/State/TransformState.h>
 
 class AttachEffect;
@@ -98,6 +99,7 @@ public:
 	STATE_VAR_DEFINE(Freeze);
 	STATE_VAR_DEFINE(GiftBox);
 	STATE_VAR_DEFINE(Paintball);
+	STATE_VAR_DEFINE(Scatter);
 	STATE_VAR_DEFINE(Transform);
 
 	void AttachState()
@@ -109,6 +111,7 @@ public:
 		STATE_VAR_INIT(Freeze);
 		STATE_VAR_INIT(GiftBox);
 		STATE_VAR_INIT(Paintball);
+		STATE_VAR_INIT(Scatter);
 		STATE_VAR_INIT(Transform);
 	}
 
@@ -123,6 +126,7 @@ public:
 			STATE_VAR_TRYGET(Freeze)
 			STATE_VAR_TRYGET(GiftBox)
 			STATE_VAR_TRYGET(Paintball)
+			STATE_VAR_TRYGET(Scatter)
 			STATE_VAR_TRYGET(Transform)
 			return state != nullptr;
 	}

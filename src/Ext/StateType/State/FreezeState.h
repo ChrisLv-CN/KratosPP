@@ -3,8 +3,6 @@
 #include "../StateScript.h"
 #include "FreezeData.h"
 
-#include <Ext/TechnoType/DamageText.h>
-
 class FreezeState : public StateScript<FreezeData>
 {
 public:
