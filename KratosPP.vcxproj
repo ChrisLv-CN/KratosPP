@@ -59,6 +59,7 @@
     <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\InfoEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\MarkEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\RevengeEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\StackEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\StandEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\State\StateEffect.cpp" />
@@ -221,6 +222,8 @@
     <ClInclude Include="src\Ext\EffectType\Effect\MarkData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\MarkEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\OffsetData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\RevengeData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\RevengeEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\StackData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\StackEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\StandData.h" />
