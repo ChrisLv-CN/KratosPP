@@ -10,24 +10,25 @@
 
 #include <Ext/ObjectType/AttachFire.h>
 
-void RevengeEffect::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+bool RevengeEffect::CanRevenge(TechnoClass*& pRevenger, HouseClass*& pRevengerHouse, TechnoClass*& pRevengeTarget,
+	WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
+	pRevenger = pTechno; // 复仇者
+	pRevengerHouse = pTechno->Owner; // 复仇者的阵营
 	// 检查弹头
 	WarheadTypeExt::TypeData* warheadTypeData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
 	if (warheadTypeData->IgnoreRevenge || !Data->OnMark(pWH))
 	{
-		return;
+		return false;
 	}
 
 	// 过滤平民
 	HouseClass* pHouse = pTechno->Owner;
 	if (Data->DeactiveWhenCivilian && pHouse && IsCivilian(pHouse))
 	{
-		return;
+		return false;
 	}
 	// 检查复仇者
-	TechnoClass* pRevenger = pTechno; // 复仇者
-	HouseClass* pRevengerHouse = pHouse; // 复仇者的阵营
 	if (Data->FromSource)
 	{
 		pRevenger = AE->pSource;
@@ -37,92 +38,137 @@ void RevengeEffect::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, 
 		{
 			// 复仇者不存在，复个屁
 			End(CoordStruct::Empty);
-			return;
+			return false;
 		}
 	}
 	// 检查报复对象
-	TechnoClass* pRevengeTargetTechno = nullptr; // 报复对象
 	TechnoClass* pAttackerTechno = nullptr;
 	// 向AE的来源复仇
 	if (Data->ToSource)
 	{
-		pRevengeTargetTechno = AE->pSource;
+		pRevengeTarget = AE->pSource;
 	}
 	else if (pAttacker && CastToTechno(pAttacker, pAttackerTechno))
 	{
-		pRevengeTargetTechno = pAttackerTechno;
+		pRevengeTarget = pAttackerTechno;
 	}
-	if (IsDeadOrInvisible(pRevengeTargetTechno))
+	return true;
+}
+
+void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+{
+	// 检查持续帧内触发
+	if (Data->ActiveOnce)
 	{
-		// 报复对象不存在
+		int currentFrame = Unsorted::CurrentFrame;
+		if (_markFrame == 0)
+		{
+			_markFrame = currentFrame;
+		}
+		if (currentFrame != _markFrame)
+		{
+			_skip = true;
+			End(CoordStruct::Empty);
+			return;
+		}
+	}
+	// 检查复仇者
+	TechnoClass* pRevenger = pTechno; // 复仇者
+	HouseClass* pRevengerHouse = pTechno->Owner; // 复仇者的阵营
+	// 检查报复对象
+	TechnoClass* pRevengeTarget = nullptr; // 报复对象
+	_skip = !CanRevenge(pRevenger, pRevengerHouse, pRevengeTarget, pWH, pAttacker, pAttackingHouse);
+	if (!_skip)
+	{
+		_bingo = Bingo(Data->Chance);
+		// 准备报复
+		if (_bingo)
+		{
+			// 反伤
+			if (Data->ThornsPercent != 0)
+			{
+				int damage = *pRealDamage;
+				int refDamage = (int)(damage * Data->ThornsPercent);
+				damage -= refDamage;
+				// 调整自身收到的伤害
+				if (Data->Rebound)
+				{
+					*pRealDamage = 0;
+				}
+				else
+				{
+					*pRealDamage = damage;
+				}
+				// 反射给攻击者
+				if (!IsDeadOrInvisible(pRevengeTarget))
+				{
+					pRevengeTarget->TakeDamage(refDamage, pRevengeTarget->GetTechnoType()->Crewed);
+				}
+			}
+		}
+	}
+}
+
+void RevengeEffect::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+{
+	if (_skip)
+	{
 		return;
 	}
 	// 准备报复
 	if (Data->Realtime || damageState == DamageState::NowDead)
 	{
-		// 过滤浮空
-		if (!Data->AffectInAir && pRevengeTargetTechno->IsInAir())
+		if (_bingo)
 		{
-			return;
-		}
-		// 发射武器复仇
-		if (Data->CanAffectHouse(pRevengerHouse, pAttackingHouse) && Data->CanAffectType(pRevengeTargetTechno) && IsOnMark(pRevengeTargetTechno, *Data))
-		{
-			// 检查持续帧内触发
-			if (Data->ActiveOnce)
+			// 需要报复对象存在的复仇
+			if (!IsDeadOrInvisible(pRevengeTarget))
 			{
-				int currentFrame = Unsorted::CurrentFrame;
-				if (_markFrame == 0)
+				// 过滤浮空
+				if (Data->AffectInAir || !pRevengeTarget->IsInAir())
 				{
-					_markFrame = currentFrame;
-				}
-				if (currentFrame != _markFrame)
-				{
-					End(CoordStruct::Empty);
-					return;
-				}
-			}
-
-			if (Bingo(Data->Chance))
-			{
-				// 使用武器复仇
-				if (!Data->Types.empty() || Data->WeaponIndex > -1)
-				{
-					Component* rgo = nullptr;
-					AttachFire* attachFire = nullptr;
-					if (TryGetScript<TechnoExt, Component>(pRevenger, rgo))
+					// 可以影响复仇对象
+					if (Data->CanAffectHouse(pRevengerHouse, pAttackingHouse) && Data->CanAffectType(pRevengeTarget) && IsOnMark(pRevengeTarget, *Data))
 					{
-						attachFire = rgo->FindOrAttach<AttachFire>();
-					}
-					if (attachFire)
-					{
-						// 发射自定义武器
-						for (std::string weaponId : Data->Types)
+						// 使用武器复仇
+						if (!Data->Types.empty() || Data->WeaponIndex > -1)
 						{
-							if (IsNotNone(weaponId))
+							Component* rgo = nullptr;
+							AttachFire* attachFire = nullptr;
+							if (TryGetScript<TechnoExt, Component>(pRevenger, rgo))
 							{
-								attachFire->FireCustomWeapon(pRevenger, pRevengeTargetTechno, pRevengerHouse, weaponId, Data->FireFLH, !Data->IsOnTurret, Data->IsOnTarget);
+								attachFire = rgo->FindOrAttach<AttachFire>();
+							}
+							if (attachFire)
+							{
+								// 发射自定义武器
+								for (std::string weaponId : Data->Types)
+								{
+									if (IsNotNone(weaponId))
+									{
+										attachFire->FireCustomWeapon(pRevenger, pRevengeTarget, pRevengerHouse, weaponId, Data->FireFLH, !Data->IsOnTurret, Data->IsOnTarget);
+									}
+								}
+								// 使用自身武器
+								if (Data->WeaponIndex > -1)
+								{
+									WeaponStruct* ws = pRevenger->GetWeapon(Data->WeaponIndex);
+									if (ws && ws->WeaponType)
+									{
+										WeaponTypeClass* pWeapon = ws->WeaponType;
+										WeaponTypeExt::TypeData* weaponTypeData = GetTypeData<WeaponTypeExt, WeaponTypeExt::TypeData>(pWeapon);
+										// 发射武器
+										attachFire->FireCustomWeapon(pRevenger, pRevengeTarget, pRevengerHouse, pWeapon, *weaponTypeData, Data->FireFLH);
+									}
+								}
 							}
 						}
-						// 使用自身武器
-						if (Data->WeaponIndex > -1)
+						// 使用AE复仇
+						AttachEffect* targetAEM = nullptr;
+						if (!Data->AttachEffects.empty() && TryGetAEManager<TechnoExt>(pRevengeTarget, targetAEM))
 						{
-							WeaponStruct* ws = pRevenger->GetWeapon(Data->WeaponIndex);
-							if (ws && ws->WeaponType)
-							{
-								WeaponTypeClass* pWeapon = ws->WeaponType;
-								WeaponTypeExt::TypeData* weaponTypeData = GetTypeData<WeaponTypeExt, WeaponTypeExt::TypeData>(pWeapon);
-								// 发射武器
-								attachFire->FireCustomWeapon(pRevenger, pRevengeTargetTechno, pRevengerHouse, pWeapon, *weaponTypeData, Data->FireFLH);
-							}
+							targetAEM->Attach(Data->AttachEffects, Data->AttachChances, false, pRevenger, pRevengerHouse);
 						}
 					}
-				}
-				// 使用AE复仇
-				AttachEffect* targetAEM = nullptr;
-				if (!Data->AttachEffects.empty() && TryGetAEManager<TechnoExt>(pRevengeTargetTechno, targetAEM))
-				{
-					targetAEM->Attach(Data->AttachEffects, Data->AttachChances, false, pRevenger, pRevengerHouse);
 				}
 			}
 			// 检查触发次数

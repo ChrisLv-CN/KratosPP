@@ -18,11 +18,18 @@ public:
 
 	double Chance = 1;
 
+	// 使用武器反击
 	std::vector<std::string> Types{};
 	int WeaponIndex = -1;
 
+	// 使用AE反击
 	std::vector<std::string> AttachEffects{};
 	std::vector<double> AttachChances{};
+
+	// 伤害反射
+	double ThornsPercent = 0; // 反伤比例
+	bool Rebound = false; // 反伤后自己不受伤
+
 	CoordStruct FireFLH = CoordStruct::Empty;
 	bool IsOnTurret = true;
 	bool IsOnTarget = false;
@@ -33,6 +40,7 @@ public:
 	bool ActiveOnce = false;
 
 	std::vector<std::string> OnlyReactionWarheads{};
+	std::vector<std::string> NotReactionWarheads{};
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -51,7 +59,11 @@ public:
 
 		AttachEffects = reader->GetList(title + "AttachEffects", AttachEffects);
 		AttachChances = reader->GetChanceList(title + "AttachChances", AttachChances);
-		Enable = Chance > 0 && (!Types.empty() || WeaponIndex > -1 || !AttachEffects.empty());
+
+		ThornsPercent = reader->GetPercent(title + "ThornsPercent", ThornsPercent);
+		Rebound = reader->Get(title + "Rebound", Rebound);
+
+		Enable = Chance > 0 && (!Types.empty() || WeaponIndex > -1 || !AttachEffects.empty() || ThornsPercent != 0);
 		if (Enable)
 		{
 			Enable = AffectTechno;
@@ -70,15 +82,28 @@ public:
 		{
 			OnlyReactionWarheads.clear();
 		}
+
+		NotReactionWarheads = reader->GetList(title + "NotReactionWarheads", NotReactionWarheads);
+		if (NotReactionWarheads.size() == 1 && !IsNotNone(NotReactionWarheads[0]))
+		{
+			NotReactionWarheads.clear();
+		}
 	}
 
 	bool OnMark(std::string warheadId)
 	{
-		bool mark = OnlyReactionWarheads.empty();
-		if (!mark)
+		bool mark = true;
+		bool hasWhiteList = !OnlyReactionWarheads.empty();
+		bool hasBlackList = !NotReactionWarheads.empty();
+		if (hasWhiteList)
 		{
 			auto it = std::find(OnlyReactionWarheads.begin(), OnlyReactionWarheads.end(), warheadId);
 			mark = it != OnlyReactionWarheads.end();
+		}
+		if (!mark && hasBlackList)
+		{
+			auto it = std::find(NotReactionWarheads.begin(), NotReactionWarheads.end(), warheadId);
+			mark = it == NotReactionWarheads.end();
 		}
 		return mark;
 	}
@@ -94,10 +119,16 @@ public:
 	{
 		return stream
 			.Process(this->Chance)
+
 			.Process(this->Types)
 			.Process(this->WeaponIndex)
+
 			.Process(this->AttachEffects)
 			.Process(this->AttachChances)
+
+			.Process(this->ThornsPercent)
+			.Process(this->Rebound)
+
 			.Process(this->FireFLH)
 			.Process(this->IsOnTurret)
 			.Process(this->IsOnTarget)
@@ -106,6 +137,7 @@ public:
 			.Process(this->ToSource)
 			.Process(this->ActiveOnce)
 			.Process(this->OnlyReactionWarheads)
+			.Process(this->NotReactionWarheads)
 			.Success();
 	};
 

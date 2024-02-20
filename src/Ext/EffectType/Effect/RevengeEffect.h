@@ -25,12 +25,19 @@ class RevengeEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Revenge);
 
+	virtual void OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
+
 	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
 
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
+			.Process(this->pRevenger)
+			.Process(this->pRevengerHouse)
+			.Process(this->pRevengeTarget)
+			.Process(this->_skip)
+			.Process(this->_bingo)
 			.Process(this->_count)
 			.Process(this->_markFrame)
 			.Success();
@@ -48,8 +55,28 @@ public:
 	}
 #pragma endregion
 private:
-	void Watch();
-	bool CanActive(int stacks);
+	/**
+	 *@brief 是否可以报复，并获得报复对象
+	 *
+	 * @param pRevenger 复仇者
+	 * @param pRevengerHouse 复仇者所属
+	 * @param pRevengeTarget 报复对象
+	 * @param pWH 弹头类型
+	 * @param pAttacking 攻击者
+	 * @param pAttackingHouse 攻击者所属
+	 * @return true 可以报复
+	 * @return false 不能报复
+	 */
+	bool CanRevenge(TechnoClass*& pRevenger, HouseClass*& pRevengerHouse, TechnoClass*& pRevengeTarget,
+		WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
+
+	TechnoClass* pRevenger = nullptr; // 复仇者
+	HouseClass* pRevengerHouse = nullptr; // 复仇者的阵营
+	// 检查报复对象
+	TechnoClass* pRevengeTarget = nullptr; // 报复对象
+
+	bool _skip = false;
+	bool _bingo = false;
 
 	int _count = 0;
 	int _markFrame = 0;

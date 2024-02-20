@@ -295,6 +295,30 @@ DEFINE_HOOK(0x701C78, TechnoClass_ReceiveDamage_Poison, 0x6)
 */
 #pragma endregion
 
+// modify the real damage
+DEFINE_HOOK(0x5F5498, ObjectClass_ReceiveDamage_RealDamage, 0xC)
+{
+	GET(ObjectClass*, pThis, ESI);
+	GET(int*, pRealDamage, EDI);
+	GET_STACK(WarheadTypeClass*, pWH, 0x34 - 0x4);
+	GET_STACK(TechnoClass*, pAttacker, 0x34);
+	GET_STACK(HouseClass*, pAttackingHouse, 0x40);
+
+	TechnoClass* pTechno = nullptr;
+	if (CastToTechno(pThis, pTechno))
+	{
+		auto pExt = TechnoExt::ExtMap.Find(pTechno);
+		pExt->_GameObject->Foreach([&](Component* c)
+		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamageReal(pRealDamage, pWH, pAttacker, pAttackingHouse); } });
+		R->ECX(*pRealDamage);
+		if (*pRealDamage < 0)
+		{
+			return 0x5F546A;
+		}
+	}
+	return 0;
+}
+
 DEFINE_HOOK(0x701DFF, TechnoClass_ReceiveDamageEnd, 0x7)
 {
 	GET(TechnoClass*, pThis, ESI);

@@ -434,9 +434,6 @@ void FindAndDamageStandOrVUnit(CoordStruct location, int damage,
 	WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse, ObjectClass* exclude)
 {
 	double distance = pWH->CellSpread * Unsorted::LeptonsPerCell;
-	WarheadTypeExt::TypeData* warheadTypeData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
-	bool affectInAir = warheadTypeData->AffectInAir;
-
 	std::map<TechnoClass*, DamageGroup> targets;
 	// 检索爆炸范围内的替身
 	for (auto standExt : TechnoExt::StandArray)
@@ -464,9 +461,8 @@ void FindAndDamageStandOrVUnit(CoordStruct location, int damage,
 	// 炸了它
 	for (auto t : targets)
 	{
-		TechnoClass* pTarget = t.first;
 		DamageGroup damageGroup = t.second;
-		t.first->ReceiveDamage(&damage, damageGroup.Distance, pWH, pAttacker, false, false, pAttackingHouse);
+		t.first->ReceiveDamage(&damage, (int)damageGroup.Distance, pWH, pAttacker, false, false, pAttackingHouse);
 	}
 
 }
@@ -488,7 +484,7 @@ bool CheckAndMarkTarget(TechnoClass* pTarget, double distance, CoordStruct locat
 			int realDamage = 0;
 			// 找到一个在范围内的目标，检查弹头是否可以影响该目标
 			if (CanAffectMe(pTarget, pAttackingHouse, pWH)
-				&& CanDamageMe(pTarget, damage, dist, pWH, realDamage))
+				&& CanDamageMe(pTarget, damage, (int)dist, pWH, realDamage))
 			{
 				damageGroup.pTarget = pTarget;
 				damageGroup.Distance = dist;
