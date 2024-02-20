@@ -26,7 +26,7 @@ public:
 #define STATE_SCRIPT(STATE_NAME) \
 	DECLARE_DYNAMIC_SCRIPT(STATE_NAME ## State, StateScript<STATE_NAME ## Data>) \
 
-#define GET_STATE(STATE_NAME) \
+#define STATE_VAR_DEFINE(STATE_NAME) \
 	STATE_NAME ## State * _ ## STATE_NAME = nullptr; \
 	STATE_NAME ## State * Get ## STATE_NAME() \
 	{ \
@@ -38,10 +38,10 @@ public:
 	} \
 	__declspec(property(get = Get ## STATE_NAME)) STATE_NAME ## State* STATE_NAME; \
 
-#define INIT_STATE(STATE_NAME) \
+#define STATE_VAR_INIT(STATE_NAME) \
 	FindOrAttach<STATE_NAME ## State>(); \
 
-#define TRY_GET_STATE(STATE_NAME) \
+#define STATE_VAR_TRYGET(STATE_NAME) \
 	else if (dynamic_cast<T*>(STATE_NAME)) \
 		state = STATE_NAME; \
 

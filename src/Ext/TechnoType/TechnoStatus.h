@@ -21,7 +21,9 @@
 #include <Ext/EffectType/Effect/CrateBuffData.h>
 #include <Ext/EffectType/Effect/StandData.h>
 
+// TODO Add new State
 #include <Ext/StateType/State/AntiBulletState.h>
+#include <Ext/StateType/State/DeselectState.h>
 #include <Ext/StateType/State/DestroyAnimState.h>
 #include <Ext/StateType/State/DestroySelfState.h>
 #include <Ext/StateType/State/GiftBoxState.h>
@@ -86,35 +88,39 @@ public:
 
 	virtual void OnSelect(bool& selectable) override;
 
+	// TODO Add new State
 	// 状态机
-	GET_STATE(AntiBullet);
-	GET_STATE(DestroyAnim);
-	GET_STATE(DestroySelf);
-	GET_STATE(GiftBox);
-	GET_STATE(Paintball);
-	GET_STATE(Transform);
+	STATE_VAR_DEFINE(AntiBullet);
+	STATE_VAR_DEFINE(Deselect);
+	STATE_VAR_DEFINE(DestroyAnim);
+	STATE_VAR_DEFINE(DestroySelf);
+	STATE_VAR_DEFINE(GiftBox);
+	STATE_VAR_DEFINE(Paintball);
+	STATE_VAR_DEFINE(Transform);
 
 	void AttachState()
 	{
-		INIT_STATE(AntiBullet);
-		INIT_STATE(DestroyAnim);
-		INIT_STATE(DestroySelf);
-		INIT_STATE(GiftBox);
-		INIT_STATE(Paintball);
-		INIT_STATE(Transform);
+		STATE_VAR_INIT(AntiBullet);
+		STATE_VAR_INIT(Deselect);
+		STATE_VAR_INIT(DestroyAnim);
+		STATE_VAR_INIT(DestroySelf);
+		STATE_VAR_INIT(GiftBox);
+		STATE_VAR_INIT(Paintball);
+		STATE_VAR_INIT(Transform);
 	}
 
 	template <typename T>
 	bool TryGetState(IStateScript*& state)
 	{
 		if (false) {}
-		TRY_GET_STATE(AntiBullet)
-		TRY_GET_STATE(DestroyAnim)
-		TRY_GET_STATE(DestroySelf)
-		TRY_GET_STATE(GiftBox)
-		TRY_GET_STATE(Paintball)
-		TRY_GET_STATE(Transform)
-		return state != nullptr;
+		STATE_VAR_TRYGET(AntiBullet)
+			STATE_VAR_TRYGET(Deselect)
+			STATE_VAR_TRYGET(DestroyAnim)
+			STATE_VAR_TRYGET(DestroySelf)
+			STATE_VAR_TRYGET(GiftBox)
+			STATE_VAR_TRYGET(Paintball)
+			STATE_VAR_TRYGET(Transform)
+			return state != nullptr;
 	}
 
 	// 踩箱子获得的buff
@@ -157,7 +163,9 @@ public:
 			.Process(this->Freezing)
 
 			.Process(this->VirtualUnit)
+
 			.Process(this->Disappear)
+			.Process(this->_disableSelectable)
 
 			.Process(this->_deactivateDimEMP)
 			.Process(this->_deactivateDimPowered)
@@ -218,6 +226,7 @@ private:
 	void OnRemove_Stand();
 
 	void OnUpdate_AntiBullet();
+	void OnUpdate_Deselect();
 	void OnUpdate_GiftBox();
 	void OnUpdate_Paintball();
 	void OnUpdate_Transform();
@@ -246,6 +255,9 @@ private:
 
 	CoordStruct _location{};
 	bool _isMoving = false;
+
+	// 选择状态
+	bool _disableSelectable = false;
 
 	// 部署变形
 	DeployToTransformData* _transformData = nullptr;

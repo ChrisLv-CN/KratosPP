@@ -413,10 +413,10 @@ void TechnoStatus::InheritedStatsTo(TechnoStatus*& heir)
 	*heir->Paintball = *Paintball;
 	*heir->Transform = *Transform;
 	// 状态机
-	// GET_STATE(AntiBullet);
-	// GET_STATE(DestroyAnim);
-	// GET_STATE(DestroySelf);
-	// GET_STATE(GiftBox);
-	// GET_STATE(Paintball);
-	// GET_STATE(Transform);
+	// STATE_VAR_DEFINE(AntiBullet);
+	// STATE_VAR_DEFINE(DestroyAnim);
+	// STATE_VAR_DEFINE(DestroySelf);
+	// STATE_VAR_DEFINE(GiftBox);
+	// STATE_VAR_DEFINE(Paintball);
+	// STATE_VAR_DEFINE(Transform);
 }

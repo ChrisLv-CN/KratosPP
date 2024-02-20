@@ -139,6 +139,7 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_Transform();
 
 		OnUpdate_AntiBullet();
+		OnUpdate_Deselect();
 		OnUpdate_GiftBox();
 		OnUpdate_Paintball();
 	}
@@ -215,11 +216,13 @@ void TechnoStatus::OnSelect(bool& selectable)
 	selectable = OnSelect_VirtualUnit();
 	if (!selectable)
 	{
+		Break();
 		return;
 	}
 	selectable = OnSelect_Deselect();
 	if (!selectable)
 	{
+		Break();
 		return;
 	}
 }

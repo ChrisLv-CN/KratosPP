@@ -178,8 +178,3 @@ bool TechnoStatus::OnSelect_VirtualUnit()
 	}
 	return !VirtualUnit;
 }
-
-bool TechnoStatus::OnSelect_Deselect()
-{
-	return true;
-}

@@ -59,24 +59,24 @@ public:
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
 	// 状态机
-	GET_STATE(GiftBox);
-	GET_STATE(DestroySelf);
-	GET_STATE(Paintball);
+	STATE_VAR_DEFINE(GiftBox);
+	STATE_VAR_DEFINE(DestroySelf);
+	STATE_VAR_DEFINE(Paintball);
 
 	void AttachState()
 	{
-		INIT_STATE(GiftBox);
-		INIT_STATE(DestroySelf);
-		INIT_STATE(Paintball);
+		STATE_VAR_INIT(GiftBox);
+		STATE_VAR_INIT(DestroySelf);
+		STATE_VAR_INIT(Paintball);
 	}
 
 	template <typename T>
 	bool TryGetState(IStateScript*& state)
 	{
 		if (false) {}
-		TRY_GET_STATE(GiftBox)
-		TRY_GET_STATE(DestroySelf)
-		TRY_GET_STATE(DestroySelf)
+		STATE_VAR_TRYGET(GiftBox)
+		STATE_VAR_TRYGET(DestroySelf)
+		STATE_VAR_TRYGET(DestroySelf)
 		return state != nullptr;
 	}
 

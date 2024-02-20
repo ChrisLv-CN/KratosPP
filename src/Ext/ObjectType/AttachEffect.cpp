@@ -151,12 +151,12 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 						// TODO Get stand's state
 
 						// 状态机
-						// GET_STATE(AntiBullet);
-						// GET_STATE(DestroyAnim);
-						// GET_STATE(DestroySelf);
-						// GET_STATE(GiftBox);
-						// GET_STATE(Paintball);
-						// GET_STATE(Transform);
+						// STATE_VAR_DEFINE(AntiBullet);
+						// STATE_VAR_DEFINE(DestroyAnim);
+						// STATE_VAR_DEFINE(DestroySelf);
+						// STATE_VAR_DEFINE(GiftBox);
+						// STATE_VAR_DEFINE(Paintball);
+						// STATE_VAR_DEFINE(Transform);
 
 						if (state) {}
 						GET_STAND_STATE(AntiBullet)
@@ -1163,6 +1163,7 @@ void AttachEffect::CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, boo
 					|| (pWeapon->Warhead->IsLocomotor && data.IsLocomotor))
 				{
 					ceaseFire = true;
+					Break();
 				}
 			}
 		}

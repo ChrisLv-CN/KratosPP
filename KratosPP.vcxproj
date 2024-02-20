@@ -97,6 +97,7 @@
     <ClCompile Include="src\Ext\TechnoType\JumpjetFacing.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\AntiBullet.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\CrateBuff.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\Deselect.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\DestroyAnim.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\DestroySelf.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\GiftBox.cpp" />
@@ -257,6 +258,8 @@
     <ClInclude Include="src\Ext\StateType\StateScript.h" />
     <ClInclude Include="src\Ext\StateType\State\AntiBulletData.h" />
     <ClInclude Include="src\Ext\StateType\State\AntiBulletState.h" />
+    <ClInclude Include="src\Ext\StateType\State\DeselectData.h" />
+    <ClInclude Include="src\Ext\StateType\State\DeselectState.h" />
     <ClInclude Include="src\Ext\StateType\State\DestroyAnimData.h" />
     <ClInclude Include="src\Ext\StateType\State\DestroyAnimState.h" />
     <ClInclude Include="src\Ext\StateType\State\DestroySelfData.h" />

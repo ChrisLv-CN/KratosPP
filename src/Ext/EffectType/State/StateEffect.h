@@ -54,6 +54,7 @@ public: \
 // TODO Add State effects
 
 STATE_EFFECT_DEFINE(AntiBullet);
+STATE_EFFECT_DEFINE(Deselect);
 STATE_EFFECT_DEFINE(DestroyAnim);
 STATE_EFFECT_DEFINE(DestroySelf);
 STATE_EFFECT_DEFINE(GiftBox);
