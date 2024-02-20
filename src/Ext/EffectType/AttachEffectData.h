@@ -9,13 +9,14 @@
 // TODO Add new Effects
 #include "Effect/AnimationData.h"
 #include "Effect/BroadcastData.h"
-#include "Effect/MarkData.h"
+#include "Effect/CrateBuffData.h"
 #include "Effect/ImmuneData.h"
 #include "Effect/InfoData.h"
+#include "Effect/MarkData.h"
 #include "Effect/RevengeData.h"
 #include "Effect/StackData.h"
 #include "Effect/StandData.h"
-#include "Effect/CrateBuffData.h"
+#include "Effect/VampireData.h"
 // State Effects
 #include <Ext/StateType/State/AntiBulletData.h>
 #include <Ext/StateType/State/DestroyAnimData.h>
@@ -133,6 +134,7 @@ public:
 	EFFECT_VAR_DEFINE(Revenge);
 	EFFECT_VAR_DEFINE(Stack);
 	EFFECT_VAR_DEFINE(Stand);
+	EFFECT_VAR_DEFINE(Vampire);
 	// State Effects
 	EFFECT_VAR_DEFINE(AntiBullet);
 	EFFECT_VAR_DEFINE(DestroyAnim);
@@ -153,6 +155,7 @@ public:
 		EFFECT_VAR_READ(Revenge);
 		EFFECT_VAR_READ(Stack);
 		EFFECT_VAR_READ(Stand);
+		EFFECT_VAR_READ(Vampire);
 		// State Effects
 		EFFECT_VAR_READ(AntiBullet);
 		EFFECT_VAR_READ(DestroyAnim);
@@ -175,6 +178,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Revenge);
 		EFFECT_VAR_SCRIPT_NAME(Stack);
 		EFFECT_VAR_SCRIPT_NAME(Stand);
+		EFFECT_VAR_SCRIPT_NAME(Vampire);
 		// State Effects
 		EFFECT_VAR_SCRIPT_NAME(AntiBullet);
 		EFFECT_VAR_SCRIPT_NAME(DestroyAnim);
@@ -200,6 +204,7 @@ public:
 			EFFECT_VAR_PROCESS(Revenge)
 			EFFECT_VAR_PROCESS(Stack)
 			EFFECT_VAR_PROCESS(Stand)
+			EFFECT_VAR_PROCESS(Vampire)
 			// State Effects
 			EFFECT_VAR_PROCESS(AntiBullet)
 			EFFECT_VAR_PROCESS(DestroyAnim)

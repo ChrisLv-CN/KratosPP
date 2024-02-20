@@ -63,6 +63,7 @@
     <ClCompile Include="src\Ext\EffectType\Effect\RevengeEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\StackEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\StandEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\VampireEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\State\StateEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\State\StateEffectScript.cpp" />
     <ClCompile Include="src\Ext\Helper\CastEx.cpp" />
@@ -103,6 +104,7 @@
     <ClCompile Include="src\Ext\TechnoType\Status\Paintball.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Stand.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Transform.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\Vampire.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Spawn.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoTrail.cpp" />
@@ -231,6 +233,8 @@
     <ClInclude Include="src\Ext\EffectType\Effect\StackEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\StandData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\StandEffect.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\VampireData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\VampireEffect.h" />
     <ClInclude Include="src\Ext\EffectType\State\StateEffect.h" />
     <ClInclude Include="src\Ext\EffectType\State\StateEffectScript.h" />
     <ClInclude Include="src\Ext\Helper\CastEx.h" />
