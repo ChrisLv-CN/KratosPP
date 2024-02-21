@@ -32,7 +32,7 @@ public:
 	{ \
 		if (!_ ## STATE_NAME) \
 		{ \
-			_ ## STATE_NAME = GetComponent<STATE_NAME ## State>(); \
+			_ ## STATE_NAME = FindOrAttach<STATE_NAME ## State>(); \
 		} \
 		return _ ## STATE_NAME; \
 	} \
@@ -44,6 +44,9 @@ public:
 #define STATE_VAR_TRYGET(STATE_NAME) \
 	else if (dynamic_cast<T*>(STATE_NAME)) \
 		state = STATE_NAME; \
+
+#define STATE_VAR_INHERITED(STATE_NAME) \
+	*heir->STATE_NAME = *STATE_NAME \
 
 template <typename TData>
 class StateScript : public ObjectScript, public IStateScript

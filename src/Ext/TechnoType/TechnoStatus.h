@@ -115,6 +115,19 @@ public:
 		STATE_VAR_INIT(Transform);
 	}
 
+	void InheritedStatsTo(TechnoStatus*& heir)
+	{
+		STATE_VAR_INHERITED(AntiBullet);
+		STATE_VAR_INHERITED(Deselect);
+		STATE_VAR_INHERITED(DestroyAnim);
+		STATE_VAR_INHERITED(DestroySelf);
+		STATE_VAR_INHERITED(Freeze);
+		// STATE_VAR_INHERITED(GiftBox);
+		STATE_VAR_INHERITED(Paintball);
+		STATE_VAR_INHERITED(Scatter);
+		STATE_VAR_INHERITED(Transform);
+	}
+
 	template <typename T>
 	bool TryGetState(IStateScript*& state)
 	{
@@ -224,7 +237,6 @@ private:
 	// 礼物盒
 	bool IsOnMark_GiftBox();
 	void ReleaseGift(std::vector<std::string> gifts, GiftBoxData data);
-	void InheritedStatsTo(TechnoStatus*& heir);
 
 	// 反抛射体
 	bool WeaponNoAA(int weaponIdx);
