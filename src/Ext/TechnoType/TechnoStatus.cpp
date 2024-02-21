@@ -4,6 +4,10 @@
 #include <Ext/Common/FireSuperManager.h>
 #include <Ext/Common/PrintTextManager.h>
 
+#include <Extension/WarheadTypeExt.h>
+
+#include <Ext/Helper/Scripts.h>
+
 #include <Ext/ObjectType/AttachEffect.h>
 
 #include "AutoFireAreaWeapon.h"
@@ -175,6 +179,61 @@ void TechnoStatus::OnTemporalUpdate(TemporalClass* pTemporal)
 
 void TechnoStatus::OnReceiveDamage(args_ReceiveDamage* args)
 {
+	// 弹头效果
+	if (!IsDeadOrInvisible(pTechno))
+	{
+		if (WarheadTypeExt::TypeData* whTypeData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(args->WH))
+		{
+			int realDamage = *args->Damage;
+			if (CanAffectHouse(pTechno->Owner, args->SourceHouse, whTypeData->AffectsOwner, whTypeData->AffectsAllies, whTypeData->AffectsEnemies)
+				&& CanDamageMe(pTechno, *args->Damage, args->DistanceToEpicenter, args->WH, realDamage, whTypeData->EffectsRequireDamage))
+			{
+				// 清理目标弹头
+				if (whTypeData->ClearTarget && pTechno->Target)
+				{
+					ClearAllTarget(pTechno);
+				}
+				// 清理伪装弹头
+				if (whTypeData->ClearDisguise && pTechno->IsDisguised())
+				{
+					pTechno->Disguised = false;
+				}
+				// 欠揍弹头
+				TechnoClass* pAttacker = nullptr;
+				if (whTypeData->Lueluelue && CastToTechno(args->Attacker, pAttacker) && CanAttack(pTechno, pAttacker))
+				{
+					pTechno->SetTarget(pAttacker);
+					pTechno->ForceMission(Mission::Attack);
+				}
+				// 强制任务弹头
+				Mission forceMission = whTypeData->ForceMission;
+				if (forceMission != Mission::None)
+				{
+					pTechno->ForceMission(forceMission);
+				}
+				// 经验修改弹头
+				if ((whTypeData->ExpCost != 0 || whTypeData->ExpLevel != ExpLevel::None) && pTechno->GetTechnoType()->Trainable)
+				{
+					switch (whTypeData->ExpLevel)
+					{
+					case ExpLevel::Rookie:
+						pTechno->Veterancy.SetRookie();
+						break;
+					case ExpLevel::Veteran:
+						pTechno->Veterancy.SetVeteran();
+						break;
+					case ExpLevel::Elite:
+						pTechno->Veterancy.SetElite();
+						break;
+					default:
+						int cost = pTechno->GetTechnoType()->GetActualCost(pTechno->Owner);
+						pTechno->Veterancy.Add(cost, whTypeData->ExpCost);
+						break;
+					}
+				}
+			}
+		}
+	}
 	OnReceiveDamage_Stand(args);
 }
 
