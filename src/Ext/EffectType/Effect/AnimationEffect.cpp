@@ -71,7 +71,7 @@ void AnimationEffect::KillIdleAnim()
 	}
 }
 
-void AnimationEffect::Start() {
+void AnimationEffect::OnStart() {
 	// 激活动画
 	if (Data->ActiveAnim.Enable)
 	{
@@ -126,6 +126,16 @@ void AnimationEffect::End(CoordStruct location)
 			}
 		}
 	}
+}
+
+void AnimationEffect::OnPause()
+{
+	End(CoordStruct::Empty);
+}
+
+void AnimationEffect::OnRecover()
+{
+	OnStart();
 }
 
 void AnimationEffect::OnPut(CoordStruct* pCoords, DirType faceDir)

@@ -34,6 +34,10 @@ class EffectScript : public ObjectScript, public IAEScript
 {
 public:
 
+	virtual void Start() override;
+	virtual void Pause() override;
+	virtual void Recover() override;
+
 	virtual EffectData* GetData() { return nullptr; };
 
 	AttachEffectData AEData{};
@@ -47,6 +51,8 @@ public:
 	bool Serialize(T& stream) {
 		return stream
 			.Process(this->AEData)
+			.Process(this->_started)
+			.Process(this->_pause)
 			.Success();
 	};
 
@@ -61,5 +67,7 @@ public:
 		return const_cast<EffectScript*>(this)->Serialize(stream);
 	}
 #pragma endregion
-private:
+protected:
+	bool _started = false;
+	bool _pause = false;
 };

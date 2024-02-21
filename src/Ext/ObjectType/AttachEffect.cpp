@@ -306,7 +306,7 @@ void AttachEffect::Attach(AttachEffectData data,
 {
 	if (!data.Enable)
 	{
-		Debug::Log("[Developer warning]Attemp to attach an invalid AE [%s] to [%s]\n", data.Name.c_str(), pObject->GetType()->ID);
+		Debug::Log("Warning: Attemp to attach an invalid AE [%s] to [%s]\n", data.Name.c_str(), pObject->GetType()->ID);
 		return;
 	}
 	// 检查是否穿透铁幕
@@ -357,7 +357,7 @@ void AttachEffect::Attach(AttachEffectData data,
 	}
 	else
 	{
-		Debug::Log("[Developer warning]Attach AE [%s] to [%s] form a unknow source [%s]\n", data.Name.c_str(), pObject->GetType()->ID, pSource->WhatAmI());
+		Debug::Log("Warning: Attach AE [%s] to [%s] form a unknow source [%s]\n", data.Name.c_str(), pObject->GetType()->ID, pSource->WhatAmI());
 		return;
 	}
 	// 更改所属，如果需要
@@ -668,7 +668,7 @@ void AttachEffect::DetachByToken(std::string token)
 	}
 }
 
-void AttachEffect::CheckDurationAndDisable()
+void AttachEffect::CheckDurationAndDisable(bool silence)
 {
 	CoordStruct location = _location;
 	ForeachChild([&](Component* c) {
@@ -678,19 +678,22 @@ void AttachEffect::CheckDurationAndDisable()
 			if (!ae->IsAlive())
 			{
 				AttachEffectData data = ae->AEData;
-				// 加入冷却计时器
-				StartDelay(data);
-				// 结束AE
-				ae->End(location);
+				if (!silence)
+				{
+					// 加入冷却计时器
+					StartDelay(data);
+					// 结束AE
+					ae->End(location);
+					// 添加NextAE
+					std::string nextAE = data.Next;
+					if (IsNotNone(nextAE) && !IsDeadOrInvisible(pObject))
+					{
+						Attach(nextAE, false, ae->pSource, ae->pSourceHouse);
+					}
+				}
 				ReduceStackCount(data);
 				// Deactivate的组件不会再执行Foreach事件，标记为失效，以便父组件将其删除
 				ae->Disable();
-				// 添加NextAE
-				std::string nextAE = data.Next;
-				if (IsNotNone(nextAE) && !IsDeadOrInvisible(pObject))
-				{
-					Attach(nextAE, false, ae->pSource, ae->pSourceHouse);
-				}
 			}
 		}
 		});

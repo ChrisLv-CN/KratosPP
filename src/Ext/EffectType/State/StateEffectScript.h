@@ -32,7 +32,7 @@ class StateEffect : public EffectScript
 {
 public:
 
-	virtual void ResetDuration() override
+	virtual void ResetDuration() override final
 	{
 		if (State)
 		{
@@ -55,7 +55,7 @@ public:
 		}
 	};
 
-	virtual void Start() override
+	virtual void Start() override final
 	{
 		if (State)
 		{
@@ -78,13 +78,23 @@ public:
 		}
 	}
 
-	virtual void End(CoordStruct location) override
+	virtual void End(CoordStruct location) override final
 	{
 		if (State)
 		{
 			State->End(AE->Token);
 		}
 	};
+
+	virtual void Pause() override final
+	{
+		End(CoordStruct::Empty);
+	}
+
+	virtual void Recover() override final
+	{
+		Start();
+	}
 
 	virtual IStateScript* GetState(TechnoStatus* status) = 0;
 	virtual IStateScript* GetState(BulletStatus* status) = 0;

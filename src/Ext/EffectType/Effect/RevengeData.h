@@ -26,9 +26,9 @@ public:
 	std::vector<std::string> AttachEffects{};
 	std::vector<double> AttachChances{};
 
-	// 伤害反射
-	double ThornsPercent = 0; // 反伤比例
-	bool Rebound = false; // 反伤后自己不受伤
+	// 伤害分配
+	double DamageSelfPercent = 1; // 自身吃到的伤害比例
+	double DamageEnemyPercent = 0; // 敌人吃到的伤害比例
 
 	CoordStruct FireFLH = CoordStruct::Empty;
 	bool IsOnTurret = true;
@@ -60,10 +60,10 @@ public:
 		AttachEffects = reader->GetList(title + "AttachEffects", AttachEffects);
 		AttachChances = reader->GetChanceList(title + "AttachChances", AttachChances);
 
-		ThornsPercent = reader->GetPercent(title + "ThornsPercent", ThornsPercent);
-		Rebound = reader->Get(title + "Rebound", Rebound);
+		DamageSelfPercent = reader->GetPercent(title + "DamageSelfPercent", DamageSelfPercent);
+		DamageEnemyPercent = reader->GetPercent(title + "DamageEnemyPercent", DamageEnemyPercent);
 
-		Enable = Chance > 0 && (!Types.empty() || WeaponIndex > -1 || !AttachEffects.empty() || ThornsPercent != 0);
+		Enable = Chance > 0 && (!Types.empty() || WeaponIndex > -1 || !AttachEffects.empty() || DamageSelfPercent != 1 || DamageEnemyPercent != 0);
 		if (Enable)
 		{
 			Enable = AffectTechno;
@@ -126,8 +126,8 @@ public:
 			.Process(this->AttachEffects)
 			.Process(this->AttachChances)
 
-			.Process(this->ThornsPercent)
-			.Process(this->Rebound)
+			.Process(this->DamageSelfPercent)
+			.Process(this->DamageEnemyPercent)
 
 			.Process(this->FireFLH)
 			.Process(this->IsOnTurret)

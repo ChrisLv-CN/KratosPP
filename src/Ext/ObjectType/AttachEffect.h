@@ -156,6 +156,13 @@ public:
 	 */
 	void DetachByToken(std::string token);
 
+	/**
+	 * @brief 检查生命值并关闭死亡的AE
+	 *
+	 * @param silence 沉默模式，只移除，不触发AE结束事件、冷却计时和Next附加
+	 */
+	void CheckDurationAndDisable(bool silence = false);
+
 	void OnGScreenRender(EventSystem* sender, Event e, void* args);
 
 	virtual void Awake() override
@@ -234,8 +241,6 @@ private:
 	 *
 	 */
 	void AttachGroupAE();
-
-	void CheckDurationAndDisable();
 
 	bool IsOnMark(FilterData data);
 	bool HasContradiction(AttachEffectData data);

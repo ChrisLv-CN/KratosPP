@@ -27,9 +27,11 @@ public:
 
 	void UpdateLocationOffset(CoordStruct offset);
 
-	virtual void Start() override;
-
+	virtual void OnStart() override;
 	virtual void End(CoordStruct location) override;
+
+	virtual void OnRecover() override;
+	virtual void OnPause() override;
 
 	virtual void OnPut(CoordStruct* pCoord, DirType faceDir) override;
 	virtual void OnUpdate() override;

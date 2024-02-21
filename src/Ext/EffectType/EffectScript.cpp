@@ -10,3 +10,28 @@ AttachEffectScript* EffectScript::GetAE()
 	}
 	return _ae;
 }
+
+void EffectScript::Start()
+{
+	_started = true;
+	OnStart();
+}
+
+void EffectScript::Pause()
+{
+	_pause = true;
+	OnPause();
+}
+
+void EffectScript::Recover()
+{
+	if (!_started)
+	{
+		Start();
+	}
+	else
+	{
+		OnRecover();
+		_pause = false;
+	}
+}

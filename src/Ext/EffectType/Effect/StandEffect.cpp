@@ -551,7 +551,7 @@ void StandEffect::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	}
 }
 
-void StandEffect::Start()
+void StandEffect::OnStart()
 {
 	EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &StandEffect::OnTechnoDelete);
 	CreateAndPutStand();
@@ -566,9 +566,19 @@ void StandEffect::End(CoordStruct location)
 	}
 }
 
+void StandEffect::OnPause()
+{
+	End(CoordStruct::Empty);
+}
+
+void StandEffect::OnRecover()
+{
+	OnStart();
+}
+
 bool StandEffect::IsAlive()
 {
-	if (IsDead(pStand))
+	if (IsDead(pStand) && _pause)
 	{
 		return false;
 	}

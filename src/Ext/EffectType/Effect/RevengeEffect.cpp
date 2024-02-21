@@ -84,24 +84,19 @@ void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH,
 		// 准备报复
 		if (_bingo)
 		{
-			// 反伤
-			if (Data->ThornsPercent != 0)
+			int damage = *pRealDamage;
+			// 减伤
+			if (Data->DamageSelfPercent != 1)
 			{
-				int damage = *pRealDamage;
-				int refDamage = (int)(damage * Data->ThornsPercent);
-				damage -= refDamage;
-				// 调整自身收到的伤害
-				if (Data->Rebound)
-				{
-					*pRealDamage = 0;
-				}
-				else
-				{
-					*pRealDamage = damage;
-				}
+				*pRealDamage = (int)(damage * Data->DamageSelfPercent);
+			}
+			// 反伤
+			if (Data->DamageEnemyPercent != 0)
+			{
 				// 反射给攻击者
-				if (!IsDeadOrInvisible(pRevengeTarget))
+				if (!IsDeadOrInvisible(pRevengeTarget) && !IsImmune(pRevengeTarget, true))
 				{
+					int refDamage = (int)(damage * Data->DamageEnemyPercent);
 					pRevengeTarget->TakeDamage(refDamage, pRevengeTarget->GetTechnoType()->Crewed);
 				}
 			}

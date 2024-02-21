@@ -8,6 +8,7 @@
 #include <Ext/Helper/Gift.h>
 #include <Ext/Helper/Scripts.h>
 
+#include <Ext/EffectType/AttachEffectScript.h>
 #include <Ext/ObjectType/AttachEffect.h>
 
 
@@ -325,9 +326,21 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 					boxGO->AddComponent(giftAEM);
 					// 修改变量
 					giftAEM = boxAEM;
+					// 关闭不可继承的AE
+					giftAEM->ForeachChild([](Component* c) {
+						if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+						{
+							if (!ae->AEData.Inheritable)
+							{
+								ae->TimeToDie();
+							}
+						}
+						});
+					giftAEM->CheckDurationAndDisable(true);
 					// 发出类型变更的通知
 					dynamic_cast<GameObject*>(giftGO)->ExtChanged = true;
 				}
+
 				// 附加新的AE
 				if (!data.AttachEffects.empty())
 				{

@@ -108,6 +108,7 @@ void AttachEffectScript::ResetEffectsDuration()
 
 void AttachEffectScript::TimeToDie()
 {
+	_hold = false;
 	_immortal = false;
 	_lifeTimer.Stop();
 }
@@ -186,7 +187,7 @@ bool AttachEffectScript::IsAlive()
 			}
 		}
 		// 检查是否有Effect失活
-		if (IsActive())
+		if (IsActive() && !_hold)
 		{
 			bool hasDead = false;
 			ForeachChild([&hasDead](Component* c) {
@@ -267,6 +268,56 @@ void AttachEffectScript::End(CoordStruct location)
 		});
 }
 
+void AttachEffectScript::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+{
+	if (_isDelayToEnable)
+	{
+		return;
+	}
+	if (damageState != DamageState::NowDead && !OwnerIsDead())
+	{
+		double healthPercent = pTechno->GetHealthPercentage();
+		double min = AEData.DeactiveWhenHealthPrecent;
+		double max = AEData.ActiveWhenHealthPrecent;
+		if (max <= min)
+		{
+			Debug::Log("Warning: AE [%s] Active when health precent setup error.\n", AEData.Name.c_str());
+			return;
+		}
+		if (healthPercent <= max && healthPercent >= min)
+		{
+			// 恢复Effects
+			for (Component* c : _children)
+			{
+				if (auto cc = dynamic_cast<IAEScript*>(c))
+				{
+					if (!c->IsActive())
+					{
+						c->Activate();
+						cc->Recover();
+					}
+				}
+			}
+		}
+		else
+		{
+			// 暂停Effects
+			for (Component* c : _children)
+			{
+				if (auto cc = dynamic_cast<IAEScript*>(c))
+				{
+					if (c->IsActive())
+					{
+						c->Deactivate();
+						cc->Pause();
+					}
+				}
+			}
+		}
+	}
+};
+
+
 void AttachEffectScript::OnGScreenRender(CoordStruct location)
 {
 	ForeachChild([&location](Component* c) {
@@ -317,6 +368,19 @@ void AttachEffectScript::EnableEffects()
 {
 	_isDelayToEnable = false;
 	SetupLifeTimer();
+	if (pTechno)
+	{
+		// 需要满足血量触发
+		double healthPrecent = pTechno->GetHealthPercentage();
+		double min = AEData.DeactiveWhenHealthPrecent;
+		double max = AEData.ActiveWhenHealthPrecent;
+		if (healthPrecent > max || healthPrecent < min)
+		{
+			_hold = true;
+			return;
+		}
+	}
+	_hold = false;
 	// Effect is disable stats, so there cannot use ForeachChild function
 	for (Component* c : _children)
 	{

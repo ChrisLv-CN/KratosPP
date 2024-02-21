@@ -24,8 +24,14 @@ class IAEScript
 {
 public:
 	virtual void Start() {};
+	virtual void OnStart() {};
 	virtual void End(CoordStruct location) {};
 	virtual void ResetDuration() {};
+
+	virtual void Pause() {};
+	virtual void OnPause() {};
+	virtual void Recover() {};
+	virtual void OnRecover() {};
 
 	virtual bool IsAlive() { return true; };
 
@@ -134,6 +140,8 @@ public:
 	 */
 	virtual void End(CoordStruct location) override;
 
+	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
+
 	virtual void OnGScreenRender(CoordStruct location) override;
 	virtual void OnGScreenRenderEnd(CoordStruct location) override;
 
@@ -158,6 +166,7 @@ public:
 			.Process(this->_delayToEnable)
 			.Process(this->_inBuilding)
 			.Process(this->_isDelayToEnable)
+			.Process(this->_hold)
 			.Success();
 	};
 
@@ -180,6 +189,7 @@ private:
 	bool _delayToEnable = false; // 延迟开启
 	bool _inBuilding = false; // 是否在建造中
 	bool _isDelayToEnable = false; // 需要延迟激活
+	bool _hold = false; // 跳过效果器死亡检查，用于暂停效果器，AE不会当成死亡结束
 
 	/**
 	 *@brief 初始化所有的Effects并加入Sub-Component

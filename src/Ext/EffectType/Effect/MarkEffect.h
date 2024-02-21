@@ -25,8 +25,6 @@ class MarkEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Mark);
 
-	virtual void Start() override;
-
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {

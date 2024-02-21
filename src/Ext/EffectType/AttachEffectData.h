@@ -5,7 +5,7 @@
 #include <vector>
 #include <set>
 
-#include <Ext/ObjectType/FilterData.h>
+#include "Effect/EffectData.h"
 // TODO Add new Effects
 #include "Effect/AnimationData.h"
 #include "Effect/BroadcastData.h"
@@ -96,7 +96,7 @@ enum class AttachOwnerType
 #define EFFECT_VAR_PROCESS(EFFECT_DATA_NAME) \
 	.Process(this->EFFECT_DATA_NAME) \
 
-class AttachEffectData : public FilterData
+class AttachEffectData : public EffectData
 {
 public:
 	std::string Name{ "" };
@@ -231,14 +231,14 @@ public:
 			;
 	}
 
-	AttachEffectData() : FilterData()
+	AttachEffectData() : EffectData()
 	{
 		this->AffectBullet = false;
 	}
 
 	virtual void Read(INIBufferReader* reader) override
 	{
-		FilterData::Read(reader);
+		EffectData::Read(reader);
 		Read(reader, "");
 	}
 
@@ -252,7 +252,7 @@ public:
 		{
 			Duration = druation;
 
-			FilterData::Read(reader, title);
+			EffectData::Read(reader, title);
 
 			ReadEffects(reader);
 
@@ -338,12 +338,12 @@ public:
 
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
-		FilterData::Load(stream, registerForChange);
+		EffectData::Load(stream, registerForChange);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
-		FilterData::Save(stream);
+		EffectData::Save(stream);
 		return const_cast<AttachEffectData*>(this)->Serialize(stream);
 	}
 #pragma endregion

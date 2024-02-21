@@ -49,8 +49,12 @@ public:
 	virtual std::string GetEffectScriptName() { return ""; };
 	virtual std::string GetStateScriptName() { return ""; };
 
-	int TriggeredTimes = -1; // 触发次数
+	// 触发条件
 	bool Powered = false; // 建筑需要使用电力
+	double ActiveWhenHealthPrecent = 1; // 血量低于这个比例再触发
+	double DeactiveWhenHealthPrecent = 0; // 血量高于这个比例触发
+
+	int TriggeredTimes = -1; // 触发次数
 	AffectWho AffectWho = AffectWho::MASTER;
 	bool DeactiveWhenCivilian = false;
 
@@ -65,8 +69,12 @@ public:
 		FilterData::Read(reader, title);
 
 		Enable = reader->Get(title + "Enable", Enable);
-		TriggeredTimes = reader->Get(title + "TriggeredTimes", TriggeredTimes);
+
 		Powered = reader->Get(title + "Powered", Powered);
+		ActiveWhenHealthPrecent = reader->GetPercent(title + "ActiveWhenHealthPrecent", ActiveWhenHealthPrecent);
+		DeactiveWhenHealthPrecent = reader->GetPercent(title + "DeactiveWhenHealthPrecent", DeactiveWhenHealthPrecent);
+
+		TriggeredTimes = reader->Get(title + "TriggeredTimes", TriggeredTimes);
 		AffectWho = reader->Get(title + "AffectWho", AffectWho);
 		DeactiveWhenCivilian = reader->Get(title + "DeactiveWhenCivilian", DeactiveWhenCivilian);
 	}

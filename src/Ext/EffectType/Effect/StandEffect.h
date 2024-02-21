@@ -29,9 +29,12 @@ public:
 
 	void OnTechnoDelete(EventSystem* sender, Event e, void* args);
 
-	virtual void Start() override;
+	virtual void OnStart() override;
 
 	virtual void End(CoordStruct location) override;
+
+	virtual void OnPause() override;
+	virtual void OnRecover() override;
 
 	virtual bool IsAlive() override;
 

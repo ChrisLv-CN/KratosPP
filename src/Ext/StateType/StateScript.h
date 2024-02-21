@@ -52,7 +52,7 @@ template <typename TData>
 class StateScript : public ObjectScript, public IStateScript
 {
 public:
-	virtual void Start(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) override
+	virtual void Start(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) override final
 	{
 		if (TData* pData = dynamic_cast<TData*>(data))
 		{
@@ -83,7 +83,7 @@ public:
 		}
 	}
 
-	virtual void End(std::string token = "") override
+	virtual void End(std::string token = "") override final
 	{
 		if (token.empty() || token == Token)
 		{
@@ -102,7 +102,7 @@ public:
 		}
 	}
 
-	virtual void Replace(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) override
+	virtual void Replace(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) override final
 	{
 		End();
 		Start(data, duration, token, receiverOwn, pTargetHouse);
@@ -129,7 +129,7 @@ public:
 		return IsActive();
 	}
 
-	virtual void ResetDuration(int duration, std::string token = "") override
+	virtual void ResetDuration(int duration, std::string token = "") override final
 	{
 		if (token.empty() || token == Token)
 		{
