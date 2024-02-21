@@ -150,6 +150,13 @@ public:
 	void DetachByName(std::vector<std::string> aeTypes);
 
 	/**
+	 *@brief 关闭并移除一组AE
+	 *
+	 * @param aeTypes AE的名称
+	 */
+	void DetachByMarks(std::vector<std::string> marks);
+
+	/**
 	 *@brief 关闭并移除一个AE
 	 *
 	 * @param token 令牌

@@ -11,11 +11,11 @@
 #include <Common/Components/ScriptComponent.h>
 #include <Extension/AnimExt.h>
 
+#include <Ext/EffectType/Effect/FireSuperData.h>
 #include <Ext/EffectType/Effect/OffsetData.h>
 #include <Ext/StateType/State/PaintballData.h>
 #include "AnimDamageData.h"
 #include "ExpireAnimData.h"
-#include "PlaySuperData.h"
 #include "RelationData.h"
 #include "SpawnAnimsData.h"
 

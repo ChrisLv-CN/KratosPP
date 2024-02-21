@@ -6,6 +6,7 @@
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Weapon.h>
+#include <Ext/Helper/Scripts.h>
 
 void Bounce::SetBounceData(BounceData newData)
 {

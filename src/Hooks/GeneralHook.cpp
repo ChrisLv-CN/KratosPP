@@ -4,6 +4,7 @@
 #include <Extension.h>
 #include <Utilities/Macro.h>
 
+#include <Common/Components/Component.h>
 #include <Common/EventSystems/EventSystem.h>
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConstant.h>
@@ -86,6 +87,9 @@ DEFINE_HOOK(0x6875F3, Scenario_Start1, 0x6)
 	int seed = Game::Seed;
 	Debug::Log("Scenario start, set random seed = %d\n", seed);
 	Random::SetRandomSeed(seed);
+
+	// 打印ComponentFactory清单，用于Debug
+	ComponentFactory::GetInstance().PrintCreaterInfo();
 
 	EventSystems::General.Broadcast(Events::ScenarioStartEvent);
 	return 0;

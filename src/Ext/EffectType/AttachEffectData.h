@@ -11,6 +11,7 @@
 #include "Effect/BroadcastData.h"
 #include "Effect/CrateBuffData.h"
 #include "Effect/FireSuperData.h"
+#include "Effect/HostData.h"
 #include "Effect/ImmuneData.h"
 #include "Effect/InfoData.h"
 #include "Effect/MarkData.h"
@@ -132,6 +133,7 @@ public:
 	EFFECT_VAR_DEFINE(Broadcast);
 	EFFECT_VAR_DEFINE(CrateBuff);
 	EFFECT_VAR_DEFINE(FireSuper);
+	EFFECT_VAR_DEFINE(Host);
 	EFFECT_VAR_DEFINE(Immune);
 	EFFECT_VAR_DEFINE(Info);
 	EFFECT_VAR_DEFINE(Mark);
@@ -156,6 +158,7 @@ public:
 		EFFECT_VAR_READ(Broadcast);
 		EFFECT_VAR_READ(CrateBuff);
 		EFFECT_VAR_READ(FireSuper);
+		EFFECT_VAR_READ(Host);
 		EFFECT_VAR_READ(Immune);
 		EFFECT_VAR_READ(Info);
 		EFFECT_VAR_READ(Mark);
@@ -182,6 +185,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Broadcast);
 		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
 		EFFECT_VAR_SCRIPT_NAME(FireSuper);
+		EFFECT_VAR_SCRIPT_NAME(Host);
 		EFFECT_VAR_SCRIPT_NAME(Immune);
 		EFFECT_VAR_SCRIPT_NAME(Info);
 		EFFECT_VAR_SCRIPT_NAME(Mark);
@@ -211,6 +215,7 @@ public:
 			EFFECT_VAR_PROCESS(Broadcast)
 			EFFECT_VAR_PROCESS(CrateBuff)
 			EFFECT_VAR_PROCESS(FireSuper)
+			EFFECT_VAR_PROCESS(Host)
 			EFFECT_VAR_PROCESS(Immune)
 			EFFECT_VAR_PROCESS(Info)
 			EFFECT_VAR_PROCESS(Mark)
@@ -291,12 +296,7 @@ public:
 		bool has = !AttachWithOutTypes.empty() && !AENames.empty();
 		if (has)
 		{
-			std::set<std::string> n(AENames.begin(), AENames.end());
-			std::set<std::string> t(AttachWithOutTypes.begin(), AttachWithOutTypes.end());
-			std::set<std::string> v;
-			// 取交集
-			std::set_intersection(n.begin(), n.end(), t.begin(), t.end(), std::inserter(v, v.begin()));
-			has = !v.empty();
+			has = CheckOnMarks(AttachWithOutTypes, AENames);
 		}
 		return has;
 	}

@@ -26,7 +26,7 @@ DEFINE_HOOK(0x489280, MapClass_DamageArea, 0x6)
 	GET(int, damage, EDX);
 	GET_STACK(ObjectClass*, pAttacker, 0x4);
 	GET_STACK(WarheadTypeClass*, pWH, 0x8);
-	GET_STACK(bool, affectsTiberium, 0xC);
+	// GET_STACK(bool, affectsTiberium, 0xC);
 	GET_STACK(HouseClass*, pAttackingHouse, 0x10);
 	if (pWH)
 	{

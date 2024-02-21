@@ -70,8 +70,8 @@ void BroadcastEffect::OnUpdate()
 				// 检查次数
 				if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
 				{
-					// Logger.Log($"{Game.CurrentFrame} 广播了 {count}次 >= {Data.TriggeredTimes}，结束AE");
-					End(CoordStruct::Empty);
+					// 结束效果器
+					Deactivate();
 				}
 				_delayTimer.Start(data.Rate);
 				FindAndAttach(data, pHouse);

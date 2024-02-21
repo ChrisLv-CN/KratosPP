@@ -43,15 +43,45 @@ inline bool Parser<Condition>::TryParse(const char* pValue, Condition* outValue)
 	return false;
 }
 
+enum class StackActionMode : int
+{
+	OR = 0, AND = 1,
+};
+
+template <>
+inline bool Parser<StackActionMode>::TryParse(const char* pValue, StackActionMode* outValue)
+{
+	switch (toupper(static_cast<unsigned char>(*pValue)))
+	{
+	case '1':
+	case 'T':
+	case 'Y':
+	case 'A':
+		if (outValue)
+		{
+			*outValue = StackActionMode::AND;
+		}
+		return true;
+	default:
+		if (outValue)
+		{
+			*outValue = StackActionMode::OR;
+		}
+		return true;
+	}
+}
+
 class StackData : public EffectData
 {
 public:
 	EFFECT_DATA(Stack);
 
-	std::string Watch{ "" };
+	std::vector<std::string> Watch{};
 
-	int Level = 0;
-	Condition Condition = Condition::EQ;
+	std::vector<int> Level{};
+	std::vector<Condition> Condition{};
+
+	StackActionMode ActionMode = StackActionMode::OR;
 
 	bool Attach = false;
 	std::vector<std::string> AttachEffects{};
@@ -59,33 +89,40 @@ public:
 
 	bool Remove = false;
 	std::vector<std::string> RemoveEffects{};
+	std::vector<std::string> RemoveEffectsWithMarks{};
 
 	bool RemoveAll = true;
 
 	virtual void Read(INIBufferReader* reader) override
 	{
-		EffectData::Read(reader);
 		Read(reader, "Stack.");
 	}
 
 	virtual void Read(INIBufferReader* reader, std::string title) override
 	{
 		EffectData::Read(reader, title);
-		Watch = reader->Get(title + "Watch", Watch);
 
-		Level = reader->Get(title + "Level", Level);
-		Condition = reader->Get(title + "Condition", Condition);
+		Watch = reader->GetList(title + "Watch", Watch);
+
+		Level = reader->GetList(title + "Level", Level);
+		Condition = reader->GetList(title + "Condition", Condition);
+
+		ActionMode = reader->Get(title + "ActionMode", ActionMode);
 
 		AttachEffects = reader->GetList(title + "AttachEffects", AttachEffects);
+		ClearIfGetNone(AttachEffects);
 		AttachChances = reader->GetChanceList(title + "AttachChances", AttachChances);
 		Attach = !AttachEffects.empty();
 
 		RemoveEffects = reader->GetList(title + "RemoveEffects", RemoveEffects);
-		Remove = !RemoveEffects.empty();
+		ClearIfGetNone(RemoveEffects);
+		RemoveEffectsWithMarks = reader->GetList(title + "RemoveEffectsWithMarks", RemoveEffectsWithMarks);
+		ClearIfGetNone(RemoveEffectsWithMarks);
+		Remove = !RemoveEffects.empty() || !RemoveEffectsWithMarks.empty();
 
 		RemoveAll = reader->Get(title + "RemoveAll", RemoveAll);
 
-		Enable = IsNotNone(Watch) && (Attach || Remove);
+		Enable = !Watch.empty() && (Attach || Remove);
 	}
 
 #pragma region save/load
@@ -96,6 +133,7 @@ public:
 			.Process(this->Watch)
 			.Process(this->Level)
 			.Process(this->Condition)
+			.Process(this->ActionMode)
 			.Process(this->Attach)
 			.Process(this->AttachEffects)
 			.Process(this->AttachChances)

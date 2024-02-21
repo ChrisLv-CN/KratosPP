@@ -438,7 +438,7 @@ public:
 		 */
 		static std::map<std::string, std::string> GetAresArmorValueArray()
 		{
-			if (_aresArmorValueArray.empty())
+			if (_aresArmorValueArray.empty() && !GetAresArmorArray().empty())
 			{
 				// 格式化所有的自定义护甲，包含嵌套护甲，获取实际的护甲信息，作为默认值
 				_aresArmorValueArray = { GetAresArmorArray() };

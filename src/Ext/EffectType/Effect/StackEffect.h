@@ -49,7 +49,7 @@ public:
 #pragma endregion
 private:
 	void Watch();
-	bool CanActive(int stacks);
+	bool CanActive(int stacks, int level, Condition condition);
 
 	int _count = 0;
 };

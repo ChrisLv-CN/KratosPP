@@ -72,10 +72,15 @@ public:
 
 	virtual void Read(INIBufferReader* reader) override
 	{
-		EffectData::Read(reader, TITLE);
+		Read(reader, "Broadcast.");
+	}
+
+	virtual void Read(INIBufferReader* reader, std::string title) override
+	{
+		EffectData::Read(reader, title);
 
 		BroadcastEntity data;
-		data.Read(reader, TITLE);
+		data.Read(reader, title);
 		if (data.Enable)
 		{
 			Data = data;
@@ -83,7 +88,7 @@ public:
 		}
 
 		BroadcastEntity eliteData;
-		eliteData.Read(reader, TITLE + "Elite");
+		eliteData.Read(reader, title + "Elite");
 		if (eliteData.Enable)
 		{
 			EliteData = eliteData;
@@ -113,7 +118,4 @@ public:
 		return const_cast<BroadcastData*>(this)->Serialize(stream);
 	}
 #pragma endregion
-
-protected:
-	inline static std::string TITLE = "Broadcast.";
 };

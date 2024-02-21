@@ -14,8 +14,9 @@
 #include <Common/INI/INIConfig.h>
 
 #include <Ext/Helper/CastEx.h>
-#include <Ext/Helper/Scripts.h>
+#include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Status.h>
+#include <Ext/Helper/StringEx.h>
 
 class FilterData : public INIConfig
 {
@@ -54,7 +55,9 @@ public:
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{
 		AffectTypes = reader->GetList<std::string>(title + "AffectTypes", AffectTypes);
+		ClearIfGetNone(AffectTypes);
 		NotAffectTypes = reader->GetList<std::string>(title + "NotAffectTypes", NotAffectTypes);
+		ClearIfGetNone(NotAffectTypes);
 
 		AffectTechno = reader->Get(title + "AffectTechno", AffectTechno);
 		AffectBuilding = reader->Get(title + "AffectBuilding", AffectBuilding);
@@ -81,7 +84,9 @@ public:
 		AffectInAir = reader->Get(title + "AffectInAir", AffectInAir);
 
 		NotAffectMarks = reader->GetList(title + "NotAffectMarks", NotAffectMarks);
+		ClearIfGetNone(NotAffectMarks);
 		OnlyAffectMarks = reader->GetList(title + "OnlyAffectMarks", OnlyAffectMarks);
+		ClearIfGetNone(OnlyAffectMarks);
 
 		bool affectsAllies = true;
 		if (reader->TryGet(title + "AffectsAllies", affectsAllies))
@@ -186,24 +191,15 @@ public:
 		bool mark = marks.empty();
 		if (!mark)
 		{
-			std::set<std::string> m(marks.begin(), marks.end());
 			bool hasWhiteList = !OnlyAffectMarks.empty();
 			bool hasBlackList = !NotAffectMarks.empty();
 			if (hasWhiteList)
 			{
-				// 取交集
-				std::set<std::string> t(OnlyAffectMarks.begin(), OnlyAffectMarks.end());
-				std::set<std::string> v;
-				std::set_intersection(m.begin(), m.end(), t.begin(), t.end(), std::inserter(v, v.begin()));
-				mark = !v.empty();
+				mark = CheckOnMarks(OnlyAffectMarks, marks);
 			}
 			if (!mark && hasBlackList)
 			{
-				// 取交集
-				std::set<std::string> t(NotAffectMarks.begin(), NotAffectMarks.end());
-				std::set<std::string> v;
-				std::set_intersection(m.begin(), m.end(), t.begin(), t.end(), std::inserter(v, v.begin()));
-				mark = v.empty();
+				mark = !CheckOnMarks(NotAffectMarks, marks);
 			}
 		}
 		return mark;

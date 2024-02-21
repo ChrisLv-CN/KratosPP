@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -10,6 +11,11 @@
 #include <TechnoTypeClass.h>
 
 #include <Helpers/Enumerators.h>
+
+#include <Ext/EffectType/Effect/CrateBuffData.h>
+#include <Ext/StateType/State/GiftBoxData.h>
+
+class AttachEffect;
 
 bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell = nullptr);
 
@@ -27,3 +33,41 @@ bool RealReleaseGift(std::string id, HouseClass* pHouse,
 	CoordStruct& putLocation, // 礼物的投放位置
 	CellClass*& pPutCell // 礼物投放的格子
 );
+
+struct BoxStateCache
+{
+	CoordStruct Location = CoordStruct::Empty; // 当前位置
+	int RandomRange = -1; // 随机分散距离
+	bool EmptyCell = true; // 有限寻找空位
+
+	Mission CurrentMission = Mission::None; // 当前任务
+	Mission ForceMission = Mission::None; // 强制任务
+	AbstractClass* pTarget = nullptr; // 目标
+	bool InheritTarget = true; // 继承目标
+
+	AbstractClass* pDest = nullptr; // 载具的移动目的地
+	AbstractClass* pFocus = nullptr; // 步兵的移动目的地
+	bool Scatter = false; // 散开
+
+	bool SameDir = true; // 保持朝向
+	DirStruct BodyDir{}; // 身体朝向
+	DirStruct TurretDir{}; // 炮塔朝向
+
+	int Group = -1; // 编队
+	bool IsSelected = false; // 是否选中
+	CrateBuffData CrateBuff{}; // 箱子属性
+	bool BoxIsBullet = false; // 盒子是抛射体不复制箱子属性
+
+	HouseClass* pHouse = nullptr; // 所属
+
+	std::vector<std::string> RemoveEffects{};
+	std::vector<std::string> AttachEffects{};
+	std::vector<double> AttachChances{};
+};
+
+BoxStateCache GiftBoxStateCache(GiftBoxData boxData);
+
+void ReleaseGifts(std::vector<std::string> gifts, GiftBoxEntity data, BoxStateCache boxState, std::function<void(TechnoClass*, TechnoStatus*&, AttachEffect*&)> inheritFun);
+
+std::vector<std::string> GetGiftList(GiftBoxEntity data);
+

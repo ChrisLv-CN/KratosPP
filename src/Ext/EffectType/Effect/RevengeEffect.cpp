@@ -37,7 +37,7 @@ bool RevengeEffect::CanRevenge(TechnoClass*& pRevenger, HouseClass*& pRevengerHo
 		if (IsDeadOrInvisible(pRevenger))
 		{
 			// 复仇者不存在，复个屁
-			End(CoordStruct::Empty);
+			Deactivate();
 			return false;
 		}
 	}
@@ -68,7 +68,7 @@ void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH,
 		if (currentFrame != _markFrame)
 		{
 			_skip = true;
-			End(CoordStruct::Empty);
+			Deactivate();
 			return;
 		}
 	}
@@ -169,7 +169,7 @@ void RevengeEffect::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, 
 			// 检查触发次数
 			if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
 			{
-				End(CoordStruct::Empty);
+				Deactivate();
 			}
 		}
 	}

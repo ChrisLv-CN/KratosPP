@@ -6,7 +6,7 @@
 #include "../StateScript.h"
 #include "GiftBoxData.h"
 
-#include <Ext/TechnoType/DamageText.h>
+#include <Ext/Helper/Gift.h>
 
 class GiftBoxState : public StateScript<GiftBoxData>
 {
@@ -22,11 +22,29 @@ public:
 	void ResetGiftBox();
 
 	/**
-	 *@brief 获取礼物清单
+	 *@brief 获取礼物配置
 	 *
-	 * @return std::vector<std::string>
+	 * @return GiftBoxEntity
 	 */
-	std::vector<std::string> GetGiftList();
+	GiftBoxEntity GetGiftData()
+	{
+		if (_isElite && Data.EliteData.Enable)
+		{
+			return Data.EliteData;
+		}
+		return Data.Data;
+	}
+
+	BoxStateCache GetGiftBoxStateCache()
+	{
+		BoxStateCache boxState = GiftBoxStateCache(Data);
+		boxState.BodyDir = BodyDir;
+		boxState.TurretDir = TurretDir;
+
+		boxState.Group = Group;
+		boxState.IsSelected = IsSelected;
+		return boxState;
+	}
 
 	virtual void OnStart() override;
 
@@ -38,7 +56,6 @@ public:
 	bool IsSelected = false;
 	DirStruct BodyDir{};
 	DirStruct TurretDir{};
-
 	int Group = -1;
 
 	GiftBoxState& operator=(const GiftBoxState& other)
@@ -64,6 +81,7 @@ public:
 	{
 		return stream
 			.Process(this->IsOpen)
+
 			.Process(this->IsSelected)
 			.Process(this->BodyDir)
 			.Process(this->TurretDir)
@@ -87,15 +105,6 @@ public:
 	}
 #pragma endregion
 private:
-	GiftBoxEntity GetGiftData()
-	{
-		if (_isElite && Data.EliteData.Enable)
-		{
-			return Data.EliteData;
-		}
-		return Data.Data;
-	}
-
 	bool Timeup()
 	{
 		return _delay <= 0 || _delayTimer.Expired();

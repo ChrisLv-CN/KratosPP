@@ -114,6 +114,14 @@ static bool IsNotNone(std::string val)
 	return !val.empty() && lowercase(trim(val)) != "none";
 }
 
+static void ClearIfGetNone(std::vector<std::string>& value)
+{
+	if (value.size() == 1 && !IsNotNone(value[0]))
+	{
+		value.clear();
+	}
+}
+
 static std::string GetUUID()
 {
     std::string strUUID;

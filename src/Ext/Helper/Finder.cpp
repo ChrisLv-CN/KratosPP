@@ -1,5 +1,6 @@
 ﻿#include "Finder.h"
 
+#include <iterator>
 #include <algorithm>
 #include <string>
 #include <vector>

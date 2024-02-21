@@ -14,7 +14,11 @@ public:
 
 	virtual void Read(INIBufferReader* reader) override
 	{
-		std::string title = "Mark.";
+		Read(reader, "Mark.");
+	}
+
+	virtual void Read(INIBufferReader* reader, std::string title) override
+	{
 		EffectData::Read(reader, title);
 
 		Names = reader->GetList(title + "Names", Names);

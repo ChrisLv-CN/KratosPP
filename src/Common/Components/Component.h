@@ -356,6 +356,19 @@ public:
 		return nullptr;
 	}
 
+	void PrintCreaterInfo()
+	{
+		if (!_creatorMap.empty())
+		{
+			Debug::Log("Component List: \n");
+			for (auto it : _creatorMap)
+			{
+				std::string scriptName = it.first;
+				Debug::Log(" -- %s\n", scriptName.c_str());
+			}
+		}
+	}
+
 
 private:
 	ComponentFactory() {};

@@ -95,7 +95,6 @@ public:
 
 	virtual void Read(INIBufferReader* reader) override
 	{
-		EffectData::Read(reader);
 		Read(reader, "Stand.");
 	}
 

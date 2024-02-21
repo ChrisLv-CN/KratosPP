@@ -136,7 +136,7 @@ void InfoEffect::OnGScreenRenderEnd(CoordStruct location)
 		if (Data->Stack.Mode != InfoMode::NONE && IsNotNone(Data->Stack.Watch) && (Data->Stack.ShowEnemy || isPlayerControl) && (!Data->Stack.OnlySelected || isSelected))
 		{
 			int stacks = -1;
-			auto it = aem->AEStacks.find(Data->Delay.Watch);
+			auto it = aem->AEStacks.find(Data->Stack.Watch);
 			if (it != aem->AEStacks.end())
 			{
 				stacks = it->second;

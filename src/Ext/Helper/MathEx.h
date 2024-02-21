@@ -1,8 +1,11 @@
 ﻿#pragma once
 
+#include <iterator>
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 #include <random>
 
 #include <ScenarioClass.h>
@@ -120,4 +123,14 @@ static bool Bingo(std::vector<double> chances, int index)
 	}
 	double chance = chances[index];
 	return Bingo(chance);
+}
+
+static bool CheckOnMarks(std::vector<std::string> values, std::vector<std::string> marks)
+{
+	// 取交集
+	std::set<std::string> m(marks.begin(), marks.end());
+	std::set<std::string> t(values.begin(), values.end());
+	std::set<std::string> v;
+	std::set_intersection(m.begin(), m.end(), t.begin(), t.end(), std::inserter(v, v.begin()));
+	return !v.empty();
 }

@@ -84,6 +84,7 @@ public:
 		{
 			State->End(AE->Token);
 		}
+		Deactivate();
 	};
 
 	virtual void Pause() override final

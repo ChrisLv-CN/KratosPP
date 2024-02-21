@@ -56,9 +56,10 @@
     <ClCompile Include="src\Ext\EffectType\EffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\AnimationEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\BroadcastEffect.cpp" />
-    <ClInclude Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
-    <ClInclude Include="src\Ext\EffectType\Effect\FireSuperEffect.cpp" />
-    <ClInclude Include="src\Ext\EffectType\Effect\ImmuneEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\FireSuperEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\HostEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\ImmuneEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\InfoEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\MarkEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\RevengeEffect.cpp" />
@@ -192,7 +193,6 @@
     <ClInclude Include="src\Ext\AnimType\AnimDamageData.h" />
     <ClInclude Include="src\Ext\AnimType\AnimStatus.h" />
     <ClInclude Include="src\Ext\AnimType\ExpireAnimData.h" />
-    <ClInclude Include="src\Ext\AnimType\PlaySuperData.h" />
     <ClInclude Include="src\Ext\AnimType\RelationData.h" />
     <ClInclude Include="src\Ext\AnimType\SpawnAnimsData.h" />
     <ClInclude Include="src\Ext\BulletType\Bounce.h" />
@@ -225,6 +225,8 @@
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\FireSuperData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\FireSuperEffect.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\HostData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\HostEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\ImmuneData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\ImmuneEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\InfoData.h" />

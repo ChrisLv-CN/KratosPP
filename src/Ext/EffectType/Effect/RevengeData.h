@@ -68,6 +68,7 @@ public:
 		{
 			Enable = AffectTechno;
 		}
+
 		FireFLH = reader->Get(title + "FireFLH", FireFLH);
 		IsOnTurret = reader->Get(title + "IsOnTurret", IsOnTurret);
 		IsOnTarget = reader->Get(title + "IsOnTarget", IsOnTarget);
@@ -78,16 +79,10 @@ public:
 		ActiveOnce = reader->Get(title + "ActiveOnce", ActiveOnce);
 
 		OnlyReactionWarheads = reader->GetList(title + "OnlyReactionWarheads", OnlyReactionWarheads);
-		if (OnlyReactionWarheads.size() == 1 && !IsNotNone(OnlyReactionWarheads[0]))
-		{
-			OnlyReactionWarheads.clear();
-		}
+		ClearIfGetNone(OnlyReactionWarheads);
 
 		NotReactionWarheads = reader->GetList(title + "NotReactionWarheads", NotReactionWarheads);
-		if (NotReactionWarheads.size() == 1 && !IsNotNone(NotReactionWarheads[0]))
-		{
-			NotReactionWarheads.clear();
-		}
+		ClearIfGetNone(NotReactionWarheads);
 	}
 
 	bool OnMark(std::string warheadId)

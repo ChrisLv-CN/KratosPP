@@ -5,12 +5,11 @@
 #include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
 
-bool StackEffect::CanActive(int stacks)
+bool StackEffect::CanActive(int stacks, int level, Condition condition)
 {
-	int level = Data->Level;
 	if (level >= 0)
 	{
-		switch (Data->Condition)
+		switch (condition)
 		{
 		case Condition::EQ:
 			return stacks == level;
@@ -31,37 +30,83 @@ bool StackEffect::CanActive(int stacks)
 
 void StackEffect::Watch()
 {
-	std::string watch = Data->Watch;
-	int stacks = -1;
-	std::map<std::string, int> aeStacks = AE->AEManager->AEStacks;
-	auto it = aeStacks.find(watch);
-	if (it != aeStacks.end())
+	bool action = false;
+	int index = 0;
+	bool modeIsAnd = Data->ActionMode == StackActionMode::AND;
+	for (std::string watch : Data->Watch)
 	{
-		stacks = it->second;
-		if (stacks > 0 && CanActive(stacks))
+		if (index > 0)
 		{
-			_count++;
-			// 添加AE
-			if (Data->Attach)
+			if (modeIsAnd)
 			{
-				AE->AEManager->Attach(Data->AttachEffects, Data->AttachChances, false, AE->pSource, AE->pSourceHouse);
+				if (!action)
+				{
+					break;
+				}
 			}
-			// 移除AE
-			if (Data->Remove)
+			else
+			{
+				if (action)
+				{
+					break;
+				}
+			}
+		}
+
+		int level = 0;
+		if (!Data->Level.empty() && index < (int)Data->Level.size())
+		{
+			level = Data->Level[index];
+		}
+		Condition con = Condition::EQ;
+		if (!Data->Condition.empty() && index < (int)Data->Condition.size())
+		{
+			con = Data->Condition[index];
+		}
+		int stacks = -1;
+		std::map<std::string, int> aeStacks = AE->AEManager->AEStacks;
+		auto it = aeStacks.find(watch);
+		if (it != aeStacks.end())
+		{
+			stacks = it->second;
+			action = stacks > 0 && CanActive(stacks, level, con);
+		}
+		else
+		{
+			action = false;
+		}
+		index++;
+	}
+	if (action)
+	{
+		_count++;
+		// 添加AE
+		if (Data->Attach)
+		{
+			AE->AEManager->Attach(Data->AttachEffects, Data->AttachChances, false, AE->pSource, AE->pSourceHouse);
+		}
+		// 移除AE
+		if (Data->Remove)
+		{
+			if (!Data->RemoveEffects.empty())
 			{
 				AE->AEManager->DetachByName(Data->RemoveEffects);
 			}
-			// 移除被监视者
-			if (Data->RemoveAll)
+			if (!Data->RemoveEffectsWithMarks.empty())
 			{
-				AE->AEManager->DetachByName({ watch });
+				AE->AEManager->DetachByMarks(Data->RemoveEffectsWithMarks);
 			}
+		}
+		// 移除被监视者
+		if (Data->RemoveAll)
+		{
+			AE->AEManager->DetachByName(Data->Watch);
 		}
 	}
 	// 检查触发次数
-	if (Data->TriggeredTimes > 0 && _count >= Data->TriggeredTimes)
+	if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
 	{
-		End(CoordStruct::Empty);
+		Deactivate();
 	}
 }
 

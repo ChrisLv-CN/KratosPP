@@ -653,6 +653,18 @@ void AttachEffect::DetachByName(std::vector<std::string> aeTypes)
 		});
 }
 
+void AttachEffect::DetachByMarks(std::vector<std::string> marks)
+{
+	ForeachChild([&marks](Component* c) {
+		auto ae = dynamic_cast<AttachEffectScript*>(c);
+		// 通过标记关闭掉AE
+		if (ae->AEData.Mark.Enable && CheckOnMarks(marks, ae->AEData.Mark.Names))
+		{
+			ae->TimeToDie();
+		}
+		});
+}
+
 void AttachEffect::DetachByToken(std::string token)
 {
 	if (!token.empty())
@@ -1131,7 +1143,7 @@ void AttachEffect::OnWarpUpdate()
 void AttachEffect::OnPut(CoordStruct* pCoord, DirType dirType)
 {
 	_location = *pCoord;
-	// TODO InitEffectFlag
+	// TODO 自我添加DamageSelf的AE InitEffectFlag
 }
 
 void AttachEffect::OnRemove()
