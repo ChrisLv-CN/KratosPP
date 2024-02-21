@@ -205,18 +205,30 @@ void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTex
 	Print(text, houseColor, data, pos, &bound, pSurface, isBuilding);
 }
 
-void PrintTextManager::PrintText(std::string text, ColorStruct color, Point2D pos, PrintTextData data)
+void PrintTextManager::PrintText(std::string text, ColorStruct houseColor, Point2D pos, PrintTextData data)
 {
 	std::wstring wText = String2WString(text);
 	DSurface* pSurface = DSurface::Temp;
-	data.Color = color;
-	Print(wText, color, data, pos, pSurface);
+	Print(wText, houseColor, data, pos, pSurface);
 }
 
-void PrintTextManager::PrintText(std::string text, ColorStruct color, CoordStruct location, PrintTextData data)
+void PrintTextManager::PrintText(std::string text, ColorStruct houseColor, CoordStruct location, PrintTextData data)
 {
 	Point2D pos = ToClientPos(location);
+	PrintText(text, houseColor, pos, data);
+}
+
+void PrintTextManager::PrintText(std::string text, ColorStruct color, Point2D pos)
+{
+	PrintTextData data;
+	data.Color = color;
 	PrintText(text, color, pos, data);
+}
+
+void PrintTextManager::PrintText(std::string text, ColorStruct color, CoordStruct location)
+{
+	Point2D pos = ToClientPos(location);
+	PrintText(text, color, pos);
 }
 
 #pragma region Rolling Text
