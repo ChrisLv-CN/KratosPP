@@ -96,18 +96,7 @@ void AnimStatus::Explosion_Damage(bool isBounce, bool bright)
 						// 播放弹头动画
 						if (GetAnimDamageData()->PlayWarheadAnim)
 						{
-							LandType landType = LandType::Clear;
-							if (CellClass* pCell = MapClass::Instance->TryGetCellAt(location))
-							{
-								landType = pCell->LandType;
-							}
-							AnimTypeClass* pWHAnimType = MapClass::SelectDamageAnimation(damage, pWH, landType, location);
-							// Logger.Log($"{Game.CurrentFrame} - Anim {pAnim} [{pAnimType->ID}] play warhead's Anim [{(pWHAnimType.IsNull ? "null" : pWHAnimType->ID)}]");
-							if (pWHAnimType)
-							{
-								AnimClass* pWHAnim = GameCreate<AnimClass>(pWHAnimType, location);
-								pWHAnim->Owner = pAnim->Owner;
-							}
+							PlayWarheadAnim(pWH, location, damage);
 						}
 					}
 				}

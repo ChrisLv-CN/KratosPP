@@ -7,9 +7,9 @@
 
 #include <Common/INI/INIConfig.h>
 
-#include <Ext/EffectType/Effect/EffectData.h>
 #include <Ext/Helper/MathEx.h>
 
+#include "EffectData.h"
 
 class BroadcastEntity
 {

@@ -150,3 +150,8 @@ bool AutoRepel(HouseClass* pHouse);
 
 bool CanAffectHouse(HouseClass* pHouse, HouseClass* pTargetHouse, bool owner = true, bool allied = true, bool enemies = true, bool civilian = true);
 #pragma endregion
+
+#pragma region WarheadTypeClass
+AnimClass* PlayWarheadAnim(WarheadTypeClass*, CoordStruct location, int damage = 1, LandType landType = LandType::Clear);
+#pragma endregion
+

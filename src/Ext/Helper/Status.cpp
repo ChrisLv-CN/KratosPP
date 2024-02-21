@@ -6,6 +6,8 @@
 #include <MechLocomotionClass.h>
 #include <ShipLocomotionClass.h>
 #include <WalkLocomotionClass.h>
+#include <CellClass.h>
+#include <MapClass.h>
 
 
 #include "CastEx.h"
@@ -571,5 +573,21 @@ bool CanAffectHouse(HouseClass* pHouse, HouseClass* pTargetHouse, bool owner, bo
 		return false;
 	}
 	return true;
+}
+#pragma endregion
+
+#pragma region WarheadTypeClass
+AnimClass* PlayWarheadAnim(WarheadTypeClass* pWH, CoordStruct location, int damage = 1, LandType landType = LandType::Clear)
+{
+	AnimClass* pAnim = nullptr;
+	if (CellClass* pCell = MapClass::Instance->TryGetCellAt(location))
+	{
+		landType = pCell->LandType;
+	}
+	if (AnimTypeClass* pAnimType = MapClass::Instance->SelectDamageAnimation(damage, pWH, landType, location))
+	{
+		AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, location);
+	}
+	return pAnim;
 }
 #pragma endregion
