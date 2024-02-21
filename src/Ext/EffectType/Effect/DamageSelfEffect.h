@@ -6,7 +6,7 @@
 #include <GeneralDefinitions.h>
 #include <AnimClass.h>
 
-#include <BulletType/BulletStatus.h>
+#include <Ext/BulletType/BulletStatus.h>
 
 #include "../EffectScript.h"
 #include "DamageSelfData.h"

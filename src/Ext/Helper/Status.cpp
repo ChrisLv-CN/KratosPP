@@ -577,7 +577,7 @@ bool CanAffectHouse(HouseClass* pHouse, HouseClass* pTargetHouse, bool owner, bo
 #pragma endregion
 
 #pragma region WarheadTypeClass
-AnimClass* PlayWarheadAnim(WarheadTypeClass* pWH, CoordStruct location, int damage = 1, LandType landType = LandType::Clear)
+AnimClass* PlayWarheadAnim(WarheadTypeClass* pWH, CoordStruct location, int damage, LandType landType)
 {
 	AnimClass* pAnim = nullptr;
 	if (CellClass* pCell = MapClass::Instance->TryGetCellAt(location))
@@ -586,7 +586,7 @@ AnimClass* PlayWarheadAnim(WarheadTypeClass* pWH, CoordStruct location, int dama
 	}
 	if (AnimTypeClass* pAnimType = MapClass::Instance->SelectDamageAnimation(damage, pWH, landType, location))
 	{
-		AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, location);
+		pAnim = GameCreate<AnimClass>(pAnimType, location);
 	}
 	return pAnim;
 }
