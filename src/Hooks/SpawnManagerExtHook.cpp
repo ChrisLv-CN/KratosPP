@@ -136,7 +136,7 @@ DEFINE_HOOK(0x6B743E, SpawnManagerClass_Update_PutSpawns, 0x6)
 			// 找到另外的子机发射器，设置Index
 			R->EBP(static_cast<unsigned int>(weaponIdx));
 		}
-		else if (AttachFire* pFire = FindOrAttach<TechnoExt, AttachFire>(pTechno))
+		else if (AttachFire* pFire = FindOrAttachScript<TechnoExt, AttachFire>(pTechno))
 		{
 			if (!pFire->SpawnerBurstFLH.empty())
 			{

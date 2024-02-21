@@ -152,16 +152,16 @@ double GetROFMulti(TechnoClass* pTechno)
 	{
 		return 1;
 	}
-	bool rof = false;
+	bool rofAbility = false;
 	if (pTechno->Veterancy.IsElite())
 	{
-		rof = pTechno->GetTechnoType()->VeteranAbilities.ROF || pTechno->GetTechnoType()->EliteAbilities.ROF;
+		rofAbility = pTechno->GetTechnoType()->VeteranAbilities.ROF || pTechno->GetTechnoType()->EliteAbilities.ROF;
 	}
 	else if (pTechno->Veterancy.IsVeteran())
 	{
-		rof = pTechno->GetTechnoType()->VeteranAbilities.ROF;
+		rofAbility = pTechno->GetTechnoType()->VeteranAbilities.ROF;
 	}
-	return (!rof ? 1.0 : RulesClass::Instance->VeteranROF) * pTechno->FirepowerMultiplier * ((!pTechno->Owner || !pTechno->Owner->Type) ? 1.0 : pTechno->Owner->Type->ROFMult);
+	return (!rofAbility ? 1.0 : RulesClass::Instance->VeteranROF) * ((!pTechno->Owner || !pTechno->Owner->Type) ? 1.0 : pTechno->Owner->Type->ROFMult);
 }
 
 double GetDamageMulti(TechnoClass* pTechno)

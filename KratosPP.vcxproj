@@ -54,6 +54,7 @@
     <ClCompile Include="src\Ext\EBoltType\EBoltStatus.cpp" />
     <ClCompile Include="src\Ext\EffectType\AttachEffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\EffectScript.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\AutoWeaponEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\AnimationEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\BroadcastEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
@@ -217,6 +218,8 @@
     <ClInclude Include="src\Ext\EffectType\AttachEffectScript.h" />
     <ClInclude Include="src\Ext\EffectType\AttachEffectTypeData.h" />
     <ClInclude Include="src\Ext\EffectType\EffectScript.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\AutoWeaponData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\AutoWeaponEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\AnimationData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\AnimationEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\BroadcastData.h" />

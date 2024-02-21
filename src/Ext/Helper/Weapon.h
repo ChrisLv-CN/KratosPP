@@ -58,7 +58,7 @@ BulletVelocity GetBulletArcingVelocity(CoordStruct sourcePos, CoordStruct& targe
 // 自定义武器发射
 // ----------------
 #pragma region Custom fire weapon
-typedef void (*FireBulletToTarget)(int index, int burst, BulletClass* pBullet, AbstractClass* pTarget);
+typedef void (*FireBulletToTarget)(int index, int burst, BulletClass*& pBullet, AbstractClass*& pTarget);
 
 class RadialFire
 {

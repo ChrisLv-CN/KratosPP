@@ -32,7 +32,7 @@ static TScript* GetScript(TBase* p)
 }
 
 template <typename TExt, typename TScript, typename TBase>
-static TScript* FindOrAttach(TBase* p)
+static TScript* FindOrAttachScript(TBase* p)
 {
 	TScript* pComponent = nullptr;
 	if (p != nullptr)

@@ -118,6 +118,17 @@ void BulletStatus::Destroy()
 	{
 		BulletExt::TargetAircraftBullets.erase(it);
 	}
+	if (pFakeTarget)
+	{
+		if (ObjectClass* pObject = dynamic_cast<ObjectClass*>(pFakeTarget))
+		{
+			pObject->UnInit();
+		}
+		else
+		{
+			Debug::Log("Error: Has one bullet has a fake target, but can not cover to ObjectClass \n");
+		}
+	}
 }
 
 void BulletStatus::TakeDamage(int damage, bool eliminate, bool harmless, bool checkInterceptable)
@@ -288,10 +299,6 @@ void BulletStatus::OnUpdateEnd_BlackHole(CoordStruct& sourcePos) {};
 
 void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 {
-	if (pFakeTarget)
-	{
-		pFakeTarget->UnInit();
-	}
 	if (!skip)
 	{
 		if ((skip = OnDetonate_AntiBullet(pCoords)) == true)

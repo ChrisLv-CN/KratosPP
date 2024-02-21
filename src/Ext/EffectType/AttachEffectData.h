@@ -8,6 +8,7 @@
 #include "Effect/EffectData.h"
 // TODO Add new Effects
 #include "Effect/AnimationData.h"
+#include "Effect/AutoWeaponData.h"
 #include "Effect/BroadcastData.h"
 #include "Effect/CrateBuffData.h"
 #include "Effect/DamageSelfData.h"
@@ -130,6 +131,7 @@ public:
 	bool Inheritable = true; // 是否可以被礼盒礼物继承
 
 	// TODO Add new Effects
+	EFFECT_VAR_DEFINE(AutoWeapon);
 	EFFECT_VAR_DEFINE(Animation);
 	EFFECT_VAR_DEFINE(Broadcast);
 	EFFECT_VAR_DEFINE(CrateBuff);
@@ -156,6 +158,7 @@ public:
 
 	void ReadEffects(INIBufferReader* reader)
 	{
+		EFFECT_VAR_READ(AutoWeapon);
 		EFFECT_VAR_READ(Animation);
 		EFFECT_VAR_READ(Broadcast);
 		EFFECT_VAR_READ(CrateBuff);
@@ -184,6 +187,7 @@ public:
 	std::set<std::string> GetScriptNames()
 	{
 		std::set<std::string> names{};
+		EFFECT_VAR_SCRIPT_NAME(AutoWeapon);
 		EFFECT_VAR_SCRIPT_NAME(Animation);
 		EFFECT_VAR_SCRIPT_NAME(Broadcast);
 		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
@@ -215,6 +219,7 @@ public:
 	void ProcessEffects(T& stream)
 	{
 		stream
+			EFFECT_VAR_PROCESS(AutoWeapon)
 			EFFECT_VAR_PROCESS(Animation)
 			EFFECT_VAR_PROCESS(Broadcast)
 			EFFECT_VAR_PROCESS(CrateBuff)

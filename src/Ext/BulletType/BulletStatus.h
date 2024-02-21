@@ -83,7 +83,7 @@ public:
 	TechnoClass* pSource = nullptr;
 	HouseClass* pSourceHouse = nullptr;
 
-	ObjectClass* pFakeTarget = nullptr;
+	AbstractClass* pFakeTarget = nullptr;
 
 	// 生命值和伤害值
 	BulletLife life = {};
