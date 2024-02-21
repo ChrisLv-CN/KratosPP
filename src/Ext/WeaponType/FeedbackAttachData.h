@@ -10,7 +10,6 @@
 class FeedbackAttachEntity : public EffectData
 {
 public:
-	EFFECT_DATA(FeedbackAttachEntity);
 
 	std::vector<std::string> AttachEffects{};
 	std::vector<double> AttachChances{};

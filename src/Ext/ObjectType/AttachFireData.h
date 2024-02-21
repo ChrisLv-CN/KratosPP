@@ -37,7 +37,11 @@ public:
 
 	virtual void Read(INIBufferReader* reader) override
 	{
-		std::string title = "AttachFire.";
+		Read(reader, "AttachFire.");
+	}
+
+	virtual void Read(INIBufferReader* reader, std::string title) override
+	{
 
 		FilterData::Read(reader, title);
 
@@ -177,7 +181,7 @@ public:
 				bool passiveAcquire = true;
 				if (CheckVersus && pWeapon->Warhead
 					&& (GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWeapon->Warhead)->GetVersus(pTargetTechno->GetTechnoType()->Armor, forceFire, retaliate, passiveAcquire) == 0.0 || !forceFire)
-				)
+					)
 				{
 					// 护甲为零，终止发射
 					canFire = false;

@@ -236,6 +236,10 @@ ImmuneData AttachEffect::GetImmuneData()
 			data.Parasite |= temp->AEData.Immune.Parasite;
 			data.Temporal |= temp->AEData.Immune.Temporal;
 			data.IsLocomotor |= temp->AEData.Immune.IsLocomotor;
+			std::vector<std::string> antiWH = temp->AEData.Immune.AntiWarheads;
+			data.AntiWarheads.assign(antiWH.begin(), antiWH.end());
+			std::vector<std::string> acceptWH = temp->AEData.Immune.AcceptWarheads;
+			data.AcceptWarheads.assign(acceptWH.begin(), acceptWH.end());
 		}
 		});
 	data.CheckEnable();

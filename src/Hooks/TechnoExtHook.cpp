@@ -212,24 +212,32 @@ DEFINE_HOOK(0x701900, TechnoClass_ReceiveDamage, 0x6)
 	WarheadTypeExt::TypeData* whData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(args->WH);
 	if (whData->IsToy)
 	{
-		args->Damage = 0;
-		DamageByToyWH = true;
+		*args->Damage = 0;
 	}
-	else
+	if (*args->Damage == 0)
 	{
-		DamageByToyWH = false;
+		// Immune this damage, nothing happend;
+		DamageByToyWH = true;
 	}
 	return 0;
 }
 
-DEFINE_HOOK(0x701F9A, TechnoClass_ReceiveDamage_SkipAllReaction, 0x6)
+DEFINE_HOOK(0x7019D8, TechnoClass_ReceiveDamage_At_Least1, 0x5)
 {
-	// Toy warhead
 	if (DamageByToyWH)
 	{
-		return 0x702D11;
+		DamageByToyWH = false;
 	}
-	return 0x70202E;
+	else
+	{
+		// Restore overridden instructions
+		GET(int*, pDamage, EBX);
+		if (*pDamage < 1)
+		{
+			*pDamage = 1;
+		}
+	}
+	return 0x7019E3;
 }
 
 #pragma region ImmuneToOOXX
@@ -309,7 +317,7 @@ DEFINE_HOOK(0x5F5498, ObjectClass_ReceiveDamage_RealDamage, 0xC)
 	{
 		auto pExt = TechnoExt::ExtMap.Find(pTechno);
 		pExt->_GameObject->Foreach([&](Component* c)
-		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamageReal(pRealDamage, pWH, pAttacker, pAttackingHouse); } });
+			{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamageReal(pRealDamage, pWH, pAttacker, pAttackingHouse); } });
 		R->ECX(*pRealDamage);
 		if (*pRealDamage < 0)
 		{
@@ -355,7 +363,7 @@ DEFINE_HOOK(0x702E9D, TechnoClass_RegisterDestruction, 0x6)
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	bool skip = false;
 	pExt->_GameObject->Foreach([&](Component* c)
-		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnRegisterDestruction(pKiller, cost, skip); } });
+		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnRegisterDestruction(pKiller, cost, skip); if (skip) c->Break(); } });
 
 	// skip the entire veterancy
 	if (skip)
@@ -374,7 +382,7 @@ DEFINE_HOOK(0x6FC339, TechnoClass_CanFire, 0x6)
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	bool ceaseFire = false;
 	pExt->_GameObject->Foreach([&](Component* c)
-		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->CanFire(pTarget, pWeapon, ceaseFire); } });
+		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->CanFire(pTarget, pWeapon, ceaseFire); if (ceaseFire) c->Break(); } });
 
 	// return FireError::ILLEGAL
 	if (ceaseFire)

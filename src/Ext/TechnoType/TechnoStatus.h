@@ -88,6 +88,8 @@ public:
 
 	virtual void OnRegisterDestruction(TechnoClass* pKiller, int cost, bool& skip) override;
 
+	virtual void CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, bool& ceaseFire) override;
+
 	virtual void OnSelect(bool& selectable) override;
 
 	// TODO Add new State

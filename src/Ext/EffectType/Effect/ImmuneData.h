@@ -5,7 +5,7 @@
 #include <GeneralStructures.h>
 
 #include <Ext/EffectType/Effect/EffectData.h>
-#include <Ext/Helper/CastEx.h>
+#include <Ext/Helper/StringEx.h>
 
 class ImmuneData : public EffectData
 {
@@ -21,9 +21,12 @@ public:
 	bool Temporal; // 免疫超时空
 	bool IsLocomotor; // 免疫磁电
 
+	std::vector<std::string> AntiWarheads{}; // 对这些弹头免疫
+	std::vector<std::string> AcceptWarheads{}; // 只接受这些弹头
+
 	void CheckEnable()
 	{
-		Enable = Psionics || PsionicWeapons || Radiation || Poison || EMP || Parasite || Temporal || IsLocomotor;
+		Enable = Psionics || PsionicWeapons || Radiation || Poison || EMP || Parasite || Temporal || IsLocomotor || !AntiWarheads.empty() || !AcceptWarheads.empty();
 	}
 
 	virtual void Read(INIBufferReader* reader) override
@@ -44,7 +47,33 @@ public:
 		Temporal = reader->Get(title + "Temporal", Temporal);
 		IsLocomotor = reader->Get(title + "IsLocomotor", IsLocomotor);
 
+		AntiWarheads = reader->GetList(title + "AntiWarheads", AntiWarheads);
+		ClearIfGetNone(AntiWarheads);
+		AcceptWarheads = reader->GetList(title + "AcceptWarheads", AcceptWarheads);
+		ClearIfGetNone(AcceptWarheads);
+
 		CheckEnable();
+	}
+
+	bool CeaseFire(std::string warheadId)
+	{
+		if (!AntiWarheads.empty())
+		{
+			auto it = std::find(AntiWarheads.begin(), AntiWarheads.end(), warheadId);
+			if (it != AntiWarheads.end())
+			{
+				return true;
+			}
+		}
+		if (!AcceptWarheads.empty())
+		{
+			auto it = std::find(AcceptWarheads.begin(), AcceptWarheads.end(), warheadId);
+			if (it == AcceptWarheads.end())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 #pragma region save/load
@@ -60,6 +89,8 @@ public:
 			.Process(this->Parasite)
 			.Process(this->Temporal)
 			.Process(this->IsLocomotor)
+			.Process(this->AntiWarheads)
+			.Process(this->AcceptWarheads)
 			.Success();
 	};
 

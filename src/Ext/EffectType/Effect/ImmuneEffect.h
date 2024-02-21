@@ -48,6 +48,6 @@ public:
 	}
 #pragma endregion
 private:
-
 	void ImmuneLogic();
+
 };

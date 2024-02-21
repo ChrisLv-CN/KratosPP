@@ -20,9 +20,10 @@ void ImmuneEffect::OnReceiveDamage(args_ReceiveDamage* args)
 		WarheadTypeClass* pWH = args->WH;
 		if ((pWH->Radiation && Data->Radiation)
 			|| (pWH->PsychicDamage && Data->PsionicWeapons)
-			|| (pWH->Poison && Data->Poison))
+			|| (pWH->Poison && Data->Poison)
+			|| Data->CeaseFire(pWH->ID))
 		{
-			args->Damage = 0;
+			*args->Damage = 0;
 		}
 	}
 	ImmuneLogic();

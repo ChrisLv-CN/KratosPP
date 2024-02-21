@@ -270,6 +270,25 @@ void TechnoStatus::OnRegisterDestruction(TechnoClass* pKiller, int cost, bool& s
 	}
 }
 
+void TechnoStatus::CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, bool& ceaseFire)
+{
+	// 目标对特定弹头免疫
+	if (!pWeapon || !pWeapon->Warhead)
+	{
+		return;
+	}
+	TechnoClass* pTargetTechno = nullptr;
+	AttachEffect* aem = nullptr;
+	if (CastToTechno(pTarget, pTargetTechno) && TryGetAEManager<TechnoExt>(pTargetTechno, aem))
+	{
+		ImmuneData immune = aem->GetImmuneData();
+		if (immune.CeaseFire(pWeapon->Warhead->ID))
+		{
+			ceaseFire = true;
+		}
+	}
+}
+
 void TechnoStatus::OnSelect(bool& selectable)
 {
 	selectable = OnSelect_VirtualUnit();
