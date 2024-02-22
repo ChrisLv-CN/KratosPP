@@ -10,6 +10,7 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 
+#include "AircraftPut.h"
 #include "AutoFireAreaWeapon.h"
 #include "BaseNormal.h"
 #include "CrawlingFLH.h"
@@ -70,6 +71,10 @@ void TechnoStatus::InitExt()
 		if (IsRocket())
 		{
 			_gameObject->FindOrAttach<MissileHoming>();
+		}
+		if (IsAircraft())
+		{
+			_gameObject->FindOrAttach<AircraftPut>();
 		}
 	}
 }

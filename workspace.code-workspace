@@ -95,7 +95,8 @@
 			"random": "cpp",
 			"*.rh": "cpp",
 			"ranges": "cpp",
-			"span": "cpp"
+			"span": "cpp",
+			"aircraftput": "c"
 		},
 		"C_Cpp.formatting": "vcFormat",
 		"files.encoding": "utf8bom"

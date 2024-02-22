@@ -3,6 +3,39 @@
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
 
+class GeneralData : public INIConfig
+{
+public:
+	// YR
+	std::vector<std::string> PadAircraft{};
+	CoordStruct NoHelipadPutOffset{};
+	bool ForcePutOffset = false;
+
+	virtual void Read(INIBufferReader* reader) override
+	{
+		PadAircraft = reader->GetList("PadAircraft", PadAircraft);
+		NoHelipadPutOffset = reader->Get("AircraftNoHelipadPutOffset", NoHelipadPutOffset);
+		ForcePutOffset = reader->Get("AircraftForcePutOffset", ForcePutOffset);
+	}
+};
+
+class General
+{
+public:
+	static GeneralData* Data()
+	{
+		if (!_data)
+		{
+			_data = INI::GetConfig<GeneralData>(INI::Rules, INI::SectionGeneral)->Data;
+		}
+		return _data;
+	};
+
+private:
+	static GeneralData* _data;
+};
+
+
 class CombatDamageData : public INIConfig
 {
 public:
