@@ -54,8 +54,7 @@ void AutoWeaponEffect::ResetROF(WeaponTypeClass* pWeapon, WeaponTypeExt::TypeDat
 	}
 	else
 	{
-		CDTimerClass timer;
-		timer.Start(rof);
+		CDTimerClass timer{ rof };
 		_rof[weaponId] = timer;
 	}
 }

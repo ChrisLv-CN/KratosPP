@@ -90,31 +90,34 @@ void StandEffect::CreateAndPutStand()
 
 void StandEffect::ExplodesOrDisappear(bool peaceful)
 {
-	bool explodes = !peaceful && (Data->Explodes || notBeHuman || (masterIsRocket && Data->ExplodesWithRocket)) && !pStand->BeingWarpedOut && !pStand->WarpingOut;
-	TechnoStatus* standStatus = nullptr;
-	if (TryGetStatus<TechnoExt>(pStand, standStatus))
+	if (pStand)
 	{
-		// Logger.Log($"{Game.CurrentFrame} 阿伟 [{Data->Type}]{pStand} 要死了 explodes = {explodes}");
-		standStatus->DestroySelf->DestroyNow(!explodes);
-		// 如果替身处于Limbo状态，OnUpdate不会执行，需要手动触发
-		if (masterIsRocket || pStand->InLimbo)
+		bool explodes = !peaceful && (Data->Explodes || notBeHuman || (masterIsRocket && Data->ExplodesWithRocket)) && !pStand->BeingWarpedOut && !pStand->WarpingOut;
+		TechnoStatus* standStatus = nullptr;
+		if (TryGetStatus<TechnoExt>(pStand, standStatus))
 		{
-			standStatus->OnUpdate();
-		}
-	}
-	else
-	{
-		if (explodes)
-		{
-			// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {pStand}[{Type.Type}] 自爆, 没有发现EXT");
-			pStand->TakeDamage(pStand->Health + 1, pStand->GetTechnoType()->Crewed);
+			// Logger.Log($"{Game.CurrentFrame} 阿伟 [{Data->Type}]{pStand} 要死了 explodes = {explodes}");
+			standStatus->DestroySelf->DestroyNow(!explodes);
+			// 如果替身处于Limbo状态，OnUpdate不会执行，需要手动触发
+			if (masterIsRocket || pStand->InLimbo)
+			{
+				standStatus->OnUpdate();
+			}
 		}
 		else
 		{
-			// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {Type.Type} 移除, 没有发现EXT");
-			pStand->Limbo();
-			// pStand->UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
-			pStand->TakeDamage(pStand->Health + 1, false);
+			if (explodes)
+			{
+				// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {pStand}[{Type.Type}] 自爆, 没有发现EXT");
+				pStand->TakeDamage(pStand->Health + 1, pStand->GetTechnoType()->Crewed);
+			}
+			else
+			{
+				// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {Type.Type} 移除, 没有发现EXT");
+				pStand->Limbo();
+				// pStand->UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
+				pStand->TakeDamage(pStand->Health + 1, false);
+			}
 		}
 	}
 	pStand = nullptr;
@@ -551,6 +554,7 @@ void StandEffect::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	if (args == pStand)
 	{
 		pStand = nullptr;
+		Debug::Log("OnTechnoDelete calling pStand [%d] is delete. \n", args);
 	}
 }
 
@@ -581,9 +585,9 @@ void StandEffect::OnRecover()
 
 bool StandEffect::IsAlive()
 {
-	if (IsDead(pStand) && _pause)
+	if (IsDead(pStand))
 	{
-		return false;
+		return _pause;
 	}
 	return true;
 }
@@ -671,6 +675,10 @@ void StandEffect::OnGScreenRender(CoordStruct location)
 
 void StandEffect::OnPut(CoordStruct* pCoord, DirType dirType)
 {
+	if (IsDead(pStand))
+	{
+		return;
+	}
 	if (pStand->InLimbo)
 	{
 		CoordStruct location = *pCoord;
@@ -683,6 +691,10 @@ void StandEffect::OnPut(CoordStruct* pCoord, DirType dirType)
 
 void StandEffect::OnRemove()
 {
+	if (IsDead(pStand))
+	{
+		return;
+	}
 	if (!AE->OwnerIsDead())
 	{
 		pStand->Limbo();
@@ -691,6 +703,10 @@ void StandEffect::OnRemove()
 
 void StandEffect::OnUpdate()
 {
+	if (IsDead(pStand))
+	{
+		return;
+	}
 	if (pTechno)
 	{
 		UpdateStateTechno(AE->OwnerIsDead());
@@ -703,6 +719,10 @@ void StandEffect::OnUpdate()
 
 void StandEffect::OnWarpUpdate()
 {
+	if (IsDead(pStand))
+	{
+		return;
+	}
 	if (pTechno)
 	{
 		UpdateStateTechno(AE->OwnerIsDead());
@@ -725,8 +745,11 @@ void StandEffect::OnReceiveDamageDestroy()
 	notBeHuman = Data->ExplodesWithMaster;
 	if (pTechno)
 	{
-		// 沉没，坠机，不销毁替身
-		pStand->QueueMission(Mission::Sleep, true);
+		if (pStand)
+		{
+			// 沉没，坠机，不销毁替身
+			pStand->QueueMission(Mission::Sleep, true);
+		}
 	}
 	else if (pBullet)
 	{
@@ -737,6 +760,10 @@ void StandEffect::OnReceiveDamageDestroy()
 
 void StandEffect::OnGuardCommand()
 {
+	if (IsDead(pStand))
+	{
+		return;
+	}
 	if (!pStand->IsSelected)
 	{
 		// 执行替身的OnStop
@@ -748,6 +775,10 @@ void StandEffect::OnGuardCommand()
 
 void StandEffect::OnStopCommand()
 {
+	if (IsDead(pStand))
+	{
+		return;
+	}
 	ClearAllTarget(pStand);
 	onStopCommand = true;
 	if (!pStand->IsSelected)

@@ -46,5 +46,5 @@ public:
 	}
 #pragma endregion
 private:
-	CDTimerClass _delayTimer;
+	CDTimerClass _delayTimer{};
 };

@@ -184,7 +184,6 @@ public:
 	}
 
 	virtual void OnUpdate() override;
-	virtual void OnUpdateEnd() override;
 	virtual void OnWarpUpdate() override;
 
 	virtual void OnPut(CoordStruct* pCoord, DirType dirType) override;

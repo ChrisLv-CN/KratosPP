@@ -14,8 +14,8 @@
 class LocationMark
 {
 public:
-	CoordStruct Location;
-	DirStruct Dir;
+	CoordStruct Location = CoordStruct::Empty;
+	DirStruct Dir{};
 
 	bool IsEmpty()
 	{

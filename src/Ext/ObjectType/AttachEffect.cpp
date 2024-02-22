@@ -946,7 +946,7 @@ bool AttachEffect::UpdateTrainStandLocation(AttachEffectScript* ae, int& markInd
 		}
 	}
 
-	if (preMark.IsEmpty())
+	if (!preMark.IsEmpty())
 	{
 		ae->UpdateStandLocation(preMark);
 		return true;
@@ -1102,6 +1102,9 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 
 void AttachEffect::OnUpdate()
 {
+	// 移除失效的AE，附加Next的AE
+	CheckDurationAndDisable();
+
 	// 添加Section上记录的AE
 	if (!_ownerIsDead)
 	{
@@ -1130,12 +1133,6 @@ void AttachEffect::OnUpdate()
 
 		this->_attachOnceFlag = true;
 	}
-}
-
-void AttachEffect::OnUpdateEnd()
-{
-	// 移除失效的AE，附加Next的AE
-	CheckDurationAndDisable();
 }
 
 void AttachEffect::OnWarpUpdate()
