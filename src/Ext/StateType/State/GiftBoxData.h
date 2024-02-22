@@ -41,6 +41,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->Enable)
 			.Process(this->Gifts)
 			.Process(this->Nums)
 			.Process(this->Chances)

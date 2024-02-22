@@ -748,6 +748,38 @@ DEFINE_HOOK(0x6F37E7, TechnoClass_SelectWeapon_SecondaryCheckAA_SwitchByRange, 0
 	}
 	return 0x6F37AD; // 返回主武器
 }
+
+DEFINE_HOOK(0x6FDD61, TechnoClass_Fire_OverrideWeapon, 0x5)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->OverrideWeapon->IsActive())
+	{
+		WeaponTypeClass* pOverrideWeapon = nullptr;
+		if (status->OverrideWeapon->TryGetOverrideWeapon(pTechno->Veterancy.IsElite(), false, pOverrideWeapon))
+		{
+			R->EBX(pOverrideWeapon);
+			return 0x6FDD71;
+		}
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x70D6B4, TechnoClass_Fire_DeathWeapon_OverrideWeapon, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->OverrideWeapon->IsActive())
+	{
+		WeaponTypeClass* pOverrideWeapon = nullptr;
+		if (status->OverrideWeapon->TryGetOverrideWeapon(pTechno->Veterancy.IsElite(), true, pOverrideWeapon))
+		{
+			R->EDI(pOverrideWeapon);
+			return 0x70D6BA;
+		}
+	}
+	return 0;
+}
 #pragma endregion
 
 

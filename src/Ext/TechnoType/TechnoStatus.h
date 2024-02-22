@@ -29,6 +29,7 @@
 #include <Ext/StateType/State/DisableWeaponState.h>
 #include <Ext/StateType/State/FreezeState.h>
 #include <Ext/StateType/State/GiftBoxState.h>
+#include <Ext/StateType/State/OverrideWeaponState.h>
 #include <Ext/StateType/State/PaintballState.h>
 #include <Ext/StateType/State/ScatterState.h>
 #include <Ext/StateType/State/TransformState.h>
@@ -102,6 +103,7 @@ public:
 	STATE_VAR_DEFINE(DisableWeapon);
 	STATE_VAR_DEFINE(Freeze);
 	STATE_VAR_DEFINE(GiftBox);
+	STATE_VAR_DEFINE(OverrideWeapon);
 	STATE_VAR_DEFINE(Paintball);
 	STATE_VAR_DEFINE(Scatter);
 	STATE_VAR_DEFINE(Transform);
@@ -115,6 +117,7 @@ public:
 		STATE_VAR_INIT(DisableWeapon);
 		STATE_VAR_INIT(Freeze);
 		STATE_VAR_INIT(GiftBox);
+		STATE_VAR_INIT(OverrideWeapon);
 		STATE_VAR_INIT(Paintball);
 		STATE_VAR_INIT(Scatter);
 		STATE_VAR_INIT(Transform);
@@ -129,6 +132,7 @@ public:
 		STATE_VAR_INHERITED(DisableWeapon);
 		STATE_VAR_INHERITED(Freeze);
 		// STATE_VAR_INHERITED(GiftBox);
+		// STATE_VAR_INHERITED(OverrideWeapon);
 		STATE_VAR_INHERITED(Paintball);
 		STATE_VAR_INHERITED(Scatter);
 		STATE_VAR_INHERITED(Transform);
@@ -145,6 +149,7 @@ public:
 			STATE_VAR_TRYGET(DisableWeapon)
 			STATE_VAR_TRYGET(Freeze)
 			STATE_VAR_TRYGET(GiftBox)
+			STATE_VAR_TRYGET(OverrideWeapon)
 			STATE_VAR_TRYGET(Paintball)
 			STATE_VAR_TRYGET(Scatter)
 			STATE_VAR_TRYGET(Transform)

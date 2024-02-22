@@ -166,6 +166,7 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 							GET_STAND_STATE(DisableWeapon)
 							GET_STAND_STATE(Freeze)
 							GET_STAND_STATE(GiftBox)
+							GET_STAND_STATE(OverrideWeapon)
 							GET_STAND_STATE(Paintball)
 							GET_STAND_STATE(Scatter)
 							GET_STAND_STATE(Transform)
