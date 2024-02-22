@@ -140,6 +140,8 @@ void HostEffect::OnUpdate()
 			boxState.pDest = pDest;
 			boxState.pFocus = pFocus;
 			boxState.Scatter = !Data->Remove || Data->ForceMission == Mission::Move; // 分散行动
+
+			boxState.pOwner = pObject;
 			boxState.pHouse = pHouse;
 
 			// 开刷

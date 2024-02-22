@@ -201,6 +201,7 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 
 	boxState.CrateBuff = CrateBuff;
 
+	boxState.pOwner = pTechno;
 	boxState.pHouse = pHouse;
 
 	// 开刷

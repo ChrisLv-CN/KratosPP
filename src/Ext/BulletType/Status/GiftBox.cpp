@@ -121,6 +121,7 @@ void BulletStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 	boxState.pDest = pFocus;
 	boxState.pFocus = pFocus;
 
+	boxState.pOwner = pBullet;
 	boxState.pHouse = pHouse;
 
 	// 开刷

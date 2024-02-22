@@ -58,6 +58,7 @@ struct BoxStateCache
 	CrateBuffData CrateBuff{}; // 箱子属性
 	bool BoxIsBullet = false; // 盒子是抛射体不复制箱子属性
 
+	ObjectClass* pOwner = nullptr;
 	HouseClass* pHouse = nullptr; // 所属
 
 	std::vector<std::string> RemoveEffects{};
