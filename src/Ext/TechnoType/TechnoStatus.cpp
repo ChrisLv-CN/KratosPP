@@ -47,6 +47,9 @@ void TechnoStatus::InitState()
 
 void TechnoStatus::InitExt()
 {
+	Tag.append("[").append(pTechno->GetTechnoType()->ID).append("]")
+		.append(WString2String(pTechno->GetTechnoType()->UIName));
+
 	_gameObject->FindOrAttach<AutoFireAreaWeapon>();
 	_gameObject->FindOrAttach<DamageText>();
 	_gameObject->FindOrAttach<HealthText>();

@@ -58,6 +58,17 @@ public:
 	bool Serialize(T& stream) {
 		return stream
 			.Process(this->pStand)
+
+			.Process(this->masterIsRocket)
+			.Process(this->masterIsSpawned)
+			.Process(this->standIsBuilding)
+			.Process(this->onStopCommand)
+			.Process(this->notBeHuman)
+			.Process(this->onReceiveDamageDestroy)
+
+			.Process(this->_lastLocationMark)
+			.Process(this->_isMoving)
+			.Process(this->_walkRateTimer)
 			.Success();
 	};
 

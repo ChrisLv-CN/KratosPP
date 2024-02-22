@@ -6,5 +6,6 @@ output
 *.sdf
 *.suo
 .vs
+.vscode
 .cproject
 .project

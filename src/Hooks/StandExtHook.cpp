@@ -250,12 +250,14 @@ DEFINE_HOOK(0x54B8E9, JumpjetLocomotionClass_In_Which_Layer_Deviation, 0x6)
 {
 	GET(TechnoClass*, pTechno, EAX);
 
-	AttachEffect* aeManager = nullptr;
-	if (TryGetAEManager<TechnoExt>(pTechno, aeManager) && aeManager->HasStand())
-	{
-		// Override JumpjetHeight / CruiseHeight check so it always results in 3 / Layer::Air.
-		R->EDX(INT32_MAX);
-		return 0x54B96B;
+	if (pTechno->IsInAir()) {
+		AttachEffect* aeManager = nullptr;
+		if (TryGetAEManager<TechnoExt>(pTechno, aeManager) && aeManager->HasStand())
+		{
+			// Override JumpjetHeight / CruiseHeight check so it always results in 3 / Layer::Air.
+			R->EDX(INT32_MAX);
+			return 0x54B96B;
+		}
 	}
 	return 0;
 }

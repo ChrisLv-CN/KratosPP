@@ -464,13 +464,16 @@ void StandEffect::RemoveStandIllegalTarget()
 
 void StandEffect::UpdateLocation(LocationMark locationMark)
 {
-	if (!locationMark.Location.IsEmpty() && !_isMoving)
+	if (pStand)
 	{
-		_isMoving = _lastLocationMark.Location != locationMark.Location;
+		if (!locationMark.Location.IsEmpty() && !_isMoving)
+		{
+			_isMoving = _lastLocationMark.Location != locationMark.Location;
+		}
+		_lastLocationMark = locationMark;
+		SetLocation(locationMark.Location);
+		SetFacing(locationMark.Dir, false);
 	}
-	_lastLocationMark = locationMark;
-	SetLocation(locationMark.Location);
-	SetFacing(locationMark.Dir, false);
 }
 
 void StandEffect::SetLocation(CoordStruct location)
@@ -587,6 +590,10 @@ bool StandEffect::IsAlive()
 
 void StandEffect::OnGScreenRender(CoordStruct location)
 {
+	if (IsDead(pStand) || AE->OwnerIsDead())
+	{
+		return;
+	}
 	if (!standIsBuilding && IsFoot())
 	{
 		// synch tilt

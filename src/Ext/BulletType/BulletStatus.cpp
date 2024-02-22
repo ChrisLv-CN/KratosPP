@@ -59,6 +59,8 @@ void BulletStatus::Awake()
 {
 	EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &BulletStatus::OnTechnoDelete);
 
+	Tag = pBullet->GetType()->Name;
+
 	pSource = pBullet->Owner;
 	if (pSource)
 	{

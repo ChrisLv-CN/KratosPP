@@ -120,8 +120,6 @@ public:
 	 */
 	virtual void Awake() override;
 
-	virtual void Destroy() override;
-
 	/**
 	 *@brief 启用AE，根据初始延迟设置延迟启动效果
 	 *
@@ -206,8 +204,8 @@ private:
 	/**
 	 *@brief 是否仍在延迟启动中
 	 *
-	 * @return true 延迟结束
-	 * @return false 延迟中
+	 * @return true 延迟中
+	 * @return false 延迟结束
 	 */
 	bool InDelayToEnable();
 	/**

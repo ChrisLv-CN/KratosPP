@@ -140,12 +140,12 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 {
 	ForeachChild([&pData, &duration, &token, &resetDuration](Component* c) {
 		if (auto ae = dynamic_cast<AttachEffectScript*>(c)) {
-			if (ae->AEData.Stand.Enable)
+			if (ae->AEData.Stand.Enable && ae->IsAlive())
 			{
 				if (StandEffect* standEffect = ae->GetComponent<StandEffect>())
 				{
 					TechnoStatus* status = nullptr;
-					if (TryGetStatus<TechnoExt>(standEffect->pStand, status))
+					if (standEffect->IsAlive() && TryGetStatus<TechnoExt>(standEffect->pStand, status))
 					{
 						IStateScript* state = nullptr;
 						// TODO Get stand's state

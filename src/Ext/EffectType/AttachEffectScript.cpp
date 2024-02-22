@@ -164,6 +164,17 @@ void AttachEffectScript::UpdateAnimOffset(CoordStruct offset)
 
 bool AttachEffectScript::IsAlive()
 {
+	if (_delayToEnable)
+	{
+		if (!InDelayToEnable())
+		{
+			EnableEffects();
+		}
+		else
+		{
+			return true;
+		}
+	}
 	if (IsActive())
 	{
 		// AE来源于乘客，检查乘客是否已经下车
@@ -230,11 +241,6 @@ void AttachEffectScript::Awake()
 
 	// 初始化效果
 	InitEffects();
-}
-
-void AttachEffectScript::Destroy()
-{
-
 }
 
 void AttachEffectScript::Start(TechnoClass* pSource, HouseClass* pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger)
@@ -320,6 +326,10 @@ void AttachEffectScript::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* 
 
 void AttachEffectScript::OnGScreenRender(CoordStruct location)
 {
+	if (_isDelayToEnable)
+	{
+		return;
+	}
 	ForeachChild([&location](Component* c) {
 		if (auto cc = dynamic_cast<IAEScript*>(c)) { cc->OnGScreenRender(location); }
 		});
@@ -327,6 +337,10 @@ void AttachEffectScript::OnGScreenRender(CoordStruct location)
 
 void AttachEffectScript::OnGScreenRenderEnd(CoordStruct location)
 {
+	if (_isDelayToEnable)
+	{
+		return;
+	}
 	ForeachChild([&location](Component* c) {
 		if (auto cc = dynamic_cast<IAEScript*>(c)) { cc->OnGScreenRenderEnd(location); }
 		});
