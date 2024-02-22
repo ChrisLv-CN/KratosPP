@@ -12,6 +12,7 @@
 #include "Effect/BroadcastData.h"
 #include "Effect/CrateBuffData.h"
 #include "Effect/DamageSelfData.h"
+#include "Effect/ExtraFireData.h"
 #include "Effect/FireSuperData.h"
 #include "Effect/HostData.h"
 #include "Effect/ImmuneData.h"
@@ -138,6 +139,7 @@ public:
 	EFFECT_VAR_DEFINE(Broadcast);
 	EFFECT_VAR_DEFINE(CrateBuff);
 	EFFECT_VAR_DEFINE(DamageSelf);
+	EFFECT_VAR_DEFINE(ExtraFire);
 	EFFECT_VAR_DEFINE(FireSuper);
 	EFFECT_VAR_DEFINE(Host);
 	EFFECT_VAR_DEFINE(Immune);
@@ -167,6 +169,7 @@ public:
 		EFFECT_VAR_READ(Broadcast);
 		EFFECT_VAR_READ(CrateBuff);
 		EFFECT_VAR_READ(DamageSelf);
+		EFFECT_VAR_READ(ExtraFire);
 		EFFECT_VAR_READ(FireSuper);
 		EFFECT_VAR_READ(Host);
 		EFFECT_VAR_READ(Immune);
@@ -198,6 +201,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Broadcast);
 		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
 		EFFECT_VAR_SCRIPT_NAME(DamageSelf);
+		EFFECT_VAR_SCRIPT_NAME(ExtraFire);
 		EFFECT_VAR_SCRIPT_NAME(FireSuper);
 		EFFECT_VAR_SCRIPT_NAME(Host);
 		EFFECT_VAR_SCRIPT_NAME(Immune);
@@ -232,6 +236,7 @@ public:
 			EFFECT_VAR_PROCESS(Broadcast)
 			EFFECT_VAR_PROCESS(CrateBuff)
 			EFFECT_VAR_PROCESS(DamageSelf)
+			EFFECT_VAR_PROCESS(ExtraFire)
 			EFFECT_VAR_PROCESS(FireSuper)
 			EFFECT_VAR_PROCESS(Host)
 			EFFECT_VAR_PROCESS(Immune)

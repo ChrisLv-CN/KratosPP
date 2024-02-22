@@ -106,7 +106,7 @@ public:
 
 		AutoWeaponEntity eliteData;
 		eliteData.Read(reader, title + "Elite");
-		if (!eliteData.Enable)
+		if (eliteData.Enable)
 		{
 			EliteData = eliteData;
 		}

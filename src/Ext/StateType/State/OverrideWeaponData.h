@@ -80,7 +80,7 @@ public:
 
 		OverrideWeaponEntity data;
 		data.Read(reader, title);
-		if (!data.Enable)
+		if (data.Enable)
 		{
 			Data = data;
 			EliteData = Data;
@@ -88,7 +88,7 @@ public:
 
 		OverrideWeaponEntity eliteData;
 		eliteData.Read(reader, title + "Elite");
-		if (!eliteData.Enable)
+		if (eliteData.Enable)
 		{
 			EliteData = eliteData;
 		}

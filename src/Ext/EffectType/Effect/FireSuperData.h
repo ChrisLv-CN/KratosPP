@@ -101,7 +101,7 @@ public:
 
 		FireSuperEntity data;
 		data.Read(reader, title);
-		if (!data.Supers.empty())
+		if (data.Enable)
 		{
 			Data = data;
 			EliteData = Data;
@@ -109,7 +109,7 @@ public:
 
 		FireSuperEntity eliteData;
 		eliteData.Read(reader, title + "Elite");
-		if (!eliteData.Supers.empty())
+		if (eliteData.Enable)
 		{
 			EliteData = eliteData;
 		}

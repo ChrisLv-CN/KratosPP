@@ -59,6 +59,7 @@
     <ClCompile Include="src\Ext\EffectType\Effect\BroadcastEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\DamageSelfEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\ExtraFireEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\FireSuperEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\HostEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\ImmuneEffect.cpp" />
@@ -232,6 +233,8 @@
     <ClInclude Include="src\Ext\EffectType\Effect\DamageSelfData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\DamageSelfEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\ExtraFireData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\ExtraFireEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\FireSuperData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\FireSuperEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\HostData.h" />

@@ -647,6 +647,33 @@ void AttachEffect::AttachGroupAE()
 	}
 }
 
+void AttachEffect::AttachStateEffect()
+{
+	std::string section = pObject->GetType()->ID;
+	if (IsNotNone(section))
+	{
+		DamageSelfData* data = INI::GetConfig<DamageSelfData>(INI::Rules, section.c_str())->Data;
+		if (data->Enable)
+		{
+			AttachEffectData aeData;
+			aeData.Enable = true;
+			aeData.Name = section + GetUUID();
+			aeData.DamageSelf = *data;
+			Attach(aeData);
+		}
+
+		ExtraFireData* extraFireData = INI::GetConfig<ExtraFireData>(INI::Rules, section.c_str())->Data;
+		if (extraFireData->Enable)
+		{
+			AttachEffectData aeData;
+			aeData.Enable = true;
+			aeData.Name = section + GetUUID();
+			aeData.ExtraFire = *extraFireData;
+			Attach(aeData);
+		}
+	}
+}
+
 void AttachEffect::DetachByName(std::vector<std::string> aeTypes)
 {
 	ForeachChild([&aeTypes](Component* c) {
@@ -1038,7 +1065,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 					color = Colors::Red;
 				}
 				PrintTextManager::PrintText(log, color, pos);
-			}
+}
 		}
 		// 打印叠层信息
 		Point2D pos2 = ToClientPos(location);
@@ -1151,19 +1178,7 @@ void AttachEffect::OnPut(CoordStruct* pCoord, DirType dirType)
 	{
 		_attachStateEffectFlag = true;
 
-		std::string section = pObject->GetType()->ID;
-		if (IsNotNone(section))
-		{
-			DamageSelfData* data = INI::GetConfig<DamageSelfData>(INI::Rules, section.c_str())->Data;
-			if (data->Enable)
-			{
-				AttachEffectData aeData;
-				aeData.Enable = true;
-				aeData.Name = section;
-				aeData.DamageSelf = *data;
-				Attach(aeData);
-			}
-		}
+		AttachStateEffect();
 	}
 }
 

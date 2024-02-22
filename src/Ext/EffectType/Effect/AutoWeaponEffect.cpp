@@ -245,8 +245,8 @@ void AutoWeaponEffect::OnUpdate()
 		{
 			// 发射单位自身的武器
 			// 获取发射单位的ROF加成
-			double rofMultipt = GetROFMulti(pShooterTechno);
-			rofMultipt *= AE->AEManager->CountAttachStatusMultiplier().ROFMultiplier;
+			double rofMultip = GetROFMulti(pShooterTechno);
+			rofMultip *= AE->AEManager->CountAttachStatusMultiplier().ROFMultiplier;
 			// 检查武器是否存在，是否ROF结束
 			WeaponStruct* pWeaponStruct = pShooterTechno->GetWeapon(data.WeaponIndex);
 			WeaponTypeClass* pWeapon = nullptr;
@@ -273,7 +273,7 @@ void AutoWeaponEffect::OnUpdate()
 								callback);
 						}
 						weaponLaunch = true;
-						ResetROF(pWeapon, weaponData, rofMultipt);
+						ResetROF(pWeapon, weaponData, rofMultip);
 					}
 				}
 			}
@@ -299,8 +299,8 @@ void AutoWeaponEffect::OnUpdate()
 				weaponTypes.assign(data.WeaponTypes.begin(), data.WeaponTypes.end());
 			}
 			// 获取ROF加成
-			double rofMultipt = GetROFMulti(pAttacker);
-			rofMultipt *= AE->AEManager->CountAttachStatusMultiplier().ROFMultiplier;
+			double rofMultip = GetROFMulti(pAttacker);
+			rofMultip *= AE->AEManager->CountAttachStatusMultiplier().ROFMultiplier;
 			// 正式发射武器
 			for (std::string weaponId : weaponTypes)
 			{
@@ -329,7 +329,7 @@ void AutoWeaponEffect::OnUpdate()
 										callback);
 								}
 								weaponLaunch = true;
-								ResetROF(pWeapon, weaponData, rofMultipt);
+								ResetROF(pWeapon, weaponData, rofMultip);
 							}
 						}
 					}

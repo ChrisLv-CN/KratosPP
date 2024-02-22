@@ -248,6 +248,8 @@ private:
 	 */
 	void AttachGroupAE();
 
+	void AttachStateEffect();
+
 	bool IsOnMark(FilterData data);
 	bool HasContradiction(AttachEffectData data);
 
