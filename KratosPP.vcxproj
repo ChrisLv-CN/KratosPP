@@ -88,6 +88,7 @@
     <ClCompile Include="src\Ext\StateType\State\AntiBulletState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroyAnimState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroySelfState.cpp" />
+    <ClCompile Include="src\Ext\StateType\State\DisableWeaponState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\FreezeState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\GiftBoxState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\PaintballState.cpp" />
@@ -105,6 +106,7 @@
     <ClCompile Include="src\Ext\TechnoType\Status\Deselect.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\DestroyAnim.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\DestroySelf.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\DisableWeapon.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Freeze.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Paintball.cpp" />
@@ -275,6 +277,8 @@
     <ClInclude Include="src\Ext\StateType\State\DestroyAnimState.h" />
     <ClInclude Include="src\Ext\StateType\State\DestroySelfData.h" />
     <ClInclude Include="src\Ext\StateType\State\DestroySelfState.h" />
+    <ClInclude Include="src\Ext\StateType\State\DisableWeaponData.h" />
+    <ClInclude Include="src\Ext\StateType\State\DisableWeaponState.h" />
     <ClInclude Include="src\Ext\StateType\State\FreezeData.h" />
     <ClInclude Include="src\Ext\StateType\State\FreezeState.h" />
     <ClInclude Include="src\Ext\StateType\State\GiftBoxData.h" />

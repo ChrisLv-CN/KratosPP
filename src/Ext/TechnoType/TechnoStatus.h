@@ -26,6 +26,7 @@
 #include <Ext/StateType/State/DeselectState.h>
 #include <Ext/StateType/State/DestroyAnimState.h>
 #include <Ext/StateType/State/DestroySelfState.h>
+#include <Ext/StateType/State/DisableWeaponState.h>
 #include <Ext/StateType/State/FreezeState.h>
 #include <Ext/StateType/State/GiftBoxState.h>
 #include <Ext/StateType/State/PaintballState.h>
@@ -98,6 +99,7 @@ public:
 	STATE_VAR_DEFINE(Deselect);
 	STATE_VAR_DEFINE(DestroyAnim);
 	STATE_VAR_DEFINE(DestroySelf);
+	STATE_VAR_DEFINE(DisableWeapon);
 	STATE_VAR_DEFINE(Freeze);
 	STATE_VAR_DEFINE(GiftBox);
 	STATE_VAR_DEFINE(Paintball);
@@ -110,6 +112,7 @@ public:
 		STATE_VAR_INIT(Deselect);
 		STATE_VAR_INIT(DestroyAnim);
 		STATE_VAR_INIT(DestroySelf);
+		STATE_VAR_INIT(DisableWeapon);
 		STATE_VAR_INIT(Freeze);
 		STATE_VAR_INIT(GiftBox);
 		STATE_VAR_INIT(Paintball);
@@ -123,6 +126,7 @@ public:
 		STATE_VAR_INHERITED(Deselect);
 		STATE_VAR_INHERITED(DestroyAnim);
 		STATE_VAR_INHERITED(DestroySelf);
+		STATE_VAR_INHERITED(DisableWeapon);
 		STATE_VAR_INHERITED(Freeze);
 		// STATE_VAR_INHERITED(GiftBox);
 		STATE_VAR_INHERITED(Paintball);
@@ -138,6 +142,7 @@ public:
 			STATE_VAR_TRYGET(Deselect)
 			STATE_VAR_TRYGET(DestroyAnim)
 			STATE_VAR_TRYGET(DestroySelf)
+			STATE_VAR_TRYGET(DisableWeapon)
 			STATE_VAR_TRYGET(Freeze)
 			STATE_VAR_TRYGET(GiftBox)
 			STATE_VAR_TRYGET(Paintball)
@@ -270,6 +275,8 @@ private:
 	void OnReceiveDamageDestroy_Transform();
 
 	void OnRegisterDestruction_Stand(TechnoClass* pKiller, int cost, bool& skip);
+
+	bool CanFire_DisableWeapon(AbstractClass* pTarget, WeaponTypeClass* pWeapon);
 
 	bool OnSelect_VirtualUnit();
 	bool OnSelect_Deselect();

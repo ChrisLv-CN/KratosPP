@@ -163,6 +163,7 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 							GET_STAND_STATE(Deselect)
 							GET_STAND_STATE(DestroyAnim)
 							GET_STAND_STATE(DestroySelf)
+							GET_STAND_STATE(DisableWeapon)
 							GET_STAND_STATE(Freeze)
 							GET_STAND_STATE(GiftBox)
 							GET_STAND_STATE(Paintball)
@@ -1144,7 +1145,25 @@ void AttachEffect::OnWarpUpdate()
 void AttachEffect::OnPut(CoordStruct* pCoord, DirType dirType)
 {
 	_location = *pCoord;
-	// TODO 自我添加DamageSelf的AE InitEffectFlag
+	// 部分AE以状态方式写在TechnoType标签里，在初始化时，自动附加一个AE
+	if (!_attachStateEffectFlag)
+	{
+		_attachStateEffectFlag = true;
+
+		std::string section = pObject->GetType()->ID;
+		if (IsNotNone(section))
+		{
+			DamageSelfData* data = INI::GetConfig<DamageSelfData>(INI::Rules, section.c_str())->Data;
+			if (data->Enable)
+			{
+				AttachEffectData aeData;
+				aeData.Enable = true;
+				aeData.Name = section;
+				aeData.DamageSelf = *data;
+				Attach(aeData);
+			}
+		}
+	}
 }
 
 void AttachEffect::OnRemove()

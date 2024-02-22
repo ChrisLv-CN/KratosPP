@@ -280,6 +280,13 @@ void TechnoStatus::CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, boo
 	{
 		return;
 	}
+	ceaseFire = CanFire_DisableWeapon(pTarget, pWeapon);
+	if (ceaseFire)
+	{
+		Break();
+		return;
+	}
+
 	TechnoClass* pTargetTechno = nullptr;
 	AttachEffect* aem = nullptr;
 	if (CastToTechno(pTarget, pTargetTechno) && TryGetAEManager<TechnoExt>(pTargetTechno, aem))
@@ -288,6 +295,8 @@ void TechnoStatus::CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, boo
 		if (immune.CeaseFire(pWeapon->Warhead->ID))
 		{
 			ceaseFire = true;
+			Break();
+			return;
 		}
 	}
 }

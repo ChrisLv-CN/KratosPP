@@ -299,6 +299,12 @@ private:
 	 */
 	bool _attachOnceFlag = false;
 
+	/**
+	 *@brief 部分AE以状态方式写在TechnoType标签里，在初始化时，自动附加一个AE
+	 *
+	 */
+	bool _attachStateEffectFlag = false;
+
 	CoordStruct _location{}; // 当前位置
 	CoordStruct _lastLocation{}; // 上一次位置
 	std::vector<LocationMark> _locationMarks{}; // 位置记录
