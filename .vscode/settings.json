@@ -3,7 +3,7 @@
 {
   // Path to main Red Alert 2: Yuri's Revenge folder (should contain gamemd.exe).
   // Edit to point to correct one, without trailing slash.
-  "gamemdFolder": "C:/Games/Yuri's Revenge",
+  "gamemdFolder": "D:/Games/YR",
 
   // List of additional paths (semicolon-separated) to folders where PDBs are located.
   // Change if needed, should be correct by default for most recent debug build.
