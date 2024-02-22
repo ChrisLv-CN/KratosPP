@@ -14,6 +14,7 @@
 
 #include <Ext/Common/CommonStatus.h>
 #include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/TechnoType/AircraftAttitude.h>
 #include <Ext/TechnoType/AircraftDive.h>
 
 DEFINE_HOOK(0x639DD8, PlanningManager_AllowAircraftsWaypoint, 0x5)
@@ -56,6 +57,22 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 
 
 #pragma region Aircraft Attitude
+
+DEFINE_HOOK(0x4CF80D, FlyLocomotionClass_Draw_Matrix, 0x5)
+{
+	FlyLocomotionClass* pFly = (FlyLocomotionClass*)(R->ESI() - 4);
+	if (TechnoClass* pTechno = pFly->LinkedTo)
+	{
+		AircraftAttitude* attitude = nullptr;
+		if (TryGetScript<TechnoExt, AircraftAttitude>(pTechno, attitude) && attitude->PitchAngle != 0)
+		{
+			GET_STACK(Matrix3D, matrix3D, 0x8);
+			matrix3D.RotateY(attitude->PitchAngle);
+			R->Stack(0x8, matrix3D);
+		}
+	}
+	return 0;
+}
 
 DEFINE_HOOK(0x4CF4C5, FlyLocomotionClass_FlightLevel_ResetA, 0xA)
 {
@@ -111,4 +128,28 @@ DEFINE_HOOK(0x4CF3C5, FlyLocomotionClass_4CEFB0, 0x6)
 	}
 	return 0;
 }
+
+DEFINE_HOOK(0x41B76E, IFlyControl_Landing_Direction, 0x5)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	int poseDir = RulesClass::Instance->PoseDir;
+	AircraftAttitude* attitude = nullptr;
+	if (TryGetScript<TechnoExt, AircraftAttitude>(pTechno, attitude) && attitude->TryGetAirportDir(poseDir))
+	{
+		// 有机场
+		// 取设置的dir
+		R->EAX(poseDir);
+		// WWSB，只支持8向
+		return 0x41B7BC; // 这个地址会跳到下面去pop EDI
+	}
+	// 飞机没有机场
+	return 0x41B78D;
+}
+
+DEFINE_HOOK(0x41B7BE, IFlyControl_Landing_Direction2, 0x6)
+{
+	// 前一步设置了EAX，拦截函数返回Ruels的PoseDir
+	return 0x41B7B4;
+}
+
 #pragma endregion

@@ -7,6 +7,7 @@
 
 #include <Common/Components/ScriptComponent.h>
 
+#include "AircraftAttitude.h"
 #include "AircraftDiveData.h"
 
 /// @brief 动态载入组件
@@ -20,8 +21,6 @@ public:
 	};
 
 	TECHNO_SCRIPT(AircraftDive);
-
-	void Setup();
 
 	virtual void Awake() override;
 
@@ -57,6 +56,18 @@ public:
 #pragma endregion
 
 private:
+	void Setup();
+
+	AircraftAttitude* _attitude = nullptr;
+	AircraftAttitude* Attitude()
+	{
+		if (!_attitude)
+		{
+			_attitude = _gameObject->GetComponent<AircraftAttitude>();
+		}
+		return _attitude;
+	}
+
 	AircraftDiveData* _data = nullptr;
 
 	bool _activeDive = false;

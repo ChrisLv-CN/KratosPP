@@ -10,6 +10,7 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 
+#include "AircraftAttitude.h"
 #include "AircraftDive.h"
 #include "AircraftPut.h"
 #include "AutoFireAreaWeapon.h"
@@ -75,6 +76,7 @@ void TechnoStatus::InitExt()
 		}
 		if (IsAircraft())
 		{
+			_gameObject->FindOrAttach<AircraftAttitude>();
 			_gameObject->FindOrAttach<AircraftDive>();
 			_gameObject->FindOrAttach<AircraftPut>();
 		}

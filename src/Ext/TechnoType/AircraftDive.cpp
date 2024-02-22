@@ -45,8 +45,8 @@ void AircraftDive::OnUpdate()
 			// 归零
 			DiveStatus = AircraftDiveStatus::NONE;
 			_activeDive = false;
-			// TODO 解锁飞行姿态
-			// attitudeScript.UnLock();
+			// 解锁飞行姿态
+			Attitude()->UnLock();
 			return;
 		}
 		// 带蛋起飞，并且高度超过设定值时，开启俯冲
@@ -66,8 +66,8 @@ void AircraftDive::OnUpdate()
 			{
 				if (data->PullUpAfterFire)
 				{
-					// TODO 持续保持头对准目标
-					// attitudeScript.UpdateHeadToCoord(pTarget.Ref.GetCoords(), true);
+					// 持续保持头对准目标
+					Attitude()->UpdateHeadToCoord(pTarget->GetCoords(), true);
 				}
 			}
 			break;
@@ -77,8 +77,8 @@ void AircraftDive::OnUpdate()
 			break;
 		default:
 			// 开始冲
-			// TODO 解锁飞行姿态
-			// attitudeScript.UnLock();
+			// 解锁飞行姿态
+			Attitude()->UnLock();
 			if (pTarget && _activeDive)
 			{
 				// 检查距离目标的距离是否足够近以触发俯冲姿态
@@ -98,7 +98,7 @@ void AircraftDive::OnUpdate()
 					// 调整飞行高度
 					pFly->FlightLevel = data->FlightLevel;
 					// 头对准目标
-					// attitudeScript.UpdateHeadToCoord(pTarget.Ref.GetCoords(), true);
+					Attitude()->UpdateHeadToCoord(pTarget->GetCoords(), true);
 				}
 			}
 			break;
