@@ -28,8 +28,6 @@ public:
 
 	virtual void ExtChanged() override;
 
-	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
-
 	virtual void OnUpdate() override;
 
 	virtual void OnUpdateEnd() override;
@@ -47,7 +45,7 @@ public:
 			.Process(_targetAngle)
 			.Process(_smooth)
 			.Process(_lockAngle)
-			.Process(_lastLocation)
+			.Process(_location)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
@@ -84,5 +82,5 @@ private:
 	bool _smooth = true; // 平滑的改变角度，防止大幅度的变化
 	bool _lockAngle = false; // 角度由外部传入，不计算
 
-	CoordStruct _lastLocation = CoordStruct::Empty;
+	CoordStruct _location = CoordStruct::Empty;
 };

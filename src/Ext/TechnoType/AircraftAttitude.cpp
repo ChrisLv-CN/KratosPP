@@ -2,9 +2,12 @@
 
 #include <FlyLocomotionClass.h>
 
+#include <Ext/Helper/DrawEx.h>
 #include <Ext/Helper/Finder.h>
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/MathEx.h>
+
+#include <Ext/Common/PrintTextManager.h>
 
 AircraftAttitudeData* AircraftAttitude::GetAircraftAttitudeData()
 {
@@ -60,8 +63,6 @@ void AircraftAttitude::UpdateHeadToCoord(CoordStruct headTo, bool lockAngle)
 	}
 	if (!headTo.IsEmpty())
 	{
-		// 检查是在倾斜地面上平飞还是爬坡，检查前后两个地块的高度没有明显的偏差
-		AircraftAttitudeData* data = GetAircraftAttitudeData();
 		FootClass* pFoot = static_cast<FootClass*>(pTechno);
 		FlyLocomotionClass* pFly = static_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
 
@@ -70,11 +71,32 @@ void AircraftAttitude::UpdateHeadToCoord(CoordStruct headTo, bool lockAngle)
 			PitchAngle = 0;
 			return;
 		}
+
+		// 飞机在全力爬升或者下降，不修正抖动
+		int z = pTechno->GetHeight() - pFly->FlightLevel;
+		if (abs(z) <= Unsorted::LevelHeight)
+		{
+			// 检查是在倾斜地面上平飞还是爬坡，检查前后两个地块的高度没有明显的偏差
+			CellClass* pCell = MapClass::Instance->TryGetCellAt(_location);
+			CellClass* pNextCell = MapClass::Instance->TryGetCellAt(headTo);
+			if (pCell && pNextCell && pNextCell != pCell)
+			{
+				CoordStruct pos1 = pCell->GetCoordsWithBridge();
+				CoordStruct pos2 = pNextCell->GetCoordsWithBridge();
+				int zCell = abs(pos1.Z - pos2.Z);
+				if (zCell == 0 || zCell <= Unsorted::LevelHeight)
+				{
+					// 平飞
+					PitchAngle = 0;
+					return;
+				}
+			}
+		}
+
 		// 计算角度
-		int z = pTechno->GetHeight() - pFly->FlightLevel; // 上升还是下降
-		double deltaZ = _lastLocation.Z - headTo.Z; // 高度差
-		double zz = abs(deltaZ);
-		if (z == 0 || zz < 20) // 消除小幅度的抖动
+		int deltaZ = _location.Z - headTo.Z; // 高度差
+		int hh = abs(deltaZ);
+		if (z == 0 || hh < 20) // 消除小幅度的抖动，每帧高度变化最大20
 		{
 			// 平飞
 			_targetAngle = 0;
@@ -82,8 +104,13 @@ void AircraftAttitude::UpdateHeadToCoord(CoordStruct headTo, bool lockAngle)
 		else
 		{
 			// 计算俯仰角度
-			double dist = _lastLocation.DistanceFrom(headTo);
-			double angle = Math::asin(zz / dist);
+			double dist = headTo.DistanceFrom(_location);
+			if (isnan(dist) || isinf(dist))
+			{
+				// 无法计算距离，用飞行速度代替
+				dist = pFly->CurrentSpeed;
+			}
+			double angle = Math::asin(hh / dist);
 			if (z > 0)
 			{
 				// 俯冲
@@ -110,7 +137,7 @@ void AircraftAttitude::Setup()
 	_targetAngle = 0.0;
 	_smooth = true;
 	_lockAngle = false;
-	_lastLocation = pTechno->GetCoords();
+	_location = pTechno->GetCoords();
 }
 
 void AircraftAttitude::Awake()
@@ -171,12 +198,33 @@ void AircraftAttitude::OnUpdate()
 		}
 		// 关闭图像缓存
 		GetStaus()->DisableVoxelCache = PitchAngle != 0;
-		CoordStruct location = pTechno->GetCoords();
+		_location = pTechno->GetCoords();
 		if (!GetAircraftAttitudeData()->Disable && !_lockAngle)
 		{
-			UpdateHeadToCoord(location);
+			// 根据速度计算出飞行的下一个位置
+			FootClass* pFoot = static_cast<FootClass*>(pTechno);
+			FlyLocomotionClass* pFly = static_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
+			int speed = pFoot->Locomotor->Apparent_Speed();
+			// 飞机使用的是炮塔角度
+			CoordStruct nextPos = GetFLHAbsoluteCoords(_location, CoordStruct{ speed, 0,0 }, pTechno->SecondaryFacing.Current());
+			// 高度设置为下一个坐标所处的格子的高度差+-20，游戏上升下降的速度是20
+			if (CellClass* pCell = MapClass::Instance->TryGetCellAt(nextPos))
+			{
+				int z = _location.Z;
+				int nextZ = pCell->GetCoordsWithBridge().Z;
+				if (z > nextZ)
+				{
+					// 下降
+					nextPos.Z -= 20;
+				}
+				else if (z < nextZ)
+				{
+					// 上升
+					nextPos.Z += 20;
+				}
+			}
+			UpdateHeadToCoord(nextPos);
 		}
-		_lastLocation = location;
 	}
 }
 
@@ -215,8 +263,4 @@ void AircraftAttitude::OnUpdateEnd()
 	}
 }
 
-void AircraftAttitude::OnFire(AbstractClass* pTarget, int weaponIdx)
-{
-
-}
 

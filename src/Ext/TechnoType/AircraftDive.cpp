@@ -64,10 +64,19 @@ void AircraftDive::OnUpdate()
 			}
 			else
 			{
-				if (data->PullUpAfterFire)
+				if (data->HeadToTarget)
 				{
-					// 持续保持头对准目标
-					Attitude()->UpdateHeadToCoord(pTarget->GetCoords(), true);
+					// 当飞行高度接近目标高度的时候，解除飞行姿态控制
+					int height = pTechno->GetHeight() + Unsorted::LevelHeight;
+					if (height <= data->FlightLevel)
+					{
+						Attitude()->UnLock();
+					}
+					else
+					{
+						// 持续保持头对准目标
+						Attitude()->UpdateHeadToCoord(pTarget->GetCoords(), true);
+					}
 				}
 			}
 			break;
@@ -97,7 +106,8 @@ void AircraftDive::OnUpdate()
 					DiveStatus = AircraftDiveStatus::DIVEING;
 					// 调整飞行高度
 					pFly->FlightLevel = data->FlightLevel;
-					if (data->HeadToTarget) {
+					if (data->HeadToTarget)
+					{
 						// 头对准目标
 						Attitude()->UpdateHeadToCoord(pTarget->GetCoords(), true);
 					}

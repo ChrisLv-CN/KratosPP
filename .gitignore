@@ -9,3 +9,4 @@ output
 .vscode
 .cproject
 .project
+/scripts/run_ion_shock.bat
