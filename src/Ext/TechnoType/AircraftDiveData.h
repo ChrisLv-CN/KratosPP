@@ -18,6 +18,8 @@ public:
 
 	bool PullUpAfterFire = false;
 
+	bool HeadToTarget = false;
+
 	virtual void Read(INIBufferReader* reader) override
 	{
 		Enable = reader->Get("Dive", Enable);
@@ -27,5 +29,7 @@ public:
 		FlightLevel = reader->Get("Dive.ForcePutOffset", FlightLevel);
 
 		PullUpAfterFire = reader->Get("Dive.PullUpAfterFire", PullUpAfterFire);
+
+		HeadToTarget = reader->Get("Dive.HeadToTarget", HeadToTarget);
 	}
 };

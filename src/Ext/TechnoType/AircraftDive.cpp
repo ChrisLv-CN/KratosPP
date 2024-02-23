@@ -97,8 +97,10 @@ void AircraftDive::OnUpdate()
 					DiveStatus = AircraftDiveStatus::DIVEING;
 					// 调整飞行高度
 					pFly->FlightLevel = data->FlightLevel;
-					// 头对准目标
-					Attitude()->UpdateHeadToCoord(pTarget->GetCoords(), true);
+					if (data->HeadToTarget) {
+						// 头对准目标
+						Attitude()->UpdateHeadToCoord(pTarget->GetCoords(), true);
+					}
 				}
 			}
 			break;
