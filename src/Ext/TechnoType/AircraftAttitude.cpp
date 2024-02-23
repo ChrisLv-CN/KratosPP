@@ -203,7 +203,6 @@ void AircraftAttitude::OnUpdate()
 		{
 			// 根据速度计算出飞行的下一个位置
 			FootClass* pFoot = static_cast<FootClass*>(pTechno);
-			FlyLocomotionClass* pFly = static_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
 			int speed = pFoot->Locomotor->Apparent_Speed();
 			// 飞机使用的是炮塔角度
 			CoordStruct nextPos = GetFLHAbsoluteCoords(_location, CoordStruct{ speed, 0,0 }, pTechno->SecondaryFacing.Current());

@@ -72,7 +72,7 @@ void AircraftPut::OnPut(CoordStruct* pCoord, DirType dirType)
 		}
 	}
 	CoordStruct offset = data->NoHelipadPutOffset;
-	offset *= 256.0;
+	offset *= Unsorted::LeptonsPerCell;
 	*pCoord += offset;
 	_aircraftPutOffset = true;
 }
