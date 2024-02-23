@@ -18,7 +18,7 @@ public:
 
 	bool PullUpAfterFire = false;
 
-	bool HeadToTarget = false;
+	bool HeadToTarget = true;
 
 	virtual void Read(INIBufferReader* reader) override
 	{

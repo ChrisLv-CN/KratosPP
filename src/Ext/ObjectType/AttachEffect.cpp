@@ -647,30 +647,26 @@ void AttachEffect::AttachGroupAE()
 	}
 }
 
+#define ATTACH_EFFECT_ON_TECHNOTYPE(EFFECT_NAME) \
+		EFFECT_NAME ## Data* _ ## EFFECT_NAME ## Data = INI::GetConfig<EFFECT_NAME ## Data>(INI::Rules, section.c_str())->Data; \
+		if (_ ## EFFECT_NAME ## Data->Enable) \
+		{ \
+			AttachEffectData aeData; \
+			aeData.Enable = true; \
+			aeData.Name = section + GetUUID(); \
+			aeData. ## EFFECT_NAME = *_ ## EFFECT_NAME ## Data; \
+			Attach(aeData); \
+		} \
+
 void AttachEffect::AttachStateEffect()
 {
+	//TODO Attach Effect on TechnoType
 	std::string section = pObject->GetType()->ID;
 	if (IsNotNone(section))
 	{
-		DamageSelfData* data = INI::GetConfig<DamageSelfData>(INI::Rules, section.c_str())->Data;
-		if (data->Enable)
-		{
-			AttachEffectData aeData;
-			aeData.Enable = true;
-			aeData.Name = section + GetUUID();
-			aeData.DamageSelf = *data;
-			Attach(aeData);
-		}
-
-		ExtraFireData* extraFireData = INI::GetConfig<ExtraFireData>(INI::Rules, section.c_str())->Data;
-		if (extraFireData->Enable)
-		{
-			AttachEffectData aeData;
-			aeData.Enable = true;
-			aeData.Name = section + GetUUID();
-			aeData.ExtraFire = *extraFireData;
-			Attach(aeData);
-		}
+		ATTACH_EFFECT_ON_TECHNOTYPE(DamageSelf);
+		ATTACH_EFFECT_ON_TECHNOTYPE(ExtraFire);
+		ATTACH_EFFECT_ON_TECHNOTYPE(FireSuper);
 	}
 }
 
