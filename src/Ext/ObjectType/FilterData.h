@@ -193,6 +193,7 @@ public:
 		{
 			bool hasWhiteList = !OnlyAffectMarks.empty();
 			bool hasBlackList = !NotAffectMarks.empty();
+			mark = !hasWhiteList && !hasBlackList;
 			if (hasWhiteList)
 			{
 				mark = CheckOnMarks(OnlyAffectMarks, marks);
