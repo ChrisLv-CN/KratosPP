@@ -92,6 +92,8 @@ public:
 
 	virtual void CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, bool& ceaseFire) override;
 
+	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
+
 	virtual void OnSelect(bool& selectable) override;
 
 	// TODO Add new State
@@ -283,6 +285,8 @@ private:
 
 	bool CanFire_DisableWeapon(AbstractClass* pTarget, WeaponTypeClass* pWeapon);
 
+	void OnFire_RockerPitch(AbstractClass* pTarget, int weaponIdx);
+
 	bool OnSelect_VirtualUnit();
 	bool OnSelect_Deselect();
 
@@ -294,6 +298,8 @@ private:
 	CoordStruct _location{};
 	bool _isMoving = false;
 
+	//
+	bool _isVoxel = false;
 	// 选择状态
 	bool _disableSelectable = false;
 	// 冻结状态

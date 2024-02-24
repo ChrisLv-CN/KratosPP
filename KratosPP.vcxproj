@@ -115,6 +115,7 @@
     <ClCompile Include="src\Ext\TechnoType\Status\Freeze.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Paintball.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\RockerPitch.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Stand.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Transform.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Vampire.cpp" />

@@ -53,6 +53,8 @@ void TechnoStatus::InitExt()
 	Tag.append("[").append(pTechno->GetTechnoType()->ID).append("]")
 		.append(WString2String(pTechno->GetTechnoType()->UIName));
 
+	_isVoxel = pTechno->IsVoxel();
+
 	_gameObject->FindOrAttach<AutoFireAreaWeapon>();
 	_gameObject->FindOrAttach<DamageText>();
 	_gameObject->FindOrAttach<HealthText>();
@@ -308,6 +310,11 @@ void TechnoStatus::CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, boo
 			return;
 		}
 	}
+}
+
+void TechnoStatus::OnFire(AbstractClass* pTarget, int weaponIdx)
+{
+	OnFire_RockerPitch(pTarget, weaponIdx);
 }
 
 void TechnoStatus::OnSelect(bool& selectable)
