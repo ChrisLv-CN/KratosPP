@@ -170,6 +170,25 @@ void FindAllObject(std::vector<TBase*> array, std::function<bool(TBase*)> func,
  * @return TechnoClass* 搜索到的单位
  */
 TechnoClass* FindRandomTechno(HouseClass* pHouse);
+/**
+ *@brief 按照CellSpread搜索一个点附近的单位
+ *
+ * @param centerCell 中心的格子的坐标
+ * @param location 比对的位置
+ * @param spread 搜索范围
+ * @param fullAirspace 圆柱形搜索
+ * @param includeInAir 包含空中单位
+ * @param ignoreBuildingOuter 忽略建筑的外扩格子
+ * @param pHouse 所属
+ * @param owner 包含自身阵营
+ * @param allied 包含友军
+ * @param enemies 包含敌人
+ * @param civilian 包含平民
+ * @return std::vector<TechnoClass*>
+ */
+std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
+	HouseClass* pHouse = nullptr,
+	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true);
 
 /**
  *@brief 按照CellSpread搜索一个点附近的单位

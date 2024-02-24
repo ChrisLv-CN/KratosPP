@@ -149,17 +149,17 @@ TechnoClass* FindRandomTechno(HouseClass* pHouse)
 	return nullptr;
 }
 
-std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
+std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
 	HouseClass* pHouse,
 	bool owner, bool allied, bool enemies, bool civilian)
 {
 	std::set<TechnoClass*> pTechnoSet;
 
 	// the quick way. only look at stuff residing on the very cells we are affecting.
-	CellStruct cellCoords = MapClass::Instance->GetCellAt(location)->MapCoords;
+	// CellStruct cellCoords = MapClass::Instance->GetCellAt(location)->MapCoords;
 	size_t range = static_cast<size_t>(spread + 0.99);
 	for (CellSpreadEnumerator it(range); it; ++it) {
-		CellClass* pCell = MapClass::Instance->GetCellAt(*it + cellCoords);
+		CellClass* pCell = MapClass::Instance->GetCellAt(*it + centerCell);
 		// find all Techno in cell
 		for (NextObject obj(pCell->GetContent()); obj; ++obj) {
 			if (TechnoClass* pTechno = abstract_cast<TechnoClass*>(*obj)) {
@@ -226,6 +226,17 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spre
 	}
 	return pTechnoList;
 }
+
+std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
+	HouseClass* pHouse,
+	bool owner, bool allied, bool enemies, bool civilian)
+{
+	CellStruct cellCoords = MapClass::Instance->GetCellAt(location)->MapCoords;
+	return GetCellSpreadTechnos(cellCoords, location, spread, fullAirspace, includeInAir, ignoreBuildingOuter,
+		pHouse,
+		owner, allied, enemies, civilian);
+}
+
 void FindTechnoOnMark(std::function<void(TechnoClass*, AttachEffect*)> func,
 	CoordStruct location, double maxSpread, double minSpread, bool fullAirspace,
 	HouseClass* pHouse, FilterData data, ObjectClass* exclude)

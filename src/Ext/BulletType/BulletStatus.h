@@ -120,7 +120,7 @@ public:
 
 			.Process(this->_initFlag)
 			// 碰撞引信
-			.Process(this->proximity)
+			.Process(this->_proximity)
 			.Process(this->_activeProximity)
 			.Process(this->_proximityRange)
 			.Success();
@@ -151,6 +151,9 @@ private:
 	// 反抛射体
 	void CanAffectAndDamageBullet(BulletClass* pTarget, WarheadTypeClass* pWH);
 
+	// 手动引爆抛射体
+	bool ManualDetonation(CoordStruct sourcePos, bool KABOOM = true, AbstractClass* pTarget = nullptr, CoordStruct detonatePos = CoordStruct::Empty);
+
 	void InitState_BlackHole();
 	void InitState_ECM();
 	void InitState_Proximity();
@@ -180,7 +183,7 @@ private:
 	ProximityData* _proximityData = nullptr;
 	ProximityData* GetProximityData();
 	// 碰撞引信
-	Proximity proximity{};
+	Proximity _proximity{};
 	bool _activeProximity = false;
 	// 近炸引信
 	int _proximityRange = -1;

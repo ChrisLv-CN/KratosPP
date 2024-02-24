@@ -49,11 +49,10 @@ public:
  *@brief 碰撞引信的状态
  *
  */
-struct Proximity
+class Proximity
 {
 public:
-	CellClass* pCheckedCell = nullptr;
-	std::vector<BuildingClass*> BuildingMarks{};
+	bool active = false;
 
 	bool count = true;
 	int times = 1;
@@ -61,10 +60,14 @@ public:
 	bool safe = false;
 	CDTimerClass safeTimer{};
 
+	CellClass* pCheckedCell = nullptr;
+	std::vector<BuildingClass*> BuildingMarks{};
+
 	Proximity() {}
 
 	Proximity(int safeDelay, int times)
 	{
+		this->active = true;
 		this->safe = safeDelay > 0;
 		if (safe)
 		{
@@ -106,5 +109,31 @@ public:
 		}
 		return find;
 	}
+
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->active)
+			.Process(this->count)
+			.Process(this->times)
+			.Process(this->safe)
+			.Process(this->safeTimer)
+			.Process(this->pCheckedCell)
+			.Process(this->BuildingMarks)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange)
+	{
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const
+	{
+		return const_cast<Proximity*>(this)->Serialize(stream);
+	}
+#pragma endregion
 };
 
