@@ -6,11 +6,10 @@
 
 #include <Extension/VoxelAnimTypeExt.h>
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x74AEB0, VoxelAnimTypeClass_CTOR, 0xB)
 {
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(VoxelAnimTypeClass *, pItem, ESI);
 

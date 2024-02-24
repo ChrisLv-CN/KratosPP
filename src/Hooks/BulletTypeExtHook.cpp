@@ -6,11 +6,10 @@
 
 #include <Extension/BulletTypeExt.h>
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x46BDD9, BulletTypeClass_CTOR, 0x5)
 {
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(BulletTypeClass *, pItem, EAX);
 

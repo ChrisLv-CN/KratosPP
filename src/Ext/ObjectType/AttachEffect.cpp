@@ -1052,7 +1052,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 		{
 			std::vector<Component::ComponentState> states;
 			int level = 0;
-			GetComponentStates(states, level);
+			_gameObject->GetComponentStates(states, level);
 			Point2D pos = ToClientPos(location);
 			int ii = 0;
 			for (Component::ComponentState& state : states)

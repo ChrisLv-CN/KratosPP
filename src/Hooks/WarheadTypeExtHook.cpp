@@ -6,11 +6,10 @@
 
 #include <Extension/WarheadTypeExt.h>
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x75D1A9, WarheadTypeClass_CTOR, 0x7)
 {
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(WarheadTypeClass *, pItem, EBP);
 

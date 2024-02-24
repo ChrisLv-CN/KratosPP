@@ -26,9 +26,6 @@ public:
 
 static SaveGameHook _saveGameHook;
 
-// Loading a save game skip the Hook like TechnoClass_CTOR to Allocate a new TechnoExt
-bool IsLoadGame = false;
-
 DEFINE_HOOK(0x67CEF0, SaveGame_Start, 0x6)
 {
 	GET(const char *, fileName, ECX);
@@ -81,7 +78,7 @@ DEFINE_HOOK(0x67E720, LoadGame_End, 0x6)
 
 DEFINE_HOOK(0x67E730, LoadGameInStream_Start, 0x5)
 {
-	IsLoadGame = true;
+	Common::IsLoadGame = true;
 	GET(IStream *, stream, ECX);
 	LoadGameEventArgs args{stream, true};
 	EventSystems::SaveLoad.Broadcast(Events::LoadGameEvent, &args);
@@ -90,7 +87,7 @@ DEFINE_HOOK(0x67E730, LoadGameInStream_Start, 0x5)
 
 DEFINE_HOOK(0x67F7C8, LoadGameInStream_End, 0x5)
 {
-	IsLoadGame = false;
+	Common::IsLoadGame = false;
 	GET(IStream *, stream, ESI);
 	LoadGameEventArgs args{stream, false};
 	EventSystems::SaveLoad.Broadcast(Events::LoadGameEvent, &args);

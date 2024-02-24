@@ -6,11 +6,10 @@
 
 #include <Extension/AnimTypeExt.h>
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x42784B, AnimTypeClass_CTOR, 0x5)
 {
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(AnimTypeClass *, pItem, EAX);
 

@@ -6,11 +6,10 @@
 
 #include <Extension/TechnoTypeExt.h>
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x711835, TechnoTypeClass_CTOR, 0x5)
 {
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(TechnoTypeClass *, pItem, ESI);
 

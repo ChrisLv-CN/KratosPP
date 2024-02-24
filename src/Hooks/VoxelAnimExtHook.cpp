@@ -10,7 +10,6 @@
 // Extension
 // ----------------
 
-extern bool IsLoadGame;
 
 //DEFINE_HOOK(0x749951, VoxelAnimClass_CTOR, 0xC)
 DEFINE_HOOK(0x74942E, VoxelAnimClass_CTOR, 0xC)

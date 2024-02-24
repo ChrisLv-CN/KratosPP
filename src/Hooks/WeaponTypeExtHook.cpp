@@ -6,11 +6,10 @@
 
 #include <Extension/WeaponTypeExt.h>
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x771EE9, WeaponTypeClass_CTOR, 0x5)
 {
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(WeaponTypeClass *, pItem, ESI);
 

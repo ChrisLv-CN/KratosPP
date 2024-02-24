@@ -6,8 +6,6 @@
 #include <Utilities/Patch.h>
 #include <Utilities/Macro.h>
 
-#include <Utilities/AresHelper.h>
-
 #ifndef IS_RELEASE_VER
 bool HideWarning = false;
 #endif
@@ -15,6 +13,8 @@ bool HideWarning = false;
 bool InChinese = GetSystemDefaultLangID() == 0x0804;
 
 HANDLE Common::hInstance = 0;
+
+bool Common::IsLoadGame = false;
 
 char Common::readBuffer[Common::readLength];
 wchar_t Common::wideBuffer[Common::readLength];

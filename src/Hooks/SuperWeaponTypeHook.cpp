@@ -6,11 +6,10 @@
 
 #include <Extension/SuperWeaponTypeExt.h>
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x6CE6F6, SuperWeaponTypeClass_CTOR, 0x5)
 {
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(SuperWeaponTypeClass *, pItem, EAX);
 

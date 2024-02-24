@@ -6,11 +6,10 @@
 
 #include <Extension/TerrainTypeExt.h>
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x71DBC0, TerrainTypeClass_CTOR, 0x7)
 {
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(TerrainTypeClass *, pItem, ESI);
 

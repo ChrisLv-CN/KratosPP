@@ -22,6 +22,8 @@ public:
 	//variables
 	static HANDLE hInstance;
 
+	static bool IsLoadGame;
+
 	static const size_t readLength = 2048;
 	static char readBuffer[readLength];
 	static wchar_t wideBuffer[readLength];
@@ -36,51 +38,4 @@ public:
 	static bool DetachFromDebugger();
 #endif // DEBUG
 
-	class UI
-	{
-	public:
-		static bool DisableEmptySpawnPositions;
-		static bool ExtendedToolTips;
-		static int MaxToolTipWidth;
-		static bool ShowHarvesterCounter;
-		static double HarvesterCounter_ConditionYellow;
-		static double HarvesterCounter_ConditionRed;
-		static bool ShowProducingProgress;
-		static bool ShowPowerDelta;
-		static double PowerDelta_ConditionYellow;
-		static double PowerDelta_ConditionRed;
-		static bool CenterPauseMenuBackground;
-
-		static const wchar_t* CostLabel;
-		static const wchar_t* PowerLabel;
-		static const wchar_t* PowerBlackoutLabel;
-		static const wchar_t* TimeLabel;
-		static const wchar_t* HarvesterLabel;
-	};
-
-	class Config
-	{
-	public:
-		static bool ToolTipDescriptions;
-		static bool ToolTipBlur;
-		static bool PrioritySelectionFiltering;
-		static bool DevelopmentCommands;
-		static bool ArtImageSwap;
-		static bool ShowPlacementPreview;
-		static bool EnableBuildingPlacementPreview;
-		static bool DigitalDisplay_Enable;
-		static bool RealTimeTimers;
-		static bool RealTimeTimers_Adaptive;
-		static int CampaignDefaultGameSpeed;
-		static bool SkirmishUnlimitedColors;
-	};
-
-	class Misc
-	{
-	public:
-		static bool CustomGS;
-		static int CustomGS_ChangeInterval[7];
-		static int CustomGS_ChangeDelay[7];
-		static int CustomGS_DefaultDelay[7];
-	};
 };

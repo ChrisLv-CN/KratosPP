@@ -29,13 +29,12 @@
 // Extension
 // ----------------
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 {
 	// skip this Allocate just left TechnoClass_Load_Suffix => LoadKey to Allocate
 	// when is loading a save game.
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(TechnoClass*, pItem, ESI);
 

@@ -13,6 +13,8 @@ class PrintTextManager
 public:
 	static Point2D GetFontSize();
 
+	static Point2D GetFontSize(std::wstring font);
+
 	/**
 	 *@brief 在指定位置打印一个文字
 	 *

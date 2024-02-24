@@ -1,5 +1,7 @@
 ﻿#include "PrintTextManager.h"
 
+#include <StringTable.h>
+
 Point2D PrintTextManager::_fontSize{ 0, 0 };
 
 Point2D PrintTextManager::GetFontSize()
@@ -13,6 +15,16 @@ Point2D PrintTextManager::GetFontSize()
 		_fontSize.Y = fontRect.Height;
 	}
 	return _fontSize;
+}
+
+Point2D PrintTextManager::GetFontSize(std::wstring font)
+{
+	Point2D fontSize = GetFontSize();
+	RectangleStruct fontRect = Drawing::GetTextDimensions(font.c_str(), Point2D::Empty, 0, 0, 0);
+	int x = fontRect.Width;
+	fontSize.X = x % 2 == 0 ? x : x + 1;
+	fontSize.Y = fontRect.Height;
+	return fontSize;
 }
 
 /**
@@ -179,8 +191,6 @@ void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTex
 		{
 			textColor = houseColor;
 		}
-		int x = GetFontSize().X;
-		int y = isBuilding ? GetFontSize().X / 2 : 0;
 		// 拆成单个字符
 		for (wchar_t& t : text)
 		{
@@ -193,6 +203,9 @@ void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTex
 			}
 			pSurface->DrawText(tt.c_str(), pBound, &pos, Drawing::RGB_To_Int(textColor));
 			// 获取字体横向位移值，即图像宽度，同时计算阶梯高度偏移
+			Point2D fontSize = GetFontSize(tt);
+			int x = fontSize.X;
+			int y = isBuilding ? fontSize.X / 2 : 0;
 			pos.X += x;
 			pos.Y -= y;
 		}

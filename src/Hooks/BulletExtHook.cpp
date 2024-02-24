@@ -23,13 +23,12 @@
 // Extension
 // ----------------
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK(0x4664BA, BulletClass_CTOR, 0x5)
 {
 	// skip this Allocate just left BulletClass_Load_Suffix => LoadKey to Allocate
 	// when is loading a save game.
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(BulletClass*, pItem, ESI);
 

@@ -21,13 +21,12 @@
 // Extension
 // ----------------
 
-extern bool IsLoadGame;
 
 DEFINE_HOOK_AGAIN(0x422126, AnimClass_CTOR, 0x5)
 DEFINE_HOOK_AGAIN(0x422707, AnimClass_CTOR, 0x5)
 DEFINE_HOOK(0x4228D2, AnimClass_CTOR, 0x5)
 {
-	if (!IsLoadGame)
+	if (!Common::IsLoadGame)
 	{
 		GET(AnimClass*, pItem, ESI);
 
