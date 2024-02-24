@@ -43,8 +43,11 @@ public:
 	void DrawVXL_Paintball(REGISTERS* R);
 
 	void OnTechnoDelete(EventSystem* sender, Event e, void* args);
+	void OnFakeTargetDetach(EventSystem* sender, Event e, void* args);
 
 	void ActiveProximity();
+
+	void SetFakeTarget(ObjectClass* pFakeTarget);
 
 	virtual void Awake() override;
 
@@ -75,15 +78,13 @@ public:
 	{
 		if (false) {}
 		STATE_VAR_TRYGET(GiftBox)
-		STATE_VAR_TRYGET(DestroySelf)
-		STATE_VAR_TRYGET(DestroySelf)
-		return state != nullptr;
+			STATE_VAR_TRYGET(DestroySelf)
+			STATE_VAR_TRYGET(DestroySelf)
+			return state != nullptr;
 	}
 
 	TechnoClass* pSource = nullptr;
 	HouseClass* pSourceHouse = nullptr;
-
-	AbstractClass* pFakeTarget = nullptr;
 
 	// 生命值和伤害值
 	BulletLife life = {};
@@ -109,7 +110,6 @@ public:
 		return stream
 			.Process(this->pSource)
 			.Process(this->pSourceHouse)
-			.Process(this->pFakeTarget)
 			.Process(this->life)
 			.Process(this->damage)
 
@@ -119,6 +119,9 @@ public:
 			.Process(this->LocationLocked)
 
 			.Process(this->_initFlag)
+
+			.Process(this->_hasFakeTarget)
+			.Process(this->_pFakeTarget)
 			// 碰撞引信
 			.Process(this->_proximity)
 			.Process(this->_activeProximity)
@@ -129,8 +132,13 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
+		bool res = this->Serialize(stream);
 		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &BulletStatus::OnTechnoDelete);
-		return this->Serialize(stream);
+		if (_hasFakeTarget)
+		{
+			EventSystems::General.AddHandler(Events::DetachAll, this, &BulletStatus::OnFakeTargetDetach);
+		}
+		return res;
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
@@ -174,6 +182,9 @@ private:
 	bool OnDetonate_SelfLaunch(CoordStruct* pCoords);
 
 	bool _initFlag = false;
+
+	bool _hasFakeTarget = false;
+	ObjectClass* _pFakeTarget = nullptr;
 
 	bool _targetToAircraftFlag = false;
 

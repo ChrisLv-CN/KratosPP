@@ -19,9 +19,16 @@ void BulletStatus::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	{
 		pSource = nullptr;
 	}
-	if (args == pFakeTarget)
+}
+
+void BulletStatus::OnFakeTargetDetach(EventSystem* sender, Event e, void* args)
+{
+	auto const& argsArray = reinterpret_cast<void**>(args);
+	AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
+	if (pInvalid == _pFakeTarget)
 	{
-		pFakeTarget = nullptr;
+		_hasFakeTarget = false;
+		_pFakeTarget = nullptr;
 	}
 }
 
@@ -53,6 +60,14 @@ void BulletStatus::InitState()
 		FindOrAttach<StraightTrajectory>();
 		break;
 	}
+}
+
+void BulletStatus::SetFakeTarget(ObjectClass* pFakeTarget)
+{
+	_pFakeTarget = pFakeTarget;
+	_hasFakeTarget = _pFakeTarget != nullptr;
+
+	EventSystems::General.AddHandler(Events::DetachAll, this, &BulletStatus::OnFakeTargetDetach);
 }
 
 void BulletStatus::Awake()
@@ -114,22 +129,14 @@ void BulletStatus::Awake()
 void BulletStatus::Destroy()
 {
 	EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &BulletStatus::OnTechnoDelete);
-
+	if (_hasFakeTarget)
+	{
+		EventSystems::General.RemoveHandler(Events::DetachAll, this, &BulletStatus::OnFakeTargetDetach);
+	}
 	auto it = std::find(BulletExt::TargetAircraftBullets.begin(), BulletExt::TargetAircraftBullets.end(), pBullet);
 	if (it != BulletExt::TargetAircraftBullets.end())
 	{
 		BulletExt::TargetAircraftBullets.erase(it);
-	}
-	if (pFakeTarget)
-	{
-		if (ObjectClass* pObject = dynamic_cast<ObjectClass*>(pFakeTarget))
-		{
-			pObject->UnInit();
-		}
-		else
-		{
-			Debug::Log("Error: Has one bullet has a fake target, but can not cover to ObjectClass \n");
-		}
 	}
 }
 
@@ -301,6 +308,10 @@ void BulletStatus::OnUpdateEnd_BlackHole(CoordStruct& sourcePos) {};
 
 void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 {
+	if (_pFakeTarget)
+	{
+		_pFakeTarget->UnInit();
+	}
 	if (!skip)
 	{
 		if ((skip = OnDetonate_AntiBullet(pCoords)) == true)

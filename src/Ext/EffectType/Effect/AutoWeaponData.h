@@ -89,7 +89,7 @@ public:
 
 	virtual void Read(INIBufferReader* reader) override
 	{
-		Read(reader, "AutoWeaponWeapon.");
+		Read(reader, "AutoWeapon.");
 	}
 
 	virtual void Read(INIBufferReader* reader, std::string title) override

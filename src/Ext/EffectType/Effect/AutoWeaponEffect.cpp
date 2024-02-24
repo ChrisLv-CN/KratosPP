@@ -15,9 +15,12 @@
 
 void AutoWeaponEffect::SetupFakeTargetToBullet(int index, int burst, BulletClass*& pBullet, AbstractClass*& pTarget)
 {
-	if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pBullet))
+	if (ObjectClass* pObj = dynamic_cast<ObjectClass*>(pTarget))
 	{
-		status->pFakeTarget = pTarget;
+		if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pBullet))
+		{
+			status->SetFakeTarget(pObj);
+		}
 	}
 }
 
@@ -120,7 +123,7 @@ bool AutoWeaponEffect::TryGetShooterAndTarget(TechnoClass* pReceiverOwner, House
 	return pTarget == nullptr;
 }
 
-AbstractClass* AutoWeaponEffect::MakeFakeTarget(HouseClass* pHouse, ObjectClass* pShooter, CoordStruct fireFLH, CoordStruct targetFLH)
+ObjectClass* AutoWeaponEffect::MakeFakeTarget(HouseClass* pHouse, ObjectClass* pShooter, CoordStruct fireFLH, CoordStruct targetFLH)
 {
 	CoordStruct targetPos;
 	CoordStruct location = pShooter->GetCoords();
@@ -240,8 +243,23 @@ void AutoWeaponEffect::OnUpdate()
 
 		bool weaponLaunch = false;
 		TechnoClass* pShooterTechno = nullptr;
+		BulletClass* pShooterBullet = nullptr;
+		AttachFire* pAttachFire = nullptr;
+		if (CastToTechno(pShooter, pShooterTechno))
+		{
+			pAttachFire = FindOrAttachScript<TechnoExt, AttachFire>(pShooterTechno);
+		}
+		else if (CastToBullet(pShooter, pShooterBullet))
+		{
+			pAttachFire = FindOrAttachScript<BulletExt, AttachFire>(pShooterBullet);
+		}
+		if (!pAttachFire)
+		{
+			Debug::Log("Error: AE [%s] cannot find the AttachFire componet on Shooter [%s]\n", AEData.Name.c_str(), pShooter->GetType()->ID);
+			return;
+		}
 		// 发射武器是单位本身的武器还是自定义武器
-		if (data.WeaponIndex >= 0 && CastToTechno(pShooter, pShooterTechno))
+		if (data.WeaponIndex >= 0 && pShooterTechno)
 		{
 			// 发射单位自身的武器
 			// 获取发射单位的ROF加成
@@ -265,13 +283,10 @@ void AutoWeaponEffect::OnUpdate()
 					if (pTarget)
 					{
 						// 发射武器
-						if (AttachFire* pAttachFire = FindOrAttachScript<TechnoExt, AttachFire>(pShooterTechno))
-						{
-							pAttachFire->FireCustomWeapon(pAttacker, pTarget, pAttackingHouse,
-								pWeapon, *weaponData,
-								data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
-								callback);
-						}
+						pAttachFire->FireCustomWeapon(pAttacker, pTarget, pAttackingHouse,
+							pWeapon, *weaponData,
+							data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
+							callback);
 						weaponLaunch = true;
 						ResetROF(pWeapon, weaponData, rofMultip);
 					}
@@ -301,6 +316,7 @@ void AutoWeaponEffect::OnUpdate()
 			// 获取ROF加成
 			double rofMultip = GetROFMulti(pAttacker);
 			rofMultip *= AE->AEManager->CountAttachStatusMultiplier().ROFMultiplier;
+
 			// 正式发射武器
 			for (std::string weaponId : weaponTypes)
 			{
@@ -312,22 +328,20 @@ void AutoWeaponEffect::OnUpdate()
 						WeaponTypeExt::TypeData* weaponData = GetTypeData<WeaponTypeExt, WeaponTypeExt::TypeData>(pWeapon);
 						if (CheckROF(pWeapon, weaponData))
 						{
+							AbstractClass* pTempTarget = pTarget;
 							FireBulletToTarget callback = nullptr;
 							if (needFakeTarget)
 							{
-								pTarget = MakeFakeTarget(pReceiverHouse, pShooter, data.FireFLH, data.TargetFLH);
+								pTempTarget = MakeFakeTarget(pReceiverHouse, pShooter, data.FireFLH, data.TargetFLH);
 								callback = SetupFakeTargetToBullet;
 							}
-							if (pTarget)
+							if (pTempTarget)
 							{
 								// 发射武器
-								if (AttachFire* pAttachFire = FindOrAttachScript<TechnoExt, AttachFire>(pShooterTechno))
-								{
-									pAttachFire->FireCustomWeapon(pAttacker, pTarget, pAttackingHouse,
-										pWeapon, *weaponData,
-										data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
-										callback);
-								}
+								pAttachFire->FireCustomWeapon(pAttacker, pTempTarget, pAttackingHouse,
+									pWeapon, *weaponData,
+									data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
+									callback);
 								weaponLaunch = true;
 								ResetROF(pWeapon, weaponData, rofMultip);
 							}

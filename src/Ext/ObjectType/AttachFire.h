@@ -254,16 +254,20 @@ class AttachFire : public ObjectScript
 public:
 	OBJECT_SCRIPT(AttachFire);
 
-	virtual void Destroy() override
+	virtual void Awake() override
 	{
-		EventSystems::General.RemoveHandler(Events::PointerExpireEvent, this, &AttachFire::PointerExpired);
+		EventSystems::Logic.AddHandler(Events::DetachAll, this, &AttachFire::OnTargetDetach);
 	}
 
-	void PointerExpired(EventSystem* sender, Event e, void* args)
+	virtual void Destroy() override
+	{
+		EventSystems::Logic.RemoveHandler(Events::DetachAll, this, &AttachFire::OnTargetDetach);
+	}
+
+	void OnTargetDetach(EventSystem* sender, Event e, void* args)
 	{
 		auto const& argsArray = reinterpret_cast<void**>(args);
 		AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
-		// bool removed = argsArray[1];
 		for (DelayFire& delayFire : _delayFires)
 		{
 			if (delayFire.pTarget == pInvalid)
@@ -410,7 +414,7 @@ public:
 				}
 			}
 		}
-			return isFire;
+		return isFire;
 	}
 
 	/**
@@ -544,6 +548,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
+		EventSystems::Logic.AddHandler(Events::DetachAll, this, &AttachFire::OnTargetDetach);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

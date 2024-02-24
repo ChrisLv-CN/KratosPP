@@ -164,6 +164,10 @@ void AttachEffectScript::UpdateAnimOffset(CoordStruct offset)
 
 bool AttachEffectScript::IsAlive()
 {
+#ifdef DEBUG
+	int timeLeft = GetDuration();
+	Tag = std::to_string(timeLeft) + "#" + AEData.Name;
+#endif
 	if (_delayToEnable)
 	{
 		if (!InDelayToEnable())

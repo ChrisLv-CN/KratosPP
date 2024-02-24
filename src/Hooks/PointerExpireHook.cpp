@@ -9,18 +9,18 @@
 #include <Helpers/Macro.h>
 
 #include <Common/EventSystems/EventSystem.h>
-/*
-class PointerExpireHook
-{
-public:
-	PointerExpireHook()
-	{
-		// EventSystems::General.AddHandler(Events::DetachAll, DetachAll);
-		// EventSystems::General.AddHandler(Events::PointerExpireEvent, InvalidatePointer);
-	}
-};
 
-static PointerExpireHook _pointerExpireHook;
+// class PointerExpireHook
+// {
+// public:
+// 	PointerExpireHook()
+// 	{
+// 		EventSystems::General.AddHandler(Events::DetachAll, DetachAll);
+// 		EventSystems::General.AddHandler(Events::PointerExpireEvent, InvalidatePointer);
+// 	}
+// };
+
+// static PointerExpireHook _pointerExpireHook;
 
 DEFINE_HOOK(0x4101F0, AbstractClass_Delete, 0x6)
 {
@@ -46,4 +46,4 @@ DEFINE_HOOK(0x7258D0, DetachThisFromAll, 0x6)
 
 	return 0;
 }
-*/
+

@@ -66,7 +66,7 @@ private:
 		ObjectClass*& pShooter, TechnoClass*& pAttacker, HouseClass*& pAttackingHouse, AbstractClass*& pTarget,
 		bool& dontMakeFakeTarget);
 
-	AbstractClass* MakeFakeTarget(HouseClass* pHouse, ObjectClass* pShooter, CoordStruct fireFLH, CoordStruct targetFLH);
+	ObjectClass* MakeFakeTarget(HouseClass* pHouse, ObjectClass* pShooter, CoordStruct fireFLH, CoordStruct targetFLH);
 
 	bool CheckROF(WeaponTypeClass* pWeapon, WeaponTypeExt::TypeData* weaponData);
 

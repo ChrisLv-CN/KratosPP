@@ -1048,10 +1048,12 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 		{
 			std::vector<Component::ComponentState> states;
 			int level = 0;
-			_gameObject->GetComponentStates(states, level);
+			GetComponentStates(states, level);
 			Point2D pos = ToClientPos(location);
+			int ii = 0;
 			for (Component::ComponentState& state : states)
 			{
+				if (ii++ == 0) continue;
 				std::string log{ state.Name };
 				log.append("\n");
 				pos.Y += offsetZ;
@@ -1061,7 +1063,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 					color = Colors::Red;
 				}
 				PrintTextManager::PrintText(log, color, pos);
-}
+			}
 		}
 		// 打印叠层信息
 		Point2D pos2 = ToClientPos(location);
