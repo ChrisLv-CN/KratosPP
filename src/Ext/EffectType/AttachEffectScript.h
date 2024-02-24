@@ -102,6 +102,7 @@ public:
 	void GetMarks(std::vector<std::string>& marks);
 
 	bool OwnerIsDead();
+	void OnTechnoDelete(EventSystem* sender, Event e, void* args);
 
 	void UpdateStandLocation(LocationMark locationMark);
 	void UpdateAnimOffset(CoordStruct offset);
@@ -119,6 +120,8 @@ public:
 	 *
 	 */
 	virtual void Awake() override;
+
+	virtual void Destroy() override;
 
 	/**
 	 *@brief 启用AE，根据初始延迟设置延迟启动效果
@@ -165,13 +168,20 @@ public:
 			.Process(this->_inBuilding)
 			.Process(this->_isDelayToEnable)
 			.Process(this->_hold)
+
+			.Process(this->_diffSource)
 			.Success();
 	};
 
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		return this->Serialize(stream);
+		bool res = this->Serialize(stream);
+		if (_diffSource)
+		{
+			EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AttachEffectScript::OnTechnoDelete);
+		}
+		return res;
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
@@ -188,6 +198,8 @@ private:
 	bool _inBuilding = false; // 是否在建造中
 	bool _isDelayToEnable = false; // 需要延迟激活
 	bool _hold = false; // 跳过效果器死亡检查，用于暂停效果器，AE不会当成死亡结束
+
+	bool _diffSource = false; // pSource是外人，需要监听死亡
 
 	/**
 	 *@brief 初始化所有的Effects并加入Sub-Component

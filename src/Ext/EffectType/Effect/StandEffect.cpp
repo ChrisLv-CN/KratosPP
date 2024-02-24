@@ -554,7 +554,6 @@ void StandEffect::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	if (args == pStand)
 	{
 		pStand = nullptr;
-		Debug::Log("OnTechnoDelete calling pStand [%d] is delete. \n", args);
 	}
 }
 

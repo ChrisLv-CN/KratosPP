@@ -760,9 +760,13 @@ AttachEffectGroupData* AttachEffect::GetGroupData()
 
 bool AttachEffect::IsOnMark(FilterData data)
 {
-	std::vector<std::string> marks;
-	GetMarks(marks);
-	return data.OnMark(marks);
+	if (data.HasMarks())
+	{
+		std::vector<std::string> marks;
+		GetMarks(marks);
+		return data.OnMark(marks);
+	}
+	return true;
 }
 
 bool AttachEffect::HasContradiction(AttachEffectData data)

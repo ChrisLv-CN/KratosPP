@@ -146,6 +146,14 @@ bool AttachEffectScript::OwnerIsDead()
 	return AEManager->OwnerIsDead();
 }
 
+void AttachEffectScript::OnTechnoDelete(EventSystem* sender, Event e, void* args)
+{
+	if (args == pSource)
+	{
+		pSource = nullptr;
+	}
+}
+
 void AttachEffectScript::UpdateStandLocation(LocationMark locationMark)
 {
 	if (StandEffect* c = GetComponent<StandEffect>())
@@ -247,11 +255,21 @@ void AttachEffectScript::Awake()
 	InitEffects();
 }
 
+void AttachEffectScript::Destroy()
+{
+	EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &AttachEffectScript::OnTechnoDelete);
+}
+
 void AttachEffectScript::Start(TechnoClass* pSource, HouseClass* pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger)
 {
 	Activate();
 	this->pSource = pSource;
 	this->pSourceHouse = pSourceHouse;
+	if (pSource != pObject)
+	{
+		this->_diffSource = true;
+		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AttachEffectScript::OnTechnoDelete);
+	}
 	if (this->FromWarhead = !warheadLocation.IsEmpty())
 	{
 		this->WarheadLocation = warheadLocation;

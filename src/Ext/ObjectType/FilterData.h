@@ -186,6 +186,11 @@ public:
 		return false;
 	}
 
+	bool HasMarks()
+	{
+		return !OnlyAffectMarks.empty() || !NotAffectMarks.empty();
+	}
+
 	bool OnMark(std::vector<std::string> marks)
 	{
 		bool mark = marks.empty();
