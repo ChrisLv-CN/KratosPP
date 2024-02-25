@@ -182,7 +182,7 @@ private:
 	// TAction: the method dispatcher class to call with each type
 	// ArgTypes: the argument types to call the method dispatcher's Process() method
 	template <typename TAction, typename... ArgTypes>
-	requires (DispatchesAction<TAction, RegisteredTypes, ArgTypes...> && ...)
+		requires (DispatchesAction<TAction, RegisteredTypes, ArgTypes...> && ...)
 	__forceinline static bool dispatch_mass_action(ArgTypes... args)
 	{
 		// (pack expression op ...) is a fold expression which
@@ -255,11 +255,10 @@ DEFINE_HOOK(0x67E826, LoadGame_Ext, 0x6)
 // 	return 0;
 // }
 
-// DEFINE_HOOK(0x559F29, LoadOptionsClass_GetFileInfo, 0x8)
+// DEFINE_HOOK_AGAIN(0x67FD9D, LoadOptionsClass_GetFileInfo, 0x7)
+// DEFINE_HOOK(0x67FDB1, LoadOptionsClass_GetFileInfo, 0x7)
 // {
-// 	if (!R->BL()) return 0x55A03D; // vanilla overridden check
-
-// 	REF_STACK(SavegameInformation, Info, STACK_OFFSET(0x400, -0x3F4));
-// 	Info.Version = Info.Version - SAVEGAME_ID;
-// 	return 0x559F29 + 0x8;
+// 	GET(SavegameInformation*, Info, ESI);
+// 	Info->InternalVersion = Info->InternalVersion - SAVEGAME_ID;
+// 	return 0;
 // }
