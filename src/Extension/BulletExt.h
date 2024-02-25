@@ -8,7 +8,7 @@ class BulletExt : public GOExtension<BulletClass, BulletExt>
 {
 public:
 	static constexpr DWORD Canary = 0x2A2A2A2A;
-	static constexpr size_t ExtPointerOffset = 0x18;
+	// static constexpr size_t ExtPointerOffset = 0x18;
 
 	/**
 	 * @brief 创建Component实例，并加入到GameObject中.

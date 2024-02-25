@@ -8,7 +8,7 @@ class AnimExt : public GOExtension<AnimClass, AnimExt>
 {
 public:
 	static constexpr DWORD Canary = 0xAAAAAAAA;
-	static constexpr size_t ExtPointerOffset = 0xD0;
+	// static constexpr size_t ExtPointerOffset = 0xD0;
 
 	/// @brief 创建Component实例，并加入到GameObject中.
 	/// 创建时需要使用new，不能使用GameCreate.

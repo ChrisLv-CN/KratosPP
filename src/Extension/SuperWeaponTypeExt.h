@@ -19,7 +19,7 @@ public:
 	};
 
 	static constexpr DWORD Canary = 0x11111111;
-	static constexpr size_t ExtPointerOffset = 0x18;
+	// static constexpr size_t ExtPointerOffset = 0x18;
 
 	static SuperWeaponTypeExt::ExtContainer ExtMap;
 };

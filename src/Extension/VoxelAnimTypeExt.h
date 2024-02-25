@@ -19,7 +19,7 @@ public:
 	};
 
 	static constexpr DWORD Canary = 0xAAAEEEEE;
-	static constexpr size_t ExtPointerOffset = 0x18;
+	// static constexpr size_t ExtPointerOffset = 0x18;
 
 	static VoxelAnimTypeExt::ExtContainer ExtMap;
 };

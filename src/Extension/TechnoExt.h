@@ -12,7 +12,7 @@ class TechnoExt : public GOExtension<TechnoClass, TechnoExt>
 {
 public:
 	static constexpr DWORD Canary = 0x55555555;
-	static constexpr size_t ExtPointerOffset = 0x34C;
+	// static constexpr size_t ExtPointerOffset = 0x34C;
 
 	/**
 	 * @brief 创建Component实例，并加入到GameObject中.
