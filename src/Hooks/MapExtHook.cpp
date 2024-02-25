@@ -10,6 +10,7 @@
 
 #include <Extension/TechnoExt.h>
 #include <Extension/TechnoTypeExt.h>
+#include <Extension/WarheadTypeExt.h>
 
 #include <Ext/Helper/Finder.h>
 #include <Ext/Helper/Scripts.h>
@@ -31,6 +32,14 @@ DEFINE_HOOK(0x489280, MapClass_DamageArea, 0x6)
 	if (pWH)
 	{
 		// 抛射体爆炸OnDetonate()后会调用该事件
+		if (pAttackingHouse)
+		{
+			WarheadTypeExt::TypeData* warheadTypeData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
+			if (warheadTypeData && warheadTypeData->ShowMeTheMoney != 0)
+			{
+				pAttackingHouse->TransactMoney(warheadTypeData->ShowMeTheMoney);
+			}
+		}
 		// Find and Attach Effects.
 		FindAndAttachEffect(*pLocation, damage, pWH, pAttacker, pAttackingHouse);
 		// Find all stand, check distance and blown it up.

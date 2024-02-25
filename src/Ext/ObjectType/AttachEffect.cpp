@@ -1051,13 +1051,23 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 		if (_gameObject)
 		{
 			std::vector<Component::ComponentState> states;
+			if (pTechno)
+			{
+				std::string uiName = std::string{ "" }.append("[").append(pTechno->GetTechnoType()->ID).append("]")
+					.append(WString2String(pTechno->GetTechnoType()->UIName));
+				std::string firePower = "FireMultip: " + std::to_string(pTechno->FirepowerMultiplier);
+				std::string armorMultip = "ArmorMultip: " + std::to_string(pTechno->ArmorMultiplier);
+				states.push_back(Component::ComponentState{ uiName, true });
+				states.push_back(Component::ComponentState{ firePower, true });
+				states.push_back(Component::ComponentState{ armorMultip, true });
+			}
 			int level = 0;
-			_gameObject->GetComponentStates(states, level);
+			GetComponentStates(states, level);
 			Point2D pos = ToClientPos(location);
 			int ii = 0;
 			for (Component::ComponentState& state : states)
 			{
-				if (ii++ == 0) continue;
+				if (ii++ == 3) continue;
 				std::string log{ state.Name };
 				log.append("\n");
 				pos.Y += offsetZ;
