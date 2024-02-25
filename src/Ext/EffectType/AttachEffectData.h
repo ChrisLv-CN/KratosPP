@@ -30,6 +30,7 @@
 #include <Ext/StateType/State/DisableWeaponData.h>
 #include <Ext/StateType/State/FreezeData.h>
 #include <Ext/StateType/State/GiftBoxData.h>
+#include <Ext/StateType/State/NoMoneyNoTalkData.h>
 #include <Ext/StateType/State/OverrideWeaponData.h>
 #include <Ext/StateType/State/PaintballData.h>
 #include <Ext/StateType/State/ScatterData.h>
@@ -157,6 +158,7 @@ public:
 	EFFECT_VAR_DEFINE(DisableWeapon);
 	EFFECT_VAR_DEFINE(Freeze);
 	EFFECT_VAR_DEFINE(GiftBox);
+	EFFECT_VAR_DEFINE(NoMoneyNoTalk);
 	EFFECT_VAR_DEFINE(OverrideWeapon);
 	EFFECT_VAR_DEFINE(Paintball);
 	EFFECT_VAR_DEFINE(Scatter);
@@ -187,6 +189,7 @@ public:
 		EFFECT_VAR_READ(DisableWeapon);
 		EFFECT_VAR_READ(Freeze);
 		EFFECT_VAR_READ(GiftBox);
+		EFFECT_VAR_READ(NoMoneyNoTalk);
 		EFFECT_VAR_READ(OverrideWeapon);
 		EFFECT_VAR_READ(Paintball);
 		EFFECT_VAR_READ(Scatter);
@@ -219,6 +222,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(DisableWeapon);
 		EFFECT_VAR_SCRIPT_NAME(Freeze);
 		EFFECT_VAR_SCRIPT_NAME(GiftBox);
+		EFFECT_VAR_SCRIPT_NAME(NoMoneyNoTalk);
 		EFFECT_VAR_SCRIPT_NAME(OverrideWeapon);
 		EFFECT_VAR_SCRIPT_NAME(Paintball);
 		EFFECT_VAR_SCRIPT_NAME(Scatter);
@@ -253,6 +257,7 @@ public:
 			EFFECT_VAR_PROCESS(DestroySelf)
 			EFFECT_VAR_PROCESS(DisableWeapon)
 			EFFECT_VAR_PROCESS(GiftBox)
+			EFFECT_VAR_PROCESS(NoMoneyNoTalk)
 			EFFECT_VAR_PROCESS(OverrideWeapon)
 			EFFECT_VAR_PROCESS(Freeze)
 			EFFECT_VAR_PROCESS(Paintball)

@@ -28,3 +28,4 @@ bool TechnoStatus::CanFire_DisableWeapon(AbstractClass* pTarget, WeaponTypeClass
 	}
 	return false;
 }
+

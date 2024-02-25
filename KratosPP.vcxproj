@@ -93,6 +93,7 @@
     <ClCompile Include="src\Ext\StateType\State\DisableWeaponState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\FreezeState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\GiftBoxState.cpp" />
+    <ClCompile Include="src\Ext\StateType\State\NoMoneyNoTalkState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\OverrideWeaponState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\PaintballState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\ScatterState.cpp" />
@@ -115,6 +116,7 @@
     <ClCompile Include="src\Ext\TechnoType\Status\DisableWeapon.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Freeze.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\GiftBox.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\NoMoneyNoTalk.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Paintball.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\RockerPitch.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Stand.cpp" />
@@ -290,6 +292,8 @@
     <ClInclude Include="src\Ext\StateType\State\FreezeState.h" />
     <ClInclude Include="src\Ext\StateType\State\GiftBoxData.h" />
     <ClInclude Include="src\Ext\StateType\State\GiftBoxState.h" />
+    <ClInclude Include="src\Ext\StateType\State\NoMoneyNoTalkData.h" />
+    <ClInclude Include="src\Ext\StateType\State\NoMoneyNoTalkState.h" />
     <ClInclude Include="src\Ext\StateType\State\OverrideWeaponData.h" />
     <ClInclude Include="src\Ext\StateType\State\OverrideWeaponState.h" />
     <ClInclude Include="src\Ext\StateType\State\PaintballData.h" />

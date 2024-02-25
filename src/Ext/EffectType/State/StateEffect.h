@@ -22,6 +22,7 @@
 #include <Ext/StateType/State/DestroyAnimData.h>
 #include <Ext/StateType/State/DestroySelfData.h>
 #include <Ext/StateType/State/GiftBoxData.h>
+#include <Ext/StateType/State/NoMoneyNoTalkData.h>
 #include <Ext/StateType/State/PaintballData.h>
 #include <Ext/StateType/State/TransformData.h>
 
@@ -60,6 +61,7 @@ STATE_EFFECT_DEFINE(DestroySelf);
 STATE_EFFECT_DEFINE(DisableWeapon);
 STATE_EFFECT_DEFINE(Freeze);
 STATE_EFFECT_DEFINE(GiftBox);
+STATE_EFFECT_DEFINE(NoMoneyNoTalk);
 STATE_EFFECT_DEFINE(OverrideWeapon);
 STATE_EFFECT_DEFINE(Paintball);
 STATE_EFFECT_DEFINE(Scatter);

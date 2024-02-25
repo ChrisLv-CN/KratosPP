@@ -26,6 +26,9 @@ public:
 		bool PumpAction = false;
 		int HumanCannon = -1;
 
+		int NoMoneyNoTalk = 0;
+		bool DontNeedMoney = false;
+
 		virtual void Read(INIBufferReader* ini) override
 		{
 			AttachFireData::Read(ini);
@@ -40,6 +43,9 @@ public:
 			SelfLaunch = ini->Get("SelfLaunch", SelfLaunch);
 			PumpAction = ini->Get("PumpAction", PumpAction);
 			HumanCannon = ini->Get("HumanCannon", HumanCannon);
+
+			NoMoneyNoTalk = ini->Get("NoMoneyNoTalk", NoMoneyNoTalk);
+			DontNeedMoney = ini->Get("DontNeedMoney", DontNeedMoney);
 		}
 
 #pragma region save/load
@@ -57,6 +63,9 @@ public:
 				.Process(this->SelfLaunch)
 				.Process(this->PumpAction)
 				.Process(this->HumanCannon)
+
+				.Process(this->NoMoneyNoTalk)
+				.Process(this->DontNeedMoney)
 				.Success();
 		};
 

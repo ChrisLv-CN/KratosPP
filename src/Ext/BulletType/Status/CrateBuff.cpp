@@ -1,6 +1,6 @@
 ﻿#include "../BulletStatus.h"
 
-#include "Trajectory/StraightTrajectory.h"
+#include "../Trajectory/StraightTrajectory.h"
 
 
 void BulletStatus::OnUpdate_RecalculateStatus()

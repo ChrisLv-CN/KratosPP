@@ -297,6 +297,12 @@ void TechnoStatus::CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, boo
 		Break();
 		return;
 	}
+	ceaseFire = CanFire_NoMoneyNoTalk(pTarget, pWeapon);
+	if (ceaseFire)
+	{
+		Break();
+		return;
+	}
 
 	TechnoClass* pTargetTechno = nullptr;
 	AttachEffect* aem = nullptr;

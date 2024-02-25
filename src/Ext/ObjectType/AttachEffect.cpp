@@ -166,6 +166,7 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 							GET_STAND_STATE(DisableWeapon)
 							GET_STAND_STATE(Freeze)
 							GET_STAND_STATE(GiftBox)
+							GET_STAND_STATE(NoMoneyNoTalk)
 							GET_STAND_STATE(OverrideWeapon)
 							GET_STAND_STATE(Paintball)
 							GET_STAND_STATE(Scatter)
@@ -667,6 +668,7 @@ void AttachEffect::AttachStateEffect()
 		ATTACH_EFFECT_ON_TECHNOTYPE(DamageSelf);
 		ATTACH_EFFECT_ON_TECHNOTYPE(ExtraFire);
 		ATTACH_EFFECT_ON_TECHNOTYPE(FireSuper);
+		ATTACH_EFFECT_ON_TECHNOTYPE(NoMoneyNoTalk);
 	}
 }
 
