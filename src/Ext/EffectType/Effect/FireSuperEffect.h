@@ -38,12 +38,12 @@ public:
 
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
-		Component::Load(stream, registerForChange);
+		EffectScript::Load(stream, registerForChange);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
-		Component::Save(stream);
+		EffectScript::Save(stream);
 		return const_cast<FireSuperEffect*>(this)->Serialize(stream);
 	}
 #pragma endregion
