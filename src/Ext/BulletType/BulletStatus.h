@@ -120,6 +120,8 @@ public:
 
 			.Process(this->_initFlag)
 
+			.Process(this->_recordStatus)
+
 			.Process(this->_hasFakeTarget)
 			.Process(this->_pFakeTarget)
 			// 碰撞引信
@@ -182,6 +184,8 @@ private:
 	bool OnDetonate_SelfLaunch(CoordStruct* pCoords);
 
 	bool _initFlag = false;
+
+	RecordBulletStatus _recordStatus{};
 
 	bool _hasFakeTarget = false;
 	ObjectClass* _pFakeTarget = nullptr;

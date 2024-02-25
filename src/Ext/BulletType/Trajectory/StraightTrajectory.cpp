@@ -15,6 +15,11 @@ void StraightTrajectory::ResetTarget(AbstractClass* pNewTarget, CoordStruct targ
 	Setup();
 }
 
+void StraightTrajectory::ResetStraightMissileVelocity()
+{
+	_straightBullet.ResetVelocity(pBullet);
+}
+
 void StraightTrajectory::Setup()
 {
 	// 直线弹道
@@ -57,7 +62,7 @@ void StraightTrajectory::Setup()
 		velocity = RecalculateBulletVelocity(pBullet, sourcePos, targetPos);
 	}
 	// 记录下导弹的速度，之后在Update时用该速度重写抛射体
-	straightBullet = { sourcePos, targetPos, velocity };
+	_straightBullet = { sourcePos, targetPos, velocity };
 
 	// 设置触碰引信
 	if (pBullet->Type->Proximity)
@@ -84,7 +89,7 @@ void StraightTrajectory::OnUpdate()
 	if (!dynamic_cast<BulletStatus*>(_parent)->CaptureByBlackHole)
 	{
 		// 强制修正速度
-		pBullet->Velocity = straightBullet.Velocity;
+		pBullet->Velocity = _straightBullet.Velocity;
 	}
 
 	// 看不懂西木的做法，自己来

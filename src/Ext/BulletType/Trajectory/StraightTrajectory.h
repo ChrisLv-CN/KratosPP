@@ -30,7 +30,9 @@ public:
 
 	BULLET_SCRIPT(StraightTrajectory);
 
-	virtual void ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos);
+	void ResetTarget(AbstractClass* pNewTarget, CoordStruct targetPos);
+
+	void ResetStraightMissileVelocity();
 
 	virtual void Awake() override;
 
@@ -43,7 +45,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(this->straightBullet)
+			.Process(this->_straightBullet)
 			.Process(this->_resetTargetFlag)
 			.Success();
 	};
@@ -62,8 +64,8 @@ public:
 private:
 	void Setup();
 
-	// 直线
-	StraightBullet straightBullet{};
+	// 记录直线导弹的位置和速度
+	StraightBullet _straightBullet{};
 	bool _resetTargetFlag = false;
 
 };

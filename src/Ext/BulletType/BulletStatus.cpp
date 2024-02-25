@@ -291,7 +291,6 @@ void BulletStatus::OnUpdate()
 
 void BulletStatus::OnUpdate_BlackHole() {};
 void BulletStatus::OnUpdate_ECM() {};
-void BulletStatus::OnUpdate_RecalculateStatus() {};
 void BulletStatus::OnUpdate_SelfLaunchOrPumpAction() {};
 
 void BulletStatus::OnUpdateEnd()

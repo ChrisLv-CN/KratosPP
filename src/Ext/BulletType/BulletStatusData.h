@@ -59,3 +59,14 @@ public:
 	bool Eliminate = true; // 一击必杀
 	bool Harmless = false; // 和平处置
 };
+
+
+/// @brief 记录抛射体的实时状态
+struct RecordBulletStatus
+{
+public:
+	int Health;
+	int Speed;
+	BulletVelocity Velocity;
+	bool CourseLocked;
+};

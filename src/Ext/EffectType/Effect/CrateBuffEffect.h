@@ -24,6 +24,12 @@ class CrateBuffEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(CrateBuff);
 
+	virtual void OnStart() override;
+
+	virtual void End(CoordStruct location) override;
+
+	virtual void OnPause() override;
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
@@ -43,4 +49,6 @@ public:
 	}
 #pragma endregion
 private:
+	void UpdateStatus();
+
 };
