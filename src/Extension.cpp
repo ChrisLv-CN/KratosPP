@@ -248,17 +248,17 @@ DEFINE_HOOK(0x67E826, LoadGame_Ext, 0x6)
 	return 0;
 }
 
-// DEFINE_HOOK(0x67D04E, Game_Save_SavegameInformation, 0x7)
-// {
-// 	REF_STACK(SavegameInformation, Info, STACK_OFFSET(0x4A4, -0x3F4));
-// 	Info.Version = Info.Version + SAVEGAME_ID;
-// 	return 0;
-// }
+DEFINE_HOOK(0x67D04E, Game_Save_SavegameInformation, 0x7)
+{
+	REF_STACK(SavegameInformation, Info, STACK_OFFSET(0x4A4, -0x3F4));
+	Info.Version = Info.Version + SAVEGAME_ID;
+	return 0;
+}
 
-// DEFINE_HOOK_AGAIN(0x67FD9D, LoadOptionsClass_GetFileInfo, 0x7)
-// DEFINE_HOOK(0x67FDB1, LoadOptionsClass_GetFileInfo, 0x7)
-// {
-// 	GET(SavegameInformation*, Info, ESI);
-// 	Info->InternalVersion = Info->InternalVersion - SAVEGAME_ID;
-// 	return 0;
-// }
+DEFINE_HOOK_AGAIN(0x67FD9D, LoadOptionsClass_GetFileInfo, 0x7)
+DEFINE_HOOK(0x67FDB1, LoadOptionsClass_GetFileInfo, 0x7)
+{
+	GET(SavegameInformation*, Info, ESI);
+	Info->Version = Info->Version - SAVEGAME_ID;
+	return 0;
+}
