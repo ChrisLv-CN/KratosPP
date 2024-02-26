@@ -17,13 +17,10 @@ bool TechnoStatus::CanFire_NoMoneyNoTalk(AbstractClass* pTarget, WeaponTypeClass
 		}
 		if (needMoney != 0 && pHouse)
 		{
-			if (needMoney > 0)
+			int money = pHouse->Available_Money();
+			if (needMoney > 0 ? money < needMoney : money > abs(needMoney))
 			{
-				return pHouse->Available_Money() < needMoney;
-			}
-			else if (needMoney < 0)
-			{
-				return pHouse->Available_Money() > abs(needMoney);
+				return true;
 			}
 		}
 	}

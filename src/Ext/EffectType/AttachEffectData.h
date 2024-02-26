@@ -132,6 +132,8 @@ public:
 
 	std::vector<std::string> AttachWithOutTypes{}; // 有这些AE存在则不可赋予
 	bool AttachOnceInTechnoType = false; // 写在TechnoType上只在创建时赋予一次
+	int AttachNeedMoney = 0; // 来源需要够钱才可以赋予
+	int ReceiverNeedMoney = 0; // 接受者需要够钱才可以赋予
 	bool Inheritable = true; // 是否可以被礼盒礼物继承
 
 	// TODO Add new Effects
@@ -317,6 +319,8 @@ public:
 			AttachWithOutTypes = reader->GetList("AttachWithOutTypes", AttachWithOutTypes);
 
 			AttachOnceInTechnoType = reader->Get("AttachOnceInTechnoType", AttachOnceInTechnoType);
+			AttachNeedMoney = reader->Get("AttachNeedMoney", AttachNeedMoney);
+			ReceiverNeedMoney = reader->Get("ReceiverNeedMoney", ReceiverNeedMoney);
 			Inheritable = reader->Get("Inheritable", Inheritable);
 		}
 	}
@@ -361,6 +365,8 @@ public:
 
 			.Process(this->AttachWithOutTypes)
 			.Process(this->AttachOnceInTechnoType)
+			.Process(this->AttachNeedMoney)
+			.Process(this->ReceiverNeedMoney)
 			.Process(this->Inheritable);
 		ProcessEffects(stream);
 		return stream.Success();

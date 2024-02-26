@@ -364,7 +364,7 @@ void AttachEffect::Attach(AttachEffectData data,
 	}
 	else
 	{
-		Debug::Log("Warning: Attach AE [%s] to [%s] form a unknow source [%s]\n", data.Name.c_str(), pObject->GetType()->ID, pSource->WhatAmI());
+		Debug::Log("Warning: Attach AE [%s] to [%s] form a unknow source!\n", data.Name.c_str(), pObject->GetType()->ID);
 		return;
 	}
 	// 更改所属，如果需要
@@ -384,6 +384,41 @@ void AttachEffect::Attach(AttachEffectData data,
 	if (!fromPassenger && data.FromTransporter && !IsDead(pAttacker))
 	{
 		pAttacker = WhoIsShooter(pAttacker);
+	}
+	// 检查金币
+	int needMoney = data.AttachNeedMoney;
+	if (needMoney != 0)
+	{
+		if (pAttackingHouse)
+		{
+			int money = pAttackingHouse->Available_Money();
+			if (needMoney > 0 ? money < needMoney : money > abs(needMoney))
+			{
+				return;
+			}
+		}
+		else
+		{
+			Debug::Log("Warning: Attach AE [%s] to [%s] get a unknow source house when check AttachNeedMoney!\n", data.Name.c_str(), pObject->GetType()->ID);
+			return;
+		}
+	}
+	needMoney = data.ReceiverNeedMoney;
+	if (needMoney != 0)
+	{
+		if (HouseClass* myHouse = pObject->GetOwningHouse())
+		{
+			int money = pAttackingHouse->Available_Money();
+			if (needMoney > 0 ? money < needMoney : money > abs(needMoney))
+			{
+				return;
+			}
+		}
+		else
+		{
+			Debug::Log("Warning: Attach AE [%s] to [%s] get a unknow source house when check ReceiverNeedMoney!\n", data.Name.c_str(), pObject->GetType()->ID);
+			return;
+		}
 	}
 	// 检查叠加
 	bool add = data.Cumulative == CumulativeMode::YES;
