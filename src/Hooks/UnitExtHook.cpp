@@ -274,7 +274,7 @@ DEFINE_HOOK(0x73C702, UnitClass_DrawSHP_TechnoType3, 0x6)
 	return 0;
 }
 
-DEFINE_HOOK(0x73C725, UnitClass_DrawSHP_HasTurret, 0x5)
+DEFINE_HOOK(0x73C725, UnitClass_DrawSHP_HasTurret, 0x6)
 {
 	GET(TechnoClass*, pTechno, EBP);
 	if (pTechno->IsDisguised() && !pTechno->IsClearlyVisibleTo(HouseClass::CurrentPlayer))
