@@ -15,7 +15,7 @@ void ImmuneEffect::OnUpdate()
 
 void ImmuneEffect::OnReceiveDamage(args_ReceiveDamage* args)
 {
-	if (args->Damage > 0)
+	if (*args->Damage > 0)
 	{
 		WarheadTypeClass* pWH = args->WH;
 		if ((pWH->Radiation && Data->Radiation)
