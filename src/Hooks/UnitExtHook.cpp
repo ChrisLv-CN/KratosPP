@@ -16,9 +16,9 @@
 #include <Ext/TechnoType/DisguiseData.h>
 
 #pragma region Unit Deploy
-DEFINE_HOOK(0x6FF929, TechnoClass_Fire_FireOnce, 0x6)
+DEFINE_HOOK(0x6FF923, TechnoClass_Fire_FireOnce, 0x6)
 {
-	GET(TechnoClass*, pTechno, ECX);
+	GET(TechnoClass*, pTechno, ESI);
 	if (pTechno->CurrentMission == Mission::Unload)
 	{
 		pTechno->QueueMission(Mission::Stop, true);

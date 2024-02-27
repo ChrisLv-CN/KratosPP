@@ -57,6 +57,7 @@ public:
 	{
 		if (args == pCreater)
 		{
+			_createrIsDeadth = true;
 			pCreater = nullptr;
 		}
 		if (args == pAttachOwner)
@@ -65,15 +66,26 @@ public:
 		}
 	}
 
+	void OnCreaterDetach(EventSystem* sender, Event e, void* args)
+	{
+		auto const& argsArray = reinterpret_cast<void**>(args);
+		AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
+		if (pInvalid == pCreater)
+		{
+			_createrIsDeadth = true;
+			pCreater = nullptr;
+		}
+	}
+
 	virtual void Awake() override
 	{
-		EventSystems::Logic.AddHandler(Events::TechnoDestroyEvent, this, &AnimStatus::OnTechnoDelete);
+		// EventSystems::General.AddHandler(Events::DetachAll, this, &AnimStatus::OnCreaterDetach);
 		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AnimStatus::OnTechnoDelete);
 	}
 
 	virtual void Destroy() override
 	{
-		EventSystems::Logic.RemoveHandler(Events::TechnoDestroyEvent, this, &AnimStatus::OnTechnoDelete);
+		// EventSystems::General.RemoveHandler(Events::DetachAll, this, &AnimStatus::OnCreaterDetach);
 		EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &AnimStatus::OnTechnoDelete);
 	}
 
@@ -116,7 +128,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		EventSystems::Logic.AddHandler(Events::TechnoDestroyEvent, this, &AnimStatus::OnTechnoDelete);
+		// EventSystems::General.AddHandler(Events::DetachAll, this, &AnimStatus::OnCreaterDetach);
 		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AnimStatus::OnTechnoDelete);
 		return this->Serialize(stream);
 	}

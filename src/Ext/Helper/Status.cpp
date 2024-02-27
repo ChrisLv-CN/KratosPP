@@ -89,7 +89,7 @@ void HiddenAnim(AnimClass* pAnim)
 bool IsDead(ObjectClass* pObject)
 {
 	// if pObject is a bullet, the Health maybe < 0
-	return !pObject || !pObject->GetType() || pObject->Health == 0 || !pObject->IsAlive;
+	return !pObject || pObject->Health == 0 || !pObject->IsAlive || !pObject->GetType() ;
 }
 bool IsDeadOrInvisible(ObjectClass* pObject)
 {
@@ -100,7 +100,7 @@ bool IsDeadOrInvisible(ObjectClass* pObject)
 #pragma endregion TechnoClass
 bool IsDead(TechnoClass* pTechno)
 {
-	return !pTechno || !pTechno->GetType() || pTechno->Health <= 0 || !pTechno->IsAlive || pTechno->IsCrashing || pTechno->IsSinking;
+	return !pTechno || pTechno->Health <= 0 || !pTechno->IsAlive || pTechno->IsCrashing || pTechno->IsSinking || !pTechno->GetType();
 }
 
 bool IsDeadOrInvisible(TechnoClass* pTechno)
