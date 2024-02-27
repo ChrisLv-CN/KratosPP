@@ -522,7 +522,7 @@ DEFINE_HOOK(0x7067F1, TechnoClass_DrawVxl_DisableCache, 0x6)
 	return 0x706879;
 }
 
-DEFINE_HOOK(0x6FC018, TechnoClass_Select_SkipVoice, 0x6)
+DEFINE_HOOK(0x6FC016, TechnoClass_Select_SkipVoice, 0x8)
 {
 	GET(TechnoClass*, pTechno, ESI);
 	TechnoStatus* status = nullptr;
