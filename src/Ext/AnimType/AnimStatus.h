@@ -67,11 +67,13 @@ public:
 
 	virtual void Awake() override
 	{
+		EventSystems::Logic.AddHandler(Events::TechnoDestroyEvent, this, &AnimStatus::OnTechnoDelete);
 		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AnimStatus::OnTechnoDelete);
 	}
 
 	virtual void Destroy() override
 	{
+		EventSystems::Logic.RemoveHandler(Events::TechnoDestroyEvent, this, &AnimStatus::OnTechnoDelete);
 		EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &AnimStatus::OnTechnoDelete);
 	}
 
@@ -114,6 +116,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
+		EventSystems::Logic.AddHandler(Events::TechnoDestroyEvent, this, &AnimStatus::OnTechnoDelete);
 		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AnimStatus::OnTechnoDelete);
 		return this->Serialize(stream);
 	}

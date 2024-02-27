@@ -37,7 +37,7 @@ DEFINE_HOOK(0x4664BA, BulletClass_CTOR, 0x5)
 	return 0;
 }
 
-DEFINE_HOOK(0x4665E9, BulletClass_DTOR, 0x5)
+DEFINE_HOOK(0x4665E9, BulletClass_DTOR, 0xA)
 {
 	GET(BulletClass*, pItem, ECX);
 	BulletExt::ExtData* ext = BulletExt::ExtMap.Find(pItem);

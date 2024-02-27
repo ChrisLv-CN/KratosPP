@@ -20,7 +20,6 @@
 
 #include <Ext/TechnoType/BuildingRangeData.h>
 
-#pragma region Crate buff
 DEFINE_HOOK(0x489280, MapClass_DamageArea, 0x6)
 {
 	GET(CoordStruct*, pLocation, ECX);
@@ -54,6 +53,8 @@ DEFINE_HOOK(0x489280, MapClass_DamageArea, 0x6)
 	}
 	return 0;
 }
+
+#pragma region Crate buff
 
 /*
 	generic crate-handler file

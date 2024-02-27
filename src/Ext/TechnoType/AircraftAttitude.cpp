@@ -84,7 +84,7 @@ void AircraftAttitude::UpdateHeadToCoord(CoordStruct headTo, bool lockAngle)
 				CoordStruct pos1 = pCell->GetCoordsWithBridge();
 				CoordStruct pos2 = pNextCell->GetCoordsWithBridge();
 				int zCell = abs(pos1.Z - pos2.Z);
-				if (zCell == 0 || zCell <= Unsorted::LevelHeight)
+				if (zCell == 0 || zCell <= Unsorted::LevelHeight || pCell->Flags & CellFlags::Bridge || pNextCell->Flags & CellFlags::Bridge)
 				{
 					// 平飞
 					PitchAngle = 0;

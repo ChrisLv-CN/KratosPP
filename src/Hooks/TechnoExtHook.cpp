@@ -346,6 +346,8 @@ DEFINE_HOOK(0x702050, TechnoClass_ReceiveDamage_Destroy, 0x6)
 {
 	GET(TechnoClass*, pThis, ESI);
 
+	EventSystems::Logic.Broadcast(Events::TechnoDestroyEvent, pThis);
+
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component* c)
 		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamageDestroy(); } });
@@ -726,12 +728,13 @@ DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon_AntiMissile, 0xA)
 	return 0x6F37AD; // 返回主武器
 }
 
-DEFINE_HOOK(0x6F37E7, TechnoClass_SelectWeapon_SecondaryCheckAA_SwitchByRange, 0xA)
+// change form Otamaa
+DEFINE_HOOK(0x6F37EB, TechnoClass_SelectWeapon_SecondaryCheckAA_SwitchByRange, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
-	GET_STACK(AbstractClass*, pTarget, 0x1C);
-	GET_STACK(WeaponTypeClass*, pPrimary, 0x14);
-	GET_STACK(WeaponTypeClass*, pSecondary, 0x10);
+	GET(AbstractClass*, pTarget, EBP);
+	GET_STACK(WeaponTypeClass*, pPrimary, 0x18 - 0x4);
+	GET(WeaponTypeClass*, pSecondary, EAX);
 	// check AA
 	if (pSecondary->Projectile->AA && pTarget->IsInAir())
 	{

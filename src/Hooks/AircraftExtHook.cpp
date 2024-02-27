@@ -128,7 +128,7 @@ DEFINE_HOOK(0x4CF3C5, FlyLocomotionClass_4CEFB0, 0x6)
 	}
 	return 0;
 }
-
+/*
 DEFINE_HOOK(0x41B76E, IFlyControl_Landing_Direction, 0x5)
 {
 	GET(TechnoClass*, pTechno, ESI);
@@ -151,5 +151,5 @@ DEFINE_HOOK(0x41B7BE, IFlyControl_Landing_Direction2, 0x6)
 	// 前一步设置了EAX，拦截函数返回Ruels的PoseDir
 	return 0x41B7B4;
 }
-
+*/
 #pragma endregion
