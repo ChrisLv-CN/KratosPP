@@ -128,28 +128,19 @@ DEFINE_HOOK(0x4CF3C5, FlyLocomotionClass_4CEFB0, 0x6)
 	}
 	return 0;
 }
-/*
-DEFINE_HOOK(0x41B76E, IFlyControl_Landing_Direction, 0x5)
+
+// Hook address form Otamma
+DEFINE_HOOK(0x41B760, IFlyControl_Landing_Direction, 0x6)
 {
-	GET(TechnoClass*, pTechno, ESI);
+	GET_STACK(TechnoClass*, pTechno, 0x4); // IFlyControl*
 	int poseDir = RulesClass::Instance->PoseDir;
 	AircraftAttitude* attitude = nullptr;
-	if (TryGetScript<TechnoExt, AircraftAttitude>(pTechno, attitude) && attitude->TryGetAirportDir(poseDir))
+	if (TryGetScript<TechnoExt, AircraftAttitude>(pTechno, attitude))
 	{
-		// 有机场
-		// 取设置的dir
-		R->EAX(poseDir);
-		// WWSB，只支持8向
-		return 0x41B7BC; // 这个地址会跳到下面去pop EDI
+		attitude->TryGetAirportDir(poseDir);
 	}
-	// 飞机没有机场
-	return 0x41B78D;
+	R->EAX(poseDir);
+	return 0x41B7C1;
 }
 
-DEFINE_HOOK(0x41B7BE, IFlyControl_Landing_Direction2, 0x6)
-{
-	// 前一步设置了EAX，拦截函数返回Ruels的PoseDir
-	return 0x41B7B4;
-}
-*/
 #pragma endregion
