@@ -23,6 +23,11 @@ public:
 
 	DamageTextEntity(bool isDamage) : PrintTextData()
 	{
+		Setup(isDamage);
+	}
+
+	void Setup(bool isDamage)
+	{
 		if (isDamage)
 		{
 			Color = { 252, 0, 0 };

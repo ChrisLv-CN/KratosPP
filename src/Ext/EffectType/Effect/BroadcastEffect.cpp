@@ -8,25 +8,32 @@
 void BroadcastEffect::FindAndAttach(BroadcastEntity data, HouseClass* pHouse)
 {
 	CoordStruct location = pObject->GetCoords();
+	ObjectClass* pSource = AE->pSource;
+	HouseClass* pSourceHouse = AE->pSourceHouse;
+	if (AEData.ReceiverOwn)
+	{
+		pSource = pObject;
+		pHouse = nullptr;
+	}
 	// 搜索单位
 	if (Data->AffectTechno)
 	{
 		FindTechnoOnMark([&](TechnoClass* pTarget, AttachEffect* aeManager)
-		{
-			// 赋予AE
-			aeManager->Attach(data.Types, data.AttachChances, pObject);
-			return false;
-		}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
+			{
+				// 赋予AE
+				aeManager->Attach(data.Types, data.AttachChances, false, pSource, pSourceHouse);
+				return false;
+			}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
 	}
 	// 搜索抛射体
 	if (Data->AffectBullet)
 	{
 		FindBulletOnMark([&](BulletClass* pTarget, AttachEffect* aeManager)
-		{
-			// 赋予AE
-			aeManager->Attach(data.Types, data.AttachChances, pObject);
-			return false;
-		}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
+			{
+				// 赋予AE
+				aeManager->Attach(data.Types, data.AttachChances, false, pSource, pSourceHouse);
+				return false;
+			}, location, data.RangeMax, data.RangeMin, data.FullAirspace, pHouse, *Data, pObject);
 	}
 }
 

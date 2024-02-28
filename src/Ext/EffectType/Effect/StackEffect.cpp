@@ -102,11 +102,11 @@ void StackEffect::Watch()
 		{
 			AE->AEManager->DetachByName(Data->Watch);
 		}
-	}
-	// 检查触发次数
-	if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
-	{
-		Deactivate();
+		// 检查触发次数
+		if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
+		{
+			Deactivate();
+		}
 	}
 }
 

@@ -127,6 +127,7 @@ public:
 		ExpLevel ExpLevel = ExpLevel::None;
 
 		int ShowMeTheMoney = 0;
+		bool ShowMeTheMoneyDisplay = false;
 
 		bool IsToy = false; // 玩具弹头
 
@@ -175,6 +176,7 @@ public:
 			ExpLevel = reader->Get("ExpLevel", ExpLevel);
 
 			ShowMeTheMoney = reader->Get("ShowMeTheMoney", ShowMeTheMoney);
+			ShowMeTheMoneyDisplay = reader->Get("ShowMeTheMoneyDisplay", ShowMeTheMoneyDisplay);
 
 			IsToy = reader->Get("IsToy", IsToy);
 

@@ -16,6 +16,7 @@
 #include <Ext/Helper/Scripts.h>
 
 #include <Ext/Common/CommonStatus.h>
+#include <Ext/Common/PrintTextManager.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 
 #include <Ext/TechnoType/BuildingRangeData.h>
@@ -33,10 +34,30 @@ DEFINE_HOOK(0x489280, MapClass_DamageArea, 0x6)
 		// 抛射体爆炸OnDetonate()后会调用该事件
 		if (pAttackingHouse)
 		{
-			WarheadTypeExt::TypeData* warheadTypeData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
-			if (warheadTypeData && warheadTypeData->ShowMeTheMoney != 0)
+			if (WarheadTypeExt::TypeData* warheadTypeData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH))
 			{
-				pAttackingHouse->TransactMoney(warheadTypeData->ShowMeTheMoney);
+				int money = warheadTypeData->ShowMeTheMoney;
+				if (money != 0)
+				{
+					pAttackingHouse->TransactMoney(warheadTypeData->ShowMeTheMoney);
+					if (warheadTypeData->ShowMeTheMoneyDisplay)
+					{
+						DamageTextEntity textData;
+						std::wstring text;
+						if (money < 0)
+						{
+							text.append(L"-$").append(std::to_wstring(abs(money)));
+							textData.Setup(true);
+						}
+						else
+						{
+							text.append(L"+$").append(std::to_wstring(money));
+							textData.Setup(false);
+						}
+						CoordStruct location = *pLocation;
+						PrintTextManager::AddRollingText(text, location, Point2D{ 0,0 }, textData.RollSpeed, textData.Duration, textData);
+					}
+				}
 			}
 		}
 		// Find and Attach Effects.
