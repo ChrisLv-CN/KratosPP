@@ -31,7 +31,7 @@ public:
 		Types = reader->GetList(title + "Types", Types);
 		ClearIfGetNone(Types);
 
-		Nums = reader->Get(title + "Nums", Nums);
+		Nums = reader->GetList(title + "Nums", Nums);
 
 		Rate = reader->Get(title + "Rate", Rate);
 
@@ -83,7 +83,6 @@ public:
 			.Process(this->Rate)
 			.Process(this->RangeMin)
 			.Process(this->RangeMax)
-			.Process(this->Close)
 			.Process(this->Force)
 			.Process(this->Count)
 			.Process(this->TargetToCell)
