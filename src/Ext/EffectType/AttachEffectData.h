@@ -8,6 +8,7 @@
 #include "Effect/EffectData.h"
 // TODO Add new Effects
 #include "Effect/AnimationData.h"
+#include "Effect/AttackBeaconData.h"
 #include "Effect/AutoWeaponData.h"
 #include "Effect/BroadcastData.h"
 #include "Effect/CrateBuffData.h"
@@ -138,6 +139,7 @@ public:
 
 	// TODO Add new Effects
 	EFFECT_VAR_DEFINE(AutoWeapon);
+	EFFECT_VAR_DEFINE(AttackBeacon);
 	EFFECT_VAR_DEFINE(Animation);
 	EFFECT_VAR_DEFINE(Broadcast);
 	EFFECT_VAR_DEFINE(CrateBuff);
@@ -169,6 +171,7 @@ public:
 	void ReadEffects(INIBufferReader* reader)
 	{
 		EFFECT_VAR_READ(AutoWeapon);
+		EFFECT_VAR_READ(AttackBeacon);
 		EFFECT_VAR_READ(Animation);
 		EFFECT_VAR_READ(Broadcast);
 		EFFECT_VAR_READ(CrateBuff);
@@ -202,6 +205,7 @@ public:
 	{
 		std::set<std::string> names{};
 		EFFECT_VAR_SCRIPT_NAME(AutoWeapon);
+		EFFECT_VAR_SCRIPT_NAME(AttackBeacon);
 		EFFECT_VAR_SCRIPT_NAME(Animation);
 		EFFECT_VAR_SCRIPT_NAME(Broadcast);
 		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
@@ -238,6 +242,7 @@ public:
 	{
 		stream
 			EFFECT_VAR_PROCESS(AutoWeapon)
+			EFFECT_VAR_PROCESS(AttackBeacon)
 			EFFECT_VAR_PROCESS(Animation)
 			EFFECT_VAR_PROCESS(Broadcast)
 			EFFECT_VAR_PROCESS(CrateBuff)

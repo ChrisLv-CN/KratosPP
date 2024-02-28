@@ -328,6 +328,17 @@ void TechnoStatus::CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, boo
 void TechnoStatus::OnFire(AbstractClass* pTarget, int weaponIdx)
 {
 	OnFire_RockerPitch(pTarget, weaponIdx);
+	OnFire_AttackBeaconRecruit(pTarget, weaponIdx);
+}
+
+void TechnoStatus::OnFire_AttackBeaconRecruit(AbstractClass* pTarget, int weaponIdx)
+{
+	// 被征召去攻击信标
+	if (AttackBeaconRecruited)
+	{
+		AttackBeaconRecruited = false;
+		pTechno->SetTarget(nullptr);
+	}
 }
 
 void TechnoStatus::OnSelect(bool& selectable)

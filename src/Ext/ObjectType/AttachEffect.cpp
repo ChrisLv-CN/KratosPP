@@ -14,6 +14,7 @@
 #include <Ext/Common/PrintTextManager.h>
 
 #include <Ext/EffectType/AttachEffectScript.h>
+#include <Ext/EffectType/Effect/AttackBeaconEffect.h>
 #include <Ext/EffectType/Effect/StandEffect.h>
 #include <Ext/BulletType/BulletStatus.h>
 #include <Ext/TechnoType/TechnoStatus.h>
@@ -700,6 +701,7 @@ void AttachEffect::AttachStateEffect()
 	std::string section = pObject->GetType()->ID;
 	if (IsNotNone(section))
 	{
+		ATTACH_EFFECT_ON_TECHNOTYPE(AttackBeacon);
 		ATTACH_EFFECT_ON_TECHNOTYPE(DamageSelf);
 		ATTACH_EFFECT_ON_TECHNOTYPE(ExtraFire);
 		ATTACH_EFFECT_ON_TECHNOTYPE(FireSuper);

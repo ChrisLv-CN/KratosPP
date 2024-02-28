@@ -180,6 +180,9 @@ public:
 
 	bool DisableSelectVoice = false;
 
+	// 攻击攻击信标
+	bool AttackBeaconRecruited = false;
+
 	bool CaptureByBlackHole = false;
 	bool Jumping = false;
 
@@ -296,6 +299,7 @@ private:
 	bool CanFire_Passenger(AbstractClass* pTarget, WeaponTypeClass* pWeapon);
 
 	void OnFire_RockerPitch(AbstractClass* pTarget, int weaponIdx);
+	void OnFire_AttackBeaconRecruit(AbstractClass* pTarget, int weaponIdx);
 
 	bool OnSelect_VirtualUnit();
 	bool OnSelect_Deselect();

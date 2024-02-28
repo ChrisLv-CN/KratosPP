@@ -59,16 +59,16 @@ void TechnoStatus::OnFire_RockerPitch(AbstractClass* pTarget, int weaponIdx)
 						// L在y轴上的投影长度为
 						double y = l / Math::sin(halfPI - theta);
 						// L在x轴上的投影长度为
-						// double x = l / Math::Cos(halfPI - Math::Abs(theta));
+						// double x = l / Math::cos(halfPI - abs(theta));
 						// L在z轴上的投影长度为
 						double z = Math::sin(gamma);
 						// L在yz面上的投影长度为
 						double lyz = Math::sqrt(pow(y, 2) + pow(z, 2));
 						// L在xz面上的投影长度为
-						// double lxz = Math::Sqrt(Math::Pow(x, 2) + Math::Pow(z, 2));
+						// double lxz = Math::sqrt(pow(x, 2) + pow(z, 2));
 
 						pitch = Math::acos(abs(y) / lyz) * fbSide;
-						// roll = Math::Acos(x / lxz) * lrSide;
+						// roll = Math::acos(x / lxz) * lrSide;
 						roll = (gamma - abs(pitch)) * lrSide;
 					}
 				}
