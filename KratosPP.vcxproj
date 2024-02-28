@@ -118,6 +118,7 @@
     <ClCompile Include="src\Ext\TechnoType\Status\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\NoMoneyNoTalk.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Paintball.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\Passenger.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\RockerPitch.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Stand.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Transform.cpp" />
@@ -324,6 +325,7 @@
     <ClInclude Include="src\Ext\TechnoType\JumpjetFacingData.h" />
     <ClInclude Include="src\Ext\TechnoType\MissileHoming.h" />
     <ClInclude Include="src\Ext\TechnoType\MissileHomingData.h" />
+    <ClInclude Include="src\Ext\TechnoType\PassengersData.h" />
     <ClInclude Include="src\Ext\TechnoType\SelectWeaponData.h" />
     <ClInclude Include="src\Ext\TechnoType\Spawn.h" />
     <ClInclude Include="src\Ext\TechnoType\SpawnData.h" />

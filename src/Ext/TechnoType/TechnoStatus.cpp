@@ -160,6 +160,7 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_Deselect();
 		OnUpdate_GiftBox();
 		OnUpdate_Paintball();
+		OnUpdate_Passenger();
 	}
 }
 
@@ -298,6 +299,12 @@ void TechnoStatus::CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, boo
 		return;
 	}
 	ceaseFire = CanFire_NoMoneyNoTalk(pTarget, pWeapon);
+	if (ceaseFire)
+	{
+		Break();
+		return;
+	}
+	ceaseFire = CanFire_Passenger(pTarget, pWeapon);
 	if (ceaseFire)
 	{
 		Break();

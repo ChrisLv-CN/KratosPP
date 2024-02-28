@@ -35,6 +35,8 @@
 #include <Ext/StateType/State/ScatterState.h>
 #include <Ext/StateType/State/TransformState.h>
 
+#include "PassengersData.h"
+
 class AttachEffect;
 
 /// @brief base compoment, save the Techno status
@@ -272,6 +274,7 @@ private:
 	void OnUpdate_Freeze();
 	void OnUpdate_GiftBox();
 	void OnUpdate_Paintball();
+	void OnUpdate_Passenger();
 	void OnUpdate_Transform();
 
 	void OnWarpUpdate_DestroySelf_Stand();
@@ -290,6 +293,7 @@ private:
 
 	bool CanFire_DisableWeapon(AbstractClass* pTarget, WeaponTypeClass* pWeapon);
 	bool CanFire_NoMoneyNoTalk(AbstractClass* pTarget, WeaponTypeClass* pWeapon);
+	bool CanFire_Passenger(AbstractClass* pTarget, WeaponTypeClass* pWeapon);
 
 	void OnFire_RockerPitch(AbstractClass* pTarget, int weaponIdx);
 
@@ -310,6 +314,10 @@ private:
 	bool _disableSelectable = false;
 	// 冻结状态
 	bool _cantMoveFlag = false;
+
+	// 乖巧乘客
+	PassengersData* _passengersData = nullptr;
+	PassengersData* GetPassengersData();
 
 	// 部署变形
 	DeployToTransformData* _transformData = nullptr;
