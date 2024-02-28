@@ -132,15 +132,17 @@ DEFINE_HOOK(0x4CF3C5, FlyLocomotionClass_4CEFB0, 0x6)
 // Hook address form Otamma
 DEFINE_HOOK(0x41B760, IFlyControl_Landing_Direction, 0x6)
 {
-	GET_STACK(TechnoClass*, pTechno, 0x4); // IFlyControl*
+	GET_STACK(IFlyControl*, pAircraft, 0x4); // IFlyControl*
 	int poseDir = RulesClass::Instance->PoseDir;
 	AircraftAttitude* attitude = nullptr;
-	if (TryGetScript<TechnoExt, AircraftAttitude>(pTechno, attitude))
+	TechnoClass* pTechno = static_cast<AircraftClass*>(pAircraft);
+	if (TryGetScript<TechnoExt, AircraftAttitude>(pTechno, attitude)
+		&& attitude->TryGetAirportDir(poseDir))
 	{
-		attitude->TryGetAirportDir(poseDir);
+		R->EAX(poseDir);
+		return 0x41B7C1;
 	}
-	R->EAX(poseDir);
-	return 0x41B7C1;
+	return 0;
 }
 
 #pragma endregion

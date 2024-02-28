@@ -32,13 +32,16 @@ bool AircraftAttitude::TryGetAirportDir(int& poseDir)
 			const char* section = pAirport->GetTechnoType()->ID;
 			std::string image = INI::GetSection(INI::Rules, section)->Get("Image", std::string{ section });
 			AircraftDockingOffsetData* dockData = INI::GetConfig<AircraftDockingOffsetData>(INI::Art, image.c_str())->Data;
-			std::vector<int> dirs = dockData->Direction;
-			if (index < (int)dirs.size())
+			if (dockData->Enable)
 			{
-				poseDir = dirs[index];
+				auto it = dockData->Direction.find(index);
+				if (it != dockData->Direction.end())
+				{
+					poseDir = it->second;
+					return true;
+				}
 			}
 		}
-		return true;
 	}
 	return false;
 }

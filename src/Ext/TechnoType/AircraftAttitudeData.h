@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
+#include <map>
 
 #include <GeneralStructures.h>
 
@@ -41,31 +42,30 @@ public:
 class AircraftDockingOffsetData : public INIConfig
 {
 public:
-	std::vector<int> Direction{};
+	std::map<int, int> Direction{};
 
 	virtual void Read(INIBufferReader* reader) override
 	{
 		// 读取全局
 		int poseDir = RulesClass::Instance->PoseDir;
-		std::vector<int> dirs;
 		for (int i = 0; i < 128; i++)
 		{
 			std::string key = "DockingOffset" + std::to_string(i) + ".Dir";
-			int dir = reader->Get(key, poseDir);
-			if (dir < 0)
+			int dir = poseDir;
+			if (reader->TryGet<int>(key, dir))
 			{
-				dir = 0;
-			}
-			else if (dir > 7)
-			{
-				dir = 7;
-			}
-			dirs.push_back(dir);
-		}
-		if (!dirs.empty())
-		{
-			Direction = dirs;
-		}
-	}
 
+				if (dir < 0)
+				{
+					dir = 0;
+				}
+				else if (dir > 7)
+				{
+					dir = 7;
+				}
+				Direction[i] = dir;
+			}
+		}
+		Enable = !Direction.empty();
+	}
 };
