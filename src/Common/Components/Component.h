@@ -108,12 +108,12 @@ public:
 	/// <summary>
 	/// 激活组件，使其可以执行Foreach逻辑
 	/// </summary>
-	void Activate();
+	virtual void Activate();
 	/// <summary>
 	/// 失活组件，使其跳过执行Foreach逻辑
 	/// </summary>
-	void Deactivate();
-	bool IsActive();
+	virtual void Deactivate();
+	virtual bool IsActive();
 
 	/// <summary>
 	/// 将Component加入子列表，同时赋予自身储存的IExtData

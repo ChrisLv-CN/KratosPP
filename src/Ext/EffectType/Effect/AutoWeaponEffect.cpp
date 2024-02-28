@@ -361,6 +361,7 @@ void AutoWeaponEffect::OnUpdate()
 void AutoWeaponEffect::End(CoordStruct location)
 {
 	Deactivate();
+	AE->TimeToDie();
 }
 
 void AutoWeaponEffect::OnRemove()

@@ -19,6 +19,7 @@ void DamageSelfEffect::OnStart()
 		if (Data->DeactiveWhenCivilian && IsCivilian(AE->pSourceHouse))
 		{
 			Deactivate();
+			AE->TimeToDie();
 			return;
 		}
 	}
@@ -93,6 +94,7 @@ void DamageSelfEffect::OnUpdate()
 							// Logger.Log($"{Game.CurrentFrame} 阿伟 [{Data->Type}]{pStand} 要死了 explodes = {explodes}");
 							status->DestroySelf->DestroyNow(true);
 							Deactivate();
+							AE->TimeToDie();
 							return;
 						}
 					}
@@ -157,12 +159,14 @@ void DamageSelfEffect::OnUpdate()
 			else
 			{
 				Deactivate();
+				AE->TimeToDie();
 				return;
 			}
 			// 检查触发次数
 			if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
 			{
 				Deactivate();
+				AE->TimeToDie();
 			}
 		}
 	}

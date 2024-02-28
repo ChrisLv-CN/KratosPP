@@ -24,6 +24,7 @@ void FireSuperEffect::OnFire(AbstractClass* pTarget, int weaponIdx)
 				if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
 				{
 					Deactivate();
+					AE->TimeToDie();
 				}
 				if (data.Reload > 0)
 				{

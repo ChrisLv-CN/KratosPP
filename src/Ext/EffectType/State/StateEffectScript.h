@@ -85,6 +85,7 @@ public:
 			State->End(AE->Token);
 		}
 		Deactivate();
+		AE->TimeToDie();
 	};
 
 	virtual void Pause() override final

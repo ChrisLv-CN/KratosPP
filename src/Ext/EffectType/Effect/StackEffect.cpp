@@ -106,6 +106,7 @@ void StackEffect::Watch()
 		if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
 		{
 			Deactivate();
+			AE->TimeToDie();
 		}
 	}
 }

@@ -79,6 +79,7 @@ void BroadcastEffect::OnUpdate()
 				{
 					// 结束效果器
 					Deactivate();
+					AE->TimeToDie();
 				}
 				_delayTimer.Start(data.Rate);
 				FindAndAttach(data, pHouse);

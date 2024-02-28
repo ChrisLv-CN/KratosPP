@@ -122,6 +122,7 @@ void StandEffect::ExplodesOrDisappear(bool peaceful)
 	}
 	pStand = nullptr;
 	Deactivate();
+	AE->TimeToDie();
 }
 
 void StandEffect::UpdateStateBullet()
@@ -485,7 +486,7 @@ void StandEffect::SetLocation(CoordStruct location)
 	if (!Data->IsTrain && Data->SameMoving && Data->StickOnFloor
 		&& !pStand->GetTechnoType()->JumpJet
 		&& pTechno->GetHeight() <= 0
-	)
+		)
 	{
 		pStand->SetHeight(0);
 	}

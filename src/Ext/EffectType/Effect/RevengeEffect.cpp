@@ -38,6 +38,7 @@ bool RevengeEffect::CanRevenge(TechnoClass*& pRevenger, HouseClass*& pRevengerHo
 		{
 			// 复仇者不存在，复个屁
 			Deactivate();
+			AE->TimeToDie();
 			return false;
 		}
 	}
@@ -69,6 +70,7 @@ void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH,
 		{
 			_skip = true;
 			Deactivate();
+			AE->TimeToDie();
 			return;
 		}
 	}
@@ -170,6 +172,7 @@ void RevengeEffect::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, 
 			if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
 			{
 				Deactivate();
+				AE->TimeToDie();
 			}
 		}
 	}
