@@ -193,22 +193,10 @@ public:
 
 	bool OnMark(std::vector<std::string> marks)
 	{
-		bool mark = marks.empty();
-		if (!mark)
-		{
-			bool hasWhiteList = !OnlyAffectMarks.empty();
-			bool hasBlackList = !NotAffectMarks.empty();
-			mark = !hasWhiteList && !hasBlackList;
-			if (hasWhiteList)
-			{
-				mark = CheckOnMarks(OnlyAffectMarks, marks);
-			}
-			if (!mark && hasBlackList)
-			{
-				mark = !CheckOnMarks(NotAffectMarks, marks);
-			}
-		}
-		return mark;
+		bool hasWhiteList = !OnlyAffectMarks.empty();
+		bool hasBlackList = !NotAffectMarks.empty();
+		return (!hasWhiteList || (!marks.empty() && CheckOnMarks(OnlyAffectMarks, marks)))
+				&& (!hasBlackList || (marks.empty() || !CheckOnMarks(NotAffectMarks, marks)));
 	}
 
 #pragma region save/load
