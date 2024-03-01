@@ -56,7 +56,7 @@ bool AttachEffect::OwnerIsDead()
 		{
 			_ownerIsDead = true;
 		}
-		else if (pTechno && IsDead(pTechno))
+		else if (pTechno && (IsDead(pTechno) || InSelling())) // 变卖了建筑也算死亡
 		{
 			_ownerIsDead = true;
 		}
@@ -69,7 +69,7 @@ bool AttachEffect::InBuilding()
 	if (IsBuilding() && !OwnerIsDead())
 	{
 		BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno);
-		return pBuilding->BState == BStateType::Construction && pBuilding->CurrentMission == Mission::Selling;
+		return pBuilding->BState == BStateType::Construction && pBuilding->CurrentMission != Mission::Selling;
 	}
 	return false;
 }

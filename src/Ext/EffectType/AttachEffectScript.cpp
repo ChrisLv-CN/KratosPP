@@ -40,7 +40,7 @@ bool AttachEffectScript::TryGetDurationTimeLeft(int& timeLeft)
 
 void AttachEffectScript::MergeDuration(int otherDuration)
 {
-	if (_isDelayToEnable || otherDuration == 0)
+	if (!_started || otherDuration == 0)
 	{
 		// 延迟激活中，不接受时延修改
 		return;
@@ -113,6 +113,15 @@ void AttachEffectScript::TimeToDie()
 	_lifeTimer.Stop();
 }
 
+void AttachEffectScript::SetupInitTimer()
+{
+	if (_initDelay > 0)
+	{
+		_delayToEnable = true;
+		_initialDelayTimer.Start(_initDelay); // 下一帧开始计时
+	}
+}
+
 void AttachEffectScript::SetupLifeTimer()
 {
 	if (!_immortal)
@@ -131,7 +140,7 @@ void AttachEffectScript::GetMarks(std::vector<std::string>& marks)
 {
 	if (AEData.Mark.Enable)
 	{
-		if (!_isDelayToEnable)
+		if (_started)
 		{
 			for (std::string mark : AEData.Mark.Names)
 			{
@@ -240,14 +249,7 @@ bool AttachEffectScript::IsAlive()
 void AttachEffectScript::Awake()
 {
 	Tag = AEData.Name;
-	// 延迟启用AE
-	int initDelay = GetRandomValue(AEData.InitialRandomDelay, AEData.InitialDelay);
-	_delayToEnable = initDelay > 0;
-	if (_delayToEnable)
-	{
-		Component::Deactivate();
-		_initialDelayTimer.Start(initDelay);
-	}
+
 	_duration = AEData.Duration;
 	_immortal = AEData.HoldDuration;
 
@@ -276,18 +278,45 @@ void AttachEffectScript::Start(TechnoClass* pSource, HouseClass* pSourceHouse, C
 	}
 	this->AEMode = aeMode;
 	this->FromPassenger = fromPassenger;
+
 	this->_inBuilding = AEManager->InBuilding();
-	this->_isDelayToEnable = InDelayToEnable();
-	if (!_isDelayToEnable)
+
+	// 初始延迟
+	this->_initDelay = GetRandomValue(AEData.InitialRandomDelay, AEData.InitialDelay);
+	// 非建造状态，并且有初始延迟，开启初始延迟计时器
+	if (!_inBuilding && _initDelay > 0)
 	{
-		EnableEffects();
+		_initDelay += 1; // 当前帧不算，多延迟一帧
+		SetupInitTimer();
 	}
+
+	// Start函数由AttachEffect的Attach函数调用，新添加的AE都应该延迟一帧激活
+	// AE管理器在每一帧的开始时检查AE的有效，AE的真正激活，将有IsAlive函数进行
+	this->_delayToEnable = true;
+
+	// 添加后立刻激活，会导致AE无法被检测到
+	//
+	// [Kratos PP](315) AE [STACK2] OnUpdate 监视 ReplicantBusterAE
+	// [Kratos PP](315) AE [STACK] OnUpdate 监视 ZZZZZ
+	// [Kratos PP](315) 添加AE[ReplicantBusterAE] <--- STACK 成功触发
+	// [Kratos PP](315) AE [ZZZZZ] OnUpdate
+	// [Kratos PP](315) AE [ReplicantBusterAE] OnUpdate
+	//
+	// [Kratos PP](316) 移除AE[ZZZZZ]
+	// [Kratos PP](316) 移除AE[ReplicantBusterAE]
+	// [Kratos PP](316) AE [STACK2] OnUpdate  监视 ReplicantBusterAE (不会触发)
+	// [Kratos PP](316) AE [STACK] OnUpdate
+	// this->_isDelayToEnable = InDelayToEnable();
+	// if (_started)
+	// {
+	// 	EnableEffects();
+	// }
 }
 
 void AttachEffectScript::End(CoordStruct location)
 {
 	Deactivate();
-	if (_isDelayToEnable)
+	if (!_started)
 	{
 		return;
 	}
@@ -298,7 +327,7 @@ void AttachEffectScript::End(CoordStruct location)
 
 void AttachEffectScript::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
-	if (_isDelayToEnable)
+	if (!_started)
 	{
 		return;
 	}
@@ -348,7 +377,7 @@ void AttachEffectScript::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* 
 
 void AttachEffectScript::OnGScreenRender(CoordStruct location)
 {
-	if (_isDelayToEnable)
+	if (!_started)
 	{
 		return;
 	}
@@ -359,7 +388,7 @@ void AttachEffectScript::OnGScreenRender(CoordStruct location)
 
 void AttachEffectScript::OnGScreenRenderEnd(CoordStruct location)
 {
-	if (_isDelayToEnable)
+	if (!_started)
 	{
 		return;
 	}
@@ -396,13 +425,19 @@ bool AttachEffectScript::InDelayToEnable()
 	if (_inBuilding)
 	{
 		_inBuilding = AEManager->InBuilding();
+		// 是建筑状态，并且有初始延迟，在建筑状态结束后，启动初始延迟计时器
+		if (!_inBuilding && _initDelay > 0)
+		{
+			// 启动初始延迟计时器
+			SetupInitTimer();
+		}
 	}
 	return _delayToEnable || _inBuilding;
 }
 
 void AttachEffectScript::EnableEffects()
 {
-	_isDelayToEnable = false;
+	_started = true;
 	SetupLifeTimer();
 	if (pTechno)
 	{

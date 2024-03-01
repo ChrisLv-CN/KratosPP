@@ -163,10 +163,11 @@ public:
 			.Process(this->_duration)
 			.Process(this->_immortal)
 			.Process(this->_lifeTimer)
-			.Process(this->_initialDelayTimer)
+			.Process(this->_initDelay)
 			.Process(this->_delayToEnable)
+			.Process(this->_initialDelayTimer)
 			.Process(this->_inBuilding)
-			.Process(this->_isDelayToEnable)
+			.Process(this->_started)
 			.Process(this->_hold)
 
 			.Process(this->_diffSource)
@@ -190,22 +191,18 @@ public:
 	}
 #pragma endregion
 private:
-	int _duration = -1; // 寿命
-	bool _immortal = true; // 永生
-	CDTimerClass _lifeTimer{};
-	CDTimerClass _initialDelayTimer{};
-	bool _delayToEnable = false; // 延迟开启
-	bool _inBuilding = false; // 是否在建造中
-	bool _isDelayToEnable = false; // 需要延迟激活
-	bool _hold = false; // 跳过效果器死亡检查，用于暂停效果器，AE不会当成死亡结束
-
-	bool _diffSource = false; // pSource是外人，需要监听死亡
 
 	/**
 	 *@brief 初始化所有的Effects并加入Sub-Component
 	 *
 	 */
 	void InitEffects();
+
+	/**
+	 * @brief 启动初始延迟计时器
+	 *
+	 */
+	void SetupInitTimer();
 
 	/**
 	 *@brief 启动生命计时器开始计时
@@ -225,4 +222,19 @@ private:
 	 *
 	 */
 	void EnableEffects();
+
+	int _duration = -1; // 寿命
+	bool _immortal = true; // 永生
+	CDTimerClass _lifeTimer{};
+
+	int _initDelay = -1; // 启动初始延迟
+	bool _delayToEnable = false; // 延迟开启
+	CDTimerClass _initialDelayTimer{}; // 初始延迟计时器
+
+	bool _inBuilding = false; // 是否在建造中
+	bool _started = false; // 已开启
+	bool _hold = false; // 跳过效果器死亡检查，用于暂停效果器，AE不会当成死亡结束
+
+	bool _diffSource = false; // pSource是外人，需要监听死亡
+
 };
