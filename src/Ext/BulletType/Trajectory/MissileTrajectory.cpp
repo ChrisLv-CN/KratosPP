@@ -5,11 +5,49 @@
 #include <Ext/Helper/Weapon.h>
 #include <Ext/Helper/Scripts.h>
 
+#include <Ext/BulletType/BulletStatus.h>
+#include <Ext/TechnoType/DecoyMissile.h>
+
+
+void MissileTrajectory::CheckTargetHasDecoy()
+{
+	if (!_targetHasDecoyFlag)
+	{
+		_targetHasDecoyFlag = true;
+
+		AbstractClass* pTarget = pBullet->Target;
+		TechnoClass* pTargetTechno = nullptr;
+		DecoyMissile* status = nullptr;
+		if (CastToTechno(pTarget, pTargetTechno) && TryGetScript<TechnoExt>(pTargetTechno, status))
+		{
+			BulletExt::TargetHasDecoyBullets.push_back(pBullet);
+		}
+	}
+}
+
+BulletStatus* MissileTrajectory::GetBulletStatus()
+{
+	if (!_status)
+	{
+		_status = GetStatus<BulletExt, BulletStatus>(pBullet);
+	}
+	return _status;
+}
+
 void MissileTrajectory::Awake()
 {
 	if (!IsMissile())
 	{
 		Disable();
+	}
+}
+
+void MissileTrajectory::Destroy()
+{
+	auto it = std::find(BulletExt::TargetHasDecoyBullets.begin(), BulletExt::TargetHasDecoyBullets.end(), pBullet);
+	if (it != BulletExt::TargetHasDecoyBullets.end())
+	{
+		BulletExt::TargetHasDecoyBullets.erase(it);
 	}
 }
 
@@ -47,8 +85,37 @@ void MissileTrajectory::OnPut(CoordStruct* pCoord, DirType dirType)
 		pBullet->Velocity.Y *= shakeY;
 		pBullet->Velocity.Z *= shakeZ;
 	}
+
+	// 是否是对飞行器攻击
+	CheckTargetHasDecoy();
 }
 
-// TODO 热诱弹
-void MissileTrajectory::OnUpdate() {};
+// 热诱弹
+void MissileTrajectory::OnUpdate()
+{
+	// 是否是对飞行器攻击
+	CheckTargetHasDecoy();
+	if (IsDecoy)
+	{
+		// 检查存活时间
+		if (LifeTimer.Expired())
+		{
+			if (BulletStatus* status = GetBulletStatus())
+			{
+				status->TakeDamage();
+			}
+		}
+		else
+		{
+			// 执行热诱弹轨迹变化
+			// Check distance to Change speed and target point
+			int speed = pBullet->Speed - 5;
+			pBullet->Speed = speed < 10 ? 10 : speed;
+			if (speed > 10 && LaunchPos.DistanceFrom(pBullet->GetCoords()) <= pBullet->WeaponType->Range)
+			{
+				pBullet->Location += CoordStruct{ 0, 0, 64 };
+			}
+		}
+	}
+};
 

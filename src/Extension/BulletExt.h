@@ -24,5 +24,5 @@ public:
 	 *@brief 目标为空军的抛射体清单
 	 *
 	 */
-	static std::vector<BulletClass*> TargetAircraftBullets;
+	static std::vector<BulletClass*> TargetHasDecoyBullets;
 };

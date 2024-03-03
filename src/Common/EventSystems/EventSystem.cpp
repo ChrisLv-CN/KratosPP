@@ -47,6 +47,7 @@ Event Events::ExeTerminate = Event("ExeTerminate", "Raised when YR terminate");
 // 读取命令参数
 Event Events::CmdLineParse = Event("CmdLineParse", "Raised when YR load cmd");
 // 游戏事件
+Event Events::MissileDeleteEvent = Event("MissileDelete", "Raised when an BulletClass is delete");
 Event Events::TechnoDestroyEvent = Event("TechnoDestroy", "Raised when an TechnoClass is take damage to destroy");
 Event Events::TechnoDeleteEvent = Event("TechnoDelete", "Raised when an TechnoClass is delete");
 Event Events::DetachAll = Event("DetachAll", "Raised when an AbstractClass detach from all");

@@ -190,10 +190,6 @@ private:
 	bool _hasFakeTarget = false;
 	ObjectClass* _pFakeTarget = nullptr;
 
-	bool _targetToAircraftFlag = false;
-
-	bool _isBounceSplit = false; // 是弹跳抛射体分裂的子抛射体
-
 	// 碰撞引信配置
 	ProximityData* _proximityData = nullptr;
 	ProximityData* GetProximityData();

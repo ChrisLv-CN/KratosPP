@@ -17,6 +17,7 @@
 #include "BaseNormal.h"
 #include "CrawlingFLH.h"
 #include "DamageText.h"
+#include "DecoyMissile.h"
 #include "HealthText.h"
 #include "JumpjetFacing.h"
 #include "MissileHoming.h"
@@ -66,6 +67,7 @@ void TechnoStatus::InitExt()
 		// 初始化尾巴
 		_gameObject->FindOrAttach<TechnoTrail>();
 		_gameObject->FindOrAttach<BaseNormal>();
+		_gameObject->FindOrAttach<DecoyMissile>();
 		if (IsInfantry())
 		{
 			_gameObject->FindOrAttach<CrawlingFLH>();

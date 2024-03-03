@@ -8,6 +8,8 @@
 
 #include "TrajectoryData.h"
 
+class BulletStatus;
+
 /// @brief 动态载入组件
 class MissileTrajectory : public BulletScript
 {
@@ -16,15 +18,27 @@ public:
 
 	virtual void Awake() override;
 
+	virtual void Destroy() override;
+
 	virtual void OnPut(CoordStruct* pCoord, DirType dirType) override;
 
 	virtual void OnUpdate() override;
+
+	bool IsDecoy = false; // 热诱弹
+	CoordStruct LaunchPos = CoordStruct::Empty;
+	CDTimerClass LifeTimer{};
 
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(IsDecoy)
+			.Process(LaunchPos)
+			.Process(LifeTimer)
+
+			.Process(_targetHasDecoyFlag)
+			.Process(_missileShakeVelocityFlag)
 			.Success();
 	};
 
@@ -40,5 +54,11 @@ public:
 	}
 #pragma endregion
 private:
+	void CheckTargetHasDecoy();
+
+	BulletStatus* _status = nullptr;
+	BulletStatus* GetBulletStatus();
+
+	bool _targetHasDecoyFlag = false;
 	bool _missileShakeVelocityFlag = false;
 };

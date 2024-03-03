@@ -106,6 +106,7 @@
     <ClCompile Include="src\Ext\TechnoType\BaseNormal.cpp" />
     <ClCompile Include="src\Ext\TechnoType\CrawlingFLH.cpp" />
     <ClCompile Include="src\Ext\TechnoType\DamageText.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\DecoyMissile.cpp" />
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
     <ClCompile Include="src\Ext\TechnoType\MissileHoming.cpp" />
     <ClCompile Include="src\Ext\TechnoType\JumpjetFacing.cpp" />
@@ -322,6 +323,8 @@
     <ClInclude Include="src\Ext\TechnoType\CrawlingFLHData.h" />
     <ClInclude Include="src\Ext\TechnoType\DamageText.h" />
     <ClInclude Include="src\Ext\TechnoType\DamageTextData.h" />
+    <ClInclude Include="src\Ext\TechnoType\DecoyMissile.h" />
+    <ClInclude Include="src\Ext\TechnoType\DecoyMissileData.h" />
     <ClInclude Include="src\Ext\TechnoType\DisguiseData.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthText.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />

@@ -78,6 +78,7 @@ public:
 	static Event ExeTerminate;
 	static Event CmdLineParse;
 	// 游戏进程事件
+	static Event MissileDeleteEvent;
 	static Event TechnoDestroyEvent;
 	static Event TechnoDeleteEvent;
 	static Event DetachAll;

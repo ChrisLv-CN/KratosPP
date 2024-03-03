@@ -12,6 +12,7 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/TechnoType/DecoyMissile.h>
 
 void BulletStatus::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 {
@@ -133,11 +134,6 @@ void BulletStatus::Destroy()
 	{
 		EventSystems::General.RemoveHandler(Events::DetachAll, this, &BulletStatus::OnFakeTargetDetach);
 	}
-	auto it = std::find(BulletExt::TargetAircraftBullets.begin(), BulletExt::TargetAircraftBullets.end(), pBullet);
-	if (it != BulletExt::TargetAircraftBullets.end())
-	{
-		BulletExt::TargetAircraftBullets.erase(it);
-	}
 }
 
 void BulletStatus::TakeDamage(int damage, bool eliminate, bool harmless, bool checkInterceptable)
@@ -204,13 +200,7 @@ void BulletStatus::OnPut(CoordStruct* pLocation, DirType dir)
 		// 	InitState_Trajectory_Straight();
 		// }
 	}
-	// 是否是对飞行器攻击
-	AbstractClass* pTarget = nullptr;
-	if (IsMissile() && (pTarget = pBullet->Target) != nullptr && (pTarget->WhatAmI() == AbstractType::Aircraft || pTarget->IsInAir()))
-	{
-		BulletExt::TargetAircraftBullets.push_back(pBullet);
-	}
-	_targetToAircraftFlag = true;
+
 }
 
 void BulletStatus::InitState_BlackHole() {};
@@ -218,16 +208,7 @@ void BulletStatus::InitState_ECM() {};
 
 void BulletStatus::OnUpdate()
 {
-	if (!_targetToAircraftFlag)
-	{
-		_targetToAircraftFlag = true;
-		// 是否是对飞行器攻击
-		AbstractClass* pTarget = nullptr;
-		if (IsMissile() && (pTarget = pBullet->Target) != nullptr && (pTarget->WhatAmI() == AbstractType::Aircraft || pTarget->IsInAir()))
-		{
-			BulletExt::TargetAircraftBullets.push_back(pBullet);
-		}
-	}
+
 	// 自毁
 	OnUpdate_DestroySelf();
 
