@@ -127,6 +127,7 @@
     <ClCompile Include="src\Ext\TechnoType\Spawn.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoTrail.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\TurretAngle.cpp" />
     <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
     <ClCompile Include="src\Hooks\AircraftExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimExtHook.cpp" />
@@ -334,6 +335,8 @@
     <ClInclude Include="src\Ext\TechnoType\SpawnData.h" />
     <ClInclude Include="src\Ext\TechnoType\TechnoStatus.h" />
     <ClInclude Include="src\Ext\TechnoType\TechnoTrail.h" />
+    <ClInclude Include="src\Ext\TechnoType\TurretAngle.h" />
+    <ClInclude Include="src\Ext\TechnoType\TurretAngleData.h" />
     <ClInclude Include="src\Ext\TechnoType\UploadAttachData.h" />
     <ClInclude Include="src\Ext\TerrainType\TerrainDestroyAnim.h" />
     <ClInclude Include="src\Ext\TerrainType\TerrainDestroyAnimData.h" />

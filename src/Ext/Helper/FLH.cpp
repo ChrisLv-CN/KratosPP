@@ -382,4 +382,48 @@ DirStruct Point2Dir(CoordStruct source, CoordStruct target)
 	radians -= Math::deg2rad(90);
 	return Radians2Dir(radians);
 }
+
+int IncludedAngle360(int bodyDirIndex, int targetDirIndex)
+{
+	// 两个方向的差值即为旋转角度，正差顺时针，负差逆时针
+	int delta = 0;
+	if (bodyDirIndex > 180 && targetDirIndex < bodyDirIndex)
+	{
+		delta = 360 - bodyDirIndex + targetDirIndex;
+	}
+	else
+	{
+		delta = targetDirIndex - bodyDirIndex;
+	}
+	if (delta < 0)
+	{
+		delta = 360 + delta;
+	}
+	return delta;
+}
+
+int GetTurnAngle(int targetBodyDelta, int min, int max)
+{
+	int turnAngle = 0;
+	// 更靠近哪一边
+	int length = max - min;
+	if ((targetBodyDelta - min) < (length / 2))
+	{
+		// 靠近小的那一边
+		turnAngle = min;
+	}
+	else
+	{
+		// 靠近大的那一边
+		turnAngle = max;
+	}
+	return turnAngle;
+}
+
+int GetTurnAngle(int targetBodyDelta, Point2D angleZone)
+{
+	int min = angleZone.X;
+	int max = angleZone.Y;
+	return GetTurnAngle(targetBodyDelta, min, max);
+}
 #pragma endregion

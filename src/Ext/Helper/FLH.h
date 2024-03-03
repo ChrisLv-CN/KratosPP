@@ -130,5 +130,19 @@ int Dir2FrameIndex(DirStruct dir, int facing);
 
 DirStruct Radians2Dir(double radians);
 DirStruct Point2Dir(CoordStruct source, CoordStruct target);
+
+/// @brief 计算targetDir相对于bodyDir之间的夹角，以360度划分圆，以bodyDir为0点，顺时针旋转，targetDir在哪一度。
+/// @param bodyDirIndex
+/// @param targetDirIndex
+/// @return angle
+int IncludedAngle360(int bodyDirIndex, int targetDirIndex);
+
+/// @brief 目标在死区范围内更靠近哪一边
+/// @param targetBodyDelta 
+/// @param min 
+/// @param max 
+/// @return 
+int GetTurnAngle(int targetBodyDelta, int min, int max);
+int GetTurnAngle(int targetBodyDelta, Point2D angleZone);
 #pragma endregion
 

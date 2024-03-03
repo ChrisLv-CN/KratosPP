@@ -22,6 +22,7 @@
 #include "MissileHoming.h"
 #include "Spawn.h"
 #include "TechnoTrail.h"
+#include "TurretAngle.h"
 
 AttachEffect* TechnoStatus::AEManager()
 {
@@ -59,6 +60,7 @@ void TechnoStatus::InitExt()
 	_gameObject->FindOrAttach<DamageText>();
 	_gameObject->FindOrAttach<HealthText>();
 	_gameObject->FindOrAttach<Spawn>();
+	_gameObject->FindOrAttach<TurretAngle>();
 	if (!IsBuilding())
 	{
 		// 初始化尾巴

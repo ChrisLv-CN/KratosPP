@@ -13,6 +13,7 @@
 #include <Ext/Helper/Scripts.h>
 
 #include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/TechnoType/TurretAngle.h>
 #include <Ext/TechnoType/DisguiseData.h>
 
 #pragma region Unit Deploy
@@ -193,6 +194,48 @@ DEFINE_HOOK(0x746B6D, UnitClass_Disguise_FullName, 0x5)
 	}
 	// 显示单位自己的名字
 	return 0x746C7A;
+}
+
+
+DEFINE_HOOK(0x736A26, UnitClass_Rotation_SetTurretFacingToTarget_Skip, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+
+	TurretAngle* status = nullptr;
+	if (TryGetScript<TechnoExt, TurretAngle>(pTechno, status) && status->LockTurret)
+	{
+		// 不允许转炮塔
+		R->EDX(&status->LockTurretDir);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x736BCA, UnitClass_Rotation_SetTurretFacing_NoTargetAndStanding, 0x5)
+{
+	GET(TechnoClass*, pTechno, ESI);
+
+	TurretAngle* status = nullptr;
+	if (TryGetScript<TechnoExt, TurretAngle>(pTechno, status) && status->ChangeDefaultDir)
+	{
+		// 炮塔转到指定角度，非车体前方
+		pTechno->SecondaryFacing.SetDesired(status->LockTurretDir);
+		return 0x736BE2;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x736BBB, UnitClass_Rotation_SetTurretFacing_NoTargetAndMoving, 0x5)
+{
+	GET(TechnoClass*, pTechno, ESI);
+
+	TurretAngle* status = nullptr;
+	if (TryGetScript<TechnoExt, TurretAngle>(pTechno, status) && status->LockTurret)
+	{
+		// 炮塔转到指定角度，非车体前方
+		pTechno->SecondaryFacing.SetDesired(status->LockTurretDir);
+		return 0x736BE2;
+	}
+	return 0;
 }
 
 DEFINE_HOOK(0x73C71D, UnitClass_DrawSHP_FacingDir, 0x6)

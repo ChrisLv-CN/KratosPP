@@ -11,6 +11,7 @@
 #include <Ext/Helper/Status.h>
 
 #include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/TechnoType/TurretAngle.h>
 
 void StandEffect::CreateAndPutStand()
 {
@@ -515,13 +516,12 @@ void StandEffect::SetFacing(DirStruct dir, bool forceSetTurret)
 			{
 				if (pStand->HasTurret())
 				{
-					// TODO 炮塔限界
 					// 炮塔的旋转交给炮塔旋转自己控制
-					// TechnoStatus* status = nullptr;
-					// if (!TryGetStatus<TechnoExt>(pStand, status) || !status->TurretAngleData.Enable)
-					// {
-					// 	pStand->SecondaryFacing.SetDesired(dir);
-					// }
+					TurretAngle* status = nullptr;
+					if (!TryGetStatus<TechnoExt>(pStand, status))
+					{
+						pStand->SecondaryFacing.SetDesired(dir);
+					}
 				}
 				else
 				{
@@ -537,13 +537,13 @@ void StandEffect::ForceFacing(DirStruct dir)
 	pStand->PrimaryFacing.SetCurrent(dir);
 	if (pStand->HasTurret())
 	{
-		// TODO 炮塔限界
-		// TechnoStatus* status = nullptr;
-		// if (TryGetStatus<TechnoExt>(pStand, status) && status->DefaultAngleIsChange(dir))
-		// {
-		// 	pStand->SecondaryFacing.SetCurrent(status->LockTurretDir);
-		// }
-		// else
+		// 炮塔限界
+		TurretAngle* status = nullptr;
+		if (TryGetScript<TechnoExt>(pTechno, status) && status->DefaultAngleIsChange(dir))
+		{
+			pStand->SecondaryFacing.SetCurrent(status->LockTurretDir);
+		}
+		else
 		{
 			pStand->SecondaryFacing.SetCurrent(dir);
 		}
