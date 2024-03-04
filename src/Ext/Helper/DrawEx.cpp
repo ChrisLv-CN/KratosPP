@@ -9,10 +9,10 @@ void DrawLaser(LaserType laser, CoordStruct sourcePos, CoordStruct targetPos, Co
 {
 	ColorStruct innerColor = laser.InnerColor;
 	ColorStruct outerColor = laser.OuterColor;
-	if (houseColor)
+	if (laser.IsHouseColor)
 	{
 		innerColor = houseColor;
-		outerColor;
+		outerColor = Colors::Empty;
 	}
 	LaserDrawClass* pLaser = GameCreate<LaserDrawClass>(
 		sourcePos, targetPos,

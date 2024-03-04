@@ -10,7 +10,11 @@ SupportSpawnsData* SupportSpawns::GetSupportSpawnsData()
 {
 	if (!_data)
 	{
-		_data = INI::GetConfig<SupportSpawnsData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+		TechnoClass* pSpawnOwner = pTechno->SpawnOwner;
+		if (pSpawnOwner)
+		{
+			_data = INI::GetConfig<SupportSpawnsData>(INI::Rules, pSpawnOwner->GetTechnoType()->ID)->Data;
+		}
 	}
 	return _data;
 }
@@ -35,7 +39,7 @@ void SupportSpawns::Setup()
 	_data = nullptr;
 	_flhData = nullptr;
 	_alwaysFire = false;
-	if (!IsAircraft() || !pTechno->GetTechnoType()->Spawned || !GetSupportSpawnsData()->Enable)
+	if (!IsAircraft() || !pTechno->GetTechnoType()->Spawned)
 	{
 		Disable();
 	}
@@ -140,7 +144,7 @@ void SupportSpawns::OnPut(CoordStruct* pCoord, DirType dirType)
 	Setup();
 	// SpawnOwner在awake拿不到，在put里检查
 	TechnoClass* pSpawnOwner = pTechno->SpawnOwner;
-	if (!pSpawnOwner)
+	if (!pSpawnOwner || !GetSupportSpawnsData()->Enable)
 	{
 		Disable();
 		return;

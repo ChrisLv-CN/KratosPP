@@ -319,6 +319,7 @@ void DrawBulletEffect(WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStru
 		ColorStruct houseColor;
 		if (pWeapon->IsHouseColor)
 		{
+			laser.IsHouseColor = true;
 			if (pAttacker)
 			{
 				houseColor = pAttacker->Owner->LaserColor;
