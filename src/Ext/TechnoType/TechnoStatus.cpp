@@ -22,6 +22,7 @@
 #include "JumpjetFacing.h"
 #include "MissileHoming.h"
 #include "Spawn.h"
+#include "SupportSpawns.h"
 #include "TechnoTrail.h"
 #include "TurretAngle.h"
 
@@ -85,6 +86,7 @@ void TechnoStatus::InitExt()
 			_gameObject->FindOrAttach<AircraftAttitude>();
 			_gameObject->FindOrAttach<AircraftDive>();
 			_gameObject->FindOrAttach<AircraftPut>();
+			_gameObject->FindOrAttach<SupportSpawns>();
 		}
 	}
 }

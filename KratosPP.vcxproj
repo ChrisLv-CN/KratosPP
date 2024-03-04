@@ -126,6 +126,7 @@
     <ClCompile Include="src\Ext\TechnoType\Status\Transform.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Vampire.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Spawn.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\SupportSpawns.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoStatus.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TechnoTrail.cpp" />
     <ClCompile Include="src\Ext\TechnoType\TurretAngle.cpp" />
@@ -336,6 +337,8 @@
     <ClInclude Include="src\Ext\TechnoType\SelectWeaponData.h" />
     <ClInclude Include="src\Ext\TechnoType\Spawn.h" />
     <ClInclude Include="src\Ext\TechnoType\SpawnData.h" />
+    <ClInclude Include="src\Ext\TechnoType\SupportSpawns.h" />
+    <ClInclude Include="src\Ext\TechnoType\SupportSpawnsData.h" />
     <ClInclude Include="src\Ext\TechnoType\TechnoStatus.h" />
     <ClInclude Include="src\Ext\TechnoType\TechnoTrail.h" />
     <ClInclude Include="src\Ext\TechnoType\TurretAngle.h" />
