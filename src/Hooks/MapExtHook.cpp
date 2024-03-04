@@ -65,12 +65,12 @@ DEFINE_HOOK(0x489280, MapClass_DamageArea, 0x6)
 		// Find all stand, check distance and blown it up.
 		FindAndDamageStandOrVUnit(*pLocation, damage, pWH, pAttacker, pAttackingHouse);
 		// Those action won't effects Stand.
-		// TechnoClass* pTechno = nullptr;
-		// TechnoStatus* status = nullptr;
-		// if (!pAttacker && CastToTechno(pAttacker, pTechno) && TryGetStatus<TechnoExt>(pTechno, status))
-		// {
-		// 	status->Teleport(pLocation, pWH);
-		// }
+		TechnoClass* pTechno = nullptr;
+		TechnoStatus* status = nullptr;
+		if (!pAttacker && CastToTechno(pAttacker, pTechno) && TryGetStatus<TechnoExt>(pTechno, status))
+		{
+			status->Teleport->Teleport(pLocation, pWH);
+		}
 	}
 	return 0;
 }

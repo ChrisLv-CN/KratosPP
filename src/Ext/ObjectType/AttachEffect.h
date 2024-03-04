@@ -62,6 +62,8 @@ public:
 
 	void AEStateToStand(EffectData* pData, int duration, std::string token, bool resetDuration);
 
+	void ClearLocationMarks();
+
 	/**
 	 *@brief 统计所有的AEBuff
 	 *
@@ -291,7 +293,6 @@ private:
 	 */
 	bool UpdateTrainStandLocation(AttachEffectScript* ae, int& markIndex);
 	CoordStruct MarkLocation();
-	void ClearLocationMarks();
 
 	bool _ownerIsDead = false;
 

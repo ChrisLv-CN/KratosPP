@@ -33,6 +33,7 @@
 #include <Ext/StateType/State/OverrideWeaponState.h>
 #include <Ext/StateType/State/PaintballState.h>
 #include <Ext/StateType/State/ScatterState.h>
+#include <Ext/StateType/State/TeleportState.h>
 #include <Ext/StateType/State/TransformState.h>
 
 #include "PassengersData.h"
@@ -112,6 +113,7 @@ public:
 	STATE_VAR_DEFINE(OverrideWeapon);
 	STATE_VAR_DEFINE(Paintball);
 	STATE_VAR_DEFINE(Scatter);
+	STATE_VAR_DEFINE(Teleport);
 	STATE_VAR_DEFINE(Transform);
 
 	void AttachState()
@@ -127,6 +129,7 @@ public:
 		STATE_VAR_INIT(OverrideWeapon);
 		STATE_VAR_INIT(Paintball);
 		STATE_VAR_INIT(Scatter);
+		STATE_VAR_INIT(Teleport);
 		STATE_VAR_INIT(Transform);
 	}
 
@@ -143,6 +146,7 @@ public:
 		STATE_VAR_INHERITED(OverrideWeapon);
 		STATE_VAR_INHERITED(Paintball);
 		STATE_VAR_INHERITED(Scatter);
+		STATE_VAR_INHERITED(Teleport);
 		STATE_VAR_INHERITED(Transform);
 	}
 
@@ -161,6 +165,7 @@ public:
 			STATE_VAR_TRYGET(OverrideWeapon)
 			STATE_VAR_TRYGET(Paintball)
 			STATE_VAR_TRYGET(Scatter)
+			STATE_VAR_TRYGET(Teleport)
 			STATE_VAR_TRYGET(Transform)
 			return state != nullptr;
 	}

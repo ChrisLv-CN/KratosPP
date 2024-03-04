@@ -7,6 +7,7 @@
 
 #include <Ext/EffectType/Effect/EffectData.h>
 #include <Ext/Helper/CastEx.h>
+#include <Ext/Helper/StringEx.h>
 
 
 class DestroySelfData : public EffectData
@@ -26,11 +27,31 @@ public:
 	{
 		EffectData::Read(reader, title);
 
-		bool destroySelf = false;
-		destroySelf = reader->Get("DestroySelf", false);
-		if (destroySelf)
+		std::string destorySelf{ "" };
+		destorySelf = reader->Get("DestroySelf", destorySelf);
+		if (IsNotNone(destorySelf))
 		{
-			Delay = 0;
+			// 是数字格式
+			if (std::regex_match(destorySelf, INIReader::Number))
+			{
+				int buffer = 0;
+				const char* pFmt = "%d";
+				if (sscanf_s(destorySelf.c_str(), pFmt, &buffer) == 1)
+				{
+					Delay = buffer;
+				}
+			}
+			else
+			{
+				const char v = *uppercase(destorySelf).substr(0, 1).c_str();
+				switch (v)
+				{
+				case 'Y':
+				case 'T':
+					Delay = 0;
+					break;
+				}
+			}
 		}
 		else
 		{

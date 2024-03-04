@@ -4,10 +4,12 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <sstream>
 
 
 //
-//  Lowercases string
+// Lowercases string
 //
 template <typename T>
 std::basic_string<T> lowercase(const std::basic_string<T>& s)
@@ -33,6 +35,8 @@ std::basic_string<T> uppercase(const std::basic_string<T>& s)
 std::string& trim(std::string& s);
 
 void split(std::string& s, std::string& delim, std::vector<std::string>* result);
+
+bool IsNum(std::string& s);
 
 int Wchar2Char(const wchar_t* wcharStr, char* charStr);
 std::string WString2String(std::wstring wstr);

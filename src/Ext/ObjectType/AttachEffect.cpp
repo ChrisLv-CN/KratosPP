@@ -26,6 +26,7 @@
 #include <Ext/StateType/State/DestroySelfData.h>
 #include <Ext/StateType/State/GiftBoxData.h>
 #include <Ext/StateType/State/PaintballData.h>
+#include <Ext/StateType/State/TeleportData.h>
 #include <Ext/StateType/State/TransformData.h>
 
 BulletStatus* AttachEffect::GetBulletStatus()
@@ -171,6 +172,7 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 							GET_STAND_STATE(OverrideWeapon)
 							GET_STAND_STATE(Paintball)
 							GET_STAND_STATE(Scatter)
+							GET_STAND_STATE(Teleport)
 							GET_STAND_STATE(Transform)
 							if (state)
 							{
@@ -706,6 +708,7 @@ void AttachEffect::AttachStateEffect()
 		ATTACH_EFFECT_ON_TECHNOTYPE(ExtraFire);
 		ATTACH_EFFECT_ON_TECHNOTYPE(FireSuper);
 		ATTACH_EFFECT_ON_TECHNOTYPE(NoMoneyNoTalk);
+		ATTACH_EFFECT_ON_TECHNOTYPE(Teleport);
 	}
 }
 

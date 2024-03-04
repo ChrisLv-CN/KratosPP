@@ -24,6 +24,7 @@
 #include <Ext/StateType/State/GiftBoxData.h>
 #include <Ext/StateType/State/NoMoneyNoTalkData.h>
 #include <Ext/StateType/State/PaintballData.h>
+#include <Ext/StateType/State/TeleportData.h>
 #include <Ext/StateType/State/TransformData.h>
 
 
@@ -65,6 +66,7 @@ STATE_EFFECT_DEFINE(NoMoneyNoTalk);
 STATE_EFFECT_DEFINE(OverrideWeapon);
 STATE_EFFECT_DEFINE(Paintball);
 STATE_EFFECT_DEFINE(Scatter);
+STATE_EFFECT_DEFINE(Teleport);
 STATE_EFFECT_DEFINE(Transform);
 
 
