@@ -107,7 +107,7 @@ void DamageText::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, Dam
 		data = &whDamageTextType->Repair;
 		if (!data->Hidden)
 		{
-			repairValue += damage;
+			repairValue -= damage;
 			text = L"+" + std::to_wstring(-damage);
 		}
 	}
