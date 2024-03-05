@@ -80,8 +80,8 @@ public:
 	TechnoClass* pSource = nullptr; // AE来源单位
 	HouseClass* pSourceHouse = nullptr; // AE来源所属
 
-	CoordStruct WarheadLocation{};
 	bool FromWarhead = false;
+	CoordStruct WarheadLocation{};
 
 	int AEMode = -1;
 	bool FromPassenger = false;
@@ -154,8 +154,8 @@ public:
 			.Process(this->AEData)
 			.Process(this->pSource)
 			.Process(this->pSourceHouse)
-			.Process(this->WarheadLocation)
 			.Process(this->FromWarhead)
+			.Process(this->WarheadLocation)
 			.Process(this->AEMode)
 			.Process(this->FromPassenger)
 			.Process(this->NonInheritable)

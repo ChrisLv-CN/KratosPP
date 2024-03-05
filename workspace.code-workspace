@@ -96,7 +96,8 @@
 			"*.rh": "cpp",
 			"ranges": "cpp",
 			"span": "cpp",
-			"aircraftput": "c"
+			"aircraftput": "c",
+			"sstream": "cpp"
 		},
 		"C_Cpp.formatting": "vcFormat",
 		"files.encoding": "utf8bom"

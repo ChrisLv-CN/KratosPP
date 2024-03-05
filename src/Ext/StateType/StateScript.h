@@ -13,13 +13,14 @@
 #include <Common/INI/INI.h>
 
 #include <Ext/ObjectType/AttachEffect.h>
+#include <Ext/EffectType/AttachEffectScript.h>
 
 class IStateScript
 {
 public:
-	virtual void Start(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) {};
+	virtual void Start(EffectData* data, int duration = -1, std::string token = "", AttachEffectScript* pAE = nullptr) {};
 	virtual void End(std::string token = "") {};
-	virtual void Replace(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) {};
+	virtual void Replace(EffectData* data, int duration = -1, std::string token = "", AttachEffectScript* pAE = nullptr) {};
 	virtual void ResetDuration(int duration, std::string token = "") {};
 };
 
@@ -52,22 +53,34 @@ template <typename TData>
 class StateScript : public ObjectScript, public IStateScript
 {
 public:
-	virtual void Start(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) override final
+	virtual void Start(EffectData* data, int duration = -1, std::string token = "", AttachEffectScript* pAE = nullptr) override final
 	{
 		if (TData* pData = dynamic_cast<TData*>(data))
 		{
 			Data = *pData;
 			Token = token;
-			ReceiverOwn = receiverOwn;
-			if (receiverOwn)
+			if (pAE)
 			{
-				pAEHouse = nullptr;
+				pAESource = pAE->pSource;
+				ReceiverOwn = pAE->AEData.ReceiverOwn;
+				if (ReceiverOwn)
+				{
+					pAEHouse = nullptr;
+				}
+				else
+				{
+					pAEHouse = pAE->pSourceHouse;
+				}
+				AEFromWarhead = pAE->FromWarhead;
+				AEWarheadLocation = pAE->WarheadLocation;
 			}
 			else
 			{
-				pAEHouse = pTargetHouse;
+				pAESource = nullptr;
+				pAEHouse = nullptr;
+				AEFromWarhead = false;
+				AEWarheadLocation = CoordStruct::Empty;
 			}
-
 			if (duration != 0)
 			{
 				Activate();
@@ -102,10 +115,10 @@ public:
 		}
 	}
 
-	virtual void Replace(EffectData* data, int duration = -1, std::string token = "", bool receiverOwn = true, HouseClass* pTargetHouse = nullptr) override final
+	virtual void Replace(EffectData* data, int duration = -1, std::string token = "", AttachEffectScript* pAE = nullptr) override final
 	{
 		End();
-		Start(data, duration, token, receiverOwn, pTargetHouse);
+		Start(data, duration, token, pAE);
 	}
 
 	virtual void OnStart() {};
@@ -219,8 +232,11 @@ public:
 
 	std::string Token{ "" };
 	TData Data{};
+	TechnoClass* pAESource = nullptr;
 	bool ReceiverOwn = true;
 	HouseClass* pAEHouse = nullptr;
+	bool AEFromWarhead = false;
+	CoordStruct AEWarheadLocation = CoordStruct::Empty;
 
 #pragma region Save/Load
 	template <typename T>
@@ -228,8 +244,11 @@ public:
 		return stream
 			.Process(this->Token)
 			.Process(this->Data)
+			.Process(this->pAESource)
 			.Process(this->ReceiverOwn)
 			.Process(this->pAEHouse)
+			.Process(this->AEFromWarhead)
+			.Process(this->AEWarheadLocation)
 
 			.Process(this->_duration)
 			.Process(this->_immortal)

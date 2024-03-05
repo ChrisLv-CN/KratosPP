@@ -75,6 +75,7 @@ bool CanBeBase(TechnoClass* pTechno, bool eligibileForAllyBuilding, int houseInd
 
 bool IsOnMark(TechnoClass* pTechno, FilterData data);
 
+bool CanAttack(BulletClass* pBullet, TechnoClass* pTarget, bool isPassiveAcquire = false);
 bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx = -1, bool isPassiveAcquire = false);
 
 int GetRealDamage(Armor armor, int damage, WarheadTypeClass* pWH, bool ignoreArmor = true, int distance = 0);

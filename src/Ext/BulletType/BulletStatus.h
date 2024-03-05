@@ -18,7 +18,9 @@
 #include <Ext/Helper/CastEx.h>
 #include <Ext/Helper/MathEx.h>
 
+// TODO Add new State
 #include <Ext/StateType/State/DestroySelfState.h>
+#include <Ext/StateType/State/ECMState.h>
 #include <Ext/StateType/State/GiftBoxState.h>
 #include <Ext/StateType/State/PaintballState.h>
 
@@ -61,13 +63,16 @@ public:
 
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
+	// TODO Add new State
 	// 状态机
+	STATE_VAR_DEFINE(ECM);
 	STATE_VAR_DEFINE(GiftBox);
 	STATE_VAR_DEFINE(DestroySelf);
 	STATE_VAR_DEFINE(Paintball);
 
 	void AttachState()
 	{
+		STATE_VAR_INIT(ECM);
 		STATE_VAR_INIT(GiftBox);
 		STATE_VAR_INIT(DestroySelf);
 		STATE_VAR_INIT(Paintball);
@@ -77,9 +82,10 @@ public:
 	bool TryGetState(IStateScript*& state)
 	{
 		if (false) {}
+		STATE_VAR_TRYGET(ECM)
 		STATE_VAR_TRYGET(GiftBox)
 			STATE_VAR_TRYGET(DestroySelf)
-			STATE_VAR_TRYGET(DestroySelf)
+			STATE_VAR_TRYGET(Paintball)
 			return state != nullptr;
 	}
 

@@ -92,6 +92,7 @@
     <ClCompile Include="src\Ext\StateType\State\DestroyAnimState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroySelfState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DisableWeaponState.cpp" />
+    <ClCompile Include="src\Ext\StateType\State\ECMState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\FreezeState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\GiftBoxState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\NoMoneyNoTalkState.cpp" />
@@ -296,6 +297,8 @@
     <ClInclude Include="src\Ext\StateType\State\DestroySelfState.h" />
     <ClInclude Include="src\Ext\StateType\State\DisableWeaponData.h" />
     <ClInclude Include="src\Ext\StateType\State\DisableWeaponState.h" />
+    <ClInclude Include="src\Ext\StateType\State\ECMData.h" />
+    <ClInclude Include="src\Ext\StateType\State\ECMState.h" />
     <ClInclude Include="src\Ext\StateType\State\FreezeData.h" />
     <ClInclude Include="src\Ext\StateType\State\FreezeState.h" />
     <ClInclude Include="src\Ext\StateType\State\GiftBoxData.h" />

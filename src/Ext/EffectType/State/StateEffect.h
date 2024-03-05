@@ -18,15 +18,6 @@
 
 #include "StateEffectScript.h"
 
-#include <Ext/StateType/State/AntiBulletData.h>
-#include <Ext/StateType/State/DestroyAnimData.h>
-#include <Ext/StateType/State/DestroySelfData.h>
-#include <Ext/StateType/State/GiftBoxData.h>
-#include <Ext/StateType/State/NoMoneyNoTalkData.h>
-#include <Ext/StateType/State/PaintballData.h>
-#include <Ext/StateType/State/TeleportData.h>
-#include <Ext/StateType/State/TransformData.h>
-
 
 #define STATE_EFFECT_DEFINE(STATE_NAME) \
 class STATE_NAME ## Effect : public StateEffect<STATE_NAME ## Data> \
@@ -60,6 +51,7 @@ STATE_EFFECT_DEFINE(Deselect);
 STATE_EFFECT_DEFINE(DestroyAnim);
 STATE_EFFECT_DEFINE(DestroySelf);
 STATE_EFFECT_DEFINE(DisableWeapon);
+STATE_EFFECT_DEFINE(ECM);
 STATE_EFFECT_DEFINE(Freeze);
 STATE_EFFECT_DEFINE(GiftBox);
 STATE_EFFECT_DEFINE(NoMoneyNoTalk);

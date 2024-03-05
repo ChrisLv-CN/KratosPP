@@ -182,7 +182,7 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 								}
 								else
 								{
-									state->Replace(pData, duration, token, ae->AEData.ReceiverOwn, ae->pSourceHouse);
+									state->Replace(pData, duration, token, ae);
 								}
 							}
 					}

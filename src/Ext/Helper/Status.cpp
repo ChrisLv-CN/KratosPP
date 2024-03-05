@@ -89,7 +89,7 @@ void HiddenAnim(AnimClass* pAnim)
 bool IsDead(ObjectClass* pObject)
 {
 	// if pObject is a bullet, the Health maybe < 0
-	return !pObject || pObject->Health == 0 || !pObject->IsAlive || !pObject->GetType() ;
+	return !pObject || pObject->Health == 0 || !pObject->IsAlive || !pObject->GetType();
 }
 bool IsDeadOrInvisible(ObjectClass* pObject)
 {
@@ -233,6 +233,35 @@ bool IsOnMark(TechnoClass* pTechno, FilterData data)
 		}
 	}
 	return mark;
+}
+
+bool CanAttack(BulletClass* pBullet, TechnoClass* pTarget, bool isPassiveAcquire)
+{
+	bool canAttack = false;
+	WarheadTypeClass* pWH = pBullet->WH;
+	if (pWH)
+	{
+		// 判断护甲
+		bool forceFire = true;
+		bool retaliate = true;
+		bool passiveAcquire = true;
+		double versus = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH)->GetVersus(pTarget->GetTechnoType()->Armor, forceFire, retaliate, passiveAcquire);
+		if (isPassiveAcquire)
+		{
+			// 是否可以主动攻击
+			canAttack = versus > 0.2 || passiveAcquire;
+		}
+		else
+		{
+			canAttack = versus != 0.0;
+		}
+		// 能不能对空
+		if (canAttack && pTarget->IsInAir())
+		{
+			canAttack = pBullet->Type->AA;
+		}
+	}
+	return canAttack;
 }
 
 bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx, bool isPassiveAcquire)
