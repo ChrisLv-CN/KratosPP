@@ -10,7 +10,7 @@ HealthTextData HealthText::GetHealthTextData()
 	if (!_healthTextData.IsRead)
 	{
 		HealthTextControlData* controlData = &TechnoExt::HealthTextControlData;
-		if (controlData->IsRead)
+		if (!controlData->IsRead)
 		{
 			controlData->Read();
 		}
