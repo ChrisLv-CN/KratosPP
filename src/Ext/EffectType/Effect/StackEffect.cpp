@@ -98,11 +98,8 @@ void StackEffect::Watch()
 			}
 		}
 		// 移除被监视者
-		if (Data->RemoveAll)
-		{
-			AE->AEManager->DetachByName(Data->Watch);
-		}
-		else if (!Data->RemoveLevel.empty())
+		bool removeLevel = false;
+		if (!Data->RemoveLevel.empty())
 		{
 			// 移除指定的层数
 			std::map<std::string, int> aeTypes;
@@ -120,10 +117,15 @@ void StackEffect::Watch()
 					aeTypes[watch] = level;
 				}
 			}
-			if (!aeTypes.empty())
+			removeLevel = !aeTypes.empty();
+			if (removeLevel)
 			{
 				AE->AEManager->DetachByName(aeTypes);
 			}
+		}
+		if (!removeLevel && Data->RemoveAll)
+		{
+			AE->AEManager->DetachByName(Data->Watch);
 		}
 		// 检查触发次数
 		if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)

@@ -91,8 +91,8 @@ public:
 	std::vector<std::string> RemoveEffects{};
 	std::vector<std::string> RemoveEffectsWithMarks{};
 
-	bool RemoveAll = true;
 	std::vector<int> RemoveLevel{};
+	bool RemoveAll = true;
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -121,8 +121,8 @@ public:
 		ClearIfGetNone(RemoveEffectsWithMarks);
 		Remove = !RemoveEffects.empty() || !RemoveEffectsWithMarks.empty();
 
-		RemoveAll = reader->Get(title + "RemoveAll", RemoveAll);
 		RemoveLevel = reader->GetList(title + "RemoveLevel", RemoveLevel);
+		RemoveAll = reader->Get(title + "RemoveAll", RemoveAll);
 
 		Enable = !Watch.empty() && (Attach || Remove);
 	}
@@ -141,8 +141,8 @@ public:
 			.Process(this->AttachChances)
 			.Process(this->Remove)
 			.Process(this->RemoveEffects)
-			.Process(this->RemoveAll)
 			.Process(this->RemoveLevel)
+			.Process(this->RemoveAll)
 			.Success();
 	};
 
