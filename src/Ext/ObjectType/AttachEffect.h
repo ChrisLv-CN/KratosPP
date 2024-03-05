@@ -36,13 +36,6 @@ class AttachEffect : public ObjectScript
 public:
 	OBJECT_SCRIPT(AttachEffect);
 
-	bool PowerOff = false; // 停电状态
-
-	std::vector<int> PassengerIds{}; // 乘客持有的AEMode ID
-	std::map<std::string, CDTimerClass> DisableDelayTimers{};
-	std::map<std::string, int> AEStacks{};
-
-
 	bool InBuilding();
 	bool InSelling();
 
@@ -152,6 +145,13 @@ public:
 	void DetachByName(std::vector<std::string> aeTypes);
 
 	/**
+	 *@brief 只关闭一定数量的AE
+	 *
+	 * @param aeTypes
+	 */
+	void DetachByName(std::map<std::string, int> aeTypes);
+
+	/**
 	 *@brief 关闭并移除一组AE
 	 *
 	 * @param aeTypes AE的名称
@@ -199,6 +199,12 @@ public:
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
 
 	virtual void OnUnInit() override;
+
+	bool PowerOff = false; // 停电状态
+
+	std::vector<int> PassengerIds{}; // 乘客持有的AEMode ID
+	std::map<std::string, CDTimerClass> DisableDelayTimers{};
+	std::map<std::string, int> AEStacks{};
 
 #pragma region Save/Load
 	template <typename T>

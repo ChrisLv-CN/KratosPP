@@ -92,6 +92,7 @@ public:
 	std::vector<std::string> RemoveEffectsWithMarks{};
 
 	bool RemoveAll = true;
+	std::vector<int> RemoveLevel{};
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -121,6 +122,7 @@ public:
 		Remove = !RemoveEffects.empty() || !RemoveEffectsWithMarks.empty();
 
 		RemoveAll = reader->Get(title + "RemoveAll", RemoveAll);
+		RemoveLevel = reader->GetList(title + "RemoveLevel", RemoveLevel);
 
 		Enable = !Watch.empty() && (Attach || Remove);
 	}
@@ -140,6 +142,7 @@ public:
 			.Process(this->Remove)
 			.Process(this->RemoveEffects)
 			.Process(this->RemoveAll)
+			.Process(this->RemoveLevel)
 			.Success();
 	};
 

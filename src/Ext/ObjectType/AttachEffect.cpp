@@ -724,6 +724,37 @@ void AttachEffect::DetachByName(std::vector<std::string> aeTypes)
 		});
 }
 
+void AttachEffect::DetachByName(std::map<std::string, int> aeTypes)
+{
+	std::vector<std::string> names;
+	std::map<std::string, int> levels;
+	std::map<std::string, int> counts;
+	for (auto ae : aeTypes)
+	{
+		std::string name = ae.first;
+		int level = ae.second;
+		names.push_back(name);
+		levels[name] = level;
+		counts[name] = 0;
+	}
+	if (!names.empty())
+	{
+		ForeachChild([&](Component* c) {
+			auto ae = dynamic_cast<AttachEffectScript*>(c);
+			std::string name = ae->AEData.Name;
+			// 通过名字关闭掉AE
+			if (ae && std::find(names.begin(), names.end(), name) != names.end())
+			{
+				if (counts[name] < levels[name])
+				{
+					ae->TimeToDie();
+					counts[name]++;
+				}
+			}
+			});
+	}
+}
+
 void AttachEffect::DetachByMarks(std::vector<std::string> marks)
 {
 	ForeachChild([&marks](Component* c) {

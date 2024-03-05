@@ -102,6 +102,29 @@ void StackEffect::Watch()
 		{
 			AE->AEManager->DetachByName(Data->Watch);
 		}
+		else if (!Data->RemoveLevel.empty())
+		{
+			// 移除指定的层数
+			std::map<std::string, int> aeTypes;
+			int idx = 0;
+			int count = Data->RemoveLevel.size();
+			for (std::string watch : Data->Watch)
+			{
+				int level = 0;
+				if (idx < count)
+				{
+					level = Data->RemoveLevel[idx];
+				}
+				if (level > 0)
+				{
+					aeTypes[watch] = level;
+				}
+			}
+			if (!aeTypes.empty())
+			{
+				AE->AEManager->DetachByName(aeTypes);
+			}
+		}
 		// 检查触发次数
 		if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)
 		{
