@@ -187,6 +187,7 @@ DEFINE_HOOK(0x469C4E, BulletClass_Detonate_WHAnim_Remap, 0x5)
 		AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, pos, 0, 1, 0x2600, -15, false);
 		SetAnimOwner(pAnim, pBullet);
 		SetAnimCreater(pAnim, pBullet);
+		return 0x469D06;
 	}
 
 	return 0;
