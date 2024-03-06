@@ -109,7 +109,7 @@ void HealthText::PrintHealthText(int barLength, Point2D* pPos, RectangleStruct* 
 	}
 	case HealthTextStyle::PERCENT:
 	{
-		double per = pTechno->GetHealthPercentage() * 100;
+		int per = (int)(pTechno->GetHealthPercentage() * 100);
 		text = std::format(L"{0}%", std::to_wstring(per));
 		break;
 	}
