@@ -16,6 +16,7 @@
 #include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/AircraftAttitude.h>
 #include <Ext/TechnoType/AircraftDive.h>
+#include <Ext/TechnoType/AircraftGuard.h>
 
 DEFINE_HOOK(0x639DD8, PlanningManager_AllowAircraftsWaypoint, 0x5)
 {
@@ -146,3 +147,55 @@ DEFINE_HOOK(0x41B760, IFlyControl_Landing_Direction, 0x6)
 }
 
 #pragma endregion
+
+#pragma region Aircraft Guard
+DEFINE_HOOK(0x41A697, AircraftClass_Mission_Guard_NoTarget_Enter, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AircraftGuard* fighter = nullptr;
+	if (TryGetScript<TechnoExt, AircraftGuard>(pTechno, fighter)
+		&& fighter->IsAreaGuardRolling())
+	{
+		// 不返回机场，而是继续前进直到目的地
+		return 0x41A6AC;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x41A96C, AircraftClass_Mission_GuardArea_NoTarget_Enter, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AircraftGuard* fighter = nullptr;
+	if (TryGetScript<TechnoExt, AircraftGuard>(pTechno, fighter))
+	{
+		// 不返回机场，而是继续前进直到目的地
+		fighter->StartAreaGuard();
+		return 0x41A97A;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x4CF780, FlyLocomotionClass_Draw_Matrix_Rolling, 0x5)
+{
+	FlyLocomotionClass* pFly = (FlyLocomotionClass*)(R->ESI() - 4);
+	TechnoClass* pTechno = pFly->LinkedTo;
+	AircraftGuard* fighter = nullptr;
+	if (pTechno && pTechno->GetTechnoType()->RollAngle != 0
+		&& TryGetScript<TechnoExt, AircraftGuard>(pTechno, fighter)
+		&& fighter->State == AircraftGuard::AircraftGuardStatus::ROLLING)
+	{
+		// 保持倾斜
+		if (fighter->Clockwise)
+		{
+			return 0x4CF7B0; // 右倾
+		}
+		else
+		{
+			return 0x4CF7DF; // 左倾
+		}
+	}
+	return 0;
+}
+
+#pragma endregion
+

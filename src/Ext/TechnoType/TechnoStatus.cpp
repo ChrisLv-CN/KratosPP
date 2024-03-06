@@ -12,6 +12,7 @@
 
 #include "AircraftAttitude.h"
 #include "AircraftDive.h"
+#include "AircraftGuard.h"
 #include "AircraftPut.h"
 #include "AutoFireAreaWeapon.h"
 #include "BaseNormal.h"
@@ -85,6 +86,7 @@ void TechnoStatus::InitExt()
 		{
 			_gameObject->FindOrAttach<AircraftAttitude>();
 			_gameObject->FindOrAttach<AircraftDive>();
+			_gameObject->FindOrAttach<AircraftGuard>();
 			_gameObject->FindOrAttach<AircraftPut>();
 			_gameObject->FindOrAttach<SupportSpawns>();
 		}

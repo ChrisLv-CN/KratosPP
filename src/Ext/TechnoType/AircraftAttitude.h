@@ -64,7 +64,7 @@ private:
 	const float angelStep = (float)Math::atan2(20, Unsorted::LeptonsPerCell);
 
 	TechnoStatus* _status = nullptr;
-	TechnoStatus* GetStaus()
+	TechnoStatus* GetTechnoStatus()
 	{
 		if (!_status)
 		{

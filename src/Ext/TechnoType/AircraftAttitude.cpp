@@ -200,7 +200,7 @@ void AircraftAttitude::OnUpdate()
 			PitchAngle = _targetAngle;
 		}
 		// 关闭图像缓存
-		GetStaus()->DisableVoxelCache = PitchAngle != 0;
+		GetTechnoStatus()->DisableVoxelCache = PitchAngle != 0;
 		_location = pTechno->GetCoords();
 		if (!GetAircraftAttitudeData()->Disable && !_lockAngle)
 		{

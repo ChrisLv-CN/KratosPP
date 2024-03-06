@@ -15,7 +15,7 @@ class AircraftDive : public TechnoScript
 {
 public:
 
-	enum class AircraftDiveStatus
+	enum class AircraftDiveStatus : int
 	{
 		NONE = 0, DIVEING = 1, PULLUP = 2
 	};

@@ -104,6 +104,7 @@
     <ClCompile Include="src\Ext\StateType\State\TransformState.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AircraftAttitude.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AircraftDive.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\AircraftGuard.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AircraftPut.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AutoFireAreaWeapon.cpp" />
     <ClCompile Include="src\Ext\TechnoType\BaseNormal.cpp" />
@@ -320,6 +321,8 @@
     <ClInclude Include="src\Ext\TechnoType\AircraftAttitudeData.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftDive.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftDiveData.h" />
+    <ClInclude Include="src\Ext\TechnoType\AircraftGuard.h" />
+    <ClInclude Include="src\Ext\TechnoType\AircraftGuardData.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftPut.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftPutData.h" />
     <ClInclude Include="src\Ext\TechnoType\AutoFireAreaWeapon.h" />
