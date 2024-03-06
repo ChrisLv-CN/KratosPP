@@ -96,6 +96,7 @@ static std::map<std::string, Mission> MissionTypeStrings
 	{ "capture", Mission::Capture },
 	{ "eaten", Mission::Eaten },
 	{ "harvest", Mission::Harvest },
+	{ "areaguard", Mission::Area_Guard },
 	{ "area_guard", Mission::Area_Guard },
 	{ "return", Mission::Return },
 	{ "stop", Mission::Stop },
