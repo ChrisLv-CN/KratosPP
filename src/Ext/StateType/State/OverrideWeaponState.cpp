@@ -34,7 +34,7 @@ bool OverrideWeaponState::TryGetOverrideWeapon(bool isElite, bool isDeadWeapon, 
 {
 	pOverrideWeapon = nullptr;
 	std::string weaponId{ "" };
-	if (IsActive() && (!Data.UseToDeathWeapon || isDeadWeapon)
+	if (IsAlive() && (!Data.UseToDeathWeapon || isDeadWeapon)
 		&& CanOverride(isElite, isDeadWeapon, weaponId)
 		&& IsNotNone(weaponId))
 	{

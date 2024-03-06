@@ -8,7 +8,7 @@ void PaintballState::RGBIsPower()
 	{
 		_rgbMode = true;
 	}
-	if (!IsActive())
+	if (!IsAlive())
 	{
 		PaintballData rgb;
 		rgb.SetColor(Colors::Red);
@@ -44,7 +44,7 @@ bool PaintballState::NeedPaint(bool& changeColor, bool& changeBright)
 {
 	changeColor = false;
 	changeBright = false;
-	if (IsActive())
+	if (IsAlive())
 	{
 		changeColor = Data.ChangeColor;
 		changeBright = Data.ChangeBright;

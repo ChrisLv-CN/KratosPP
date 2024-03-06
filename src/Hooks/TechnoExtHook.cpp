@@ -695,7 +695,7 @@ DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon_AntiMissile, 0xA)
 			{
 				if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
 				{
-					if (status->AntiBullet->IsActive())
+					if (status->AntiBullet->IsAlive())
 					{
 						// 自己捕获的目标，按设置选择武器
 						if (status->AntiBullet->Data.Weapon == 1)
@@ -755,7 +755,7 @@ DEFINE_HOOK(0x6FDD61, TechnoClass_Fire_OverrideWeapon, 0x5)
 {
 	GET(TechnoClass*, pTechno, ESI);
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->OverrideWeapon->IsActive())
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->OverrideWeapon->IsAlive())
 	{
 		WeaponTypeClass* pOverrideWeapon = nullptr;
 		if (status->OverrideWeapon->TryGetOverrideWeapon(pTechno->Veterancy.IsElite(), false, pOverrideWeapon))
@@ -771,7 +771,7 @@ DEFINE_HOOK(0x70D6B4, TechnoClass_Fire_DeathWeapon_OverrideWeapon, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->OverrideWeapon->IsActive())
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->OverrideWeapon->IsAlive())
 	{
 		WeaponTypeClass* pOverrideWeapon = nullptr;
 		if (status->OverrideWeapon->TryGetOverrideWeapon(pTechno->Veterancy.IsElite(), true, pOverrideWeapon))

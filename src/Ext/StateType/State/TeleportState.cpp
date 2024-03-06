@@ -13,7 +13,7 @@
 
 bool TeleportState::Teleport(CoordStruct* pLocation, WarheadTypeClass* pWH)
 {
-	if (IsActive() && _step == TeleportStep::READY)
+	if (IsAlive() && _step == TeleportStep::READY)
 	{
 		CoordStruct targetPos = *pLocation;
 		if (!targetPos.IsEmpty())

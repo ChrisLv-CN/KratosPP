@@ -3,7 +3,7 @@
 
 bool DestroySelfState::AmIDead()
 {
-	return IsActive() && (GoDie || Timeup());
+	return IsAlive() && (GoDie || Timeup());
 }
 
 void DestroySelfState::DestroyNow(bool peaceful)

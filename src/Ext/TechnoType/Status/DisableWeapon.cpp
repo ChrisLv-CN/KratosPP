@@ -6,7 +6,7 @@
 
 bool TechnoStatus::CanFire_DisableWeapon(AbstractClass* pTarget, WeaponTypeClass* pWeapon)
 {
-	if (DisableWeapon->IsActive())
+	if (DisableWeapon->IsAlive())
 	{
 		DisableWeaponData data = DisableWeapon->Data;
 		if (!data.OnLandTypes.empty())

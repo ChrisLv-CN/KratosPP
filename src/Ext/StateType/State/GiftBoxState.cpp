@@ -5,7 +5,7 @@
 
 bool GiftBoxState::CanOpen()
 {
-	return IsActive() && !IsOpen && Timeup() && GetGiftData().Enable;
+	return IsAlive() && !IsOpen && Timeup() && GetGiftData().Enable;
 }
 
 
@@ -39,7 +39,7 @@ void GiftBoxState::OnUpdate()
 	{
 		isElite = pBullet->Owner->Veterancy.IsElite();
 	}
-	if (_isElite != isElite && IsActive() && _delayTimer.Expired())
+	if (_isElite != isElite && IsAlive() && _delayTimer.Expired())
 	{
 		ResetGiftBox();
 	}

@@ -198,7 +198,7 @@ void TechnoStatus::OnUpdate_Paintball()
 			}
 		}
 
-		if (Paintball->IsActive())
+		if (Paintball->IsAlive())
 		{
 			if (!_buildingWasColor || Paintball->IfReset())
 			{

@@ -4,7 +4,7 @@
 
 void TechnoStatus::OnUpdate_Freeze()
 {
-	Freezing = Freeze->IsActive();
+	Freezing = Freeze->IsAlive();
 	if (Freezing)
 	{
 		if (!_cantMoveFlag)

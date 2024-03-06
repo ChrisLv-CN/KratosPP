@@ -135,7 +135,7 @@ public:
 				_frame = currentFrame;
 				if (!_immortal && _lifeTimer.Expired())
 				{
-					Deactivate();
+					End();
 				}
 			}
 		}
@@ -182,7 +182,6 @@ public:
 
 	virtual void ExtChanged() override
 	{
-		Deactivate();
 		OnInitState(true);
 	}
 

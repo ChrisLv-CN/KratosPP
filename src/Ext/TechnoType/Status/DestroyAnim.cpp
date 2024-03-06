@@ -19,7 +19,7 @@ void TechnoStatus::OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeC
 
 bool TechnoStatus::PlayDestroyAnims()
 {
-	if (DestroyAnim->IsActive())
+	if (DestroyAnim->IsAlive())
 	{
 		DestroyAnimData data = DestroyAnim->Data;
 		if (data.Enable && data.CanAffectType(pTechno))

@@ -37,7 +37,7 @@ void TechnoStatus::OnUpdate_DeployToTransform()
 void TechnoStatus::OnUpdate_GiftBox()
 {
 	// 记录单位的状态
-	if (GiftBox->IsActive())
+	if (GiftBox->IsAlive())
 	{
 		// 记录盒子的状态
 		GiftBox->IsSelected = pTechno->IsSelected;
@@ -118,7 +118,7 @@ void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass
 
 void TechnoStatus::OnReceiveDamageDestroy_GiftBox()
 {
-	if (GiftBox->IsActive() && GiftBox->Data.OpenWhenDestroyed && IsOnMark_GiftBox())
+	if (GiftBox->IsAlive() && GiftBox->Data.OpenWhenDestroyed && IsOnMark_GiftBox())
 	{
 		// 开盒
 		GiftBox->IsOpen = true;

@@ -19,7 +19,7 @@ void BulletStatus::OnUpdate_GiftBox()
 		GiftBox->IsSelected = pTechno->IsSelected;
 		GiftBox->Group = pTechno->Group;
 	}
-	if (GiftBox->IsActive())
+	if (GiftBox->IsAlive())
 	{
 		// 记录朝向
 		GiftBox->BodyDir = Facing(pBullet);
@@ -57,7 +57,7 @@ void BulletStatus::OnUpdate_GiftBox()
 
 bool BulletStatus::OnDetonate_GiftBox(CoordStruct* pCoords)
 {
-	if (GiftBox->IsActive() && GiftBox->Data.OpenWhenDestroyed && IsOnMark_GiftBox())
+	if (GiftBox->IsAlive() && GiftBox->Data.OpenWhenDestroyed && IsOnMark_GiftBox())
 	{
 		// 开盒
 		GiftBox->IsOpen = true;

@@ -5,7 +5,7 @@ void TechnoStatus::OnUpdate_Transform()
 	if (!_transformLocked)
 	{
 		// 执行变形逻辑
-		if (Transform->IsActive())
+		if (Transform->IsAlive())
 		{
 			if (!_hasBeenChanged || _changeToType != Transform->Data.TransformToType)
 			{
@@ -18,7 +18,7 @@ void TechnoStatus::OnUpdate_Transform()
 				}
 				else
 				{
-					Transform->Deactivate();
+					Transform->End();
 				}
 			}
 		}
@@ -55,7 +55,7 @@ void TechnoStatus::ChangeTechnoTypeTo(TechnoTypeClass* pNewType)
 	switch (GetAbsType())
 	{
 	case AbstractType::Infantry:
-		dynamic_cast<InfantryClass*>(pTechno)->Type = dynamic_cast<InfantryTypeClass*>(pNewType);
+ 		dynamic_cast<InfantryClass*>(pTechno)->Type = dynamic_cast<InfantryTypeClass*>(pNewType);
 		break;
 	case AbstractType::Unit:
 		dynamic_cast<UnitClass*>(pTechno)->Type = dynamic_cast<UnitTypeClass*>(pNewType);

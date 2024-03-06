@@ -53,7 +53,7 @@ bool TechnoStatus::WeaponNoAA(int weaponIdx)
 
 void TechnoStatus::OnUpdate_AntiBullet()
 {
-	if (!IsDeadOrInvisible(pTechno) && AntiBullet->IsActive())
+	if (!IsDeadOrInvisible(pTechno) && AntiBullet->IsAlive())
 	{
 		AntiBulletData data = AntiBullet->Data;
 		// 没有乘客也没有防空武器，关闭反抛射体搜索

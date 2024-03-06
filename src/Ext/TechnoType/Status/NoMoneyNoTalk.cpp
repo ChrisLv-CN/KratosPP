@@ -11,7 +11,7 @@ bool TechnoStatus::CanFire_NoMoneyNoTalk(AbstractClass* pTarget, WeaponTypeClass
 	if (weaponData && !weaponData->DontNeedMoney)
 	{
 		int needMoney = weaponData->NoMoneyNoTalk;
-		if (needMoney == 0 && NoMoneyNoTalk->IsActive())
+		if (needMoney == 0 && NoMoneyNoTalk->IsAlive())
 		{
 			needMoney = NoMoneyNoTalk->Data.Money;
 		}
