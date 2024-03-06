@@ -174,57 +174,13 @@ public:
 		return GetAbsType() == AbstractType::Aircraft;
 	}
 
-	LocoType GetLocoType()
+	LocoType GetThisLocoType()
 	{
 		if (!IsBuilding())
 		{
 			if (_locoType == LocoType::None)
 			{
-				GUID locoId = pTechno->GetTechnoType()->Locomotor;
-				if (locoId == LocomotionClass::CLSIDs::Drive)
-				{
-					return LocoType::Drive;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Hover)
-				{
-					return LocoType::Hover;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Tunnel)
-				{
-					return LocoType::Tunnel;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Walk)
-				{
-					return LocoType::Walk;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Droppod)
-				{
-					return LocoType::Droppod;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Fly)
-				{
-					return LocoType::Fly;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Teleport)
-				{
-					return LocoType::Teleport;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Mech)
-				{
-					return LocoType::Mech;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Ship)
-				{
-					return LocoType::Ship;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Jumpjet)
-				{
-					return LocoType::Jumpjet;
-				}
-				else if (locoId == LocomotionClass::CLSIDs::Rocket)
-				{
-					return LocoType::Rocket;
-				}
+				_locoType = GetLocoType(pTechno);
 			}
 		}
 		return _locoType;
@@ -232,20 +188,20 @@ public:
 
 	bool IsFly()
 	{
-		return GetLocoType() == LocoType::Fly;
+		return GetThisLocoType() == LocoType::Fly;
 	}
 	bool IsJumpjet()
 	{
-		return GetLocoType() == LocoType::Jumpjet;
+		return GetThisLocoType() == LocoType::Jumpjet;
 	}
 	bool IsShip()
 	{
-		return GetLocoType() == LocoType::Ship;
+		return GetThisLocoType() == LocoType::Ship;
 	}
 
 	bool IsRocket()
 	{
-		return IsAircraft() && GetLocoType() == LocoType::Rocket;
+		return IsAircraft() && GetThisLocoType() == LocoType::Rocket;
 	}
 
 protected:

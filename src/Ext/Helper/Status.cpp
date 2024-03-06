@@ -98,6 +98,59 @@ bool IsDeadOrInvisible(ObjectClass* pObject)
 #pragma endregion
 
 #pragma endregion TechnoClass
+LocoType GetLocoType(TechnoClass* pTechno)
+{
+	if (pTechno && pTechno->GetTechnoType())
+	{
+		GUID locoId = pTechno->GetTechnoType()->Locomotor;
+		if (locoId == LocomotionClass::CLSIDs::Drive)
+		{
+			return LocoType::Drive;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Hover)
+		{
+			return LocoType::Hover;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Tunnel)
+		{
+			return LocoType::Tunnel;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Walk)
+		{
+			return LocoType::Walk;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Droppod)
+		{
+			return LocoType::Droppod;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Fly)
+		{
+			return LocoType::Fly;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Teleport)
+		{
+			return LocoType::Teleport;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Mech)
+		{
+			return LocoType::Mech;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Ship)
+		{
+			return LocoType::Ship;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Jumpjet)
+		{
+			return LocoType::Jumpjet;
+		}
+		else if (locoId == LocomotionClass::CLSIDs::Rocket)
+		{
+			return LocoType::Rocket;
+		}
+	}
+	return LocoType::None;
+}
+
 bool IsDead(TechnoClass* pTechno)
 {
 	return !pTechno || pTechno->Health <= 0 || !pTechno->IsAlive || pTechno->IsCrashing || pTechno->IsSinking || !pTechno->GetType();

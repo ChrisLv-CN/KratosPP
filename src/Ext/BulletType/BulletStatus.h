@@ -134,6 +134,11 @@ public:
 			.Process(this->_proximity)
 			.Process(this->_activeProximity)
 			.Process(this->_proximityRange)
+			// 发射射手
+			.Process(this->_selfLaunch)
+			.Process(this->_limboFlag)
+			.Process(this->_shooterIsSelected)
+			.Process(this->_movingSelfInitFlag)
 			.Success();
 	};
 
@@ -204,4 +209,10 @@ private:
 	bool _activeProximity = false;
 	// 近炸引信
 	int _proximityRange = -1;
+
+	// 发射射手
+	bool _selfLaunch = false;
+	bool _limboFlag = false;
+	bool _shooterIsSelected = false;
+	bool _movingSelfInitFlag = false;
 };

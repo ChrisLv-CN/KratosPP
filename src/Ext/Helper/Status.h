@@ -55,6 +55,8 @@ enum class LocoType
 	Rocket = 11
 };
 
+LocoType GetLocoType(TechnoClass* pTechno);
+
 bool IsDead(TechnoClass* pTechno);
 bool IsDeadOrInvisible(TechnoClass* pTechno);
 

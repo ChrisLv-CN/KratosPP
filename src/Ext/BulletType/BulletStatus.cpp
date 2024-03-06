@@ -263,7 +263,6 @@ void BulletStatus::OnUpdate()
 	if (!IsDeadOrInvisible(pBullet) && !life.IsDetonate)
 	{
 		OnUpdate_BlackHole();
-		OnUpdate_ECM();
 		OnUpdate_GiftBox();
 		OnUpdate_RecalculateStatus();
 		OnUpdate_SelfLaunchOrPumpAction();
@@ -271,8 +270,6 @@ void BulletStatus::OnUpdate()
 }
 
 void BulletStatus::OnUpdate_BlackHole() {};
-void BulletStatus::OnUpdate_ECM() {};
-void BulletStatus::OnUpdate_SelfLaunchOrPumpAction() {};
 
 void BulletStatus::OnUpdateEnd()
 {
@@ -308,6 +305,3 @@ void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 		}
 	}
 };
-
-bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords) { return false; };
-

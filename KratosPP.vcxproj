@@ -43,6 +43,7 @@
     <ClCompile Include="src\Ext\BulletType\Status\CrateBuff.cpp" />
     <ClCompile Include="src\Ext\BulletType\Status\DestroySelf.cpp" />
     <ClCompile Include="src\Ext\BulletType\Status\GiftBox.cpp" />
+    <ClCompile Include="src\Ext\BulletType\Status\SelfLaunch.cpp" />
     <ClCompile Include="src\Ext\BulletType\Status\Paintball.cpp" />
     <ClCompile Include="src\Ext\BulletType\Status\Proximity.cpp" />
     <ClCompile Include="src\Ext\BulletType\Trajectory\ArcingTrajectory.cpp" />
