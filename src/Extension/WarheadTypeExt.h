@@ -247,7 +247,7 @@ public:
 			{
 				// 自定义护甲
 				auto array = GetAresArmorArray();
-				if (armorIndex -= 11 < array.size())
+				if ((armorIndex -= 11) < (int)array.size())
 				{
 					auto it = array.begin();
 					if (armorIndex > 0)
@@ -348,22 +348,26 @@ public:
 			return false;
 		}
 
-		static void GetArmorKeys(std::string key, std::map<std::string, std::string> array, std::stack<std::string>& keys)
+		static void GetArmorKeys(std::string key, std::vector<std::pair<std::string, std::string>> array, std::stack<std::string>& keys)
 		{
-			if (array.find(key) != array.end())
+			for (auto& kv : array)
 			{
-				keys.push(key);
-				// 查找是否嵌套
-				std::string value = array[key];
-				int index = 0;
-				if (value.find("%") != std::string::npos || IsDefaultArmor(value, index))
+				if (kv.first == key)
 				{
-					return;
-				}
-				// 迭代查找
-				if (value != key)
-				{
-					GetArmorKeys(value, array, keys);
+					keys.push(key);
+					// 查找是否嵌套
+					std::string value = kv.second;
+					int index = 0;
+					if (value.find("%") != std::string::npos || IsDefaultArmor(value, index))
+					{
+						return;
+					}
+					// 迭代查找
+					if (value != key)
+					{
+						GetArmorKeys(value, array, keys);
+					}
+					break;
 				}
 			}
 		}
@@ -375,22 +379,25 @@ public:
 		 * @param array
 		 * @return std::string
 		 */
-		static std::string GetArmorValue(std::string key, std::map<std::string, std::string> array)
+		static std::string GetArmorValue(std::string key, std::vector<std::pair<std::string, std::string>> array)
 		{
-			auto it = array.find(key);
-			if (it != array.end())
+			for (auto& kv : array)
 			{
-				std::string value = it->second;
-				// 如果是百分比则返回百分比，如果是游戏默认护甲，则返回默认护甲
-				int index = 0;
-				if (value.find("%", 0) != std::string::npos || IsDefaultArmor(value, index))
+				if (kv.first == key)
 				{
-					return value;
-				}
-				// 迭代查找
-				if (value != key)
-				{
-					return GetArmorValue(value, array);
+					std::string value = kv.second;
+					// 如果是百分比则返回百分比，如果是游戏默认护甲，则返回默认护甲
+					int index = 0;
+					if (value.find("%", 0) != std::string::npos || IsDefaultArmor(value, index))
+					{
+						return value;
+					}
+					// 迭代查找
+					if (value != key)
+					{
+						return GetArmorValue(value, array);
+					}
+					break;
 				}
 			}
 			Debug::Log("Warning: Try to read Ares's [ArmorTypes] but type [%s] value is wrong.", key.c_str());
@@ -402,9 +409,9 @@ public:
 		 * [ArmorTypes]\n
 		 * OOXX = 100%\n
 		 * XXOO = OOXX\n
-		 * @return std::map<std::string, std::string>
+		 * @return std::vector<std::pair<std::string, std::string>>
 		 */
-		static std::map<std::string, std::string> GetAresArmorArray()
+		static std::vector<std::pair<std::string, std::string>> GetAresArmorArray()
 		{
 			if (_aresArmorArray.empty())
 			{
@@ -426,7 +433,7 @@ public:
 								Debug::Log("Warning: Try to read Ares's [ArmorTypes], ArmorType %s is %s\n", keyName.c_str(), value.c_str());
 								value = "0%";
 							}
-							_aresArmorArray[keyName] = value;
+							_aresArmorArray.push_back(std::pair<std::string, std::string>{ keyName, value });
 						}
 					}
 				}
@@ -440,9 +447,9 @@ public:
 		 * OOXX = 100%\n
 		 * XXOO = 100%\n
 		 *
-		 * @return std::map<std::string, std::string>
+		 * @return std::vector<std::pair<std::string, std::string>>
 		 */
-		static std::map<std::string, std::string> GetAresArmorValueArray()
+		static std::vector<std::pair<std::string, std::string>> GetAresArmorValueArray()
 		{
 			if (_aresArmorValueArray.empty() && !GetAresArmorArray().empty())
 			{
@@ -452,7 +459,14 @@ public:
 				{
 					std::string key = it.first;
 					std::string value = GetArmorValue(key, GetAresArmorArray());
-					_aresArmorValueArray[key] = value; // 更新为新的值
+					for (auto& kv : _aresArmorValueArray)
+					{
+						if (kv.first == key)
+						{
+							kv.second = value; // 更新为新的值
+							break;
+						}
+					}
 				}
 				// 输出日志检查是否正确
 				std::string logMsg = "[ArmorTypes]\n";
@@ -471,7 +485,15 @@ public:
 					}
 					else
 					{
-						std::string vv = _aresArmorValueArray[key];
+						std::string vv = "";
+						for (auto& kv : _aresArmorValueArray)
+						{
+							if (kv.first == key)
+							{
+								vv = kv.second;
+								break;
+							}
+						}
 						nPos = vv.find("%", 0);
 						char sp = '%';
 						vv = nPos >= 0 ? vv.insert(nPos, 1, sp) : vv;
@@ -484,8 +506,8 @@ public:
 			return _aresArmorValueArray;
 		}
 
-		inline static std::map<std::string, std::string> _aresArmorArray{}; // Ares护甲注册表，护甲的对应关系
-		inline static std::map<std::string, std::string> _aresArmorValueArray{}; // 读取完所有嵌套护甲对应的百分比默认值
+		inline static std::vector<std::pair<std::string, std::string>> _aresArmorArray{}; // Ares护甲注册表，护甲的对应关系
+		inline static std::vector<std::pair<std::string, std::string>> _aresArmorValueArray{}; // 读取完所有嵌套护甲对应的百分比默认值
 	};
 
 	static constexpr DWORD Canary = 0x22222222;
