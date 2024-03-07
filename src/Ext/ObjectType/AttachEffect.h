@@ -179,6 +179,12 @@ public:
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
 	}
 
+	virtual void ExtChanged() override
+	{
+		_typeData = nullptr;
+		_groupData = nullptr;
+	}
+
 	virtual void Destroy() override
 	{
 		EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);

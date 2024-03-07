@@ -428,7 +428,7 @@ void AttachEffect::Attach(AttachEffectData data,
 	if (!add)
 	{
 		// 不同攻击者是否叠加
-		bool isAttackMark = fromPassenger || data.Cumulative == CumulativeMode::ATTACKER && !pAttacker && pAttacker->IsAlive;
+		bool isAttackMark = fromPassenger || data.Cumulative == CumulativeMode::ATTACKER && pAttacker && pAttacker->IsAlive;
 		// 不同所属是否叠加
 		bool isHouseMark = data.Cumulative == CumulativeMode::HOUSE;
 		// 攻击者标记AE名称相同，但可以来自不同的攻击者，可以叠加，不检查Delay
