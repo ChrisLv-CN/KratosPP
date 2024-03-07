@@ -251,7 +251,7 @@ void AnimStatus::OnUpdate_Damage()
 		if (!_initDamageDelayFlag)
 		{
 			_initDamageDelayFlag = true;
-			_damageDelayTimer.Start(GetAnimDamageData()->Delay);
+			_damageDelayTimer.Start(GetAnimDamageData()->InitDelay);
 		}
 		if (!_createrIsDeadth)
 		{
