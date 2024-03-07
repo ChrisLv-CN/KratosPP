@@ -185,7 +185,7 @@ bool AttachEffectScript::IsAlive()
 	int timeLeft = GetDuration();
 	Tag = std::to_string(timeLeft) + "#" + AEData.Name;
 #endif
-	if (_delayToEnable)
+	if (!_started)
 	{
 		if (!InDelayToEnable())
 		{
