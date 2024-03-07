@@ -139,6 +139,26 @@ public:
 		return !IsBullet() && !IsBuilding();
 	}
 
+	bool InBuilding()
+	{
+		if (IsBuilding())
+		{
+			BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno);
+			return pBuilding->BState == BStateType::Construction && pBuilding->CurrentMission != Mission::Selling;
+		}
+		return false;
+	}
+
+	bool InSelling()
+	{
+		if (IsBuilding())
+		{
+			BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno);
+			return pBuilding->BState == BStateType::Construction && pBuilding->CurrentMission == Mission::Selling && pBuilding->MissionStatus > 0;
+		}
+		return false;
+	}
+
 protected:
 	AbstractType _absType = AbstractType::None;
 };

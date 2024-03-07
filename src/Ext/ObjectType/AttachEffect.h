@@ -36,9 +36,7 @@ class AttachEffect : public ObjectScript
 public:
 	OBJECT_SCRIPT(AttachEffect);
 
-	bool InBuilding();
-	bool InSelling();
-
+	void OnDestroySelf();
 	bool OwnerIsDead();
 
 	/**

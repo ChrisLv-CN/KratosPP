@@ -49,6 +49,11 @@ TechnoStatus* AttachEffect::GetTechnoStatus()
 	return status;
 }
 
+void AttachEffect::OnDestroySelf()
+{
+	_ownerIsDead = true;
+}
+
 bool AttachEffect::OwnerIsDead()
 {
 	if (!_ownerIsDead)
@@ -63,26 +68,6 @@ bool AttachEffect::OwnerIsDead()
 		}
 	}
 	return _ownerIsDead;
-}
-
-bool AttachEffect::InBuilding()
-{
-	if (IsBuilding() && !OwnerIsDead())
-	{
-		BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno);
-		return pBuilding->BState == BStateType::Construction && pBuilding->CurrentMission != Mission::Selling;
-	}
-	return false;
-}
-
-bool AttachEffect::InSelling()
-{
-	if (IsBuilding())
-	{
-		BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno);
-		return pBuilding->BState == BStateType::Construction && pBuilding->CurrentMission == Mission::Selling && pBuilding->MissionStatus > 0;
-	}
-	return false;
 }
 
 int AttachEffect::Count()

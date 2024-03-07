@@ -8,6 +8,11 @@ void TechnoStatus::OnUpdate_DestroySelf()
 {
 	if (DestroySelf->AmIDead() && !IsDead(pTechno))
 	{
+		// 通知AE管理器
+		if (AEManager())
+		{
+			AEManager()->OnDestroySelf();
+		}
 		// 啊我死了
 		if (DestroySelf->Data.Peaceful)
 		{
