@@ -43,7 +43,7 @@ void BulletStatus::OnUpdate_SelfLaunchOrPumpAction()
 	{
 		_limboFlag = true;
 		// 抛射体生成时没有消耗弹药，所以在抛射体开始运行后，再移除发射者
-		if (IsDeadOrInvisible(pSource))
+		if (!IsDeadOrInvisible(pSource))
 		{
 			CoordStruct sourcePos = pSource->GetCoords();
 			// 从占据的格子中移除自己
