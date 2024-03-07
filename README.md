@@ -41,13 +41,14 @@ Run `RunAres.bat` to start the game.
 
 帮助文档 (Documents)
 ------------
-* [食用说明书](https://github.com/ChrisLv-CN/DPKratos-Lite/blob/main/DynamicPatcher/Kratos%E9%A3%9F%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.ini)
+* [食用说明书](https://github.com/ChrisLv-CN/KratosPP/blob/main/Kratos%E9%A3%9F%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.ini)
 * [Wiki](https://github.com/ChrisLv-CN/DPKratos-Lite/wiki)
 
 开发者 (Developers)
 ------------
 * [艾木魁](https://space.bilibili.com/194846) (M.Kenosis) - 主策划
 * [双杀步枪](https://space.bilibili.com/276838) (ChrisLv_CN) - 开发者
+* [冲冲冲14782](https://space.bilibili.com/149326956/) - 测试
 
 鸣谢 (Credits)
 ------------
