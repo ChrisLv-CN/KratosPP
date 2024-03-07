@@ -1,4 +1,4 @@
-[![license](https://www.gnu.org/graphics/gplv3-or-later.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[![license](https://www.gnu.org/graphics/lgplv3-147x51.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
 关于Kratos-PP（About Kratos-PP）
 ============
