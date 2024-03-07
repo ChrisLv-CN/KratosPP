@@ -41,7 +41,7 @@ Point2D PrintTextManager::GetFontSize(std::wstring font)
 void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTextData data, Point2D pos, RectangleStruct* pBound, DSurface* pSurface, bool isBuilding)
 {
 	bool noNumbers = data.NoNumbers || data.SHPDrawStyle != SHPDrawStyle::NUMBER;
-	LongText longText = LongText::NONE;
+	LongText longText = LongText::EMPTY;
 	auto it = LongTextStrings.find(uppercase(text));
 	if (it != LongTextStrings.end())
 	{
@@ -181,7 +181,7 @@ void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTex
 	}
 	else
 	{
-		if (noNumbers && longText == LongText::NONE)
+		if (noNumbers && longText == LongText::EMPTY)
 		{
 			return;
 		}

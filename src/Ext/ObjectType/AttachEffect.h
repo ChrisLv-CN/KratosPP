@@ -183,6 +183,7 @@ public:
 	{
 		_typeData = nullptr;
 		_groupData = nullptr;
+		_attachOnceFlag = false;
 	}
 
 	virtual void Destroy() override

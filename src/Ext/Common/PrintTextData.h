@@ -189,12 +189,12 @@ public:
 
 enum class LongText
 {
-	NONE = 0, HIT = 1, MISS = 2, CRIT = 3, GLANCING = 4, BLOCK = 5
+	EMPTY = 0, HIT = 1, MISS = 2, CRIT = 3, GLANCING = 4, BLOCK = 5
 };
 
 static std::map<std::wstring, LongText> LongTextStrings
 {
-	{ L"NONE", LongText::NONE },
+	{ L"EMPTY", LongText::EMPTY },
 	{ L"HIT", LongText::HIT },
 	{ L"MISS", LongText::MISS },
 	{ L"CRIT", LongText::CRIT },
