@@ -44,6 +44,8 @@ public:
 		AttachEffectChances = reader->GetChanceList(title + ".Chances", AttachEffectChances);
 		AttachByPassenger = reader->Get(title + ".AttachByPassenger", AttachByPassenger);
 		AEModeIndex = index;
+
+		Enable = !AttachEffectTypes.empty();
 	}
 
 };

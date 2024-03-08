@@ -17,6 +17,7 @@
 #include <Ext/TechnoType/AircraftAttitude.h>
 #include <Ext/TechnoType/AircraftDive.h>
 #include <Ext/TechnoType/AircraftGuard.h>
+#include <Ext/TechnoType/AirstrikeData.h>
 
 DEFINE_HOOK(0x639DD8, PlanningManager_AllowAircraftsWaypoint, 0x5)
 {
@@ -198,4 +199,101 @@ DEFINE_HOOK(0x4CF780, FlyLocomotionClass_Draw_Matrix_Rolling, 0x5)
 }
 
 #pragma endregion
+
+
+DEFINE_HOOK(0x41D970, AirstrikeClass_Setup_SetTarget, 0x5)
+{
+	GET(AbstractClass*, pTarget, ESI);
+	GET(AirstrikeClass*, pAirs, EDI);
+	FootClass* pObject = pAirs->FirstObject;
+	do
+	{
+		if (pObject)
+		{
+			pObject->SetTarget(pTarget);
+		}
+	} while (pObject && (pObject = pObject->NextTeamMember) != nullptr);
+	return 0;
+}
+
+DEFINE_HOOK(0x41D97B, AirstrikeClass_Setup_AirstrikeLaser_SkipBuildingCheck, 0x7)
+{
+	return 0x41D98B;
+}
+
+DEFINE_HOOK(0x6D481D, TacticalClass_Draw_AirstrikeLaser_SkipBuildingCheck, 0x7)
+{
+	enum { draw = 0x6D482D, skip = 0x6D48FA };
+	GET(TechnoClass*, pTechno, ESI);
+	AirstrikeData* data = INI::GetConfig<AirstrikeData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+	if (data->AirstrikeDisableLine)
+	{
+		return skip;
+	}
+	return draw;
+}
+
+DEFINE_HOOK(0x70E92F, TechnoClass_Airstrike_Tint_Timer_Update_SkipBuildingCheck, 0x5)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
+	{
+		return 0x70E96E;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x706342, TechnoClass_DrawSHP_Tint_SkipBuildingCheck, 0x7)
+{
+	enum { draw = 0x706377, skip = 0x706389 };
+	GET(TechnoClass*, pTechno, ESI);
+	if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
+	{
+		AirstrikeData* data = INI::GetConfig<AirstrikeData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+		if (data->AirstrikeDisableBlink)
+		{
+			return skip;
+		}
+		return draw;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x70679B, TechnoClass_DrawVXL_Tint_SkipBuildingCheck, 0x5)
+{
+	enum { draw = 0x7067D2, skip = 0x7067E4 };
+	GET(TechnoClass*, pTechno, EBP);
+	if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
+	{
+		AirstrikeData* data = INI::GetConfig<AirstrikeData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+		if (data->AirstrikeDisableBlink)
+		{
+			return skip;
+		}
+		return draw;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x73BFA4, UnitClass_DrawVXL_Tint_Airstrike, 0x6)
+{
+	enum { draw = 0x73BFAA, skip = 0x73C07C };
+	GET(TechnoClass*, pTechno, EBP);
+	if (pTechno->IsIronCurtained())
+	{
+		return draw;
+	}
+	else if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
+	{
+		AirstrikeData* data = INI::GetConfig<AirstrikeData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+		if (data->AirstrikeDisableBlink)
+		{
+			return skip;
+		}
+		return draw;
+	}
+	return skip;
+}
+
+
 

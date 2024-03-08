@@ -325,6 +325,7 @@
     <ClInclude Include="src\Ext\TechnoType\AircraftGuardData.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftPut.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftPutData.h" />
+    <ClInclude Include="src\Ext\TechnoType\AirstrikeData.h" />
     <ClInclude Include="src\Ext\TechnoType\AutoFireAreaWeapon.h" />
     <ClInclude Include="src\Ext\TechnoType\AutoFireAreaWeaponData.h" />
     <ClInclude Include="src\Ext\TechnoType\BaseNormal.h" />
