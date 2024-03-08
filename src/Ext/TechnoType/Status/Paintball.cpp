@@ -2,14 +2,29 @@
 
 #include <Ext/Common/CommonStatus.h>
 
+unsigned int TechnoStatus::GetLaserTargetColor2()
+{
+	if (_laserTargetColor2 == 0)
+	{
+		ColorStruct color = RulesClass::Instance->ColorAdd[RulesClass::Instance->LaserTargetColor];
+		_laserTargetColor2 = Add2RGB565(color);
+	}
+	return _laserTargetColor2;
+}
+
 unsigned int TechnoStatus::GetBerserkColor2()
 {
 	if (_berserkColor2 == 0)
 	{
-		ColorStruct berserkColor = RulesClass::Instance->ColorAdd[RulesClass::Instance->BerserkColor];
-		_berserkColor2 = Add2RGB565(ToColorAdd(berserkColor));
+		ColorStruct color = RulesClass::Instance->ColorAdd[RulesClass::Instance->BerserkColor];
+		_berserkColor2 = Add2RGB565(color);
 	}
 	return _berserkColor2;
+}
+
+AirstrikeData* TechnoStatus::GetAirstrikeData(TechnoClass* pOwner)
+{
+	return INI::GetConfig<AirstrikeData>(INI::Rules, pOwner->GetTechnoType()->ID)->Data;;
 }
 
 void TechnoStatus::SetExtraSparkleAnim(AnimClass* pAnim)
@@ -48,6 +63,14 @@ void TechnoStatus::DrawSHP_Paintball(REGISTERS* R)
 void TechnoStatus::DrawSHP_Paintball_BuildingAnim(REGISTERS* R)
 {
 	GET_STACK(unsigned int, bright, 0x38);
+	if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno && !GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+	{
+		R->EBP(GetLaserTargetColor2());
+	}
+	else
+	{
+		R->EBP(0);
+	}
 	if (pTechno->Berzerk)
 	{
 		R->EBP(GetBerserkColor2());
@@ -85,6 +108,14 @@ void TechnoStatus::DrawSHP_Colour(REGISTERS* R)
 		//== Colour ==
 		// ForceShield
 		// LaserTarget
+		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno && !GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+		{
+			R->EAX(GetLaserTargetColor2());
+		}
+		else
+		{
+			R->EAX(0);
+		}
 		// Berzerk, 建筑不支持狂暴染色
 		if (pTechno->Berzerk) // paint color to building
 		{
@@ -114,6 +145,14 @@ void TechnoStatus::DrawVXL_Paintball(REGISTERS* R, bool isBuilding)
 	{
 		// Vxl turret
 		GET_STACK(unsigned int, bright, 0x20);
+		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno && !GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+		{
+			R->Stack(0x24, GetLaserTargetColor2());
+		}
+		else
+		{
+			R->Stack(0x24, 0);
+		}
 		if (pTechno->Berzerk) // paint color to building's anim
 		{
 			R->Stack(0x24, GetBerserkColor2());
@@ -123,6 +162,18 @@ void TechnoStatus::DrawVXL_Paintball(REGISTERS* R, bool isBuilding)
 			R->Stack(0x20, GetBright(bright, _deactivateDimEMP));
 		}
 	}
+	else
+	{
+		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno && !GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+		{
+			R->ESI(GetLaserTargetColor2());
+		}
+		else
+		{
+			R->ESI(0);
+		}
+	}
+
 
 	bool changeColor = false;
 	bool changeBright = false;

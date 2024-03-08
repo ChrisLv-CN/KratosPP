@@ -111,6 +111,9 @@ void TechnoStatus::ExtChanged()
 	_absType = AbstractType::None;
 	_locoType = LocoType::None;
 
+	_passengersData = nullptr;
+	_transformData = nullptr;
+
 	// 重新附加其他的组件
 	InitExt();
 }

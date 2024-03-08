@@ -36,6 +36,7 @@
 #include <Ext/StateType/State/TeleportState.h>
 #include <Ext/StateType/State/TransformState.h>
 
+#include "AirstrikeData.h"
 #include "PassengersData.h"
 
 class AttachEffect;
@@ -57,6 +58,7 @@ public:
 
 	bool PlayDestroyAnims();
 
+	unsigned int GetLaserTargetColor2();
 	unsigned int GetBerserkColor2();
 	void SetExtraSparkleAnim(AnimClass* pAnim);
 
@@ -222,6 +224,7 @@ public:
 
 			.Process(this->_deactivateDimEMP)
 			.Process(this->_deactivateDimPowered)
+			.Process(this->_laserTargetColor2)
 			.Process(this->_berserkColor2)
 			.Process(this->_buildingWasBerzerk)
 			.Process(this->_buildingWasEMP)
@@ -333,8 +336,10 @@ private:
 	DeployToTransformData* GetTransformData();
 
 	// 染色状态
+	AirstrikeData* GetAirstrikeData(TechnoClass* pOwner);
 	float _deactivateDimEMP = 0.8f;
 	float _deactivateDimPowered = 0.5f;
+	unsigned int _laserTargetColor2 = 0;
 	unsigned int _berserkColor2 = 0;
 	bool _buildingWasBerzerk = false;
 	bool _buildingWasEMP = false;
