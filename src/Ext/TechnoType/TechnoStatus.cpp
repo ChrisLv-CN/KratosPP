@@ -130,6 +130,10 @@ void TechnoStatus::OnRemove()
 
 void TechnoStatus::OnUpdate()
 {
+	if (Airstrike && (Airstrike->Target != pTechno))
+	{
+		CancelAirstrike();
+	}
 	OnUpdate_DestroySelf();
 	if (!_isDead && !IsDead(pTechno))
 	{

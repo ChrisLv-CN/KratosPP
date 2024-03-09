@@ -63,9 +63,9 @@ void TechnoStatus::DrawSHP_Paintball(REGISTERS* R)
 void TechnoStatus::DrawSHP_Paintball_BuildingAnim(REGISTERS* R)
 {
 	GET_STACK(unsigned int, bright, 0x38);
-	if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
+	if (Airstrike && Airstrike->Target == pTechno)
 	{
-		if (GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+		if (GetAirstrikeData(Airstrike->Owner)->AirstrikeDisableColor)
 		{
 			R->EBP(0);
 		}
@@ -111,9 +111,9 @@ void TechnoStatus::DrawSHP_Colour(REGISTERS* R)
 		//== Colour ==
 		// ForceShield
 		// LaserTarget
-		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
+		if (Airstrike && Airstrike->Target == pTechno)
 		{
-			if (GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+			if (GetAirstrikeData(Airstrike->Owner)->AirstrikeDisableColor)
 			{
 				R->EAX(0);
 			}
@@ -151,9 +151,9 @@ void TechnoStatus::DrawVXL_Paintball(REGISTERS* R, bool isBuilding)
 	{
 		// Vxl turret
 		GET_STACK(unsigned int, bright, 0x20);
-		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
+		if (Airstrike && Airstrike->Target == pTechno)
 		{
-			if (GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+			if (GetAirstrikeData(Airstrike->Owner)->AirstrikeDisableColor)
 			{
 				R->Stack(0x24, 0);
 			}
@@ -173,9 +173,9 @@ void TechnoStatus::DrawVXL_Paintball(REGISTERS* R, bool isBuilding)
 	}
 	else
 	{
-		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
+		if (Airstrike && Airstrike->Target == pTechno)
 		{
-			if (GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+			if (GetAirstrikeData(Airstrike->Owner)->AirstrikeDisableColor)
 			{
 				R->ESI(0);
 			}

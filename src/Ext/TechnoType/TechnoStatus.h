@@ -49,6 +49,24 @@ public:
 
 	bool AmIStand();
 
+	void OnAirstrikeDetach(EventSystem* sender, Event e, void* args)
+	{
+		auto const& argsArray = reinterpret_cast<void**>(args);
+		AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
+		if (pInvalid == Airstrike)
+		{
+			CancelAirstrike();
+		}
+	}
+
+	/**
+	 *@brief 被空袭
+	 *
+	 * @param airstrike
+	 */
+	void SetAirstrike(AirstrikeClass* airstrike);
+	void CancelAirstrike();
+
 	/**
 	 *@brief 踩箱子获得的buff
 	 *
@@ -172,6 +190,9 @@ public:
 			return state != nullptr;
 	}
 
+	// 被空袭管理器
+	AirstrikeClass* Airstrike = nullptr;
+
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
 	// 替身的配置
@@ -205,6 +226,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->Airstrike)
 			.Process(this->CrateBuff)
 			.Process(this->StandData)
 			.Process(this->pMyMaster)
@@ -242,7 +264,12 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		return this->Serialize(stream);
+		bool res = this->Serialize(stream);
+		if (Airstrike && Airstrike->Target == pTechno)
+		{
+			EventSystems::General.AddHandler(Events::DetachAll, this, &TechnoStatus::OnAirstrikeDetach);
+		}
+		return res;
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{

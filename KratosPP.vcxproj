@@ -114,6 +114,7 @@
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
     <ClCompile Include="src\Ext\TechnoType\MissileHoming.cpp" />
     <ClCompile Include="src\Ext\TechnoType\JumpjetFacing.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\Airstrike.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\AntiBullet.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\CrateBuff.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Deselect.cpp" />
@@ -136,6 +137,7 @@
     <ClCompile Include="src\Ext\TechnoType\TurretAngle.cpp" />
     <ClCompile Include="src\Ext\TrailType\Trail.cpp" />
     <ClCompile Include="src\Hooks\AircraftExtHook.cpp" />
+    <ClCompile Include="src\Hooks\AirstrikeExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimExtHook.cpp" />
     <ClCompile Include="src\Hooks\AnimTypeExtHook.cpp" />
     <ClCompile Include="src\Hooks\BuildingExtHook.cpp" />
