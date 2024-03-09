@@ -18,6 +18,18 @@
 #include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/AirstrikeData.h>
 
+// 鲍里斯的副武器使用空袭是强制指定目标类型必须为建筑
+DEFINE_HOOK(0x6F348F, TechnoClass_SelectWeapon_Airstrike, 0xA)
+{
+	return 0x6F3807;
+}
+
+// 武器的空袭指针强制只对建筑显示
+DEFINE_HOOK(0x51EAE0, InfantryClass_WhatAction_Cursor, 0x7)
+{
+	return 0x51EB06;
+}
+
 // 首次添加空袭管理器，跳过建筑检查
 DEFINE_HOOK(0x41D97B, AirstrikeClass_Setup_SkipBuildingCheck, 0x7)
 {
@@ -54,7 +66,7 @@ DEFINE_HOOK(0x41D994, AirstrikeClass_Setup_SetToTarget, 0x6)
 DEFINE_HOOK(0x41DA68, AirstrikeClass_Reset_Stopwhat_SkipBuildingCheck, 0x7)
 {
 	GET(TechnoClass*, pTarget, ESI);
-	GET(AirstrikeClass*, pAirstrike, EBP);
+	// GET(AirstrikeClass*, pAirstrike, EBP);
 	// Debug::Log("空袭管理器 %d 设置新目标，当前旧目标[%s]%d\n", pAirstrike, pTarget->GetTechnoType()->ID, pTarget);
 	TechnoStatus* status = nullptr;
 	if (TryGetStatus<TechnoExt>(pTarget, status))
@@ -69,7 +81,7 @@ DEFINE_HOOK(0x41DA68, AirstrikeClass_Reset_Stopwhat_SkipBuildingCheck, 0x7)
 DEFINE_HOOK(0x41DA88, AirstrikeClass_Reset_Startwhat_SkipBuildingCheck, 0x7)
 {
 	GET(TechnoClass*, pTarget, EBX);
-	GET(AirstrikeClass*, pAirstrike, EBP);
+	// GET(AirstrikeClass*, pAirstrike, EBP);
 	// Debug::Log("空袭管理器 %d 设置新目标，当前新目标[%s]%d\n", pAirstrike, pTarget->GetTechnoType()->ID, pTarget);
 	R->ESI(pTarget);
 	return 0x41DA9C;
