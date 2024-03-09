@@ -25,7 +25,9 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell)
 		--Unsorted::IKnowWhatImDoing;
 		pCell->OccupationFlags = occFlags;
 		// 单位移动到指定位置
-		pTechno->Location.Z = location.Z;
+		CoordStruct pos = pTechno->GetCoords();
+		pos.Z = location.Z;
+		pTechno->SetLocation(pos);
 		return true;
 	}
 	return false;

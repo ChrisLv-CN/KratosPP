@@ -41,17 +41,18 @@ public:
 
 		for (int i = 0; i < 128; i++)
 		{
+			std::string idx = std::to_string(i + 1);
 			CoordStruct flhs{};
-			flhs = reader->Get(title + "Weapon" + std::to_string(i) + "FLH", flhs);
+			flhs = reader->Get(title + "Weapon" + idx + "FLH", flhs);
 			if (!flhs.IsEmpty())
 			{
 				WeaponXFLH[i] = flhs;
 			}
-			if (reader->Get(title + "Weapon" + std::to_string(i) + "OnBody", false))
+			if (reader->Get(title + "Weapon" + idx + "OnBody", false))
 			{
 				OnBodyIndexs.push_back(i);
 			}
-			if (reader->Get(title + "Weapon" + std::to_string(i) + "OnTarget", false))
+			if (reader->Get(title + "Weapon" + idx + "OnTarget", false))
 			{
 				OnTargetIndexs.push_back(i);
 			}

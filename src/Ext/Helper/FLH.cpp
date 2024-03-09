@@ -134,7 +134,7 @@ CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isO
 	{
 		// Building can't use Matrix3D get FLH
 		CoordStruct tempFLH = flh;
-		tempFLH.Y += flipY;
+		tempFLH.Y *= flipY;
 		DirStruct dir = pTechno->PrimaryFacing.Current();
 		return GetFLHAbsoluteCoords(source, tempFLH, dir, turretOffset);
 	}

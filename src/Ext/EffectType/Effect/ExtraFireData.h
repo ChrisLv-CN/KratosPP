@@ -31,8 +31,9 @@ public:
 
 		for (int i = 0; i < 128; i++)
 		{
+			std::string idx = std::to_string(i + 1);
 			std::vector<std::string> weapons{};
-			weapons = reader->GetList(title + "Weapon" + std::to_string(i), weapons);
+			weapons = reader->GetList(title + "Weapon" + idx, weapons);
 			ClearIfGetNone(weapons);
 			if (!weapons.empty())
 			{
