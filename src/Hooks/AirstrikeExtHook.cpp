@@ -161,6 +161,11 @@ DEFINE_HOOK(0x70E92F, TechnoClass_Update_Airstrike_Tint_Timer, 0x5)
 	return 0;
 }
 
+DEFINE_HOOK(0x43D390, BuildingClass_DrawSHP_LaserTargetColor_Skip, 0x6)
+{
+	return 0x43D430;
+}
+
 // 绘制SHP时无敌或者被空袭时，调整亮度
 DEFINE_HOOK(0x706342, TechnoClass_DrawSHP_Tint_Airstrike, 0x7)
 {
@@ -177,6 +182,11 @@ DEFINE_HOOK(0x706342, TechnoClass_DrawSHP_Tint_Airstrike, 0x7)
 		return draw;
 	}
 	return 0;
+}
+
+DEFINE_HOOK(0x43DC2A, BuildingClass_DrawVXL_LaserTargetColor_Skip, 0x6)
+{
+	return 0x43DCCE;
 }
 
 // 绘制VXL时无敌或者被空袭时，调整亮度
