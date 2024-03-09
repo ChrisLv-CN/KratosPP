@@ -63,13 +63,16 @@ void TechnoStatus::DrawSHP_Paintball(REGISTERS* R)
 void TechnoStatus::DrawSHP_Paintball_BuildingAnim(REGISTERS* R)
 {
 	GET_STACK(unsigned int, bright, 0x38);
-	if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno && !GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+	if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
 	{
-		R->EBP(GetLaserTargetColor2());
-	}
-	else
-	{
-		R->EBP(0);
+		if (GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+		{
+			R->EBP(0);
+		}
+		else
+		{
+			R->EBP(GetLaserTargetColor2());
+		}
 	}
 	if (pTechno->Berzerk)
 	{
@@ -108,13 +111,16 @@ void TechnoStatus::DrawSHP_Colour(REGISTERS* R)
 		//== Colour ==
 		// ForceShield
 		// LaserTarget
-		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno && !GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
 		{
-			R->EAX(GetLaserTargetColor2());
-		}
-		else
-		{
-			R->EAX(0);
+			if (GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+			{
+				R->EAX(0);
+			}
+			else
+			{
+				R->EAX(GetLaserTargetColor2());
+			}
 		}
 		// Berzerk, 建筑不支持狂暴染色
 		if (pTechno->Berzerk) // paint color to building
@@ -145,13 +151,16 @@ void TechnoStatus::DrawVXL_Paintball(REGISTERS* R, bool isBuilding)
 	{
 		// Vxl turret
 		GET_STACK(unsigned int, bright, 0x20);
-		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno && !GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
 		{
-			R->Stack(0x24, GetLaserTargetColor2());
-		}
-		else
-		{
-			R->Stack(0x24, 0);
+			if (GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+			{
+				R->Stack(0x24, 0);
+			}
+			else
+			{
+				R->Stack(0x24, GetLaserTargetColor2());
+			}
 		}
 		if (pTechno->Berzerk) // paint color to building's anim
 		{
@@ -164,13 +173,16 @@ void TechnoStatus::DrawVXL_Paintball(REGISTERS* R, bool isBuilding)
 	}
 	else
 	{
-		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno && !GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+		if (pTechno->Airstrike && pTechno->Airstrike->Target == pTechno)
 		{
-			R->ESI(GetLaserTargetColor2());
-		}
-		else
-		{
-			R->ESI(0);
+			if (GetAirstrikeData(pTechno->Airstrike->Owner)->AirstrikeDisableColor)
+			{
+				R->ESI(0);
+			}
+			else
+			{
+				R->ESI(GetLaserTargetColor2());
+			}
 		}
 	}
 

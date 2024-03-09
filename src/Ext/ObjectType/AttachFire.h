@@ -256,12 +256,12 @@ public:
 
 	virtual void Awake() override
 	{
-		EventSystems::Logic.AddHandler(Events::DetachAll, this, &AttachFire::OnTargetDetach);
+		EventSystems::General.AddHandler(Events::DetachAll, this, &AttachFire::OnTargetDetach);
 	}
 
 	virtual void Destroy() override
 	{
-		EventSystems::Logic.RemoveHandler(Events::DetachAll, this, &AttachFire::OnTargetDetach);
+		EventSystems::General.RemoveHandler(Events::DetachAll, this, &AttachFire::OnTargetDetach);
 	}
 
 	void OnTargetDetach(EventSystem* sender, Event e, void* args)
@@ -290,11 +290,7 @@ public:
 	 *@brief 发射任务结束，清除所有未发射任务
 	 *
 	 */
-	void FireMissionDone()
-	{
-		_delayFires.clear();
-		_simulateBurst.clear();
-	}
+	void FireMissionDone();
 
 	/**
 	 *@brief 发射单位自身的武器
@@ -304,11 +300,7 @@ public:
 	 * @param delay 延时
 	 * @param count 次数
 	 */
-	void FireOwnWeapon(int weaponIdx, AbstractClass* pTarget, int delay = 0, int count = 1)
-	{
-		DelayFire delayFire{ weaponIdx, pTarget, delay, count };
-		_delayFires.emplace_back(delayFire);
-	}
+	void FireOwnWeapon(int weaponIdx, AbstractClass* pTarget, int delay = 0, int count = 1);
 
 	/**
 	 *@brief 发射自定义武器
@@ -327,95 +319,7 @@ public:
 	 */
 	bool FireCustomWeapon(TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttackingHouse,
 		WeaponTypeClass* pWeapon, WeaponTypeExt::TypeData weaponTypeData,
-		CoordStruct flh, bool isOnBody = false, bool isOnTarget = false, FireBulletToTarget callback = nullptr)
-	{
-		bool isFire = false;
-		// 不允许朝这个目标发射
-		if (!weaponTypeData.CanFireToTarget(pTarget, dynamic_cast<ObjectClass*>(this->pObject), pAttacker, pAttackingHouse, pWeapon))
-		{
-			return isFire;
-		}
-		int burst = pWeapon->Burst;
-		int minRange = pWeapon->MinimumRange;
-		int maxRange = pWeapon->Range;
-		// 检查抛射体是否具有AA
-		if (pTarget->IsInAir())
-		{
-			if (weaponTypeData.CheckAA && !pWeapon->Projectile->AA)
-			{
-				// 抛射体没有AA，终止发射
-				return isFire;
-			}
-			if (this->pTechno)
-			{
-				maxRange += this->pTechno->GetTechnoType()->AirRangeBonus;
-			}
-		}
-		// 检查射程
-		if (!weaponTypeData.CheckRange || InRange(pTarget, pWeapon, minRange, maxRange))
-		{
-			// 可以发射武器
-			if (burst > 1 && weaponTypeData.SimulateBurst)
-			{
-				// burst 发射
-				int flipY = 1;
-				BulletTypeClass* pBulletType = pWeapon->Projectile;
-				if (pBulletType)
-				{
-					// 翻转抛射体的速度，左右对调
-					TrajectoryData* trajectoryData = INI::GetConfig<TrajectoryData>(INI::Rules, pBulletType->ID)->Data;
-					if (trajectoryData->ReverseVelocity)
-					{
-						flipY = -1;
-					}
-				}
-				// 模拟burst发射武器
-				SimulateBurst newBurst{ pTarget, pAttacker, pAttackingHouse, pWeapon, weaponTypeData, minRange, maxRange, flh, isOnBody, isOnTarget, burst, flipY, callback };
-				SimulateBurstFire(newBurst);
-				// 入队
-				_simulateBurst.emplace_back(newBurst);
-				isFire = true;
-			}
-			else
-			{
-				// 直接发射武器
-				DirStruct facingDir{};
-				CoordStruct sourcePos;
-				CoordStruct targetPos = pTarget->GetCoords();
-				if (isOnTarget)
-				{
-					CoordStruct location = this->pObject->GetCoords(); // 射手的位置
-					sourcePos = GetSourcePosOnTarget(location, targetPos, flh, facingDir);
-				}
-				else
-				{
-					sourcePos = GetSourcePos(flh, facingDir);
-				}
-				// 扇形攻击
-				RadialFire radialFire{ facingDir, burst, weaponTypeData.RadialAngle };
-				BulletVelocity bulletVelocity = GetBulletVelocity(sourcePos, targetPos);
-				for (int i = 0; i < burst; i++)
-				{
-					if (weaponTypeData.RadialFire)
-					{
-						bulletVelocity = radialFire.GetBulletVelocity(i, weaponTypeData.RadialZ);
-					}
-					// 发射武器，全射出去
-					BulletClass* pBullet = FireBulletTo(dynamic_cast<ObjectClass*>(this->pObject), pAttacker, pTarget, pAttackingHouse, pWeapon, sourcePos, targetPos, bulletVelocity);
-					// 记录下子机发射器的开火坐标
-					if (pWeapon->Spawner)
-					{
-						SpawnerBurstFLH[i] = sourcePos;
-					}
-					if (callback != nullptr)
-					{
-						callback(i, burst, pBullet, pTarget);
-					}
-				}
-			}
-		}
-		return isFire;
-	}
+		CoordStruct flh, bool isOnBody = false, bool isOnTarget = false, FireBulletToTarget callback = nullptr);
 
 	/**
 	 *@brief 发射自定义武器
@@ -433,105 +337,9 @@ public:
 	 */
 	bool FireCustomWeapon(TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttackingHouse,
 		std::string weaponId,
-		CoordStruct flh, bool isOnBody = false, bool isOnTarget = false, FireBulletToTarget callback = nullptr)
-	{
-		bool isFire = false;
-		WeaponTypeClass* pWeapon = WeaponTypeClass::Find(weaponId.c_str());
-		if (pWeapon)
-		{
-			WeaponTypeExt::TypeData weaponTypeData = *GetTypeData<WeaponTypeExt, WeaponTypeExt::TypeData>(pWeapon);
-			isFire = FireCustomWeapon(pAttacker, pTarget, pAttackingHouse, pWeapon, weaponTypeData, flh, isOnBody, isOnTarget, callback);
-		}
-		return isFire;
-	}
+		CoordStruct flh, bool isOnBody = false, bool isOnTarget = false, FireBulletToTarget callback = nullptr);
 
-	virtual void OnUpdate() override
-	{
-		if (IsDeadOrInvisible(this->pObject))
-		{
-			FireMissionDone();
-			return;
-		}
-		// 发射自身武器
-		if (this->pTechno)
-		{
-			TechnoClass* pShooter = this->pTechno;
-			int size = _delayFires.size();
-			for (int i = 0; i < size; i++)
-			{
-				auto it = _delayFires.begin();
-				DelayFire delayFire = *it;
-				_delayFires.erase(it);
-				if (!delayFire.Invalid)
-				{
-					if (delayFire.TimesUp())
-					{
-						// 发射武器
-						if (delayFire.FireOwnWeapon)
-						{
-							pShooter->Fire_IgnoreType(delayFire.pTarget, delayFire.WeaponIndex);
-						}
-						else
-						{
-							if (!FireCustomWeapon(pShooter, delayFire.pTarget, pShooter->Owner, delayFire.pWeapon, delayFire.WeaponTypeData, delayFire.FLH))
-							{
-								delayFire.Done();
-							}
-						}
-						delayFire.RecuceOnce();
-					}
-				}
-				if (delayFire.NotDone())
-				{
-					_delayFires.emplace_back(delayFire);
-				}
-			}
-		}
-		else
-		{
-			_delayFires.clear();
-		}
-		// 模拟Burst发射
-		int size = _simulateBurst.size();
-		for (int i = 0; i < size; i++)
-		{
-			auto it = _simulateBurst.begin();
-			SimulateBurst burst = *it;
-			_simulateBurst.erase(it);
-			if (!burst.Invalid)
-			{
-				// 检查余弹
-				if (burst.Index < burst.Burst)
-				{
-					// 检查延迟
-					if (burst.CanFire())
-					{
-						AbstractClass* pTarget = burst.pTarget; // 武器的目标
-						WeaponTypeClass* pWeapon = burst.pWeapon;
-
-						TechnoClass* pTargetTechno = nullptr;
-						// 检查目标幸存和射程
-						if (pWeapon && pTarget
-							&& (!CastToTechno(pTarget, pTargetTechno) || (!IsDeadOrInvisible(pTargetTechno) && !pTargetTechno->IsFallingDown)) // 如果目标是单位，检查存活情况
-							&& (!burst.WeaponTypeData.CheckRange || InRange(pTarget, burst)) // 射程之内
-							&& (!burst.WeaponTypeData.CheckAA || !pTarget->IsInAir() || pWeapon->Projectile->AA) // 检查AA
-							)
-						{
-							// 发射
-							SimulateBurstFire(burst);
-						}
-						else
-						{
-							// 武器失效，任务取消
-							continue;
-						}
-					}
-					// 归队
-					_simulateBurst.emplace_back(burst);
-				}
-			}
-		}
-	}
+	virtual void OnUpdate() override;
 
 	// 发射过的子机发射器的开火坐标
 	std::map<int, CoordStruct> SpawnerBurstFLH{};
@@ -548,7 +356,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		EventSystems::Logic.AddHandler(Events::DetachAll, this, &AttachFire::OnTargetDetach);
+		EventSystems::General.AddHandler(Events::DetachAll, this, &AttachFire::OnTargetDetach);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
@@ -558,114 +366,20 @@ public:
 	}
 #pragma endregion
 private:
-	CoordStruct GetSourcePos(CoordStruct flh, DirStruct& facingDir, bool isOnTurret = true, int flipY = 1)
-	{
-		CoordStruct sourcePos = this->pObject->GetCoords();
-		if (this->pTechno)
-		{
-			sourcePos = GetFLHAbsoluteCoords(pTechno, flh, isOnTurret, flipY);
-			facingDir = pTechno->GetRealFacing().Current();
-		}
-		else if (this->pBullet)
-		{
-			facingDir = Facing(pBullet, sourcePos);
-			CoordStruct tempFLH = flh;
-			tempFLH.Y *= flipY;
-			sourcePos = GetFLHAbsoluteCoords(sourcePos, tempFLH, facingDir);
-		}
-		return sourcePos;
-	}
+	CoordStruct GetSourcePos(CoordStruct flh, DirStruct& facingDir, bool isOnTurret = true, int flipY = 1);
 
-	CoordStruct GetSourcePosOnTarget(CoordStruct sourcePos, CoordStruct targetPos, CoordStruct flh, DirStruct& facingDir, int flipY = 1)
-	{
-		facingDir = Point2Dir(sourcePos, targetPos);
-		CoordStruct tempFLH = flh;
-		tempFLH.Y *= flipY;
-		return GetFLHAbsoluteCoords(targetPos, tempFLH, facingDir);
-	}
+	CoordStruct GetSourcePosOnTarget(CoordStruct sourcePos, CoordStruct targetPos, CoordStruct flh, DirStruct& facingDir, int flipY = 1);
 
-	bool InRange(AbstractClass* pTarget, WeaponTypeClass* pWeapon, int minRange, int maxRange)
-	{
-		CoordStruct location = this->pObject->GetCoords();
-		switch (this->pObject->WhatAmI())
-		{
-		case AbstractType::Building:
-		case AbstractType::Infantry:
-		case AbstractType::Unit:
-		case AbstractType::Aircraft:
-			return dynamic_cast<TechnoClass*>(this->pObject)->InRange(&location, pTarget, pWeapon);
-		default:
-			CoordStruct targetPos = pTarget->GetCoords();
-			double distance = targetPos.DistanceFrom(location);
-			if (isnan(distance))
-			{
-				distance = 0;
-			}
-			return distance <= pWeapon->Range && distance >= minRange;
-		}
-	}
-	bool InRange(AbstractClass* pTarget, SimulateBurst burst)
-	{
-		return InRange(pTarget, burst.pWeapon, burst.MinRange, burst.MaxRange);
-	}
+	bool IsInRange(AbstractClass* pTarget, SimulateBurst burst);
 
-	void SimulateBurstFire(SimulateBurst& burst)
-	{
-		// burst模式3，双发
-		if (burst.WeaponTypeData.SimulateBurstMode == 3)
-		{
-			SimulateBurst b2 = burst;
-			b2.FlipY *= -1;
-			SimulateBurstFireOnce(b2);
-		}
-		SimulateBurstFireOnce(burst);
-	}
+	void SimulateBurstFire(SimulateBurst& burst);
 
 	/**
 	 *@brief 发射一次武器
 	 *
 	 * @param burst
 	 */
-	void SimulateBurstFireOnce(SimulateBurst& burst)
-	{
-		DirStruct facingDir{};
-		CoordStruct sourcePos = CoordStruct::Empty;
-		CoordStruct targetPos = burst.pTarget->GetCoords();
-		if (burst.IsOnTarget)
-		{
-			CoordStruct location = this->pObject->GetCoords(); // 射手的位置
-			sourcePos = GetSourcePosOnTarget(location, targetPos, burst.FLH, facingDir, burst.FlipY);
-		}
-		else
-		{
-			sourcePos = GetSourcePos(burst.FLH, facingDir, !burst.IsOnBody, burst.FlipY);
-		}
-
-		BulletVelocity bulletVelocity = BulletVelocity::Empty;
-		// 扇形攻击
-		if (burst.WeaponTypeData.RadialFire)
-		{
-			RadialFire radialFire{ facingDir, burst.Burst, burst.WeaponTypeData.RadialAngle };
-			bulletVelocity = radialFire.GetBulletVelocity(burst.Index, burst.WeaponTypeData.RadialZ);
-		}
-		else
-		{
-			bulletVelocity = GetBulletVelocity(sourcePos, targetPos);
-		}
-		// 发射武器
-		WeaponTypeClass* pWeapon = burst.pWeapon;
-		BulletClass* pBullet = FireBulletTo(dynamic_cast<ObjectClass*>(this->pObject), burst.pAttacker, burst.pTarget, burst.pAttackingHouse, pWeapon, sourcePos, targetPos, bulletVelocity);
-		// 记录下子机发射器的开火坐标
-		if (pWeapon->Spawner)
-		{
-			SpawnerBurstFLH[burst.Index] = sourcePos;
-		}
-		if (burst.Callback != nullptr)
-		{
-			burst.Callback(burst.Index, burst.Burst, pBullet, burst.pTarget);
-		}
-		burst.CountOne();
-	}
+	void SimulateBurstFireOnce(SimulateBurst& burst);
 
 	// 发射自身武器的待发射队列
 	std::vector<DelayFire> _delayFires{};

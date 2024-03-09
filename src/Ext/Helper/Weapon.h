@@ -81,6 +81,8 @@ private:
 
 TechnoClass* WhoIsShooter(TechnoClass* pAttacker);
 
+bool InRange(ObjectClass* pObject, AbstractClass* pTarget, WeaponTypeClass* pWeapon, int minRange, int maxRange);
+
 void FireWeaponTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
 	WeaponTypeClass* pWeapon, CoordStruct flh,
 	FireBulletToTarget callback = nullptr, CoordStruct bulletSourcePos = CoordStruct::Empty,

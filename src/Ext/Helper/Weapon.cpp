@@ -178,6 +178,29 @@ TechnoClass* WhoIsShooter(TechnoClass* pAttacker)
 	return pAttacker;
 }
 
+
+bool InRange(ObjectClass* pObject, AbstractClass* pTarget, WeaponTypeClass* pWeapon, int minRange, int maxRange)
+{
+	CoordStruct location = pObject->GetCoords();
+	switch (pObject->WhatAmI())
+	{
+	case AbstractType::Building:
+	case AbstractType::Infantry:
+	case AbstractType::Unit:
+	case AbstractType::Aircraft:
+		return dynamic_cast<TechnoClass*>(pObject)->InRange(&location, pTarget, pWeapon);
+	default:
+		CoordStruct targetPos = pTarget->GetCoords();
+		double distance = targetPos.DistanceFrom(location);
+		if (isnan(distance))
+		{
+			distance = 0;
+		}
+		return distance <= pWeapon->Range && distance >= minRange;
+	}
+}
+
+
 void FireWeaponTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
 	WeaponTypeClass* pWeapon, CoordStruct flh,
 	FireBulletToTarget callback, CoordStruct bulletSourcePos,
