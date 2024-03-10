@@ -108,7 +108,7 @@ bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords)
 				pSource->Select();
 			}
 		}
-		if (!FallingDown(pSource, Unsorted::LevelHeight, false))
+		if (!FallingDown(pSource, 0, false))
 		{
 			if (pSource->Target)
 			{
