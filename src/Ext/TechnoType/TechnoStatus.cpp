@@ -103,6 +103,9 @@ void TechnoStatus::Awake()
 
 void TechnoStatus::Destroy()
 {
+	EventSystems::General.RemoveHandler(Events::DetachAll, this, &TechnoStatus::OnAirstrikeDetach);
+	EventSystems::General.RemoveHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
+	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 	((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
 }
 
@@ -126,6 +129,7 @@ void TechnoStatus::OnPut(CoordStruct* pCoord, DirType dirType)
 void TechnoStatus::OnRemove()
 {
 	OnRemove_Stand();
+	OnRemove_TargetLaser();
 }
 
 void TechnoStatus::OnUpdate()
@@ -184,6 +188,7 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_GiftBox();
 		OnUpdate_Paintball();
 		OnUpdate_Passenger();
+		OnUpdate_TargetLaser();
 	}
 }
 
@@ -352,6 +357,8 @@ void TechnoStatus::OnFire(AbstractClass* pTarget, int weaponIdx)
 {
 	OnFire_RockerPitch(pTarget, weaponIdx);
 	OnFire_AttackBeaconRecruit(pTarget, weaponIdx);
+	OnFire_TargetLaser(pTarget, weaponIdx);
+	_lastTarget = pTarget;
 }
 
 void TechnoStatus::OnFire_AttackBeaconRecruit(AbstractClass* pTarget, int weaponIdx)

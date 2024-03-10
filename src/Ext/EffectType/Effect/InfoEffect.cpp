@@ -31,7 +31,7 @@ void InfoEffect::OnGScreenRenderEnd(CoordStruct location)
 			int duration = -1;
 			int initDelay = -1;
 			auto data = Data;
-			aem->ForeachChild([&checkDuration,&checkInitDelay,&duration,&initDelay,&data](Component* c) {
+			aem->ForeachChild([&checkDuration, &checkInitDelay, &duration, &initDelay, &data](Component* c) {
 				if (AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c))
 				{
 					std::string aeName = ae->AEData.Name;
@@ -282,11 +282,17 @@ void InfoEffect::OnGScreenRenderEnd(CoordStruct location)
 			}
 			if (pTarget)
 			{
-				CoordStruct targetLocation = pTarget->GetCoords();
-				Point2D targetPos = ToClientPos(targetLocation);
-				DrawDashedLine(DSurface::Temp, pos, targetPos, Data->Target.Color, bounds, true);
-				if (pTarget->AbstractFlags & AbstractFlags::Object)
+				CoordStruct sourceLocation = location;
+				if (pTechno)
 				{
+					int weaponIdx = pTechno->SelectWeapon(pTarget);
+					sourceLocation = pTechno->GetFLH(weaponIdx, CoordStruct::Empty);
+				}
+				CoordStruct targetLocation = pTarget->GetCoords();
+				DrawTargetLaser(DSurface::Temp, sourceLocation, targetLocation, Data->Target.Color, bounds);
+				if (Data->Target.Mode == InfoMode::TEXT && pTarget->AbstractFlags & AbstractFlags::Object)
+				{
+					Point2D targetPos = ToClientPos(targetLocation);
 					std::string id = dynamic_cast<ObjectClass*>(pTarget)->GetType()->ID;
 					PrintInfoText(id, Data->Target.Color, targetPos, Data->Target);
 				}

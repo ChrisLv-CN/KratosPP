@@ -128,6 +128,7 @@
     <ClCompile Include="src\Ext\TechnoType\Status\Passenger.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\RockerPitch.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Stand.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\TargetLaser.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Transform.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Vampire.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Spawn.cpp" />
@@ -364,6 +365,7 @@
     <ClInclude Include="src\Ext\TrailType\TrailTypeData.h" />
     <ClInclude Include="src\Ext\WeaponType\FeedbackAttachData.h" />
     <ClInclude Include="src\Ext\WeaponType\ProximityRangeData.h" />
+    <ClInclude Include="src\Ext\WeaponType\TargetLaserData.h" />
     <ClInclude Include="src\Kratos.h" />
     <ClInclude Include="src\Utilities\Anchor.h" />
     <ClInclude Include="src\Utilities\Concepts.h" />

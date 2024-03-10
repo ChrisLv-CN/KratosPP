@@ -36,8 +36,11 @@
 #include <Ext/StateType/State/TeleportState.h>
 #include <Ext/StateType/State/TransformState.h>
 
+#include <Ext/WeaponType/TargetLaserData.h>
+
 #include "AirstrikeData.h"
 #include "PassengersData.h"
+
 
 class AttachEffect;
 
@@ -67,6 +70,28 @@ public:
 	void SetAirstrike(AirstrikeClass* airstrike);
 	void CancelAirstrike(AirstrikeClass* airstrike);
 	bool AnyAirstrike();
+
+	/**
+	 *@brief 我有一只激光笔
+	 *
+	 * @param sender
+	 * @param e
+	 * @param args
+	 */
+	void StartTargetLaser(AbstractClass* pTarget, int weaponRange, TargetLaserData data, CoordStruct flh, bool isOnTurret = true);
+	void CloseTargetLaser();
+	void OnGScreenRender(EventSystem* sender, Event e, void* args);
+
+	void OnLaserTargetDetach(EventSystem* sender, Event e, void* args)
+	{
+		auto const& argsArray = reinterpret_cast<void**>(args);
+		AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
+		if (pInvalid == _targetLaserTarget)
+		{
+			_targetLaserTarget = nullptr;
+			CloseTargetLaser();
+		}
+	}
 
 	/**
 	 *@brief 踩箱子获得的buff
@@ -241,6 +266,15 @@ public:
 
 			.Process(this->_airstrikes)
 
+			.Process(this->_hasTargetLaser)
+			.Process(this->_targetLaserTarget)
+			.Process(this->_targetLaserRange)
+			.Process(this->_targetLaserData)
+			.Process(this->_targetLaserFLH)
+			.Process(this->_targetLaserOnTurret)
+			.Process(this->_targetLaserOffset)
+			.Process(this->_targetLaserShakeTimer)
+
 			.Process(this->_deactivateDimEMP)
 			.Process(this->_deactivateDimPowered)
 			.Process(this->_berserkColor2)
@@ -264,6 +298,11 @@ public:
 		if (!_airstrikes.empty())
 		{
 			EventSystems::General.AddHandler(Events::DetachAll, this, &TechnoStatus::OnAirstrikeDetach);
+		}
+		if (_hasTargetLaser)
+		{
+			EventSystems::General.AddHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
+			EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 		}
 		return res;
 	}
@@ -299,9 +338,13 @@ private:
 	// 变形
 	void ChangeTechnoTypeTo(TechnoTypeClass* pNewType);
 
+	// 激光笔
+	void LostTargetLaser();
+
 	void OnPut_Stand(CoordStruct* pCoord, DirType dirType);
 
 	void OnRemove_Stand();
+	void OnRemove_TargetLaser();
 
 	void OnUpdate_AntiBullet();
 	void OnUpdate_Deselect();
@@ -309,6 +352,7 @@ private:
 	void OnUpdate_GiftBox();
 	void OnUpdate_Paintball();
 	void OnUpdate_Passenger();
+	void OnUpdate_TargetLaser();
 	void OnUpdate_Transform();
 
 	void OnWarpUpdate_DestroySelf_Stand();
@@ -331,6 +375,7 @@ private:
 
 	void OnFire_RockerPitch(AbstractClass* pTarget, int weaponIdx);
 	void OnFire_AttackBeaconRecruit(AbstractClass* pTarget, int weaponIdx);
+	void OnFire_TargetLaser(AbstractClass* pTarget, int weaponIdx);
 
 	bool OnSelect_VirtualUnit();
 	bool OnSelect_Deselect();
@@ -350,6 +395,9 @@ private:
 	// 冻结状态
 	bool _cantMoveFlag = false;
 
+	// 我最后打的目标
+	AbstractClass* _lastTarget = nullptr;
+
 	// 乖巧乘客
 	PassengersData* _passengersData = nullptr;
 	PassengersData* GetPassengersData();
@@ -357,6 +405,16 @@ private:
 	// 部署变形
 	DeployToTransformData* _transformData = nullptr;
 	DeployToTransformData* GetTransformData();
+
+	// 我有一只激光笔
+	bool _hasTargetLaser = false;
+	AbstractClass* _targetLaserTarget = nullptr; // 照射的目标
+	int _targetLaserRange = -1;
+	TargetLaserData _targetLaserData{};
+	CoordStruct _targetLaserFLH = CoordStruct::Empty; // 发射的FLH
+	bool _targetLaserOnTurret = true; // 发射位置在炮塔上
+	CoordStruct _targetLaserOffset = CoordStruct::Empty;
+	CDTimerClass _targetLaserShakeTimer{};
 
 	// 被空袭管理器
 	std::vector<AirstrikeClass*> _airstrikes;
