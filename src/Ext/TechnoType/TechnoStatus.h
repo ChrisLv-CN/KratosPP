@@ -53,9 +53,9 @@ public:
 	{
 		auto const& argsArray = reinterpret_cast<void**>(args);
 		AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
-		if (pInvalid == Airstrike)
+		if (AirstrikeClass* pAirstrike = dynamic_cast<AirstrikeClass*>(pInvalid))
 		{
-			CancelAirstrike();
+			CancelAirstrike(pAirstrike);
 		}
 	}
 
@@ -65,7 +65,8 @@ public:
 	 * @param airstrike
 	 */
 	void SetAirstrike(AirstrikeClass* airstrike);
-	void CancelAirstrike();
+	void CancelAirstrike(AirstrikeClass* airstrike);
+	bool AnyAirstrike();
 
 	/**
 	 *@brief 踩箱子获得的buff
@@ -76,8 +77,6 @@ public:
 
 	bool PlayDestroyAnims();
 
-	unsigned int GetLaserTargetColor2();
-	unsigned int GetBerserkColor2();
 	void SetExtraSparkleAnim(AnimClass* pAnim);
 
 	void DrawSHP_Paintball(REGISTERS* R);
@@ -190,9 +189,6 @@ public:
 			return state != nullptr;
 	}
 
-	// 被空袭管理器
-	AirstrikeClass* Airstrike = nullptr;
-
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
 	// 替身的配置
@@ -226,7 +222,6 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(this->Airstrike)
 			.Process(this->CrateBuff)
 			.Process(this->StandData)
 			.Process(this->pMyMaster)
@@ -244,9 +239,10 @@ public:
 			.Process(this->_disableSelectable)
 			.Process(this->_cantMoveFlag)
 
+			.Process(this->_airstrikes)
+
 			.Process(this->_deactivateDimEMP)
 			.Process(this->_deactivateDimPowered)
-			.Process(this->_laserTargetColor2)
 			.Process(this->_berserkColor2)
 			.Process(this->_buildingWasBerzerk)
 			.Process(this->_buildingWasEMP)
@@ -265,7 +261,7 @@ public:
 	{
 		Component::Load(stream, registerForChange);
 		bool res = this->Serialize(stream);
-		if (Airstrike && Airstrike->Target == pTechno)
+		if (!_airstrikes.empty())
 		{
 			EventSystems::General.AddHandler(Events::DetachAll, this, &TechnoStatus::OnAirstrikeDetach);
 		}
@@ -362,12 +358,15 @@ private:
 	DeployToTransformData* _transformData = nullptr;
 	DeployToTransformData* GetTransformData();
 
+	// 被空袭管理器
+	std::vector<AirstrikeClass*> _airstrikes;
+
 	// 染色状态
 	AirstrikeData* GetAirstrikeData(TechnoClass* pOwner);
 	float _deactivateDimEMP = 0.8f;
 	float _deactivateDimPowered = 0.5f;
-	unsigned int _laserTargetColor2 = 0;
 	unsigned int _berserkColor2 = 0;
+	unsigned int GetBerserkColor2();
 	bool _buildingWasBerzerk = false;
 	bool _buildingWasEMP = false;
 	bool _buildingWasColor = false;

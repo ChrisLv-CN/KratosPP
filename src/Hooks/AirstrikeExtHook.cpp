@@ -66,12 +66,12 @@ DEFINE_HOOK(0x41D994, AirstrikeClass_Setup_SetToTarget, 0x6)
 DEFINE_HOOK(0x41DA68, AirstrikeClass_Reset_Stopwhat_SkipBuildingCheck, 0x7)
 {
 	GET(TechnoClass*, pTarget, ESI);
-	// GET(AirstrikeClass*, pAirstrike, EBP);
+	GET(AirstrikeClass*, pAirstrike, EBP);
 	// Debug::Log("空袭管理器 %d 设置新目标，当前旧目标[%s]%d\n", pAirstrike, pTarget->GetTechnoType()->ID, pTarget);
 	TechnoStatus* status = nullptr;
 	if (TryGetStatus<TechnoExt>(pTarget, status))
 	{
-		status->CancelAirstrike();
+		status->CancelAirstrike(pAirstrike);
 	}
 	R->EDI(pTarget);
 	return 0x41DA7C;
@@ -111,7 +111,7 @@ DEFINE_HOOK(0x41DBD4, AirstrikeClass_ClearTarget, 0x7)
 	TechnoStatus* status = nullptr;
 	if (TryGetStatus<TechnoExt>(pTarget, status))
 	{
-		status->CancelAirstrike();
+		status->CancelAirstrike(pAirstrike);
 	}
 	// 该函数遍历所有的空袭管理器清空挂载，因为接管了目标身上的管理器，所以永久返回clearTarget
 	if (pTarget->Airstrike == pAirstrike)
@@ -135,6 +135,12 @@ DEFINE_HOOK(0x41DBD4, AirstrikeClass_ClearTarget, 0x7)
 // 	return 0;
 // }
 
+namespace AirstrikeLaser
+{
+	bool CustomColor = false;
+	ColorStruct Color = Colors::Red;
+}
+
 // 绘制激光指示
 DEFINE_HOOK(0x6D481D, TacticalClass_Draw_AirstrikeLaser_SkipBuildingCheck, 0x7)
 {
@@ -146,7 +152,55 @@ DEFINE_HOOK(0x6D481D, TacticalClass_Draw_AirstrikeLaser_SkipBuildingCheck, 0x7)
 	{
 		return skip;
 	}
+	// 自定义颜色
+	AirstrikeLaser::CustomColor = true;
+	if (data->AirstrikeTargetLaser >= 0)
+	{
+		ColorStruct add = RulesClass::Instance->ColorAdd[data->AirstrikeTargetLaser];
+		AirstrikeLaser::Color = Drawing::Int_To_RGB(Add2RGB565(add));
+	}
+	else
+	{
+		AirstrikeLaser::Color = data->AirstrikeTargetLaserColor;
+	}
 	return draw;
+}
+
+DEFINE_HOOK(0x705976, TechnoClass_Draw_AirstrikeLaser_LineColor, 0x8)
+{
+	if (!AirstrikeLaser::CustomColor)
+	{
+		AirstrikeLaser::Color = Drawing::Int_To_RGB(Add2RGB565(RulesClass::Instance->ColorAdd[RulesClass::Instance->LaserTargetColor]));
+	}
+	ColorStruct c = AirstrikeLaser::Color;
+	BYTE rand = (BYTE)Random::RandomRanged(0, 14);
+	if (c.R > rand)
+	{
+		c.R -= rand;
+	}
+	if (c.G > rand)
+	{
+		c.G -= rand;
+	}
+	if (c.B > rand)
+	{
+		c.B -= rand;
+	}
+	// 线的颜色
+	R->Stack(0x10, c);
+	return 0;
+}
+
+DEFINE_HOOK(0x705986, TechnoClass_Draw_AirstrikeLaser_PointColor, 0x6)
+{
+	if (!AirstrikeLaser::CustomColor)
+	{
+		AirstrikeLaser::Color = Drawing::Int_To_RGB(Add2RGB565(RulesClass::Instance->ColorAdd[RulesClass::Instance->LaserTargetColor]));
+	}
+	ColorStruct c = AirstrikeLaser::Color;
+	// 点的颜色
+	R->ESI(Drawing::RGB_To_Int(c));
+	return 0x7059C7;
 }
 
 // 更新被空袭时的闪光变化
@@ -154,7 +208,7 @@ DEFINE_HOOK(0x70E92F, TechnoClass_Update_Airstrike_Tint_Timer, 0x5)
 {
 	GET(TechnoClass*, pTechno, ESI);
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->Airstrike && status->Airstrike->Target == pTechno)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AnyAirstrike())
 	{
 		return 0x70E96E;
 	}
@@ -172,13 +226,14 @@ DEFINE_HOOK(0x706342, TechnoClass_DrawSHP_Tint_Airstrike, 0x7)
 	enum { draw = 0x706377, skip = 0x706389 };
 	GET(TechnoClass*, pTechno, ESI);
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->Airstrike && status->Airstrike->Target == pTechno)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AnyAirstrike())
 	{
 		AirstrikeData* data = INI::GetConfig<AirstrikeData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
 		if (data->AirstrikeDisableBlink)
 		{
 			return skip;
 		}
+		pTechno->NeedsRedraw = true;
 		return draw;
 	}
 	return 0;
@@ -195,13 +250,14 @@ DEFINE_HOOK(0x70679B, TechnoClass_DrawVXL_Tint_Airstrike, 0x5)
 	enum { draw = 0x7067D2, skip = 0x7067E4 };
 	GET(TechnoClass*, pTechno, EBP);
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->Airstrike && status->Airstrike->Target == pTechno)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AnyAirstrike())
 	{
 		AirstrikeData* data = INI::GetConfig<AirstrikeData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
 		if (data->AirstrikeDisableBlink)
 		{
 			return skip;
 		}
+		pTechno->NeedsRedraw = true;
 		return draw;
 	}
 	return 0;
@@ -217,7 +273,7 @@ DEFINE_HOOK(0x73BFA4, UnitClass_DrawVXL_Tint_Airstrike, 0x6)
 		return draw;
 	}
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->Airstrike && status->Airstrike->Target == pTechno)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AnyAirstrike())
 	{
 		AirstrikeData* data = INI::GetConfig<AirstrikeData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
 		if (data->AirstrikeDisableBlink)
