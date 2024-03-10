@@ -22,12 +22,15 @@ public:
 	bool TranslucentInCloak = false; // 隐形时调整透明度为50
 	Relation Visibility = Relation::All; // 谁能看见持续动画
 
-	void Read(INIBufferReader* reader, std::string title, std::string anim)
+	void Read(INIBufferReader* reader, std::string title, std::string& anim)
 	{
 		Type = reader->Get(title + "Type", anim);
 		if (IsNotNone(Type))
 		{
 			Enable = true;
+
+			anim = Type;
+
 			Offset.Read(reader, title);
 
 			RemoveInCloak = reader->Get(title + "RemoveInCloak", RemoveInCloak);
