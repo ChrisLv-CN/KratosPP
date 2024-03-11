@@ -19,6 +19,8 @@ public:
 	double ROFMultiplier = 1.0;
 	bool Cloakable = false;
 	bool ForceDecloak = false;
+	double RangeMultiplier = 1.0;
+	double RangeCell = 0.0;
 
 	CrateBuffData() : EffectData()
 	{
@@ -39,6 +41,8 @@ public:
 		this->ROFMultiplier += a.ROFMultiplier;
 		this->Cloakable = a.Cloakable;
 		this->ForceDecloak = a.ForceDecloak;
+		this->RangeMultiplier += a.RangeMultiplier;
+		this->RangeCell += a.RangeCell;
 		return *this;
 	}
 
@@ -57,8 +61,16 @@ public:
 		ROFMultiplier = reader->Get(title + "ROFMultiplier", ROFMultiplier);
 		Cloakable = reader->Get(title + "Cloakable", Cloakable);
 		ForceDecloak = reader->Get(title + "ForceDecloak", ForceDecloak);
+		RangeMultiplier = reader->Get(title + "RangeMultiplier", RangeMultiplier);
+		RangeCell = reader->Get(title + "RangeCell", RangeCell);
 
-		Enable = FirepowerMultiplier != 1.0 || ArmorMultiplier != 1.0 || SpeedMultiplier != 1.0 || ROFMultiplier != 1.0 || Cloakable || ForceDecloak;
+		Enable = FirepowerMultiplier != 1.0
+			|| ArmorMultiplier != 1.0
+			|| SpeedMultiplier != 1.0
+			|| ROFMultiplier != 1.0
+			|| Cloakable || ForceDecloak
+			|| RangeMultiplier != 1.0
+			|| RangeCell != 0.0;
 	}
 
 #pragma region save/load
@@ -72,6 +84,8 @@ public:
 			.Process(this->ROFMultiplier)
 			.Process(this->Cloakable)
 			.Process(this->ForceDecloak)
+			.Process(this->RangeMultiplier)
+			.Process(this->RangeCell)
 			.Success();
 	};
 

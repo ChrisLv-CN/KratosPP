@@ -505,6 +505,21 @@ DEFINE_HOOK(0x6F9039, TechnoClass_Greatest_Threat_HealWeaponRange, 0x5)
 	return 0x6F903E;
 }
 
+DEFINE_HOOK(0x6F72E3, TechnoClass_IsRange, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	GET(int, range, EDI);
+	AttachEffect* aeManager = nullptr;
+	if (TryGetAEManager<TechnoExt>(pTechno, aeManager))
+	{
+		CrateBuffData data = aeManager->CountAttachStatusMultiplier();
+		range += data.RangeCell;
+		range *= data.RangeMultiplier;
+	}
+	R->EDI(range);
+	return 0;
+}
+
 DEFINE_HOOK(0x7067F1, TechnoClass_DrawVxl_DisableCache, 0x6)
 {
 	GET(unsigned int, esi, ESI);

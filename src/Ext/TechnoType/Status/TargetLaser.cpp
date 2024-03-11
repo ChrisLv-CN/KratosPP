@@ -10,6 +10,11 @@ void TechnoStatus::StartTargetLaser(AbstractClass* pTarget, WeaponTypeClass* pWe
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 	}
 	bool found = false;
+	int range = pWeapon->Range;
+	if (pTarget->IsInAir())
+	{
+		range += pTechno->GetTechnoType()->AirRangeBonus;
+	}
 	for (TargetLaser& laser : _targetLasers)
 	{
 		if (laser.pWeapon == pWeapon)
@@ -18,7 +23,7 @@ void TechnoStatus::StartTargetLaser(AbstractClass* pTarget, WeaponTypeClass* pWe
 			// 更新设置
 			laser.Data = data;
 			laser.pTarget = pTarget;
-			laser.RangeLimit = pWeapon->Range + (int)laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell;
+			laser.RangeLimit = range + (int)laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell;
 			laser.FLH = flh;
 			laser.IsOnTurret = isOnTurret;
 			laser.TargetOffset = data.TargetLaserOffset;
@@ -33,7 +38,7 @@ void TechnoStatus::StartTargetLaser(AbstractClass* pTarget, WeaponTypeClass* pWe
 		laser.pWeapon = pWeapon;
 		laser.Data = data;
 		laser.pTarget = pTarget;
-		laser.RangeLimit = pWeapon->Range + (int)laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell;
+		laser.RangeLimit = range + (int)laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell;
 		laser.FLH = flh;
 		laser.IsOnTurret = isOnTurret;
 		laser.TargetOffset = data.TargetLaserOffset;
