@@ -57,11 +57,11 @@ void ECMState::OnStart()
 {
 	_count = 0;
 	_delay = Data.Rate;
-	BulletStatus* status = GetBulletStatus();
-	if (status && !status->IsMissile())
-	{
-		End();
-	}
+	// BulletStatus* status = GetBulletStatus();
+	// if (status && !status->IsMissile())
+	// {
+	// 	End();
+	// }
 }
 
 void ECMState::OnUpdate()
