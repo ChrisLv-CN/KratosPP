@@ -154,7 +154,7 @@ void DrawBeam(CoordStruct sourcePos, CoordStruct targetPos, BeamType type, Color
 		pBeam->SetCoordsSource(sourcePos);
 		pBeam->SetCoordsTarget(targetPos);
 		ColorStruct beamColor = type.Color;
-		if (customColor)
+		if (customColor != Colors::Empty)
 		{
 			beamColor = customColor;
 		}
