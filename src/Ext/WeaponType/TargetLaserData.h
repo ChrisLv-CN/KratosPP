@@ -85,6 +85,11 @@ public:
 	int Duration = -1;
 	CDTimerClass LifeTimer{}; // 生命计时器
 
+	bool Timeup()
+	{
+		return Duration > 0 && LifeTimer.Expired();
+	}
+
 	bool OutOfRange(int dist)
 	{
 		return dist < pWeapon->MinimumRange || (RangeLimit >= 0 && dist > RangeLimit);
