@@ -84,12 +84,12 @@ TechnoClass* WhoIsShooter(TechnoClass* pAttacker);
 bool InRange(ObjectClass* pObject, AbstractClass* pTarget, WeaponTypeClass* pWeapon, int minRange, int maxRange);
 
 void FireWeaponTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
-	WeaponTypeClass* pWeapon, CoordStruct flh,
+	WeaponTypeClass* pWeapon, CoordStruct flh, bool isOnTurret,
 	FireBulletToTarget callback = nullptr, CoordStruct bulletSourcePos = CoordStruct::Empty,
 	bool radialFire = false, int splitAngle = 180, bool radialZ = true);
 
 BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
-	WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos, BulletVelocity velocity = BulletVelocity::Empty);
+	WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos, BulletVelocity velocity = BulletVelocity::Empty, CoordStruct flh = CoordStruct::Empty, bool isOnTurret = true);
 
 BulletClass* FireBullet(TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
 	WeaponTypeClass* pWeapon, double fireMulti = 1.0,

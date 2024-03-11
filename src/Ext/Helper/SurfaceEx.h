@@ -116,5 +116,6 @@ void DrawCell(DSurface* pSurface,
  * @param bound
  */
 void DrawTargetLaser(DSurface* pSurface,
-	CoordStruct start, CoordStruct end, ColorStruct color, RectangleStruct bound);
+	CoordStruct start, CoordStruct end, ColorStruct color, RectangleStruct bound,
+	bool drawPoint = true);
 

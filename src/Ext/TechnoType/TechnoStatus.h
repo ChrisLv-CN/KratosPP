@@ -79,18 +79,14 @@ public:
 	 * @param args
 	 */
 	void StartTargetLaser(AbstractClass* pTarget, int weaponRange, TargetLaserData data, CoordStruct flh, bool isOnTurret = true);
-	void CloseTargetLaser();
+	void CloseTargetLaser(AbstractClass* pTarget);
 	void OnGScreenRender(EventSystem* sender, Event e, void* args);
 
 	void OnLaserTargetDetach(EventSystem* sender, Event e, void* args)
 	{
 		auto const& argsArray = reinterpret_cast<void**>(args);
 		AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
-		if (pInvalid == _targetLaserTarget)
-		{
-			_targetLaserTarget = nullptr;
-			CloseTargetLaser();
-		}
+		CloseTargetLaser(pInvalid);
 	}
 
 	/**
@@ -266,14 +262,7 @@ public:
 
 			.Process(this->_airstrikes)
 
-			.Process(this->_hasTargetLaser)
-			.Process(this->_targetLaserTarget)
-			.Process(this->_targetLaserRange)
-			.Process(this->_targetLaserData)
-			.Process(this->_targetLaserFLH)
-			.Process(this->_targetLaserOnTurret)
-			.Process(this->_targetLaserOffset)
-			.Process(this->_targetLaserShakeTimer)
+			.Process(this->_targetLasers)
 
 			.Process(this->_deactivateDimEMP)
 			.Process(this->_deactivateDimPowered)
@@ -299,7 +288,7 @@ public:
 		{
 			EventSystems::General.AddHandler(Events::DetachAll, this, &TechnoStatus::OnAirstrikeDetach);
 		}
-		if (_hasTargetLaser)
+		if (!_targetLasers.empty())
 		{
 			EventSystems::General.AddHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
 			EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
@@ -407,14 +396,7 @@ private:
 	DeployToTransformData* GetTransformData();
 
 	// 我有一只激光笔
-	bool _hasTargetLaser = false;
-	AbstractClass* _targetLaserTarget = nullptr; // 照射的目标
-	int _targetLaserRange = -1;
-	TargetLaserData _targetLaserData{};
-	CoordStruct _targetLaserFLH = CoordStruct::Empty; // 发射的FLH
-	bool _targetLaserOnTurret = true; // 发射位置在炮塔上
-	CoordStruct _targetLaserOffset = CoordStruct::Empty;
-	CDTimerClass _targetLaserShakeTimer{};
+	std::vector<TargetLaser> _targetLasers{};
 
 	// 被空袭管理器
 	std::vector<AirstrikeClass*> _airstrikes;

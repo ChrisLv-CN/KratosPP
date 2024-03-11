@@ -171,7 +171,8 @@ void DrawCell(DSurface* pSurface,
  * @param bound
  */
 void DrawTargetLaser(DSurface* pSurface,
-	CoordStruct startLocation, CoordStruct endLocation, ColorStruct color, RectangleStruct bound)
+	CoordStruct startLocation, CoordStruct endLocation, ColorStruct color, RectangleStruct bound,
+	bool drawPoint)
 {
 	Point2D point1 = ToClientPos(startLocation);
 	Point2D point2 = ToClientPos(endLocation);
@@ -191,20 +192,22 @@ void DrawTargetLaser(DSurface* pSurface,
 		c.B -= rand;
 	}
 	int dwColor = Drawing::RGB_To_Int(c);
-	// 在目标位置绘制光点 #
-	Point2D a1 = point2, a2 = point2;
-	a1.Y -= 1; a2.Y += 2;
-	Point2D b1 = a1, b2 = a2;
-	b1.X += 1; b2.X += 1;
-	Point2D c1 = point2, c2 = point2;
-	c1.X -= 1; c2.X += 2;
-	Point2D d1 = c1, d2 = c2;
-	d1.Y += 1; d2.Y += 1;
-	DrawLine(pSurface, a1, a2, dwColor, bound);
-	DrawLine(pSurface, b1, b2, dwColor, bound);
-	DrawLine(pSurface, c1, c2, dwColor, bound);
-	DrawLine(pSurface, d1, d2, dwColor, bound);
-
+	if (drawPoint)
+	{
+		// 在目标位置绘制光点 #
+		Point2D a1 = point2, a2 = point2;
+		a1.Y -= 1; a2.Y += 2;
+		Point2D b1 = a1, b2 = a2;
+		b1.X += 1; b2.X += 1;
+		Point2D c1 = point2, c2 = point2;
+		c1.X -= 1; c2.X += 2;
+		Point2D d1 = c1, d2 = c2;
+		d1.Y += 1; d2.Y += 1;
+		DrawLine(pSurface, a1, a2, dwColor, bound);
+		DrawLine(pSurface, b1, b2, dwColor, bound);
+		DrawLine(pSurface, c1, c2, dwColor, bound);
+		DrawLine(pSurface, d1, d2, dwColor, bound);
+	}
 	// 绘制线条
 	int startZ = -32 - TacticalClass::AdjustForZ(startLocation.Z);
 	int endZ = -32 - TacticalClass::AdjustForZ(endLocation.Z);

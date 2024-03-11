@@ -73,6 +73,8 @@ void SupportSpawns::FireSupportWeaponToSpawn(bool checkROF)
 			flh.Y = flh.Y * _flipY;
 			_flipY *= -1;
 		}
+		bool isOnTurret = data->IsOnTurret;
+		bool turnTurret = data->TurnTurret;
 		TechnoClass* pAttacker = pTechno->SpawnOwner;
 		HouseClass* pAttackingHouse = pAttacker->Owner;
 		TechnoClass* pTarget = pTechno;
@@ -104,11 +106,17 @@ void SupportSpawns::FireSupportWeaponToSpawn(bool checkROF)
 						}
 					}
 					// Ready to fire
-					CoordStruct sourcePos = GetFLHAbsoluteCoords(pShooter, flh, true);
+					CoordStruct sourcePos = GetFLHAbsoluteCoords(pShooter, flh, isOnTurret);
 					CoordStruct targetPos = GetFLHAbsoluteCoords(pTarget, hitFLH, true);
 					BulletVelocity v = GetBulletVelocity(sourcePos, targetPos);
 					// Fire weapon
-					FireBulletTo(pShooter, pAttacker, pTarget, pAttackingHouse, pWeapon, sourcePos, targetPos, v);
+					FireBulletTo(pShooter, pAttacker, pTarget, pAttackingHouse, pWeapon, sourcePos, targetPos, v, flh, isOnTurret);
+					if (turnTurret && pShooter->HasTurret())
+					{
+						// 强制扭头
+						DirStruct facing = Point2Dir(sourcePos, targetPos);
+						pShooter->TurretFacing().SetCurrent(facing);
+					}
 					if (checkROF)
 					{
 						int rof = pWeapon->ROF;

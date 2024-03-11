@@ -4,32 +4,57 @@
 
 void TechnoStatus::StartTargetLaser(AbstractClass* pTarget, int weaponRange, TargetLaserData data, CoordStruct flh, bool isOnTurret)
 {
-	if (!_hasTargetLaser)
+	if (_targetLasers.empty())
 	{
 		EventSystems::General.AddHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 	}
-	_hasTargetLaser = true;
-	_targetLaserTarget = pTarget;
-	_targetLaserRange = weaponRange + (int)(data.TargetLaserRange * Unsorted::LeptonsPerCell);
-	_targetLaserData = data;
-	_targetLaserFLH = flh;
-	_targetLaserOnTurret = isOnTurret;
-	_targetLaserOffset = data.TargetLaserOffset;
+	bool found = false;
+	for (TargetLaser& laser : _targetLasers)
+	{
+		if (laser.Target == pTarget)
+		{
+			found = true;
+			// 更新设置
+			laser.RangeLimit = weaponRange + (int)laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell;
+			laser.Data = data;
+			laser.FLH = flh;
+			laser.IsOnTurret = isOnTurret;
+			laser.TargetOffset = data.TargetLaserOffset;
+		}
+	}
+	if (!found)
+	{
+		// 添加一个新的
+		TargetLaser laser{};
+		laser.Target = pTarget;
+		laser.RangeLimit = weaponRange + (int)laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell;
+		laser.Data = data;
+		laser.FLH = flh;
+		laser.IsOnTurret = isOnTurret;
+		laser.TargetOffset = data.TargetLaserOffset;
+		_targetLasers.emplace_back(laser);
+	}
 }
 
-void TechnoStatus::CloseTargetLaser()
+void TechnoStatus::CloseTargetLaser(AbstractClass* pTarget)
 {
-	_hasTargetLaser = false;
-	_targetLaserTarget = nullptr;
-	_targetLaserRange = -1;
-	_targetLaserData.Enable = false;
-	_targetLaserFLH = CoordStruct::Empty; // 发射的FLH
-	_targetLaserOnTurret = true; // 发射位置在炮塔上
-	_targetLaserOffset = CoordStruct::Empty;
-	_targetLaserShakeTimer.Stop();
-	EventSystems::General.RemoveHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
-	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
+	for (auto it = _targetLasers.begin(); it != _targetLasers.end();)
+	{
+		if ((*it).Target == pTarget)
+		{
+			it = _targetLasers.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+	if (_targetLasers.empty())
+	{
+		EventSystems::General.RemoveHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
+		EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
+	}
 }
 
 void TechnoStatus::OnGScreenRender(EventSystem* sender, Event e, void* args)
@@ -38,68 +63,79 @@ void TechnoStatus::OnGScreenRender(EventSystem* sender, Event e, void* args)
 	{
 		return;
 	}
-	if (args && _targetLaserTarget)
+	if (args)
 	{
-		// EndRender
-		CoordStruct sourceLocation = GetFLHAbsoluteCoords(pTechno, _targetLaserFLH, _targetLaserOnTurret);
-		// 绘制激光
-		CoordStruct targetLocation = _targetLaserTarget->GetCoords();
-		CoordStruct offset = _targetLaserData.TargetLaserOffset;
-		// 偏移和抖动
-		if (!_targetLaserData.TargetLaserShake.IsEmpty())
-		{
-			offset = _targetLaserOffset;
-			// 更新偏移值
-			if (_targetLaserShakeTimer.Expired())
-			{
-				int min = _targetLaserData.TargetLaserShake.X;
-				int max = _targetLaserData.TargetLaserShake.Y;
-				int d = Random::RandomRanged(min, max);
-				_targetLaserOffset = _targetLaserData.TargetLaserOffset + CoordStruct{ d, d, d };
-				int delay = Random::RandomRanged(0, 15);
-				_targetLaserShakeTimer.Start(delay);
-			}
-		}
-		DirStruct facing = Point2Dir(sourceLocation, targetLocation);
-		targetLocation = GetFLHAbsoluteCoords(targetLocation, offset, facing);
-		ColorStruct color = _targetLaserData.LaserInnerColor;
-		if (_targetLaserData.IsHouseColor)
-		{
-			color = pTechno->Owner->LaserColor;
-		}
 		RectangleStruct bounds = DSurface::Temp->GetRect();
 		bounds.Height -= 34;
-		DrawTargetLaser(DSurface::Temp, sourceLocation, targetLocation, color, bounds);
+		// EndRender
+		for (TargetLaser& laser : _targetLasers)
+		{
+			CoordStruct sourceLocation = GetFLHAbsoluteCoords(pTechno, laser.FLH, laser.IsOnTurret);
+			// 绘制激光
+			CoordStruct targetLocation = laser.Target->GetCoords();
+			CoordStruct offset = laser.Data.TargetLaserOffset;
+			// 偏移和抖动
+			if (!laser.Data.TargetLaserShake.IsEmpty())
+			{
+				offset = laser.TargetOffset;
+				// 更新偏移值
+				if (laser.ShakeTimer.Expired())
+				{
+					int min = laser.Data.TargetLaserShake.X;
+					int max = laser.Data.TargetLaserShake.Y;
+					int d = Random::RandomRanged(min, max);
+					laser.TargetOffset = laser.Data.TargetLaserOffset + CoordStruct{ d, d, d };
+					int delay = Random::RandomRanged(0, 15);
+					laser.ShakeTimer.Start(delay);
+				}
+			}
+			DirStruct facing = Point2Dir(sourceLocation, targetLocation);
+			targetLocation = GetFLHAbsoluteCoords(targetLocation, offset, facing);
+			ColorStruct color = laser.Data.LaserInnerColor;
+			if (laser.Data.IsHouseColor)
+			{
+				color = pTechno->Owner->LaserColor;
+			}
+			DrawTargetLaser(DSurface::Temp, sourceLocation, targetLocation, color, bounds, laser.Data.TargetLaserPoint);
+		}
+
 	}
 }
 
 void TechnoStatus::OnUpdate_TargetLaser()
 {
-	// 检测与目标的距离，并关闭激光笔
-	if (_hasTargetLaser)
+	if (!_targetLasers.empty())
 	{
-		TechnoClass* pTargetTechno = nullptr;
-		if (!_targetLaserTarget
-			|| (CastToTechno(_targetLaserTarget, pTargetTechno) && IsDeadOrInvisibleOrCloaked(pTargetTechno))
-			|| (_lastTarget == _targetLaserTarget && !pTechno->Target))
+		// 检测与目标的距离，并关闭激光笔
+		for (auto it = _targetLasers.begin(); it != _targetLasers.end();)
 		{
-			CloseTargetLaser();
-			return;
-		}
-		if (_targetLaserRange >= 0)
-		{
-			int dist = pTechno->DistanceFrom(_targetLaserTarget);
-			if (dist > _targetLaserRange)
+			TargetLaser laser = *it;
+			TechnoClass* pTargetTechno = nullptr;
+			if (!laser.Target
+				|| (CastToTechno(laser.Target, pTargetTechno) && IsDeadOrInvisibleOrCloaked(pTargetTechno))
+				|| (_lastTarget == laser.Target && !pTechno->Target)
+				|| (laser.RangeLimit >= 0 && (pTechno->DistanceFrom(laser.Target) > laser.RangeLimit)))
 			{
-				CloseTargetLaser();
+				it = _targetLasers.erase(it);
 			}
+			else
+			{
+				it++;
+			}
+		}
+		if (_targetLasers.empty())
+		{
+			EventSystems::General.RemoveHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
+			EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 		}
 	}
 }
 
 void TechnoStatus::OnRemove_TargetLaser()
 {
-	CloseTargetLaser();
+	_targetLasers.clear();
+	EventSystems::General.RemoveHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
+	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 }
 
 void TechnoStatus::OnFire_TargetLaser(AbstractClass* pTarget, int weaponIdx)
@@ -109,7 +145,6 @@ void TechnoStatus::OnFire_TargetLaser(AbstractClass* pTarget, int weaponIdx)
 	TargetLaserData* data = INI::GetConfig<TargetLaserData>(INI::Rules, pWeaponType->ID)->Data;
 	if (data->Enable)
 	{
-		CoordStruct flh = pTechno->GetFLH(weaponIdx, CoordStruct::Empty);
 		StartTargetLaser(pTarget, pWeaponType->Range, *data, pWeapon->FLH);
 	}
 }

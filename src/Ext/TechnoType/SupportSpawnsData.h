@@ -13,6 +13,9 @@ public:
 	bool SwitchFLH = false;
 	bool AlwaysFire = false;
 
+	bool IsOnTurret = true;
+	bool TurnTurret = false;
+
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -29,6 +32,9 @@ public:
 		SwitchFLH = reader->Get(title + "SwitchFLH", SwitchFLH);
 		AlwaysFire = reader->Get(title + "AlwaysFire", AlwaysFire);
 
+		IsOnTurret = reader->Get(title + "IsOnTurret", IsOnTurret);
+		TurnTurret = reader->Get(title + "TurnTurret", TurnTurret);
+
 		Enable = !Weapons.empty() || !EliteWeapons.empty();
 	}
 
@@ -41,6 +47,8 @@ public:
 			.Process(this->EliteWeapons)
 			.Process(this->SwitchFLH)
 			.Process(this->AlwaysFire)
+			.Process(this->IsOnTurret)
+			.Process(this->TurnTurret)
 			.Success();
 	};
 

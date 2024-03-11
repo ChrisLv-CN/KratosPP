@@ -15,6 +15,8 @@
 #include <Extension/WeaponTypeExt.h>
 
 #include <Ext/ObjectType/AttachEffect.h>
+#include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/WeaponType/TargetLaserData.h>
 
 // ----------------
 // 高级弹道学
@@ -202,7 +204,7 @@ bool InRange(ObjectClass* pObject, AbstractClass* pTarget, WeaponTypeClass* pWea
 
 
 void FireWeaponTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
-	WeaponTypeClass* pWeapon, CoordStruct flh,
+	WeaponTypeClass* pWeapon, CoordStruct flh, bool isOnTurret,
 	FireBulletToTarget callback, CoordStruct bulletSourcePos,
 	bool radialFire, int splitAngle, bool radialZ)
 {
@@ -240,13 +242,15 @@ void FireWeaponTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* 
 		if (sourcePos.IsEmpty())
 		{
 			// get flh
-			sourcePos = GetFLHAbsoluteCoords(pShooter, flh, true, flipY, CoordStruct::Empty);
+			sourcePos = GetFLHAbsoluteCoords(pShooter, flh, isOnTurret, flipY, CoordStruct::Empty);
 		}
 		if (bulletVelocity.IsEmpty())
 		{
 			bulletVelocity = GetBulletVelocity(sourcePos, targetPos);
 		}
-		BulletClass* pBullet = FireBulletTo(pShooter, pAttacker, pTarget, pAttacingHouse, pWeapon, sourcePos, targetPos, bulletVelocity);
+		CoordStruct tempFLH = flh;
+		tempFLH *= flipY;
+		BulletClass* pBullet = FireBulletTo(pShooter, pAttacker, pTarget, pAttacingHouse, pWeapon, sourcePos, targetPos, bulletVelocity, tempFLH, isOnTurret);
 		// callback
 		if (callback && pBullet)
 		{
@@ -256,7 +260,7 @@ void FireWeaponTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* 
 }
 
 BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse,
-	WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos, BulletVelocity velocity)
+	WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos, BulletVelocity velocity, CoordStruct flh, bool isOnTurret)
 {
 	TechnoClass* pTargetTechno = nullptr;
 	if (!pTarget || (CastToTechno(pTarget, pTargetTechno) && IsDeadOrInvisible(pTargetTechno)))
@@ -298,6 +302,16 @@ BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, Abstrac
 		)
 		{
 			pAEM->FeedbackAttach(pWeapon);
+		}
+		// Draw target laser
+		if (pShooterT)
+		{
+			TargetLaserData* data = INI::GetConfig<TargetLaserData>(INI::Rules, pWeapon->ID)->Data;
+			TechnoStatus* pStatus = nullptr;
+			if (data->Enable && TryGetStatus<TechnoExt>(pShooterT, pStatus))
+			{
+				pStatus->StartTargetLaser(pTarget, pWeapon->Range, *data, flh, isOnTurret);
+			}
 		}
 	}
 	return pBullet;

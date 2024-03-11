@@ -12,6 +12,7 @@ public:
 	CoordStruct TargetLaserOffset = CoordStruct::Empty;
 	Point2D TargetLaserShake = Point2D{ -15, 15 };
 	double TargetLaserRange = 0.5;
+	bool TargetLaserPoint = true;
 
 	ColorStruct LaserInnerColor = Colors::Empty;
 	bool IsHouseColor = true;
@@ -22,6 +23,7 @@ public:
 		TargetLaserOffset = reader->Get("TargetLaserOffset", TargetLaserOffset);
 		TargetLaserShake = reader->GetRange("TargetLaserShake", TargetLaserShake);
 		TargetLaserRange = reader->Get("TargetLaserRange", TargetLaserRange);
+		TargetLaserPoint = reader->Get("TargetLaserPoint", TargetLaserPoint);
 
 		LaserInnerColor = reader->Get("LaserInnerColor", LaserInnerColor);
 		IsHouseColor = reader->Get("IsHouseColor", IsHouseColor);
@@ -38,6 +40,7 @@ public:
 			.Process(this->TargetLaserOffset)
 			.Process(this->TargetLaserShake)
 			.Process(this->TargetLaserRange)
+			.Process(this->TargetLaserPoint)
 
 			.Process(this->LaserInnerColor)
 			.Process(this->IsHouseColor)
@@ -51,6 +54,50 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
 		return const_cast<TargetLaserData*>(this)->Serialize(stream);
+	}
+#pragma endregion
+};
+
+
+class TargetLaser
+{
+public:
+	TargetLaserData Data{}; // 配置
+
+	AbstractClass* Target = nullptr; // 照射的目标
+
+	int RangeLimit = -1; // 射程限制
+	CoordStruct FLH = CoordStruct::Empty; // 发射的FLH
+	bool IsOnTurret = true; // 发射位置在炮塔上
+
+	CoordStruct TargetOffset = CoordStruct::Empty; // 目标位置偏移
+	CDTimerClass ShakeTimer{}; // 抖动延迟计时器
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(this->Data)
+
+			.Process(this->Target)
+
+			.Process(this->RangeLimit)
+			.Process(this->FLH)
+			.Process(this->IsOnTurret)
+
+			.Process(this->TargetOffset)
+			.Process(this->ShakeTimer)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange)
+	{
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const
+	{
+		return const_cast<TargetLaser*>(this)->Serialize(stream);
 	}
 #pragma endregion
 };
