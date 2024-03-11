@@ -513,7 +513,7 @@ DEFINE_HOOK(0x6F72E3, TechnoClass_IsRange, 0x6)
 	if (TryGetAEManager<TechnoExt>(pTechno, aeManager))
 	{
 		CrateBuffData data = aeManager->CountAttachStatusMultiplier();
-		range += data.RangeCell;
+		range += (int)(data.RangeCell * Unsorted::LeptonsPerCell);
 		range *= data.RangeMultiplier;
 	}
 	R->EDI(range);
