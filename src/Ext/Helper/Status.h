@@ -69,6 +69,7 @@ bool AmIStand(TechnoClass* pTechno);
 
 double GetROFMulti(TechnoClass* pTechno);
 double GetDamageMulti(TechnoClass* pTechno);
+int GetRangePlus(TechnoClass* pTechno, bool targetInAir = false);
 
 void SetExtraSparkleAnim(TechnoClass* pTechno, AnimClass*& pAnim);
 void ActiveRGBMode(TechnoClass* pTechno);

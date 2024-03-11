@@ -75,7 +75,6 @@ public:
 
 	AbstractClass* pTarget = nullptr; // 照射的目标
 
-	int RangeLimit = -1; // 射程限制
 	CoordStruct FLH = CoordStruct::Empty; // 发射的FLH
 	bool IsOnTurret = true; // 发射位置在炮塔上
 
@@ -88,11 +87,6 @@ public:
 	bool Timeup()
 	{
 		return Duration > 0 && LifeTimer.Expired();
-	}
-
-	bool OutOfRange(int dist)
-	{
-		return dist < pWeapon->MinimumRange || (RangeLimit >= 0 && dist > RangeLimit);
 	}
 
 	void ResetTimer()
@@ -114,7 +108,6 @@ public:
 
 			.Process(this->pTarget)
 
-			.Process(this->RangeLimit)
 			.Process(this->FLH)
 			.Process(this->IsOnTurret)
 

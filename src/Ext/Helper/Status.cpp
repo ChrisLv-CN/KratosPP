@@ -235,6 +235,37 @@ double GetDamageMulti(TechnoClass* pTechno)
 	return (!firepower ? 1.0 : RulesClass::Instance->VeteranCombat) * pTechno->FirepowerMultiplier * ((!pTechno->Owner || !pTechno->Owner->Type) ? 1.0 : pTechno->Owner->Type->FirepowerMult);
 }
 
+int GetRangePlus(TechnoClass* pTechno, bool targetInAir)
+{
+	int range = 0;
+	if (!IsDead(pTechno))
+	{
+		if (targetInAir)
+		{
+			range += pTechno->GetTechnoType()->AirRangeBonus;
+		}
+		if (pTechno->CanOccupyFire())
+		{
+			range = (RulesClass::Instance->OccupyWeaponRange + pTechno->GetOccupyRangeBonus()) * Unsorted::LeptonsPerCell;
+		}
+		if (pTechno->BunkerLinkedItem && pTechno->WhatAmI() != AbstractType::Building)
+		{
+			range += RulesClass::Instance->BunkerWeaponRangeBonus * Unsorted::LeptonsPerCell;
+		}
+		if (pTechno->InOpenToppedTransport)
+		{
+			range += RulesClass::Instance->OpenToppedRangeBonus * Unsorted::LeptonsPerCell;
+		}
+		if (AttachEffect* aem = GetAEManager<TechnoExt>(pTechno))
+		{
+			CrateBuffData data = aem->CountAttachStatusMultiplier();
+			range += (int)(data.RangeCell * Unsorted::LeptonsPerCell);
+			range *= data.RangeMultiplier;
+		}
+	}
+	return range;
+}
+
 void SetExtraSparkleAnim(TechnoClass* pTechno, AnimClass*& pAnim)
 {
 	if (!IsDeadOrInvisible(pTechno) && pAnim)

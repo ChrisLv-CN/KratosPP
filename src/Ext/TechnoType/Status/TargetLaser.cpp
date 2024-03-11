@@ -10,11 +10,6 @@ void TechnoStatus::StartTargetLaser(AbstractClass* pTarget, WeaponTypeClass* pWe
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 	}
 	bool found = false;
-	int range = pWeapon->Range;
-	if (pTarget->IsInAir())
-	{
-		range += pTechno->GetTechnoType()->AirRangeBonus;
-	}
 	for (TargetLaser& laser : _targetLasers)
 	{
 		if (laser.pWeapon == pWeapon)
@@ -23,7 +18,6 @@ void TechnoStatus::StartTargetLaser(AbstractClass* pTarget, WeaponTypeClass* pWe
 			// 更新设置
 			laser.Data = data;
 			laser.pTarget = pTarget;
-			laser.RangeLimit = range + (int)laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell;
 			laser.FLH = flh;
 			laser.IsOnTurret = isOnTurret;
 			laser.TargetOffset = data.TargetLaserOffset;
@@ -38,7 +32,6 @@ void TechnoStatus::StartTargetLaser(AbstractClass* pTarget, WeaponTypeClass* pWe
 		laser.pWeapon = pWeapon;
 		laser.Data = data;
 		laser.pTarget = pTarget;
-		laser.RangeLimit = range + (int)laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell;
 		laser.FLH = flh;
 		laser.IsOnTurret = isOnTurret;
 		laser.TargetOffset = data.TargetLaserOffset;
@@ -86,6 +79,23 @@ void TechnoStatus::CloseTargetLaser(WeaponTypeClass* pWeapon)
 		EventSystems::General.RemoveHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
 		EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
 	}
+}
+
+bool TechnoStatus::OutOfTargetLaserRange(TargetLaser laser)
+{
+	int range = laser.pWeapon->Range;
+	if (range > 0)
+	{
+		range += GetRangePlus(pTechno, laser.pTarget->IsInAir());
+		BulletTypeClass* pBulletType = laser.pWeapon->Projectile;
+		if (pBulletType->SubjectToElevation)
+		{
+			range += pTechno->GetElevationBonusDistance(laser.pTarget);
+		}
+		range += (int)(laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell);
+		return pTechno->DistanceFrom(laser.pTarget) >= range;
+	}
+	return true;
 }
 
 void TechnoStatus::OnGScreenRender(EventSystem* sender, Event e, void* args)
@@ -144,7 +154,7 @@ void TechnoStatus::OnUpdate_TargetLaser()
 			TechnoClass* pTargetTechno = nullptr;
 			if (!laser.pTarget
 				|| laser.Timeup()
-				|| laser.OutOfRange(pTechno->DistanceFrom(laser.pTarget))
+				|| OutOfTargetLaserRange(laser)
 				|| (_lastTarget == laser.pTarget && !pTechno->Target)
 				|| (CastToTechno(laser.pTarget, pTargetTechno) && IsDeadOrInvisibleOrCloaked(pTargetTechno))
 			)
