@@ -141,7 +141,8 @@ void TechnoStatus::OnUpdate_TargetLaser()
 				|| (laser.Duration >0 && laser.LifeTimer.Expired())
 				|| (CastToTechno(laser.pTarget, pTargetTechno) && IsDeadOrInvisibleOrCloaked(pTargetTechno))
 				|| (_lastTarget == laser.pTarget && !pTechno->Target)
-				|| (laser.RangeLimit >= 0 && (pTechno->DistanceFrom(laser.pTarget) > laser.RangeLimit)))
+				|| laser.OutOfRange(pTechno->DistanceFrom(laser.pTarget))
+			)
 			{
 				it = _targetLasers.erase(it);
 			}
