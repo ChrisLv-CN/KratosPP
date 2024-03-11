@@ -23,6 +23,7 @@
 
 // TODO Add new State
 #include <Ext/StateType/State/AntiBulletState.h>
+#include <Ext/StateType/State/DamageReactionState.h>
 #include <Ext/StateType/State/DeselectState.h>
 #include <Ext/StateType/State/DestroyAnimState.h>
 #include <Ext/StateType/State/DestroySelfState.h>
@@ -149,6 +150,7 @@ public:
 	// TODO Add new State
 	// 状态机
 	STATE_VAR_DEFINE(AntiBullet);
+	STATE_VAR_DEFINE(DamageReaction);
 	STATE_VAR_DEFINE(Deselect);
 	STATE_VAR_DEFINE(DestroyAnim);
 	STATE_VAR_DEFINE(DestroySelf);
@@ -165,6 +167,7 @@ public:
 	void AttachState()
 	{
 		STATE_VAR_INIT(AntiBullet);
+		STATE_VAR_INIT(DamageReaction);
 		STATE_VAR_INIT(Deselect);
 		STATE_VAR_INIT(DestroyAnim);
 		STATE_VAR_INIT(DestroySelf);
@@ -182,6 +185,7 @@ public:
 	void InheritedStatsTo(TechnoStatus*& heir)
 	{
 		STATE_VAR_INHERITED(AntiBullet);
+		STATE_VAR_INHERITED(DamageReaction);
 		STATE_VAR_INHERITED(Deselect);
 		STATE_VAR_INHERITED(DestroyAnim);
 		STATE_VAR_INHERITED(DestroySelf);
@@ -201,6 +205,7 @@ public:
 	{
 		if (false) {}
 		STATE_VAR_TRYGET(AntiBullet)
+		STATE_VAR_TRYGET(DamageReaction)
 			STATE_VAR_TRYGET(Deselect)
 			STATE_VAR_TRYGET(DestroyAnim)
 			STATE_VAR_TRYGET(DestroySelf)

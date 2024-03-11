@@ -138,15 +138,9 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 						// TODO Get stand's state
 
 						// 状态机
-						// STATE_VAR_DEFINE(AntiBullet);
-						// STATE_VAR_DEFINE(DestroyAnim);
-						// STATE_VAR_DEFINE(DestroySelf);
-						// STATE_VAR_DEFINE(GiftBox);
-						// STATE_VAR_DEFINE(Paintball);
-						// STATE_VAR_DEFINE(Transform);
-
 						if (state) {}
 						GET_STAND_STATE(AntiBullet)
+							GET_STAND_STATE(DamageReaction)
 							GET_STAND_STATE(Deselect)
 							GET_STAND_STATE(DestroyAnim)
 							GET_STAND_STATE(DestroySelf)

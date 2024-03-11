@@ -25,6 +25,7 @@
 #include "Effect/VampireData.h"
 // State Effects
 #include <Ext/StateType/State/AntiBulletData.h>
+#include <Ext/StateType/State/DamageReactionData.h>
 #include <Ext/StateType/State/DeselectData.h>
 #include <Ext/StateType/State/DestroyAnimData.h>
 #include <Ext/StateType/State/DestroySelfData.h>
@@ -158,6 +159,7 @@ public:
 	EFFECT_VAR_DEFINE(Vampire);
 	// State Effects
 	EFFECT_VAR_DEFINE(AntiBullet);
+	EFFECT_VAR_DEFINE(DamageReaction);
 	EFFECT_VAR_DEFINE(Deselect);
 	EFFECT_VAR_DEFINE(DestroyAnim);
 	EFFECT_VAR_DEFINE(DestroySelf);
@@ -192,6 +194,7 @@ public:
 		EFFECT_VAR_READ(Vampire);
 		// State Effects
 		EFFECT_VAR_READ(AntiBullet);
+		EFFECT_VAR_READ(DamageReaction);
 		EFFECT_VAR_READ(Deselect);
 		EFFECT_VAR_READ(DestroyAnim);
 		EFFECT_VAR_READ(DestroySelf);
@@ -228,6 +231,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Vampire);
 		// State Effects
 		EFFECT_VAR_SCRIPT_NAME(AntiBullet);
+		EFFECT_VAR_SCRIPT_NAME(DamageReaction);
 		EFFECT_VAR_SCRIPT_NAME(Deselect);
 		EFFECT_VAR_SCRIPT_NAME(DestroyAnim);
 		EFFECT_VAR_SCRIPT_NAME(DestroySelf);
@@ -267,6 +271,7 @@ public:
 			EFFECT_VAR_PROCESS(Vampire)
 			// State Effects
 			EFFECT_VAR_PROCESS(AntiBullet)
+			EFFECT_VAR_PROCESS(DamageReaction)
 			EFFECT_VAR_PROCESS(Deselect)
 			EFFECT_VAR_PROCESS(DestroyAnim)
 			EFFECT_VAR_PROCESS(DestroySelf)

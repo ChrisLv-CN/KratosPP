@@ -90,6 +90,7 @@
     <ClCompile Include="src\Ext\ObjectType\AttachFire.cpp" />
     <ClCompile Include="src\Ext\StateType\StateScript.cpp" />
     <ClCompile Include="src\Ext\StateType\State\AntiBulletState.cpp" />
+    <ClCompile Include="src\Ext\StateType\State\DamageReactionState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroyAnimState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroySelfState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DisableWeaponState.cpp" />
@@ -295,6 +296,8 @@
     <ClInclude Include="src\Ext\StateType\StateScript.h" />
     <ClInclude Include="src\Ext\StateType\State\AntiBulletData.h" />
     <ClInclude Include="src\Ext\StateType\State\AntiBulletState.h" />
+    <ClInclude Include="src\Ext\StateType\State\DamageReactionData.h" />
+    <ClInclude Include="src\Ext\StateType\State\DamageReactionState.h" />
     <ClInclude Include="src\Ext\StateType\State\DeselectData.h" />
     <ClInclude Include="src\Ext\StateType\State\DeselectState.h" />
     <ClInclude Include="src\Ext\StateType\State\DestroyAnimData.h" />

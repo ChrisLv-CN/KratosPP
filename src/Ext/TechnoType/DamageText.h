@@ -16,6 +16,24 @@ public:
 
 	TECHNO_SCRIPT(DamageText);
 
+	/**
+	 * @brief 是否打印本次伤害数字
+	 *
+	 * @param pWH 弹头
+	 * @param damageTextType 格式
+	 * @return true
+	 * @return false
+	 */
+	bool SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& damageTextType);
+	/**
+	 *@brief 打印伤害数字
+	 *
+	 * @param text 内容
+	 * @param location 位置
+	 * @param data 格式
+	 */
+	void OrderDamageText(std::wstring text, CoordStruct location, DamageTextEntity*& data);
+
 	virtual void Awake() override;
 
 	virtual void OnUpdate() override;
@@ -46,23 +64,6 @@ public:
 #pragma endregion
 
 private:
-	/**
-	 * @brief 是否打印本次伤害数字
-	 *
-	 * @param pWH 弹头
-	 * @param damageTextType 格式
-	 * @return true
-	 * @return false
-	 */
-	bool SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& damageTextType);
-	/**
-	 *@brief 打印伤害数字
-	 *
-	 * @param text 内容
-	 * @param location 位置
-	 * @param data 格式
-	 */
-	void OrderDamageText(std::wstring text, CoordStruct location, DamageTextEntity*& data);
 
 	std::map<DamageTextEntity*, DamageTextCache> _damageCache{};
 	std::map<DamageTextEntity*, DamageTextCache> _repairCache{};

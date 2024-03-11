@@ -13,6 +13,8 @@
 #include <Ext/Helper/StringEx.h>
 #include <Ext/Helper/Scripts.h>
 
+#include <Ext/StateType/State/DamageReactionData.h>
+
 #include "TypeExtension.h"
 
 enum class ExpLevel
@@ -137,7 +139,7 @@ public:
 		bool Capturer = false; // 弹头黑洞捕获标记
 		bool IgnoreRevenge = false; // 不触发复仇
 		bool IgnoreDamageReaction = false; // 不触发伤害相应
-		// std::vector<DamageReactionMode> IgnoreDamageReactionModes{}; // 不触发特定的伤害相应类型
+		std::vector<DamageReactionMode> IgnoreDamageReactionModes{}; // 不触发特定的伤害相应类型
 		bool IgnoreStandShareDamage = false; // 替身不分担伤害
 
 		virtual void Read(INIBufferReader* reader) override
@@ -186,11 +188,11 @@ public:
 			Capturer = reader->Get("Capturer", Capturer);
 			IgnoreRevenge = reader->Get("IgnoreRevenge", IgnoreRevenge);
 			IgnoreDamageReaction = reader->Get("IgnoreDamageReaction", IgnoreDamageReaction);
-			// IgnoreDamageReactionModes = reader->GetList("IgnoreDamageReaction.Modes", IgnoreDamageReactionModes);
-			// if (null != IgnoreDamageReactionModes && IgnoreDamageReactionModes.Any())
-			// {
-			// 	IgnoreDamageReaction = true;
-			// }
+			IgnoreDamageReactionModes = reader->GetList("IgnoreDamageReaction.Modes", IgnoreDamageReactionModes);
+			if (!IgnoreDamageReactionModes.empty())
+			{
+				IgnoreDamageReaction = true;
+			}
 			IgnoreStandShareDamage = reader->Get("IgnoreStandShareDamage", IgnoreStandShareDamage);
 		}
 
