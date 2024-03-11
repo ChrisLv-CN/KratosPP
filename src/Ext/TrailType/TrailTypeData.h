@@ -109,6 +109,11 @@ public:
 		BoltType.Disable2 = reader->Get("Bolt.Disable2", BoltType.Disable2);
 		BoltType.Disable3 = reader->Get("Bolt.Disable3", BoltType.Disable3);
 
+		// 辐射尾巴
+		BeamType.Color = reader->Get("Bean.Color", BeamType.Color);
+		BeamType.Period = reader->Get("Beam.Period", BeamType.Period);
+		BeamType.Amplitude = reader->Get("Beam.Amplitude", BeamType.Amplitude);
+
 		// 粒子尾巴
 		ParticleSystem = reader->Get("ParticleSystem", ParticleSystem);
 

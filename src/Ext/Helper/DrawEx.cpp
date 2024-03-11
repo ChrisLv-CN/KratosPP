@@ -166,14 +166,15 @@ void DrawBeam(CoordStruct sourcePos, CoordStruct targetPos, BeamType type, Color
 
 void DrawRadBeam(CoordStruct sourcePos, CoordStruct targetPos, ColorStruct customColor, int period, double amplitude)
 {
-	BeamType type(RadBeamType::RadBeam);
+	BeamType type{ RadBeamType::RadBeam };
 	type.Period = period;
 	type.Amplitude = amplitude;
 	DrawBeam(sourcePos, targetPos, type, customColor);
 }
+
 void DrawTemporalBeam(CoordStruct sourcePos, CoordStruct targetPos, ColorStruct customColor, int period, double amplitude)
 {
-	BeamType type(RadBeamType::Temporal);
+	BeamType type{ RadBeamType::Temporal };
 	type.Period = period;
 	type.Amplitude = amplitude;
 	DrawBeam(sourcePos, targetPos, type, customColor);
