@@ -38,6 +38,42 @@ DEFINE_HOOK(0x739C74, UnitClass_Deployed, 0x6)
 }
 #pragma endregion
 
+#pragma region FLH free
+DEFINE_HOOK(0x6F3B5C, UnitClassClass_GetFLH_UnbindTurret, 0x6)
+{
+	enum { turretMitrix = 0x6F3C1A, nextCheck = 0x6F3B62, takeOver = 0x6F3C52 };
+	GET(TechnoClass*, pTechno, EBX);
+	if (pTechno)
+	{
+		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+		{
+			GET_STACK(int, weaponIdx, 0xE0);
+			status->FLHIndex = weaponIdx;
+			if (pTechno->HasTurret() && status->IsFLHOnBody(weaponIdx))
+			{
+				Matrix3D matrix = GetMatrix3D(pTechno);
+				R->Stack(0x48, matrix);
+				return takeOver;
+			}
+		}
+		return nextCheck;
+	}
+	return turretMitrix;
+}
+
+DEFINE_HOOK(0x6F3D2F, UnitClassClass_GetFLH_OnTarget, 0x5)
+{
+	GET(TechnoClass*, pTechno, EBX);
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->IsFLHOnTarget())
+	{
+		GET(CoordStruct*, pRenderCoord, EAX);
+		*pRenderCoord = pTechno->Target->GetCoords();
+	}
+	return 0;
+}
+#pragma endregion
+
 #pragma region Unit explosion anims
 DEFINE_HOOK(0x738749, UnitClass_Destroy_Explosion_Remap, 0x6)
 {

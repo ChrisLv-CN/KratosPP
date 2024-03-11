@@ -782,6 +782,27 @@ DEFINE_HOOK(0x70D6B4, TechnoClass_Fire_DeathWeapon_OverrideWeapon, 0x6)
 	}
 	return 0;
 }
+
+DEFINE_HOOK(0x70D773, TechnoClass_Fire_DeathWeapon_OverrideWeapon_Stand, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && !IsDead(status->pMyMaster))
+	{
+		// 修改死亡武器的发射者是JOJO
+		TechnoClass* pMaster = status->pMyMaster;
+		if (status->MyMasterIsSpawned && status->StandData.ExperienceToSpawnOwner && !IsDead(pMaster->SpawnOwner))
+		{
+			pMaster = pMaster->SpawnOwner;
+		}
+		if (pMaster->GetTechnoType()->Trainable)
+		{
+			GET(BulletClass*, pBullet, EBX);
+			pBullet->Owner = pMaster;
+		}
+	}
+	return 0;
+}
 #pragma endregion
 
 
@@ -807,3 +828,4 @@ DEFINE_HOOK(0x6FF28F, TechnoClass_Fire_ROFMultiplier, 0x6)
 
 	return 0;
 }
+

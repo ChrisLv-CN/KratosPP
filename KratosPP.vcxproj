@@ -121,6 +121,7 @@
     <ClCompile Include="src\Ext\TechnoType\Status\DestroyAnim.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\DestroySelf.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\DisableWeapon.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\FireFLH.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Freeze.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\GiftBox.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\NoMoneyNoTalk.cpp" />
@@ -341,6 +342,7 @@
     <ClInclude Include="src\Ext\TechnoType\DecoyMissile.h" />
     <ClInclude Include="src\Ext\TechnoType\DecoyMissileData.h" />
     <ClInclude Include="src\Ext\TechnoType\DisguiseData.h" />
+    <ClInclude Include="src\Ext\TechnoType\FireFLHData.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthText.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />
     <ClInclude Include="src\Ext\TechnoType\JumpjetFacing.h" />

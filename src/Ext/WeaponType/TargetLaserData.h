@@ -17,6 +17,8 @@ public:
 	ColorStruct LaserInnerColor = Colors::Empty;
 	bool IsHouseColor = true;
 
+	bool BreakTargetLaser = false;
+
 	virtual void Read(INIBufferReader* reader) override
 	{
 		IsTargetLaser = reader->Get("IsTargetLaser", IsTargetLaser);
@@ -28,7 +30,9 @@ public:
 		LaserInnerColor = reader->Get("LaserInnerColor", LaserInnerColor);
 		IsHouseColor = reader->Get("IsHouseColor", IsHouseColor);
 
-		Enable = IsTargetLaser;
+		BreakTargetLaser = reader->Get("BreakTargetLaser", BreakTargetLaser);
+
+		Enable = IsTargetLaser || BreakTargetLaser;
 	}
 
 #pragma region save/load

@@ -269,11 +269,11 @@ BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, Abstrac
 	}
 	// Get fireMulti
 	double fireMulti = 1;
-	if (IsDead(pAttacker))
+	if (!IsDead(pAttacker))
 	{
 		// check spawner
 		SpawnManagerClass* pSpawns = pAttacker->SpawnManager;
-		if (pWeapon->Spawner && !pSpawns)
+		if (pWeapon->Spawner && pSpawns)
 		{
 			pSpawns->SetTarget(pTarget);
 			return nullptr;
@@ -310,7 +310,14 @@ BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, Abstrac
 			TechnoStatus* pStatus = nullptr;
 			if (data->Enable && TryGetStatus<TechnoExt>(pShooterT, pStatus))
 			{
-				pStatus->StartTargetLaser(pTarget, pWeapon->Range, *data, flh, isOnTurret);
+				if (!data->BreakTargetLaser)
+				{
+					pStatus->StartTargetLaser(pTarget, pWeapon->Range, *data, flh, isOnTurret);
+				}
+				else
+				{
+					pStatus->CloseTargetLaser(pTarget);
+				}
 			}
 		}
 	}

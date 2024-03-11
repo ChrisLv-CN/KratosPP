@@ -39,6 +39,7 @@
 #include <Ext/WeaponType/TargetLaserData.h>
 
 #include "AirstrikeData.h"
+#include "FireFLHData.h"
 #include "PassengersData.h"
 
 
@@ -99,6 +100,9 @@ public:
 	bool PlayDestroyAnims();
 
 	void SetExtraSparkleAnim(AnimClass* pAnim);
+
+	bool IsFLHOnBody(int weaponIdx);
+	bool IsFLHOnTarget();
 
 	void DrawSHP_Paintball(REGISTERS* R);
 	void DrawSHP_Paintball_BuildingAnim(REGISTERS* R);
@@ -237,6 +241,8 @@ public:
 	// 虚单位
 	bool VirtualUnit = false;
 	bool Disappear = false;
+
+	int FLHIndex = 0;
 
 #pragma region save/load
 	template <typename T>
@@ -420,4 +426,8 @@ private:
 
 	// EMP动画
 	AnimClass* pExtraSparkleAnim = nullptr;
+
+	// FLH
+	FireFLHData* _fireFLHData = nullptr;
+	FireFLHData* GetFireFLHData();
 };

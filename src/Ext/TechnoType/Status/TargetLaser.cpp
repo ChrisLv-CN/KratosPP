@@ -145,7 +145,14 @@ void TechnoStatus::OnFire_TargetLaser(AbstractClass* pTarget, int weaponIdx)
 	TargetLaserData* data = INI::GetConfig<TargetLaserData>(INI::Rules, pWeaponType->ID)->Data;
 	if (data->Enable)
 	{
-		StartTargetLaser(pTarget, pWeaponType->Range, *data, pWeapon->FLH);
+		if (!data->BreakTargetLaser)
+		{
+			StartTargetLaser(pTarget, pWeaponType->Range, *data, pWeapon->FLH);
+		}
+		else
+		{
+			CloseTargetLaser(pTarget);
+		}
 	}
 }
 
