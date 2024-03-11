@@ -16,12 +16,15 @@ public:
 
 	virtual void OnStart() override;
 
+	virtual void OnUpdate() override;
+
 	DestroySelfState& operator=(const DestroySelfState& other)
 	{
 		if (this != &other)
 		{
 			StateScript<DestroySelfData>::operator=(other);
 			GoDie = other.GoDie;
+			_safety = other._safety;
 			_delay = other._delay;
 			_delayTimer = other._delayTimer;
 		}
@@ -34,6 +37,7 @@ public:
 	{
 		return stream
 			.Process(this->GoDie)
+			.Process(this->_safety)
 			.Process(this->_delay)
 			.Process(this->_delayTimer)
 			.Success();
@@ -57,6 +61,7 @@ private:
 
 	bool GoDie = false;
 
+	bool _safety = false; // 为子机设置的保险
 	int _delay = 0;
 	CDTimerClass _delayTimer{};
 };

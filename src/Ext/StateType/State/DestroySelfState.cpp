@@ -25,17 +25,30 @@ void DestroySelfState::ExtendLife()
 	_delayTimer.Stop();
 	if (_delay > 0)
 	{
+		_safety = pObject->InLimbo;
 		_delayTimer.Start(_delay);
 	}
 }
 
 bool DestroySelfState::Timeup()
 {
-	GoDie = _delay <= 0 || _delayTimer.Expired();
+	GoDie = !_safety && (_delay <= 0 || _delayTimer.Expired());
 	return GoDie;
 }
 
 void DestroySelfState::OnStart()
 {
 	ExtendLife();
+}
+
+void DestroySelfState::OnUpdate()
+{
+	if (_safety)
+	{
+		_safety = pObject->InLimbo;
+		if (!_safety)
+		{
+			_delayTimer.Start(_delay);
+		}
+	}
 }
