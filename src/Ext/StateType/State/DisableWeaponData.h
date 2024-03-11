@@ -44,8 +44,8 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(Disable)
-			.Process(OnLandTypes)
+			.Process(this->Disable)
+			.Process(this->OnLandTypes)
 			.Success();
 	};
 

@@ -49,12 +49,12 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(State)
-			.Process(Clockwise)
-			.Process(_destCenter)
-			.Process(_destList)
-			.Process(_destIndex)
-			.Process(_onStopCommand)
+			.Process(this->State)
+			.Process(this->Clockwise)
+			.Process(this->_destCenter)
+			.Process(this->_destList)
+			.Process(this->_destIndex)
+			.Process(this->_onStopCommand)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override

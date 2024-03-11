@@ -33,12 +33,12 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(IsDecoy)
-			.Process(LaunchPos)
-			.Process(LifeTimer)
+			.Process(this->IsDecoy)
+			.Process(this->LaunchPos)
+			.Process(this->LifeTimer)
 
-			.Process(_targetHasDecoyFlag)
-			.Process(_missileShakeVelocityFlag)
+			.Process(this->_targetHasDecoyFlag)
+			.Process(this->_missileShakeVelocityFlag)
 			.Success();
 	};
 

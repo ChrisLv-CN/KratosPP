@@ -43,7 +43,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(Money)
+			.Process(this->Money)
 			.Success();
 	};
 

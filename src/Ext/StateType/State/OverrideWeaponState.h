@@ -17,7 +17,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(_weaponIndex)
+			.Process(this->_weaponIndex)
 			.Success();
 	};
 

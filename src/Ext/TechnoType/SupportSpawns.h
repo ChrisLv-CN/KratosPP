@@ -33,9 +33,9 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(_alwaysFire)
-			.Process(_rof)
-			.Process(_flipY)
+			.Process(this->_alwaysFire)
+			.Process(this->_rof)
+			.Process(this->_flipY)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override

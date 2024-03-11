@@ -103,9 +103,9 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(Data)
-			.Process(EliteData)
-			.Process(UseToDeathWeapon)
+			.Process(this->Data)
+			.Process(this->EliteData)
+			.Process(this->UseToDeathWeapon)
 			.Success();
 	};
 

@@ -39,13 +39,13 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(PitchAngle)
+			.Process(this->PitchAngle)
 
-			.Process(_initFlag)
-			.Process(_targetAngle)
-			.Process(_smooth)
-			.Process(_lockAngle)
-			.Process(_location)
+			.Process(this->_initFlag)
+			.Process(this->_targetAngle)
+			.Process(this->_smooth)
+			.Process(this->_lockAngle)
+			.Process(this->_location)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
