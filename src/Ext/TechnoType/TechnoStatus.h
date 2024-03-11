@@ -79,8 +79,9 @@ public:
 	 * @param e
 	 * @param args
 	 */
-	void StartTargetLaser(AbstractClass* pTarget, int weaponRange, TargetLaserData data, CoordStruct flh, bool isOnTurret = true);
+	void StartTargetLaser(AbstractClass* pTarget, WeaponTypeClass* pWeapon, TargetLaserData data, CoordStruct flh, bool isOnTurret = true);
 	void CloseTargetLaser(AbstractClass* pTarget);
+	void CloseTargetLaser(WeaponTypeClass* pWeapon);
 	void OnGScreenRender(EventSystem* sender, Event e, void* args);
 
 	void OnLaserTargetDetach(EventSystem* sender, Event e, void* args)

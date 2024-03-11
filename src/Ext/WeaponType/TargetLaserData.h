@@ -9,6 +9,8 @@ class TargetLaserData : public INIConfig
 {
 public:
 	bool IsTargetLaser = false;
+
+	int TargetLaserDuration = -1;
 	CoordStruct TargetLaserOffset = CoordStruct::Empty;
 	Point2D TargetLaserShake = Point2D{ -15, 15 };
 	double TargetLaserRange = 0.5;
@@ -22,6 +24,8 @@ public:
 	virtual void Read(INIBufferReader* reader) override
 	{
 		IsTargetLaser = reader->Get("IsTargetLaser", IsTargetLaser);
+
+		TargetLaserDuration = reader->Get("TargetLaserDuration", TargetLaserDuration);
 		TargetLaserOffset = reader->Get("TargetLaserOffset", TargetLaserOffset);
 		TargetLaserShake = reader->GetRange("TargetLaserShake", TargetLaserShake);
 		TargetLaserRange = reader->Get("TargetLaserRange", TargetLaserRange);
@@ -66,9 +70,10 @@ public:
 class TargetLaser
 {
 public:
+	WeaponTypeClass* pWeapon = nullptr; // 照射挂载的武器
 	TargetLaserData Data{}; // 配置
 
-	AbstractClass* Target = nullptr; // 照射的目标
+	AbstractClass* pTarget = nullptr; // 照射的目标
 
 	int RangeLimit = -1; // 射程限制
 	CoordStruct FLH = CoordStruct::Empty; // 发射的FLH
@@ -77,14 +82,27 @@ public:
 	CoordStruct TargetOffset = CoordStruct::Empty; // 目标位置偏移
 	CDTimerClass ShakeTimer{}; // 抖动延迟计时器
 
+	int Duration = -1;
+	CDTimerClass LifeTimer{}; // 生命计时器
+
+	void ResetTimer()
+	{
+		LifeTimer.Stop();
+		if (Duration > 0)
+		{
+			LifeTimer.Start(Duration);
+		}
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->pWeapon)
 			.Process(this->Data)
 
-			.Process(this->Target)
+			.Process(this->pTarget)
 
 			.Process(this->RangeLimit)
 			.Process(this->FLH)
@@ -92,6 +110,9 @@ public:
 
 			.Process(this->TargetOffset)
 			.Process(this->ShakeTimer)
+
+			.Process(this->Duration)
+			.Process(this->LifeTimer)
 			.Success();
 	};
 

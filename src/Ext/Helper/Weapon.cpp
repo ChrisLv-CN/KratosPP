@@ -312,7 +312,7 @@ BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, Abstrac
 			{
 				if (!data->BreakTargetLaser)
 				{
-					pStatus->StartTargetLaser(pTarget, pWeapon->Range, *data, flh, isOnTurret);
+					pStatus->StartTargetLaser(pTarget, pWeapon, *data, flh, isOnTurret);
 				}
 				else
 				{

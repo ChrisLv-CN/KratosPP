@@ -70,7 +70,6 @@ void ExtraFireEffect::OnFire(AbstractClass* pTarget, int weaponIdx)
 			const char* section = pShooter->GetTechnoType()->ID;
 			std::string image = INI::GetSection(INI::Rules, section)->Get("Image", std::string{ section });
 			ExtraFireFLHData* pArtData = INI::GetConfig<ExtraFireFLHData>(INI::Art, image.c_str())->Data;
-			Debug::Log("取Image[%s]上的ExtraFireFLH\n", image.c_str());
 			if (isElite)
 			{
 				ExtraFireFLHEntity art = pArtData->EliteData;
