@@ -162,7 +162,7 @@ public:
 
 		this->FLH = flh;
 		this->IsOnBody = isOnBody;
-		this->IsOnTarget = IsOnTarget;
+		this->IsOnTarget = isOnTarget;
 
 		this->Burst = burst;
 		this->FlipY = flipY;
