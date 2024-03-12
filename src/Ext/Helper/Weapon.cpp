@@ -303,20 +303,24 @@ BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, Abstrac
 		{
 			pAEM->FeedbackAttach(pWeapon);
 		}
-		// Draw target laser
 		if (pShooterT)
 		{
-			TargetLaserData* data = INI::GetConfig<TargetLaserData>(INI::Rules, pWeapon->ID)->Data;
-			TechnoStatus* pStatus = nullptr;
-			if (data->Enable && TryGetStatus<TechnoExt>(pShooterT, pStatus))
+			TechnoStatus* status = nullptr;
+			if (TryGetStatus<TechnoExt>(pShooterT, status))
 			{
-				if (!data->BreakTargetLaser)
+				status->RockerPitch(pWeapon);
+				// Draw target laser
+				TargetLaserData* data = INI::GetConfig<TargetLaserData>(INI::Rules, pWeapon->ID)->Data;
+				if (data->Enable)
 				{
-					pStatus->StartTargetLaser(pTarget, pWeapon, *data, flh, isOnTurret);
-				}
-				else
-				{
-					pStatus->CloseTargetLaser(pTarget);
+					if (!data->BreakTargetLaser)
+					{
+						status->StartTargetLaser(pTarget, pWeapon, *data, flh, isOnTurret);
+					}
+					else
+					{
+						status->CloseTargetLaser(pTarget);
+					}
 				}
 			}
 		}

@@ -54,6 +54,8 @@ public:
 
 	bool AmIStand();
 
+	void RockerPitch(WeaponTypeClass* pWeapon);
+
 	void OnAirstrikeDetach(EventSystem* sender, Event e, void* args)
 	{
 		auto const& argsArray = reinterpret_cast<void**>(args);
