@@ -62,30 +62,6 @@ Matrix3D MoveMatrix3DOnTurret(Matrix3D& mtx, CoordStruct turretOffset, double fa
 	return mtx;
 }
 
-// Step 3: rotation to turretDir
-Matrix3D RotateMatrix3DOnTurret(Matrix3D& mtx, double turretRad, bool isBuilding)
-{
-	/*
-	double turretRad = pTechno->TurretFacing().GetRadian();
-	double bodyRad = pTechno->PrimaryFacing.Current().GetRadian();
-	float angle = (float)(turretRad - bodyRad);
-
-	mtx.RotateZ(angle);
-	*/
-
-	// rotate to turret's angle
-	if (isBuilding)
-	{
-		mtx.RotateZ(static_cast<float>(turretRad));
-	}
-	else
-	{
-		mtx.RotateZ(-mtx.GetZRotation());
-		mtx.RotateZ(static_cast<float>(turretRad));
-	}
-	return mtx;
-}
-
 // Step 4: apply FLH offset
 Vector3D<float> GetFLHOffset(Matrix3D& mtx, CoordStruct flh)
 {
@@ -147,17 +123,21 @@ CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isO
 			// step 2
 			if (isOnTurret)
 			{
-				// read the ini config data
-				CoordStruct offset = INI::GetSection(INI::Art, pTechno->GetType()->ID)->Get("TurrentOffset", CoordStruct::Empty);
-				offset += turretOffset;
-				MoveMatrix3DOnTurret(mtx, offset);
-
+				if (turretOffset.IsEmpty())
+				{
+					const char* section = pTechno->GetTechnoType()->ID;
+					std::string image = INI::GetSection(INI::Rules, section)->Get("Image", std::string{ section });
+					turretOffset = INI::GetSection(INI::Art, image.c_str())->Get("TurretOffset", turretOffset);
+				}
+				MoveMatrix3DOnTurret(mtx, turretOffset);
 				// step 3
 				if (pTechno->HasTurret())
 				{
-					DirStruct turretDir = pTechno->SecondaryFacing.Current();
-					double turretRad = turretDir.GetRadian();
-					RotateMatrix3DOnTurret(mtx, turretRad, false);
+					double turretRad = pTechno->TurretFacing().Current().GetRadian();
+					double bodyRad = pTechno->PrimaryFacing.Current().GetRadian();
+					float angle = (float)(turretRad - bodyRad);
+
+					mtx.RotateZ(angle);
 				}
 			}
 			// step 4

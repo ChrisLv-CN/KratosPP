@@ -65,9 +65,6 @@ Matrix3D GetMatrix3D(TechnoClass* pTechno, VoxelIndexKey* pKey = nullptr, bool i
 // Step 2: move to turretOffset
 Matrix3D MoveMatrix3DOnTurret(Matrix3D& mtx, CoordStruct turretOffset, double factor = 1.0);
 
-// Step 3: rotation to turretDir
-Matrix3D RotateMatrix3DOnTurret(Matrix3D& mtx, double turretRad, bool isBuilding);
-
 // Step 4: apply FLH offset
 Vector3D<float> GetFLHOffset(Matrix3D& mtx, CoordStruct flh);
 
