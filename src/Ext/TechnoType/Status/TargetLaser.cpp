@@ -93,7 +93,8 @@ bool TechnoStatus::OutOfTargetLaserRange(TargetLaser laser)
 			range += pTechno->GetElevationBonusDistance(laser.pTarget);
 		}
 		range += (int)(laser.Data.TargetLaserRange * Unsorted::LeptonsPerCell);
-		return pTechno->DistanceFrom(laser.pTarget) >= range;
+		int targetRange = pTechno->DistanceFrom(laser.pTarget);
+		return targetRange < laser.pWeapon->MinimumRange || targetRange > range;
 	}
 	return true;
 }
