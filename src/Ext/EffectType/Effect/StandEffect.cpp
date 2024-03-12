@@ -67,7 +67,7 @@ void StandEffect::CreateAndPutStand()
 		// 放出地图
 		if (!pObject->InLimbo)
 		{
-			if (!TryPutTechno(pStand, location))
+			if (!TryPutTechno(pStand, location, nullptr, true))
 			{
 				End(location);
 				return;
@@ -682,7 +682,7 @@ void StandEffect::OnPut(CoordStruct* pCoord, DirType dirType)
 	if (pStand->InLimbo)
 	{
 		CoordStruct location = *pCoord;
-		if (!TryPutTechno(pStand, location))
+		if (!TryPutTechno(pStand, location, nullptr, true))
 		{
 			End(location);
 		}

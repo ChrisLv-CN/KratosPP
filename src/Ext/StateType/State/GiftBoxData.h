@@ -258,7 +258,14 @@ public:
 	{
 		ForceTransform = true;
 
-		GiftBoxData::Read(reader, TITLE);
+		std::string type{ "" };
+		type = reader->Get("DeployToTransform", type);
+		if (IsNotNone(type))
+		{
+			Data.Gifts.emplace_back(type);
+		}
+
+		GiftBoxData::Read(reader, "DeployToTransform.");
 	}
 
 #pragma region save/load
@@ -281,5 +288,4 @@ public:
 	}
 #pragma endregion
 private:
-	inline static std::string TITLE = "DeployToTransform.";
 };

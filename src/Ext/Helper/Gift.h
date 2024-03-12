@@ -17,7 +17,7 @@
 
 class AttachEffect;
 
-bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell = nullptr);
+bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell = nullptr, bool virtualUnit = false);
 
 TechnoClass* CreateAndPutTechno(TechnoTypeClass* pType, HouseClass* pHouse, CoordStruct location, CellClass* pCell = nullptr);
 

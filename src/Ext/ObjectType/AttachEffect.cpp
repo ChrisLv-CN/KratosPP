@@ -1323,10 +1323,8 @@ void AttachEffect::OnUnInit()
 	ForeachChild([&location](Component* c) {
 		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
 		{
-			if (ae->IsAlive())
-			{
-				ae->End(location);
-			}
+			ae->TimeToDie();
+			ae->End(location);
 		}
 		});
 }

@@ -14,7 +14,7 @@
 
 #include <Ext/EffectType/Effect/CrateBuffData.h>
 
-bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell)
+bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell, bool virtualUnit)
 {
 	if (pCell || (pCell = MapClass::Instance->TryGetCellAt(location)) != nullptr)
 	{
@@ -23,11 +23,34 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell)
 		++Unsorted::IKnowWhatImDoing;
 		pTechno->Unlimbo(pCell->GetCoordsWithBridge(), DirType::East);
 		--Unsorted::IKnowWhatImDoing;
-		pCell->OccupationFlags = occFlags;
-		// 单位移动到指定位置
-		CoordStruct pos = pTechno->GetCoords();
-		pos.Z = location.Z;
-		pTechno->SetLocation(pos);
+		if (virtualUnit)
+		{
+			pCell->OccupationFlags = occFlags;
+		}
+		bool dontMove = false;
+		if (BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno))
+		{
+			pBuilding->QueueMission(Mission::Construction, false);
+			pBuilding->DiscoveredBy(pTechno->Owner);
+			pBuilding->IsReadyToCommence = true;
+			pTechno->Owner->RecheckTechTree = true;
+			if (!virtualUnit)
+			{
+				pCell->AddContent(pBuilding, false);
+				dontMove = true;
+			}
+			else
+			{
+				dontMove = false;
+			}
+		}
+		if (!dontMove)
+		{
+			// 单位移动到指定位置
+			CoordStruct pos = pTechno->GetCoords();
+			pos.Z = location.Z;
+			pTechno->SetLocation(pos);
+		}
 		return true;
 	}
 	return false;

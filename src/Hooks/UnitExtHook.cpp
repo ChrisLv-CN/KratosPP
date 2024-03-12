@@ -27,7 +27,7 @@ DEFINE_HOOK(0x6FF923, TechnoClass_Fire_FireOnce, 0x6)
 	return 0;
 }
 
-DEFINE_HOOK(0x739C74, UnitClass_Deployed, 0x6)
+DEFINE_HOOK(0x739C7A, UnitClass_Deployed, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
 	if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))

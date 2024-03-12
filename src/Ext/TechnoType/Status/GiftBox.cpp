@@ -272,8 +272,16 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				Component* boxGO = this->GetParent();
 				// 交换AE管理器
 				AttachEffect* boxAEM = boxGO->GetComponent<AttachEffect>();
-				// 将当前的GiftBox的AE关闭，如果有的话
-				boxAEM->DetachByToken(GiftBox->Token);
+				// 关闭不可继承的AE，以及含有GiftBox的AE
+				boxAEM->ForeachChild([](Component* c) {
+					if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+					{
+						if (!ae->AEData.Inheritable || ae->AEData.GiftBox.Enable)
+						{
+							ae->TimeToDie();
+						}
+					}
+					});
 				// AE管理器脱离
 				boxAEM->DetachFromParent(false);
 				pGiftAEM->DetachFromParent(false);
@@ -282,16 +290,6 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				boxGO->AddComponent(pGiftAEM);
 				// 修改变量
 				pGiftAEM = boxAEM;
-				// 关闭不可继承的AE
-				pGiftAEM->ForeachChild([](Component* c) {
-					if (auto ae = dynamic_cast<AttachEffectScript*>(c))
-					{
-						if (!ae->AEData.Inheritable)
-						{
-							ae->TimeToDie();
-						}
-					}
-					});
 				pGiftAEM->CheckDurationAndDisable(true);
 				// 发出类型变更的通知
 				dynamic_cast<GameObject*>(giftGO)->ExtChanged = true;
