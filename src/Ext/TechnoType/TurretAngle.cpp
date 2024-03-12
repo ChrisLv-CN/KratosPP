@@ -20,17 +20,31 @@ TurretAngleData* TurretAngle::GetTurretAngleData()
 
 TechnoStatus* TurretAngle::GetTechnoStatue()
 {
-	if (_status)
+	if (!_status)
 	{
-		_status = GetStatus<TechnoExt, TechnoStatus>(pTechno);
+		_status = _gameObject->GetComponent<TechnoStatus>();
 	}
 	return _status;
+}
+
+int TurretAngle::Dir2FacingIndex180to360(DirStruct dir)
+{
+	int dirIndex = Dir2FacingIndex(dir, 180) * 2;
+	if (dirIndex > 0 && dirIndex < 180)
+	{
+		dirIndex++;
+	}
+	else if (dirIndex > 180)
+	{
+		dirIndex--;
+	}
+	return dirIndex;
 }
 
 bool TurretAngle::DefaultAngleIsChange(DirStruct bodyDir)
 {
 	// 车体朝向方向，游戏限制只能划180份
-	int bodyDirIndex = Dir2FacingIndex(bodyDir, 180) * 2;
+	int bodyDirIndex = Dir2FacingIndex180to360(bodyDir);
 	DirStruct newDefaultDir;
 	ChangeDefaultDir = TryGetDefaultAngle(bodyDirIndex, newDefaultDir);
 	if (ChangeDefaultDir)
@@ -84,7 +98,7 @@ bool TurretAngle::ForceTurretToForward(DirStruct bodyDir, int bodyDirIndex, int 
 {
 	// 检查炮塔朝向角度和目标朝向角度的差值，判断是否需要转回前方
 	DirStruct turretDir = pTechno->SecondaryFacing.Current();
-	int turretDirIndex = Dir2FacingIndex(turretDir, 180) * 2;
+	int turretDirIndex = Dir2FacingIndex180to360(turretDir);
 	int turretAngle = IncludedAngle360(bodyDirIndex, turretDirIndex);
 
 	if (turretAngle > 180)
@@ -98,8 +112,8 @@ bool TurretAngle::ForceTurretToForward(DirStruct bodyDir, int bodyDirIndex, int 
 				turnAngle -= 360;
 			}
 			// 逆时针回转到限位
-			pTechno->SecondaryFacing.SetCurrent(turretDir);
 			LockTurretDir = DirNormalized(turnAngle, 360);
+			pTechno->SecondaryFacing.SetCurrent(LockTurretDir);
 			return true;
 		}
 		else if (bodyTargetDelta < 180)
@@ -120,8 +134,8 @@ bool TurretAngle::ForceTurretToForward(DirStruct bodyDir, int bodyDirIndex, int 
 			{
 				turnAngle -= 360;
 			}
-			pTechno->SecondaryFacing.SetCurrent(turretDir);
 			LockTurretDir = DirNormalized(turnAngle, 360);
+			pTechno->SecondaryFacing.SetCurrent(LockTurretDir);
 			return true;
 		}
 		else if (bodyTargetDelta > 180)
@@ -281,7 +295,7 @@ void TurretAngle::OnUpdate()
 		DirStruct bodyDir = pTechno->PrimaryFacing.Current();
 		LockTurretDir = bodyDir;
 		// 车体朝向方向，游戏限制只能划180份
-		int bodyDirIndex = Dir2FacingIndex(bodyDir, 180) * 2;
+		int bodyDirIndex = Dir2FacingIndex180to360(bodyDir);
 		DirStruct newDefaultDir;
 		ChangeDefaultDir = TryGetDefaultAngle(bodyDirIndex, newDefaultDir);
 		if (ChangeDefaultDir)
@@ -302,7 +316,7 @@ void TurretAngle::OnUpdate()
 			// 目标所在方向
 			DirStruct targetDir = pTechno->Direction(pTarget);
 			// 游戏限制只能划180份，Index * 2
-			int targetDirIndex = Dir2FacingIndex(targetDir, 180) * 2;
+			int targetDirIndex = Dir2FacingIndex180to360(targetDir);
 			// 取夹角的度数值
 			int bodyTargetDelta = IncludedAngle360(bodyDirIndex, targetDirIndex);
 			// 目标在射程范围内

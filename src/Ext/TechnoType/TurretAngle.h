@@ -59,6 +59,8 @@ public:
 private:
 	void Setup();
 
+	int Dir2FacingIndex180to360(DirStruct dir);
+
 	bool TryGetDefaultAngle(int& bodyDirIndex, DirStruct& newDefaultDir);
 
 	bool InDeadZone(int bodyTargetDelta, int min, int max);

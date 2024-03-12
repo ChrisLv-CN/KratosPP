@@ -202,7 +202,7 @@ void TechnoStatus::OnFire_TargetLaser(AbstractClass* pTarget, int weaponIdx)
 	{
 		if (!data->BreakTargetLaser)
 		{
-			StartTargetLaser(pTarget, pWeaponType, *data, pWeapon->FLH);
+			StartTargetLaser(pTarget, pWeaponType, *data, pWeapon->FLH, !IsFLHOnBody(weaponIdx));
 		}
 		else
 		{
