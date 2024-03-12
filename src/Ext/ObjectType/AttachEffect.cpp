@@ -192,7 +192,7 @@ CrateBuffData AttachEffect::CountAttachStatusMultiplier()
 	// 统计AE加成
 	ForeachChild([&multiplier](Component* c) {
 		auto temp = dynamic_cast<AttachEffectScript*>(c);
-		if (temp && temp->IsActive() && temp->AEData.CrateBuff.Enable)
+		if (temp && temp->IsAlive() && temp->AEData.CrateBuff.Enable)
 		{
 			multiplier.FirepowerMultiplier *= temp->AEData.CrateBuff.FirepowerMultiplier;
 			multiplier.ArmorMultiplier *= temp->AEData.CrateBuff.ArmorMultiplier;
@@ -213,7 +213,7 @@ ImmuneData AttachEffect::GetImmuneData()
 	// 统计AE加成
 	ForeachChild([&data](Component* c) {
 		auto temp = dynamic_cast<AttachEffectScript*>(c);
-		if (temp && temp->IsActive() && temp->AEData.Immune.Enable)
+		if (temp && temp->IsAlive() && temp->AEData.Immune.Enable)
 		{
 			data.Psionics |= temp->AEData.Immune.Psionics;
 			data.PsionicWeapons |= temp->AEData.Immune.PsionicWeapons;
@@ -423,7 +423,7 @@ void AttachEffect::Attach(AttachEffectData data,
 		// 检查持续时间，增减Duration
 		ForeachChild([&find, &add, &isAttackMark, &isHouseMark, &data, &pAttacker, &pAttackingHouse, &location](Component* c) {
 			auto temp = dynamic_cast<AttachEffectScript*>(c);
-			if (temp && temp->IsActive())
+			if (temp && temp->IsAlive())
 			{
 				if (data.Group < 0)
 				{
@@ -489,11 +489,15 @@ void AttachEffect::Attach(AttachEffectData data,
 						if (data.OverrideSameGroup)
 						{
 							// 与自己不同名的，替换
-							if (temp->Name != data.Name)
+							if (temp->AEData.Name != data.Name)
 							{
 								// 执行替换操作，关闭所有的同组AE
-								temp->End(location);
+								temp->TimeToDie();
 								add = true;
+							}
+							else if (temp->AEData.ResetDurationOnReapply)
+							{
+								temp->ResetDuration();
 							}
 							// 继续循环直至全部关闭
 						}
@@ -971,7 +975,7 @@ int AttachEffect::FindInsertIndex(AttachEffectData data)
 				for (auto it = _children.rbegin(); it != _children.rend(); it++)
 				{
 					AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(*it);
-					if (ae && ae->IsActive() && ae->AEData.Stand.Enable && ae->AEData.Stand.IsTrain)
+					if (ae && ae->IsAlive() && ae->AEData.Stand.Enable && ae->AEData.Stand.IsTrain)
 					{
 						if (ae->AEData.Stand.CabinGroup == data.Stand.CabinGroup)
 						{
@@ -995,7 +999,7 @@ int AttachEffect::FindInsertIndex(AttachEffectData data)
 				for (Component*& c : _children)
 				{
 					auto ae = dynamic_cast<AttachEffectScript*>(c);
-					if (ae && ae->IsActive() && ae->AEData.Stand.Enable && ae->AEData.Stand.IsTrain)
+					if (ae && ae->IsAlive() && ae->AEData.Stand.Enable && ae->AEData.Stand.IsTrain)
 					{
 						if (ae->AEData.Stand.CabinGroup == data.Stand.CabinGroup)
 						{
@@ -1319,7 +1323,7 @@ void AttachEffect::OnUnInit()
 	ForeachChild([&location](Component* c) {
 		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
 		{
-			if (ae->IsActive())
+			if (ae->IsAlive())
 			{
 				ae->End(location);
 			}
