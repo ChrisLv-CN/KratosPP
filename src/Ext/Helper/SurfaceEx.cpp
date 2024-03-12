@@ -161,6 +161,47 @@ void DrawCell(DSurface* pSurface,
 	}
 }
 
+void DrawTargetLaserPoint(DSurface* pSurface,
+	CoordStruct location, ColorStruct color, RectangleStruct bound)
+{
+	Point2D targetPos = ToClientPos(location);
+	// 颜色的随机偏移
+	ColorStruct c = color;
+	BYTE rand = (BYTE)Random::RandomRanged(0, 14);
+	if (c.R > rand)
+	{
+		c.R -= rand;
+	}
+	if (c.G > rand)
+	{
+		c.G -= rand;
+	}
+	if (c.B > rand)
+	{
+		c.B -= rand;
+	}
+	int dwColor = Drawing::RGB_To_Int(c);
+	DrawTargetLaserPoint(pSurface, targetPos, dwColor, bound);
+}
+
+void DrawTargetLaserPoint(DSurface* pSurface,
+	Point2D targetPos, int dwColor, RectangleStruct bound)
+{
+	// 在目标位置绘制光点 #
+	Point2D a1 = targetPos, a2 = targetPos;
+	a1.Y -= 1; a2.Y += 2;
+	Point2D b1 = a1, b2 = a2;
+	b1.X += 1; b2.X += 1;
+	Point2D c1 = targetPos, c2 = targetPos;
+	c1.X -= 1; c2.X += 2;
+	Point2D d1 = c1, d2 = c2;
+	d1.Y += 1; d2.Y += 1;
+	DrawLine(pSurface, a1, a2, dwColor, bound);
+	DrawLine(pSurface, b1, b2, dwColor, bound);
+	DrawLine(pSurface, c1, c2, dwColor, bound);
+	DrawLine(pSurface, d1, d2, dwColor, bound);
+}
+
 /**
  *@brief 绘制激光照射
  *
@@ -195,18 +236,7 @@ void DrawTargetLaser(DSurface* pSurface,
 	if (drawPoint)
 	{
 		// 在目标位置绘制光点 #
-		Point2D a1 = point2, a2 = point2;
-		a1.Y -= 1; a2.Y += 2;
-		Point2D b1 = a1, b2 = a2;
-		b1.X += 1; b2.X += 1;
-		Point2D c1 = point2, c2 = point2;
-		c1.X -= 1; c2.X += 2;
-		Point2D d1 = c1, d2 = c2;
-		d1.Y += 1; d2.Y += 1;
-		DrawLine(pSurface, a1, a2, dwColor, bound);
-		DrawLine(pSurface, b1, b2, dwColor, bound);
-		DrawLine(pSurface, c1, c2, dwColor, bound);
-		DrawLine(pSurface, d1, d2, dwColor, bound);
+		DrawTargetLaserPoint(pSurface, point2, dwColor, bound);
 	}
 	// 绘制线条
 	int startZ = -32 - TacticalClass::AdjustForZ(startLocation.Z);

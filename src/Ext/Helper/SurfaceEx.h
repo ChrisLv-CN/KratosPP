@@ -107,6 +107,28 @@ void DrawCell(DSurface* pSurface,
 	bool dashed = true, bool blink = false, int length = 128);
 
 /**
+ *@brief 绘制一个类激光照射的3x3范围的十字点
+ *
+ * @param pSurface
+ * @param location
+ * @param color
+ * @param bound
+ */
+void DrawTargetLaserPoint(DSurface* pSurface,
+	CoordStruct location, ColorStruct color, RectangleStruct bound);
+
+/**
+ *@brief 绘制激光照射的十字点
+ *
+ * @param pSurface
+ * @param targetPos
+ * @param dwColor
+ * @param bound
+ */
+void DrawTargetLaserPoint(DSurface* pSurface,
+	Point2D targetPos, int dwColor, RectangleStruct bound);
+
+/**
  *@brief 绘制激光照射
  *
  * @param pSurface

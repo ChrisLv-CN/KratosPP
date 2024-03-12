@@ -12,6 +12,7 @@ public:
 
 	int TargetLaserDuration = -1;
 	CoordStruct TargetLaserOffset = CoordStruct::Empty;
+	double TargetLaserLength = 0.9;
 	Point2D TargetLaserShake = Point2D{ -15, 15 };
 	double TargetLaserRange = 0.5;
 	bool TargetLaserPoint = true;
@@ -27,6 +28,7 @@ public:
 
 		TargetLaserDuration = reader->Get("TargetLaserDuration", TargetLaserDuration);
 		TargetLaserOffset = reader->Get("TargetLaserOffset", TargetLaserOffset);
+		TargetLaserLength = reader->GetPercent("TargetLaserLength", TargetLaserLength);
 		TargetLaserShake = reader->GetRange("TargetLaserShake", TargetLaserShake);
 		TargetLaserRange = reader->Get("TargetLaserRange", TargetLaserRange);
 		TargetLaserPoint = reader->Get("TargetLaserPoint", TargetLaserPoint);
@@ -46,6 +48,7 @@ public:
 		return stream
 			.Process(this->IsTargetLaser)
 			.Process(this->TargetLaserOffset)
+			.Process(this->TargetLaserLength)
 			.Process(this->TargetLaserShake)
 			.Process(this->TargetLaserRange)
 			.Process(this->TargetLaserPoint)

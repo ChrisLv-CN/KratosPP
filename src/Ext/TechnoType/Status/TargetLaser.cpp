@@ -137,9 +137,21 @@ void TechnoStatus::OnGScreenRender(EventSystem* sender, Event e, void* args)
 			{
 				color = pTechno->Owner->LaserColor;
 			}
-			DrawTargetLaser(DSurface::Temp, sourceLocation, targetLocation, color, bounds, laser.Data.TargetLaserPoint);
+			// 画点
+			if (laser.Data.TargetLaserPoint)
+			{
+				DrawTargetLaserPoint(DSurface::Temp, targetLocation, color, bounds);
+			}
+			// 截断激光线
+			double dist = sourceLocation.DistanceFrom(targetLocation);
+			if (!isnan(dist) && !isinf(dist))
+			{
+				double length = dist * laser.Data.TargetLaserLength;
+				CoordStruct targetLocation2 = GetForwardCoords(sourceLocation, targetLocation, length, dist);
+				// 画线
+				DrawTargetLaser(DSurface::Temp, sourceLocation, targetLocation2, color, bounds, false);
+			}
 		}
-
 	}
 }
 
@@ -157,7 +169,7 @@ void TechnoStatus::OnUpdate_TargetLaser()
 				|| OutOfTargetLaserRange(laser)
 				|| (_lastTarget == laser.pTarget && !pTechno->Target)
 				|| (CastToTechno(laser.pTarget, pTargetTechno) && IsDeadOrInvisibleOrCloaked(pTargetTechno))
-			)
+				)
 			{
 				it = _targetLasers.erase(it);
 			}
