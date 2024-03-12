@@ -488,9 +488,13 @@ void AttachEffect::Attach(AttachEffectData data,
 						find = true;
 						if (data.OverrideSameGroup)
 						{
-							// 执行替换操作，关闭所有的同组AE
-							temp->End(location);
-							add = true;
+							// 与自己不同名的，替换
+							if (temp->Name != data.Name)
+							{
+								// 执行替换操作，关闭所有的同组AE
+								temp->End(location);
+								add = true;
+							}
 							// 继续循环直至全部关闭
 						}
 						else

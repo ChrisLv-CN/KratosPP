@@ -103,5 +103,5 @@ void AttachedParticleSystem(WeaponTypeClass* pWeapon, CoordStruct sourcePos, Coo
 
 void PlayReportSound(WeaponTypeClass* pWeapon, CoordStruct sourcePos);
 
-void DrawWeaponAnim(ObjectClass* pShooter, WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos);
+void DrawWeaponAnim(ObjectClass* pShooter, TechnoClass* pAttacker, HouseClass* pAttackingHouse, WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos);
 #pragma endregion

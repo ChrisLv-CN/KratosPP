@@ -292,7 +292,7 @@ BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, Abstrac
 	if (pShooter)
 	{
 		// Draw weapon anim
-		DrawWeaponAnim(pShooter, pWeapon, sourcePos, targetPos);
+		DrawWeaponAnim(pShooter, pAttacker, pAttacingHouse, pWeapon, sourcePos, targetPos);
 		// feedbackAE
 		TechnoClass* pShooterT = nullptr;
 		BulletClass* pShooterB = nullptr;
@@ -436,7 +436,7 @@ void PlayReportSound(WeaponTypeClass* pWeapon, CoordStruct sourcePos)
 	}
 }
 
-void DrawWeaponAnim(ObjectClass* pShooter, WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos)
+void DrawWeaponAnim(ObjectClass* pShooter, TechnoClass* pAttacker, HouseClass* pAttackingHouse, WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos)
 {
 	// Anim
 	if (pWeapon->Anim.Count > 0)
@@ -456,7 +456,11 @@ void DrawWeaponAnim(ObjectClass* pShooter, WeaponTypeClass* pWeapon, CoordStruct
 		if (pAnimType)
 		{
 			AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, sourcePos);
-			pAnim->SetOwnerObject(pShooter);
+			SetAnimOwner(pAnim, pAttackingHouse);
+			if (!pAnimType->Bouncer && !pAnimType->IsMeteor)
+			{
+				pAnim->SetOwnerObject(pShooter);
+			}
 		}
 	}
 }
