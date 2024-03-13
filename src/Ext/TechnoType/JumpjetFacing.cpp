@@ -39,13 +39,13 @@ void JumpjetFacing::OnUpdate()
 	{
 		if (_JJNeedTurn)
 		{
-			FootClass* pFoot = static_cast<FootClass*>(pTechno);
+			FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
 			if (pFoot->GetCurrentSpeed() == 0)
 			{
 				// Turning
 				_JJNeedTurn = false;
 				pFoot->StopMoving();
-				JumpjetLocomotionClass* jjLoco = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get());
+				JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get());
 				jjLoco->LocomotionFacing.SetDesired(_JJTurnTo);
 			}
 			else

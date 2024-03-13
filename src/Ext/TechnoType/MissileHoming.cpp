@@ -44,7 +44,7 @@ void MissileHoming::OnUpdate()
 		{
 			CoordStruct sourcePos = pTechno->GetCoords();
 			CoordStruct targetPos;
-			static_cast<FootClass*>(pTechno)->Locomotor->Destination(&targetPos);
+			dynamic_cast<FootClass*>(pTechno)->Locomotor->Destination(&targetPos);
 			DirStruct dir = Point2Dir(sourcePos, targetPos);
 			pTechno->PrimaryFacing.SetCurrent(dir);
 			pTechno->SecondaryFacing.SetCurrent(dir);
@@ -69,7 +69,7 @@ void MissileHoming::OnUpdate()
 		}
 		if (!HomingTargetLocation.IsEmpty())
 		{
-			RocketLocomotionClass* pLoco = static_cast<RocketLocomotionClass*>(static_cast<FootClass*>(pTechno)->Locomotor.get());
+			RocketLocomotionClass* pLoco = static_cast<RocketLocomotionClass*>(dynamic_cast<FootClass*>(pTechno)->Locomotor.get());
 			if (pLoco->MissionState > 2)
 			{
 				pLoco->MovingDestination = HomingTargetLocation;

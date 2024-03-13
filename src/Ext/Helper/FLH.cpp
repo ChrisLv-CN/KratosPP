@@ -166,7 +166,10 @@ DirStruct GetRelativeDir(TechnoClass* pMaster, int dir, bool isOnTurret)
 		GUID locoId = pMaster->GetTechnoType()->Locomotor;
 		if (locoId == LocomotionClass::CLSIDs::Jumpjet)
 		{
-			sourceDir = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get())->LocomotionFacing.Current();
+			if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
+			{
+				sourceDir = jjLoco->LocomotionFacing.Current();
+			}
 		}
 		if (isOnTurret || pFoot->WhatAmI() == AbstractType::Aircraft) // WWSB Aircraft is a turret!!!
 		{

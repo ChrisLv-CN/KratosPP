@@ -38,8 +38,8 @@ void AircraftDive::OnUpdate()
 	if (!IsDeadOrInvisible(pTechno))
 	{
 		AircraftDiveData* data = GetAircraftDiveData();
-		FootClass* pFoot = static_cast<FootClass*>(pTechno);
-		FlyLocomotionClass* pFly = static_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
+		FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
+		FlyLocomotionClass* pFly = dynamic_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
 		if (!pTechno->IsInAir() || pFly->IsTakingOff || pFly->IsLanding)
 		{
 			// 归零

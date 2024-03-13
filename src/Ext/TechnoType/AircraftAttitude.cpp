@@ -66,8 +66,8 @@ void AircraftAttitude::UpdateHeadToCoord(CoordStruct headTo, bool lockAngle)
 	}
 	if (!headTo.IsEmpty())
 	{
-		FootClass* pFoot = static_cast<FootClass*>(pTechno);
-		FlyLocomotionClass* pFly = static_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
+		FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
+		FlyLocomotionClass* pFly = dynamic_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
 
 		if (pFly->IsTakingOff || pFly->IsLanding || !pFly->HasMoveOrder)
 		{
@@ -205,7 +205,7 @@ void AircraftAttitude::OnUpdate()
 		if (!GetAircraftAttitudeData()->Disable && !_lockAngle)
 		{
 			// 根据速度计算出飞行的下一个位置
-			FootClass* pFoot = static_cast<FootClass*>(pTechno);
+			FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
 			int speed = pFoot->Locomotor->Apparent_Speed();
 			// 飞机使用的是炮塔角度
 			CoordStruct nextPos = GetFLHAbsoluteCoords(_location, CoordStruct{ speed, 0,0 }, pTechno->SecondaryFacing.Current());
@@ -236,8 +236,8 @@ void AircraftAttitude::OnUpdateEnd()
 	if (!IsDeadOrInvisible(pTechno) && !IsDeadOrInvisible(pTechno->SpawnOwner))
 	{
 		AircraftAttitudeData* data = GetAircraftAttitudeData();
-		FootClass* pFoot = static_cast<FootClass*>(pTechno);
-		FlyLocomotionClass* pFly = static_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
+		FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
+		FlyLocomotionClass* pFly = dynamic_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
 
 		TechnoClass* pSpawnOwner = pTechno->SpawnOwner;
 

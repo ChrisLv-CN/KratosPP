@@ -503,21 +503,21 @@ void ForceStopMoving(ILocomotion* pLoco, GUID locoId)
 	pLoco->Mark_All_Occupation_Bits((int)PlacementType::Remove);
 	if (locoId == LocomotionClass::CLSIDs::Drive)
 	{
-		DriveLocomotionClass* loco = static_cast<DriveLocomotionClass*>(pLoco);
+		DriveLocomotionClass* loco = dynamic_cast<DriveLocomotionClass*>(pLoco);
 		loco->Destination = CoordStruct::Empty;
 		loco->HeadToCoord = CoordStruct::Empty;
 		loco->IsDriving = false;
 	}
 	else if (locoId == LocomotionClass::CLSIDs::Ship)
 	{
-		ShipLocomotionClass* loco = static_cast<ShipLocomotionClass*>(pLoco);
+		ShipLocomotionClass* loco = dynamic_cast<ShipLocomotionClass*>(pLoco);
 		loco->Destination = CoordStruct::Empty;
 		loco->HeadToCoord = CoordStruct::Empty;
 		loco->IsDriving = false;
 	}
 	else if (locoId == LocomotionClass::CLSIDs::Walk)
 	{
-		WalkLocomotionClass* loco = static_cast<WalkLocomotionClass*>(pLoco);
+		WalkLocomotionClass* loco = dynamic_cast<WalkLocomotionClass*>(pLoco);
 		loco->Destination = CoordStruct::Empty;
 		loco->HeadToCoord = CoordStruct::Empty;
 		loco->IsMoving = false;
@@ -525,7 +525,7 @@ void ForceStopMoving(ILocomotion* pLoco, GUID locoId)
 	}
 	else if (locoId == LocomotionClass::CLSIDs::Mech)
 	{
-		MechLocomotionClass* loco = static_cast<MechLocomotionClass*>(pLoco);
+		MechLocomotionClass* loco = dynamic_cast<MechLocomotionClass*>(pLoco);
 		loco->Destination = CoordStruct::Empty;
 		loco->HeadToCoord = CoordStruct::Empty;
 		loco->IsMoving = false;

@@ -16,6 +16,8 @@ HANDLE Common::hInstance = 0;
 
 bool Common::IsLoadGame = false;
 
+bool Common::DebugAE = false;
+
 char Common::readBuffer[Common::readLength];
 wchar_t Common::wideBuffer[Common::readLength];
 const char Common::readDelims[4] = ",";
@@ -23,7 +25,7 @@ const char Common::readDelims[4] = ",";
 //void Common::CmdLineParse(char** ppArgs, int nNumArgs)
 void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 {
-	/*
+
 	auto const& argsArray = reinterpret_cast<void**>(args);
 	char** ppArgs = (char**)argsArray[0];
 	int nNumArgs = (int)argsArray[1];
@@ -32,15 +34,14 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 	for (int i = 1; i < nNumArgs; i++)
 	{
 		const char* pArg = ppArgs[i];
-
-#ifndef IS_RELEASE_VER
-		if (_stricmp(pArg, "-b=" STR(BUILD_NUMBER)) == 0)
+#ifdef DEBUG
+		if (_stricmp(pArg, "-DebugAE") == 0)
 		{
-			//HideWarning = true;
+			DebugAE = true;
 		}
-#endif
+#endif // DEBUG
 	}
-	*/
+
 	if (InChinese)
 	{
 		Debug::Log("初始化完成 版本: " PRODUCT_VERSION "\n");

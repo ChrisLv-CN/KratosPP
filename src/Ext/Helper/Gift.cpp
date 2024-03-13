@@ -58,7 +58,7 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell, 
 
 TechnoClass* CreateAndPutTechno(TechnoTypeClass* pType, HouseClass* pHouse, CoordStruct location, CellClass* pCell)
 {
-	TechnoClass* pTechno = static_cast<TechnoClass*>(pType->CreateObject(pHouse));
+	TechnoClass* pTechno = dynamic_cast<TechnoClass*>(pType->CreateObject(pHouse));
 	if (TryPutTechno(pTechno, location, pCell))
 	{
 		return pTechno;
@@ -204,8 +204,8 @@ void ReleaseGifts(std::vector<std::string> gifts, GiftBoxEntity data, BoxStateCa
 					// JJ有单独的Facing
 					if (pGiftStatus->IsJumpjet())
 					{
-						FootClass* pGiftFoot = static_cast<FootClass*>(pGift);
-						JumpjetLocomotionClass* pLoco = static_cast<JumpjetLocomotionClass*>(pGiftFoot->Locomotor.get());
+						FootClass* pGiftFoot = dynamic_cast<FootClass*>(pGift);
+						JumpjetLocomotionClass* pLoco = dynamic_cast<JumpjetLocomotionClass*>(pGiftFoot->Locomotor.get());
 						pLoco->LocomotionFacing.SetCurrent(boxState.BodyDir);
 					}
 					// 同步编队

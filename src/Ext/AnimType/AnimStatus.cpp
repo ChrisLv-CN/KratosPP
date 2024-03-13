@@ -55,8 +55,7 @@ void AnimStatus::Explosion_Damage(bool isBounce, bool bright)
 				if (IsNotNone(weaponType))
 				{
 					// 用武器
-					WeaponTypeClass* pWeapon = WeaponTypeClass::Find(weaponType.c_str());
-					if (pWeapon)
+					if (WeaponTypeClass* pWeapon = WeaponTypeClass::Find(weaponType.c_str()))
 					{
 						// 使用武器的伤害数值
 						if (GetAnimDamageData()->UseWeaponDamage)
@@ -67,18 +66,32 @@ void AnimStatus::Explosion_Damage(bool isBounce, bool bright)
 						{
 							if (_damageDelayTimer.Expired())
 							{
-								// Logger.Log($"{Game.CurrentFrame} - 动画 {pAnim} [{pAnimType->ID}] 用武器播放伤害 TypeDamage = {damage}, AnimDamage = {pAnim->Damage}, Weapon = {weaponType}");
 								pWH = pWeapon->Warhead;
+								if (!pWH)
+								{
+									Debug::Log("Warning: Anim [%s] try to use weapon [%s] to make damage, but weapon have no Warhead.\n", pAnim->Type->ID, weaponType.c_str());
+									return;
+								}
 								bool isBright = bright || pWeapon->Bright; // 原游戏中弹头上的bright是无效的
-								BulletTypeClass* pBulletType = pWeapon->Projectile;
-								BulletClass* pBullet = pBulletType->CreateBullet(nullptr, pCreater, damage, pWH, pWeapon->Speed, isBright);
-								pBullet->WeaponType = pWeapon;
-								SetSourceHouse(pBullet, pAnim->Owner);
-								pBullet->Detonate(location);
-								pBullet->UnInit();
+								if (BulletTypeClass* pBulletType = pWeapon->Projectile)
+								{
+									BulletClass* pBullet = pBulletType->CreateBullet(nullptr, pCreater, damage, pWH, pWeapon->Speed, isBright);
+									pBullet->WeaponType = pWeapon;
+									SetSourceHouse(pBullet, pAnim->Owner);
+									pBullet->Detonate(location);
+									pBullet->UnInit();
+								}
+								else
+								{
+									Debug::Log("Warning: Anim [%s] try to use weapon [%s] to make damage, but weapon have no Projectile.\n", pAnim->Type->ID, weaponType.c_str());
+								}
 								_damageDelayTimer.Start(GetAnimDamageData()->Delay);
 							}
 						}
+					}
+					else
+					{
+						Debug::Log("Warning: Anim [%s] try to use weapon [%s] to make damage, but can not find that Weapon.\n", pAnim->Type->ID, weaponType.c_str());
 					}
 				}
 				else if (pWH)

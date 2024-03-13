@@ -48,7 +48,7 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 		pMatrix->Scale(AudioVisual::Data()->VoxelShadowScaleInAir);
 
 		// 调整倾斜时影子的纵向比例
-		Matrix3D matrix = static_cast<FootClass*>(pTechno)->Locomotor->Draw_Matrix(nullptr);
+		Matrix3D matrix = dynamic_cast<FootClass*>(pTechno)->Locomotor->Draw_Matrix(nullptr);
 		double scale = Math::cos(abs(matrix.GetYRotation()));
 		pMatrix->ScaleX(static_cast<float>(scale));
 	}
@@ -136,7 +136,7 @@ DEFINE_HOOK(0x41B760, IFlyControl_Landing_Direction, 0x6)
 	GET_STACK(IFlyControl*, pAircraft, 0x4); // IFlyControl*
 	int poseDir = RulesClass::Instance->PoseDir;
 	AircraftAttitude* attitude = nullptr;
-	TechnoClass* pTechno = static_cast<AircraftClass*>(pAircraft);
+	TechnoClass* pTechno = dynamic_cast<AircraftClass*>(pAircraft);
 	if (TryGetScript<TechnoExt, AircraftAttitude>(pTechno, attitude)
 		&& attitude->TryGetAirportDir(poseDir))
 	{

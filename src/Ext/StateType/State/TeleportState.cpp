@@ -161,8 +161,10 @@ void TeleportState::OnUpdate()
 							else if (pTargetTechno->GetTechnoType()->Locomotor == LocomotionClass::CLSIDs::Jumpjet)
 							{
 								FootClass* pFoot = dynamic_cast<FootClass*>(pTargetTechno);
-								JumpjetLocomotionClass* jjLoco = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get());
-								facing = jjLoco->LocomotionFacing.Current();
+								if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
+								{
+									facing = jjLoco->LocomotionFacing.Current();
+								}
 							}
 							else
 							{
@@ -309,7 +311,7 @@ void TeleportState::OnUpdate()
 				if (_loco)
 				{
 					// 当前帧切换loco后会切回来，而且下一帧才可以获得计时器
-					_teleportTimer = static_cast<TeleportLocomotionClass*>(_loco)->Timer;
+					_teleportTimer = dynamic_cast<TeleportLocomotionClass*>(_loco)->Timer;
 				}
 				if (_teleportTimer.Expired())
 				{

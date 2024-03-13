@@ -25,8 +25,8 @@ void TechnoStatus::OnUpdate_DeployToTransform()
 {
 	if (GetTransformData()->Enable)
 	{
-		if ((IsInfantry() && static_cast<InfantryClass*>(pTechno)->SequenceAnim == Sequence::Deployed)
-			|| (IsUnit() && static_cast<UnitClass*>(pTechno)->Deployed))
+		if ((IsInfantry() && dynamic_cast<InfantryClass*>(pTechno)->SequenceAnim == Sequence::Deployed)
+			|| (IsUnit() && dynamic_cast<UnitClass*>(pTechno)->Deployed))
 		{
 			// 步兵或载具部署完毕，开始变形
 			GiftBox->Start(GetTransformData());
@@ -48,8 +48,8 @@ void TechnoStatus::OnUpdate_GiftBox()
 		// JJ有单独的Facing
 		if (IsJumpjet())
 		{
-			FootClass* pFoot = static_cast<FootClass*>(pTechno);
-			GiftBox->BodyDir = static_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get())->LocomotionFacing.Current();
+			FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
+			GiftBox->BodyDir = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get())->LocomotionFacing.Current();
 			GiftBox->TurretDir = GiftBox->BodyDir;
 		}
 
@@ -176,7 +176,7 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 	// 获取目的地
 	if (!IsBuilding())
 	{
-		pDest = static_cast<FootClass*>(pTechno)->Destination;
+		pDest = dynamic_cast<FootClass*>(pTechno)->Destination;
 		pFocus = pTechno->Focus;
 	}
 	// 读取盒子的状态

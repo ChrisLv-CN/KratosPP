@@ -178,7 +178,7 @@ void TechnoStatus::OnUpdate()
 		}
 		if (!IsBuilding())
 		{
-			FootClass* pFoot = static_cast<FootClass*>(pTechno);
+			FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
 			_isMoving = pFoot->GetCurrentSpeed() > 0 && pFoot->Locomotor.get()->Is_Moving();
 			OnUpdate_DeployToTransform();
 		}

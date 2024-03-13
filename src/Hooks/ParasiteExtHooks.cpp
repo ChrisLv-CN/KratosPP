@@ -18,7 +18,7 @@ DEFINE_HOOK(0x62A13F, ParasiteClass_Update_Anim_Remap, 0x5)
 	GET_STACK(CoordStruct, location, 0x34);
 
 	AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, location);
-	SetAnimOwner(pAnim, static_cast<TechnoClass*>(pParasite->Victim));
+	SetAnimOwner(pAnim, dynamic_cast<TechnoClass*>(pParasite->Victim));
 	pAnim->Owner = pParasite->Owner->Owner;
 
 	return 0;

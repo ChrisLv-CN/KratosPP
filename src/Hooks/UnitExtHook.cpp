@@ -123,7 +123,7 @@ DEFINE_HOOK(0x6F4222, TechnoClass_Init_PermaDisguise, 0x7)
 			if (pType)
 			{
 				// 伪装成指定的坦克
-				pDisguise = static_cast<ObjectTypeClass*>(pType);
+				pDisguise = dynamic_cast<ObjectTypeClass*>(pType);
 				custom = true;
 			}
 		}
@@ -141,7 +141,7 @@ DEFINE_HOOK(0x6F4222, TechnoClass_Init_PermaDisguise, 0x7)
 					if (pType)
 					{
 						// 伪装成指定的坦克
-						pDisguise = static_cast<ObjectTypeClass*>(pType);
+						pDisguise = dynamic_cast<ObjectTypeClass*>(pType);
 						custom = true;
 					}
 				}
@@ -160,7 +160,7 @@ DEFINE_HOOK(0x6F4222, TechnoClass_Init_PermaDisguise, 0x7)
 			if (pType)
 			{
 				// 伪装成指定的步兵
-				pDisguise = static_cast<ObjectTypeClass*>(pType);
+				pDisguise = dynamic_cast<ObjectTypeClass*>(pType);
 				custom = true;
 			}
 		}
@@ -180,7 +180,7 @@ DEFINE_HOOK(0x6F4222, TechnoClass_Init_PermaDisguise, 0x7)
 DEFINE_HOOK(0x7466D8, UnitClass_Set_Disguise, 0xA)
 {
 	GET(AbstractClass*, pTarget, ESI);
-	if (static_cast<ObjectClass*>(pTarget)->IsDisguised())
+	if (dynamic_cast<ObjectClass*>(pTarget)->IsDisguised())
 	{
 		// 伪装成目标单位的伪装
 		return 0x7466E6;
@@ -188,7 +188,7 @@ DEFINE_HOOK(0x7466D8, UnitClass_Set_Disguise, 0xA)
 	else if (pTarget->WhatAmI() == AbstractType::Unit)
 	{
 		// 我自己来
-		TechnoClass* pTargetTechno = static_cast<TechnoClass*>(pTarget);
+		TechnoClass* pTargetTechno = dynamic_cast<TechnoClass*>(pTarget);
 		GET(TechnoClass*, pTechno, EDI);
 		pTechno->Disguise = pTargetTechno->GetType();
 		R->EAX(reinterpret_cast<unsigned int>(pTarget->GetOwningHouse()));
@@ -280,7 +280,7 @@ DEFINE_HOOK(0x73C71D, UnitClass_DrawSHP_FacingDir, 0x6)
 	if (pTechno->IsDisguised() && !pTechno->IsClearlyVisibleTo(HouseClass::CurrentPlayer))
 	{
 		// WWSB 自己算起始帧
-		UnitTypeClass* pTargetType = static_cast<UnitTypeClass*>(pTechno->GetDisguise(true));
+		UnitTypeClass* pTargetType = dynamic_cast<UnitTypeClass*>(pTechno->GetDisguise(true));
 		if (pTargetType->WhatAmI() == AbstractType::UnitType)
 		{
 			int facing = pTargetType->Facings;
@@ -359,7 +359,7 @@ DEFINE_HOOK(0x73C725, UnitClass_DrawSHP_HasTurret, 0x6)
 	if (pTechno->IsDisguised() && !pTechno->IsClearlyVisibleTo(HouseClass::CurrentPlayer))
 	{
 		ObjectTypeClass* pTargetType = pTechno->GetDisguise(true);
-		if (pTargetType && !static_cast<TechnoTypeClass*>(pTargetType)->Turret)
+		if (pTargetType && !dynamic_cast<TechnoTypeClass*>(pTargetType)->Turret)
 		{
 			// no turret
 			return 0x73CE0D;
@@ -378,7 +378,7 @@ DEFINE_HOOK(0x73BDA3, UnitClass_DrawVoxel_TurretFacing, 0x5)
 	{
 		// 本体没有炮塔
 		ObjectTypeClass* pTargetType = pTechno->GetDisguise(true);
-		if (pTargetType && static_cast<TechnoTypeClass*>(pTargetType)->Turret)
+		if (pTargetType && dynamic_cast<TechnoTypeClass*>(pTargetType)->Turret)
 		{
 			// 伪装的对象有炮塔，将身体的朝向赋给炮塔
 			GET(DirStruct*, pDir, EAX);

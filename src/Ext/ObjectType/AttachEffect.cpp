@@ -1108,53 +1108,56 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 			if (auto ae = dynamic_cast<AttachEffectScript*>(c)) { ae->OnGScreenRenderEnd(location); }
 			});
 #ifdef DEBUG
-		int offsetZ = PrintTextManager::GetFontSize().Y;
-		// 打印Component结构
-		/// GameObject
-		///		|__ AttachEffect
-		///				|__ AttachEffectScript#0
-		///						|__ EffectScript#0
-		///						|__ EffectScript#1
-		///				|__ AttachEffectScript#1
-		///						|__ EffectScript#0
-		///						|__ EffectScript#1
-		///						|__ EffectScript#2
-		if (_gameObject)
+		if (Common::DebugAE)
 		{
-			int ii = 0;
-			std::vector<Component::ComponentState> states;
-			if (pTechno)
+			int offsetZ = PrintTextManager::GetFontSize().Y;
+			// 打印Component结构
+			/// GameObject
+			///		|__ AttachEffect
+			///				|__ AttachEffectScript#0
+			///						|__ EffectScript#0
+			///						|__ EffectScript#1
+			///				|__ AttachEffectScript#1
+			///						|__ EffectScript#0
+			///						|__ EffectScript#1
+			///						|__ EffectScript#2
+			if (_gameObject)
 			{
-				std::string uiName = std::string{ "" }.append("[").append(pTechno->GetTechnoType()->ID).append("]")
-					.append(WString2String(pTechno->GetTechnoType()->UIName));
-				states.push_back(Component::ComponentState{ uiName, !pTechno->InLimbo });
-				ii = -1;
-			}
-			int level = 0;
-			GetComponentStates(states, level);
-			Point2D pos = ToClientPos(location);
-			for (Component::ComponentState& state : states)
-			{
-				if (ii++ == 0) continue;
-				std::string log{ state.Name };
-				log.append("\n");
-				pos.Y += offsetZ;
-				ColorStruct color = Colors::Green;
-				if (!state.Active)
+				int ii = 0;
+				std::vector<Component::ComponentState> states;
+				if (pTechno)
 				{
-					color = Colors::Red;
+					std::string uiName = std::string{ "" }.append("[").append(pTechno->GetTechnoType()->ID).append("]")
+						.append(WString2String(pTechno->GetTechnoType()->UIName));
+					states.push_back(Component::ComponentState{ uiName, !pTechno->InLimbo });
+					ii = -1;
 				}
-				PrintTextManager::PrintText(log, color, pos);
+				int level = 0;
+				GetComponentStates(states, level);
+				Point2D pos = ToClientPos(location);
+				for (Component::ComponentState& state : states)
+				{
+					if (ii++ == 0) continue;
+					std::string log{ state.Name };
+					log.append("\n");
+					pos.Y += offsetZ;
+					ColorStruct color = Colors::Green;
+					if (!state.Active)
+					{
+						color = Colors::Red;
+					}
+					PrintTextManager::PrintText(log, color, pos);
+				}
 			}
-		}
-		// 打印叠层信息
-		Point2D pos2 = ToClientPos(location);
-		for (auto it = AEStacks.begin(); it != AEStacks.end(); it++)
-		{
-			std::string log;
-			log.append(it->first).append(" : ").append(std::to_string(it->second)).append("\n");
-			pos2.Y -= offsetZ;
-			PrintTextManager::PrintText(log, Colors::Red, pos2);
+			// 打印叠层信息
+			Point2D pos2 = ToClientPos(location);
+			for (auto it = AEStacks.begin(); it != AEStacks.end(); it++)
+			{
+				std::string log;
+				log.append(it->first).append(" : ").append(std::to_string(it->second)).append("\n");
+				pos2.Y -= offsetZ;
+				PrintTextManager::PrintText(log, Colors::Red, pos2);
+			}
 		}
 #endif // DEBUG
 	}
@@ -1163,49 +1166,48 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 		// BeginRender
 		if (!_ownerIsDead)
 		{
-			location = MarkLocation();
-		}
-		// 替身的定位偏移
-		std::map<std::string, CoordStruct> standMarks{};
-		std::map<int, CoordStruct> standGroupMarks{};
-		std::map<int, CoordStruct> standGroupFirstMarks{};
-		// 动画的定位偏移
-		std::map<std::string, CoordStruct> animMarks{};
-		std::map<int, CoordStruct> animGroupMarks{};
-		std::map<int, CoordStruct> animGroupFirstMarks{};
+			// 替身的定位偏移
+			std::map<std::string, CoordStruct> standMarks{};
+			std::map<int, CoordStruct> standGroupMarks{};
+			std::map<int, CoordStruct> standGroupFirstMarks{};
+			// 动画的定位偏移
+			std::map<std::string, CoordStruct> animMarks{};
+			std::map<int, CoordStruct> animGroupMarks{};
+			std::map<int, CoordStruct> animGroupFirstMarks{};
 
-		// 火车的位置索引
-		int markIndex = 0;
-		ForeachChild([&](Component* c) {
-			if (auto ae = dynamic_cast<AttachEffectScript*>(c))
-			{
-				if (ae->IsAlive())
+			// 火车的位置索引
+			int markIndex = 0;
+			ForeachChild([&](Component* c) {
+				if (auto ae = dynamic_cast<AttachEffectScript*>(c))
 				{
-					AttachEffectData aeData = ae->AEData;
-					// 调整替身的位置
-					if (aeData.Stand.Enable)
+					if (ae->IsAlive())
 					{
-						// 调整火车替身的位置
-						if (!aeData.Stand.IsTrain || !UpdateTrainStandLocation(ae, markIndex))
+						AttachEffectData aeData = ae->AEData;
+						// 调整替身的位置
+						if (aeData.Stand.Enable)
 						{
-							// 堆叠偏移
-							OffsetData offsetData = aeData.Stand.Offset;
-							CoordStruct standOffset = this->StackOffset(aeData, offsetData, standMarks, standGroupMarks, standGroupFirstMarks);
-							LocationMark locationMark = GetRelativeLocation(pObject, offsetData, standOffset);
-							ae->UpdateStandLocation(locationMark);
+							// 调整火车替身的位置
+							if (!aeData.Stand.IsTrain || !UpdateTrainStandLocation(ae, markIndex))
+							{
+								// 堆叠偏移
+								OffsetData offsetData = aeData.Stand.Offset;
+								CoordStruct standOffset = this->StackOffset(aeData, offsetData, standMarks, standGroupMarks, standGroupFirstMarks);
+								LocationMark locationMark = GetRelativeLocation(pObject, offsetData, standOffset);
+								ae->UpdateStandLocation(locationMark);
+							}
 						}
+						// 调整动画的位置
+						if (aeData.Animation.Enable && aeData.Animation.IdleAnim.Enable)
+						{
+							OffsetData offsetData = aeData.Animation.IdleAnim.Offset;
+							CoordStruct animOffset = this->StackOffset(aeData, offsetData, animMarks, animGroupMarks, animGroupFirstMarks);
+							ae->UpdateAnimOffset(animOffset);
+						}
+						ae->OnGScreenRender(location);
 					}
-					// 调整动画的位置
-					if (aeData.Animation.Enable && aeData.Animation.IdleAnim.Enable)
-					{
-						OffsetData offsetData = aeData.Animation.IdleAnim.Offset;
-						CoordStruct animOffset = this->StackOffset(aeData, offsetData, animMarks, animGroupMarks, animGroupFirstMarks);
-						ae->UpdateAnimOffset(animOffset);
-					}
-					ae->OnGScreenRender(location);
 				}
-			}
-			});
+				});
+		}
 	}
 }
 
@@ -1217,7 +1219,7 @@ void AttachEffect::OnUpdate()
 	// 添加Section上记录的AE
 	if (!_ownerIsDead)
 	{
-		_location = pObject->GetCoords();
+		_location = MarkLocation();
 		// 检查电力
 		if (!IsBullet())
 		{
@@ -1248,6 +1250,10 @@ void AttachEffect::OnWarpUpdate()
 {
 	// 移除失效的AE，附加Next的AE
 	CheckDurationAndDisable();
+	if (!_ownerIsDead)
+	{
+		_location = MarkLocation();
+	}
 }
 
 void AttachEffect::OnPut(CoordStruct* pCoord, DirType dirType)
@@ -1265,7 +1271,6 @@ void AttachEffect::OnPut(CoordStruct* pCoord, DirType dirType)
 void AttachEffect::OnRemove()
 {
 	// 从地图移除时关闭AE
-	_location = pObject->GetCoords();
 	CoordStruct location = pObject->GetCoords();
 	_location = location;
 	ClearLocationMarks();

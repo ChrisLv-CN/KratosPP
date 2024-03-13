@@ -236,7 +236,7 @@ DEFINE_HOOK(0x54E661, KamikazeTrackerClass_Cannot_Detach2, 0x6)
 {
 	GET(Kamikaze::KamikazeControl*, pKamikazeControl, EAX);
 	AircraftClass* pRocket = pKamikazeControl->Item;
-	if (IsDeadOrInvisible(static_cast<TechnoClass*>(pRocket)))
+	if (IsDeadOrInvisible(dynamic_cast<TechnoClass*>(pRocket)))
 	{
 		// 导弹作为目标时，死亡的是导弹，也是目标
 		return 0;
@@ -247,7 +247,7 @@ DEFINE_HOOK(0x54E661, KamikazeTrackerClass_Cannot_Detach2, 0x6)
 	{
 		// 目标是个死人，替换目标
 		CoordStruct lastLocation = pRocket->GetCoords();
-		if (MissileHoming* homing = GetScript<TechnoExt, MissileHoming>(static_cast<TechnoClass*>(pRocket)))
+		if (MissileHoming* homing = GetScript<TechnoExt, MissileHoming>(dynamic_cast<TechnoClass*>(pRocket)))
 		{
 			homing->IsHoming = false;
 			lastLocation = homing->HomingTargetLocation;
@@ -264,7 +264,7 @@ DEFINE_HOOK(0x54E661, KamikazeTrackerClass_Cannot_Detach2, 0x6)
 DEFINE_HOOK(0x6622C0, RocketLocomotionClass_Process, 0x6)
 {
 	GET(FootClass*, pFoot, ESI);
-	RocketLocomotionClass* pLoco = static_cast<RocketLocomotionClass*>(pFoot->Locomotor.get());
+	RocketLocomotionClass* pLoco = dynamic_cast<RocketLocomotionClass*>(pFoot->Locomotor.get());
 	// If missile try to AA, it will block on ground. step is 0, can't move.
 	if (pLoco->MissionState == 0)
 	{

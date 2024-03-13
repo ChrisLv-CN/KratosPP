@@ -156,7 +156,10 @@ void ECMState::OnUpdate()
 						// 搜索范围内的一个单位作为新目标
 						FindTechnoOnMark([&](TechnoClass* pTarget, AttachEffect* aeManager)
 							{
-								targetList.push_back(pTarget);
+								if (pTarget != pExclude)
+								{
+									targetList.push_back(pTarget);
+								}
 								return false;
 							}, location, data.RangeMax, data.RangeMin, data.FullAirspace, status->pSourceHouse, data, pObject);
 						int count = targetList.size();

@@ -201,7 +201,7 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruc
 		{
 		case AbstractType::Building:
 		{
-			BuildingClass* pBuilding = static_cast<BuildingClass*>(pTechno);
+			BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno);
 			if (pBuilding->Type->InvisibleInGame) {
 				continue;
 			}

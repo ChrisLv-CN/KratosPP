@@ -19,7 +19,7 @@ void StandEffect::CreateAndPutStand()
 	TechnoTypeClass* pType = TechnoTypeClass::Find(Data->Type.c_str());
 	if (pType)
 	{
-		pStand = static_cast<TechnoClass*>(pType->CreateObject(AE->pSourceHouse));
+		pStand = dynamic_cast<TechnoClass*>(pType->CreateObject(AE->pSourceHouse));
 	}
 	if (pStand)
 	{
@@ -420,12 +420,12 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 					// WalkLoco和MechLoco则只返回IsMoving来判断是否在运动
 					if (locoId == LocomotionClass::CLSIDs::Walk)
 					{
-						WalkLocomotionClass* pLoco = static_cast<WalkLocomotionClass*>(loco);
+						WalkLocomotionClass* pLoco = dynamic_cast<WalkLocomotionClass*>(loco);
 						pLoco->IsReallyMoving = true;
 					}
 					else if (locoId == LocomotionClass::CLSIDs::Mech)
 					{
-						MechLocomotionClass* pLoco = static_cast<MechLocomotionClass*>(loco);
+						MechLocomotionClass* pLoco = dynamic_cast<MechLocomotionClass*>(loco);
 						pLoco->IsMoving = true;
 					}
 				}
@@ -443,12 +443,12 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 					}
 					if (locoId == LocomotionClass::CLSIDs::Walk)
 					{
-						WalkLocomotionClass* pLoco = static_cast<WalkLocomotionClass*>(loco);
+						WalkLocomotionClass* pLoco = dynamic_cast<WalkLocomotionClass*>(loco);
 						pLoco->IsReallyMoving = false;
 					}
 					else if (locoId == LocomotionClass::CLSIDs::Mech)
 					{
-						MechLocomotionClass* pLoco = static_cast<MechLocomotionClass*>(loco);
+						MechLocomotionClass* pLoco = dynamic_cast<MechLocomotionClass*>(loco);
 						pLoco->IsMoving = false;
 					}
 				}
@@ -655,15 +655,15 @@ void StandEffect::OnGScreenRender(CoordStruct location)
 
 					if (masterLocoId == LocomotionClass::CLSIDs::Drive && standLocoId == LocomotionClass::CLSIDs::Drive)
 					{
-						DriveLocomotionClass* pMasterLoco = static_cast<DriveLocomotionClass*>(masterLoco);
-						DriveLocomotionClass* pStandLoco = static_cast<DriveLocomotionClass*>(standLoco);
+						DriveLocomotionClass* pMasterLoco = dynamic_cast<DriveLocomotionClass*>(masterLoco);
+						DriveLocomotionClass* pStandLoco = dynamic_cast<DriveLocomotionClass*>(standLoco);
 						pStandLoco->PreviousRamp = pMasterLoco->PreviousRamp;
 						pStandLoco->CurrentRamp = pMasterLoco->CurrentRamp;
 					}
 					else if (masterLocoId == LocomotionClass::CLSIDs::Ship && standLocoId == LocomotionClass::CLSIDs::Ship)
 					{
-						ShipLocomotionClass* pMasterLoco = static_cast<ShipLocomotionClass*>(masterLoco);
-						ShipLocomotionClass* pStandLoco = static_cast<ShipLocomotionClass*>(standLoco);
+						ShipLocomotionClass* pMasterLoco = dynamic_cast<ShipLocomotionClass*>(masterLoco);
+						ShipLocomotionClass* pStandLoco = dynamic_cast<ShipLocomotionClass*>(standLoco);
 						pStandLoco->Ramp1 = pMasterLoco->Ramp1;
 						pStandLoco->Ramp2 = pMasterLoco->Ramp2;
 					}
