@@ -45,7 +45,7 @@ void Kratos::DrawVersionText(EventSystem* sender, Event e, void* args)
 {
 	if (!_versionText.text)
 	{
-		_versionText.text = L"KratosPP ver." VERSION_SHORT_WSTR " Inside";
+		_versionText.text = L"Kratos " VERSION_SHORT_WSTR;
 		RectangleStruct textRect = Drawing::GetTextDimensions(_versionText.text, { 0, 0 }, 0, 2, 0);
 		RectangleStruct sidebarRect = DSurface::Sidebar->GetRect();
 		int x = sidebarRect.Width / 2 - textRect.Width / 2;
