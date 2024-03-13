@@ -492,7 +492,6 @@
     </Link>
     <PostBuildEvent>
       <Command>call $(SolutionDir)scripts\copy_debug
-call $(SolutionDir)scripts\run_yr
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -537,7 +536,6 @@ call $(SolutionDir)scripts\run_yr
     </Link>
     <PostBuildEvent>
       <Command>call $(SolutionDir)scripts\copy_release
-call $(SolutionDir)scripts\run_yr
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
