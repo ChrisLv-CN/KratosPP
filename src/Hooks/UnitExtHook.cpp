@@ -15,6 +15,8 @@
 #include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/TurretAngle.h>
 #include <Ext/TechnoType/DisguiseData.h>
+#include <Ext/TechnoType/SHPFVTurretData.h>
+#include <Ext/TechnoType/Spawn.h>
 
 #pragma region Unit Deploy
 DEFINE_HOOK(0x6FF923, TechnoClass_Fire_FireOnce, 0x6)
@@ -274,6 +276,57 @@ DEFINE_HOOK(0x736BBB, UnitClass_Rotation_SetTurretFacing_NoTargetAndMoving, 0x5)
 	return 0;
 }
 
+DEFINE_HOOK(0x736B7E, UnitClass_Rotation_SetTurretFacing_Skip, 0xA)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	if (pTechno->IsUnderEMP())
+	{
+		// 不允许转炮塔
+		return 0x736BE2;
+	}
+	return 0;
+}
+
+
+DEFINE_HOOK(0x73CD01, UnitClass_Draw_ChangeTurret_SHPIFV, 0x5)
+{
+	GET(TechnoClass*, pTechno, EBP);
+	if (!pTechno->IsVoxel() && pTechno->GetTechnoType()->Gunner && pTechno->Passengers.NumPassengers > 0)
+	{
+		// 最后的乘客也就是第一个乘客就是枪手
+		ObjectClass* pPassenger = pTechno->Passengers.FirstPassenger;
+		ObjectClass* pGunner = pPassenger;
+		do
+		{
+			if (pPassenger)
+			{
+				pGunner = pPassenger;
+			}
+		} while (pPassenger && (pPassenger = pPassenger->NextObject) != nullptr);
+		int ifvMode = pGunner->GetTechnoType()->IFVMode + 1;
+		if (SHPFVTurretData* typeData = INI::GetConfig<SHPFVTurretData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data)
+		{
+			if (typeData->Datas.find(ifvMode) != typeData->Datas.end())
+			{
+				SHPFVTurretEntity data = typeData->Datas[ifvMode];
+				GET(int, index, EAX);
+				index += data.WeaponTurretFrameIndex;
+				R->EAX(index);
+				if (IsNotNone(data.WeaponTurretCustomSHP))
+				{
+					if (SHPStruct* pCustomSHP = FileSystem::LoadSHPFile(data.WeaponTurretCustomSHP.c_str()))
+					{
+						R->EDI(pCustomSHP);
+					}
+				}
+				R->ECX(R->EBP());
+				return 0x73CD06;
+			}
+		}
+	}
+	return 0;
+}
+
 DEFINE_HOOK(0x73C71D, UnitClass_DrawSHP_FacingDir, 0x6)
 {
 	GET(TechnoClass*, pTechno, EBP);
@@ -439,3 +492,21 @@ DEFINE_HOOK(0x706724, TechnoClass_Draw_VXL_Disguise_Blit_Flags, 0x5)
 	return 0x706731;
 }
 #pragma endregion
+
+
+DEFINE_HOOK(0x73C485, UnitClass_Draw_Voxel_Shadow_WO_Skip, 0x8)
+{
+	GET(TechnoClass*, pTechno, EBP);
+	SpawnManagerClass* pSpawnManager = pTechno->SpawnManager;
+	Spawn* spawnEx = nullptr;
+	if (pSpawnManager
+		&& pSpawnManager->CountDockedSpawns() < pSpawnManager->SpawnCount
+		&& pTechno->GetTechnoType()->NoSpawnAlt
+		&& TryGetScript<TechnoExt>(pTechno, spawnEx)
+		&& spawnEx->GetSpawnData()->NoShadowSpawnAlt)
+	{
+		// skip draw shadow
+		return 0x73C5C9;
+	}
+	return 0;
+}

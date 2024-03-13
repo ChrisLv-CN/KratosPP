@@ -354,6 +354,7 @@
     <ClInclude Include="src\Ext\TechnoType\MissileHomingData.h" />
     <ClInclude Include="src\Ext\TechnoType\PassengersData.h" />
     <ClInclude Include="src\Ext\TechnoType\SelectWeaponData.h" />
+    <ClInclude Include="src\Ext\TechnoType\SHPFVTurretData.h" />
     <ClInclude Include="src\Ext\TechnoType\Spawn.h" />
     <ClInclude Include="src\Ext\TechnoType\SpawnData.h" />
     <ClInclude Include="src\Ext\TechnoType\SupportSpawns.h" />
