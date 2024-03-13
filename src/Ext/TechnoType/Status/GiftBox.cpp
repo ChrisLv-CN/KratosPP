@@ -71,7 +71,7 @@ void TechnoStatus::OnUpdate_GiftBox()
 		{
 			if (GiftBox->Data.Remove)
 			{
-				GiftBox->Disable();
+				GiftBox->End();
 				if (GiftBox->Data.Destroy)
 				{
 					pTechno->TakeDamage(pTechno->Health + 1, pTechno->GetTechnoType()->Crewed);
@@ -82,6 +82,9 @@ void TechnoStatus::OnUpdate_GiftBox()
 					pTechno->Limbo();
 					pTechno->UnInit();
 				}
+				_isDead = true;
+				// 重要，击杀自己后中断所有后续循环
+				Break();
 			}
 			else
 			{
@@ -206,7 +209,7 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 
 	// 开刷
 	ReleaseGifts(gifts, GiftBox->GetGiftData(), boxState,
-		[&](TechnoClass* pGift, TechnoStatus* pGiftStatus, AttachEffect* pGiftAEM)
+		[&](TechnoClass* pGift, TechnoStatus*& pGiftStatus, AttachEffect*& pGiftAEM)
 		{
 			TechnoTypeClass* pGiftType = pGift->GetTechnoType();
 			// 修改血量
@@ -282,6 +285,8 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 						}
 					}
 					});
+				boxAEM->CheckDurationAndDisable(true);
+				boxAEM->ClearDisableComponent();
 				// AE管理器脱离
 				boxAEM->DetachFromParent(false);
 				pGiftAEM->DetachFromParent(false);
@@ -290,8 +295,9 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				boxGO->AddComponent(pGiftAEM);
 				// 修改变量
 				pGiftAEM = boxAEM;
-				pGiftAEM->CheckDurationAndDisable(true);
 				// 发出类型变更的通知
+				boxAEM->ExtChanged();
+				pGiftAEM->ExtChanged();
 				dynamic_cast<GameObject*>(giftGO)->ExtChanged = true;
 			}
 		});

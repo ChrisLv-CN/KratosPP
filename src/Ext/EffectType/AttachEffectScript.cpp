@@ -189,6 +189,7 @@ bool AttachEffectScript::IsAlive()
 	{
 		if (!InDelayToEnable())
 		{
+			// 激活效果器
 			EnableEffects();
 		}
 		else
@@ -198,6 +199,18 @@ bool AttachEffectScript::IsAlive()
 	}
 	if (IsActive())
 	{
+		// 检查血量暂停或恢复效果器
+		if (_hold)
+		{
+			if (CheckHealthPercent())
+			{
+				RecordEffects();
+			}
+			else
+			{
+				PauseEffects();
+			}
+		}
 		// AE来源于乘客，检查乘客是否已经下车
 		if (FromPassenger)
 		{
@@ -333,42 +346,15 @@ void AttachEffectScript::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* 
 	}
 	if (damageState != DamageState::NowDead && !OwnerIsDead())
 	{
-		double healthPercent = pTechno->GetHealthPercentage();
-		double min = AEData.DeactiveWhenHealthPrecent;
-		double max = AEData.ActiveWhenHealthPrecent;
-		if (max <= min)
+		if (_hold)
 		{
-			Debug::Log("Warning: AE [%s] Active when health precent setup error.\n", AEData.Name.c_str());
-			return;
-		}
-		if (healthPercent <= max && healthPercent >= min)
-		{
-			// 恢复Effects
-			for (Component* c : _children)
+			if (CheckHealthPercent())
 			{
-				if (auto cc = dynamic_cast<IAEScript*>(c))
-				{
-					if (!c->IsActive())
-					{
-						c->Activate();
-						cc->Recover();
-					}
-				}
+				RecordEffects();
 			}
-		}
-		else
-		{
-			// 暂停Effects
-			for (Component* c : _children)
+			else
 			{
-				if (auto cc = dynamic_cast<IAEScript*>(c))
-				{
-					if (c->IsActive())
-					{
-						c->Deactivate();
-						cc->Pause();
-					}
-				}
+				PauseEffects();
 			}
 		}
 	}
@@ -438,29 +424,92 @@ bool AttachEffectScript::InDelayToEnable()
 void AttachEffectScript::EnableEffects()
 {
 	_started = true;
+#ifdef DEBUG_AE
+	Debug::Log("  - [%s]%d 上的 AE[%s]%d 激活持有的%d个效果器\n", pObject->GetType()->ID, pObject, AEData.Name.c_str(), this, _children.size());
+#endif // DEBUG_AE
 	SetupLifeTimer();
+	bool pause = false;
 	if (pTechno)
 	{
 		// 需要满足血量触发
+		if (AEData.CheckHealthPrecent)
+		{
+			_hold = true;
+			pause = !CheckHealthPercent();
+		}
+	}
+	else
+	{
+		_hold = false;
+	}
+	if (!pause)
+	{
+		// Effect is disable stats, so there cannot use ForeachChild function
+		for (Component* c : _children)
+		{
+			if (EffectScript* effect = dynamic_cast<EffectScript*>(c))
+			{
+#ifdef DEBUG_AE
+				Debug::Log("  - 效果器[%s]%d 激活\n", effect->Name.c_str(), effect);
+#endif // DEBUG_AE
+				effect->Activate();
+				effect->Start();
+			}
+		}
+	}
+}
+
+void AttachEffectScript::PauseEffects()
+{
+	// 暂停Effects
+	for (Component* c : _children)
+	{
+		if (auto cc = dynamic_cast<IAEScript*>(c))
+		{
+			if (c->IsActive())
+			{
+				c->Deactivate();
+				cc->Pause();
+			}
+		}
+	}
+}
+
+void AttachEffectScript::RecordEffects()
+{
+	// 恢复Effects
+	for (Component* c : _children)
+	{
+		if (auto cc = dynamic_cast<IAEScript*>(c))
+		{
+			if (!c->IsActive())
+			{
+				c->Activate();
+				cc->Recover();
+			}
+		}
+	}
+}
+
+bool AttachEffectScript::CheckHealthPercent()
+{
+	if (pTechno && AEData.CheckHealthPrecent)
+	{
 		double healthPrecent = pTechno->GetHealthPercentage();
 		double min = AEData.DeactiveWhenHealthPrecent;
 		double max = AEData.ActiveWhenHealthPrecent;
-		if (healthPrecent > max || healthPrecent < min)
+		if (max <= min)
 		{
-			_hold = true;
-			return;
+			Debug::Log("Warning: AE [%s] Active when health precent setup error.\n", AEData.Name.c_str());
+			_hold = false;
+			return true;
 		}
+#ifdef DEBUG_AE
+		Debug::Log("  - [%s]%d 上的 AE[%s]%d 需要满足血量触发[%s, %s]%s\n", pObject->GetType()->ID, pObject, AEData.Name.c_str(), this, _children.size(), std::to_string(min).c_str(), std::to_string(max).c_str(), std::to_string(healthPrecent).c_str());
+#endif // DEBUG_AE
+		return healthPrecent <= max && healthPrecent >= min;
 	}
-	_hold = false;
-	// Effect is disable stats, so there cannot use ForeachChild function
-	for (Component* c : _children)
-	{
-		if (EffectScript* effect = dynamic_cast<EffectScript*>(c))
-		{
-			effect->Activate();
-			effect->Start();
-		}
-	}
+	return true;
 }
 
 AttachEffect* AttachEffectScript::GetAEManager()

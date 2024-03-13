@@ -217,11 +217,32 @@ private:
 	 * @return false 延迟结束
 	 */
 	bool InDelayToEnable();
+
 	/**
 	 *@brief 激活所有的Effects，开始执行Foreach逻辑
 	 *
 	 */
 	void EnableEffects();
+
+	/**
+	 *@brief 暂停所有的Effects
+	 *
+	 */
+	void PauseEffects();
+
+	/**
+	 *@brief 恢复所有的Effects
+	 *
+	 */
+	void RecordEffects();
+
+	/**
+	 * @brief 检查血量比例是否满足开启效果器
+	 *
+	 * @return true 满足
+	 * @return false 不满足
+	 */
+	bool CheckHealthPercent();
 
 	int _duration = -1; // 寿命
 	bool _immortal = true; // 永生

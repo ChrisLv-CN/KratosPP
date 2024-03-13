@@ -61,6 +61,9 @@ public:
 			Token = token;
 			if (pAE)
 			{
+#ifdef DEBUG_AE
+				Debug::Log("AE[%s]%d 激活[%s]%d 的状态机[%s]\n", pAE->AEData.Name.c_str(), pAE, pObject->GetType()->ID, pObject, Name.c_str());
+#endif // DEBUG_AE
 				pAESource = pAE->pSource;
 				ReceiverOwn = pAE->AEData.ReceiverOwn;
 				if (ReceiverOwn)

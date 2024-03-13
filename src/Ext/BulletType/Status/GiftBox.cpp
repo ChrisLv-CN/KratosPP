@@ -42,7 +42,7 @@ void BulletStatus::OnUpdate_GiftBox()
 		{
 			if (GiftBox->Data.Remove)
 			{
-				GiftBox->Disable();
+				GiftBox->End();
 				bool harmless = !GiftBox->Data.Destroy;
 				life.Detonate(harmless);
 			}
@@ -126,5 +126,5 @@ void BulletStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 
 	// 开刷
 	ReleaseGifts(gifts, GiftBox->GetGiftData(), boxState,
-		[&](TechnoClass* pGift, TechnoStatus* pGiftStatus, AttachEffect* pGiftAEM) {});
+		[&](TechnoClass* pGift, TechnoStatus*& pGiftStatus, AttachEffect*& pGiftAEM) {});
 }

@@ -166,7 +166,7 @@ public:
 	/**
 	 * @brief 检查生命值并关闭死亡的AE
 	 *
-	 * @param silence 沉默模式，只移除，不触发AE结束事件、冷却计时和Next附加
+	 * @param silence 沉默模式，只移除，不触发冷却计时和Next附加
 	 */
 	void CheckDurationAndDisable(bool silence = false);
 

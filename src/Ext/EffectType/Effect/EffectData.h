@@ -51,6 +51,8 @@ public:
 
 	// 触发条件
 	bool Powered = false; // 建筑需要使用电力
+
+	bool CheckHealthPrecent = false; // 需要检查血量
 	double ActiveWhenHealthPrecent = 1; // 血量低于这个比例再触发
 	double DeactiveWhenHealthPrecent = 0; // 血量高于这个比例触发
 
@@ -74,6 +76,9 @@ public:
 		ActiveWhenHealthPrecent = reader->GetPercent(title + "ActiveWhenHealthPrecent", ActiveWhenHealthPrecent);
 		DeactiveWhenHealthPrecent = reader->GetPercent(title + "DeactiveWhenHealthPrecent", DeactiveWhenHealthPrecent);
 
+		CheckHealthPrecent = (ActiveWhenHealthPrecent > 0.0 && ActiveWhenHealthPrecent < 1.0)
+			|| (DeactiveWhenHealthPrecent > 0.0 && DeactiveWhenHealthPrecent < 1.0);
+
 		TriggeredTimes = reader->Get(title + "TriggeredTimes", TriggeredTimes);
 		AffectWho = reader->Get(title + "AffectWho", AffectWho);
 		DeactiveWhenCivilian = reader->Get(title + "DeactiveWhenCivilian", DeactiveWhenCivilian);
@@ -84,8 +89,13 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(this->TriggeredTimes)
 			.Process(this->Powered)
+
+			.Process(this->CheckHealthPrecent)
+			.Process(this->ActiveWhenHealthPrecent)
+			.Process(this->DeactiveWhenHealthPrecent)
+
+			.Process(this->TriggeredTimes)
 			.Process(this->AffectWho)
 			.Process(this->DeactiveWhenCivilian)
 			.Success();

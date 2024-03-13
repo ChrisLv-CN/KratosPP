@@ -519,6 +519,9 @@ void AttachEffect::Attach(AttachEffectData data,
 	{
 		int index = FindInsertIndex(data);
 		Component* c = AddComponent(AttachEffectScript::ScriptName, index); // 插队
+#ifdef DEBUG_AE
+		Debug::Log("[%s]%d 添加新的AE[%s]%d\n", pObject->GetType()->ID, pObject, data.Name.c_str(), c);
+#endif // DEBUG_AE
 		if (c)
 		{
 			AddStackCount(data); // 叠层计数
@@ -781,12 +784,15 @@ void AttachEffect::CheckDurationAndDisable(bool silence)
 			if (!ae->IsAlive())
 			{
 				AttachEffectData data = ae->AEData;
+				// 结束AE
+				ae->End(location);
 				if (!silence)
 				{
 					// 加入冷却计时器
 					StartDelay(data);
-					// 结束AE
-					ae->End(location);
+#ifdef DEBUG_AE
+					Debug::Log("  - [%s]%d 关闭AE [%s]%d ,加入冷却计时 %d, 附加NextAE[%s]\n", pObject->GetType()->ID, pObject, data.Name.c_str(), c, data.Delay, data.Next.c_str());
+#endif // DEBUG_AE
 					// 添加NextAE
 					std::string nextAE = data.Next;
 					if (IsNotNone(nextAE) && !IsDeadOrInvisible(pObject))
@@ -797,6 +803,9 @@ void AttachEffect::CheckDurationAndDisable(bool silence)
 				ReduceStackCount(data);
 				// Deactivate的组件不会再执行Foreach事件，标记为失效，以便父组件将其删除
 				ae->Disable();
+#ifdef DEBUG_AE
+				Debug::Log("  - [%s]%d 移除AE [%s]%d\n", pObject->GetType()->ID, pObject, data.Name.c_str(), c);
+#endif // DEBUG_AE
 			}
 		}
 		});
@@ -1118,7 +1127,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 			{
 				std::string uiName = std::string{ "" }.append("[").append(pTechno->GetTechnoType()->ID).append("]")
 					.append(WString2String(pTechno->GetTechnoType()->UIName));
-				states.push_back(Component::ComponentState{ uiName, true });
+				states.push_back(Component::ComponentState{ uiName, !pTechno->InLimbo });
 				ii = -1;
 			}
 			int level = 0;
