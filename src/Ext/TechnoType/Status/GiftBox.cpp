@@ -279,7 +279,7 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				boxAEM->ForeachChild([](Component* c) {
 					if (auto ae = dynamic_cast<AttachEffectScript*>(c))
 					{
-						if (!ae->AEData.Inheritable || ae->AEData.GiftBox.Enable)
+						if (!ae->AEData.Inheritable || ae->AEData.GiftBox.Enable || ae->AEData.Transform.Enable)
 						{
 							ae->TimeToDie();
 						}

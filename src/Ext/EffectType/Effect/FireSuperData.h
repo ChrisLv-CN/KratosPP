@@ -34,6 +34,7 @@ public:
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{
 		Supers = reader->GetList(title + "Types", Supers);
+		ClearIfGetNone(Supers);
 		Chances = reader->GetChanceList(title + "Chances", Chances);
 
 		InitDelay = reader->Get(title + "InitDelay", InitDelay);

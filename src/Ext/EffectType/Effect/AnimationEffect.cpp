@@ -143,6 +143,16 @@ void AnimationEffect::OnPut(CoordStruct* pCoords, DirType faceDir)
 	CreateIdleAnim(true, *pCoords);
 }
 
+void AnimationEffect::ExtChanged()
+{
+	if (pIdleAnim)
+	{
+		// 重新设置动画的附着对象，由动画自身去位移
+		AnimStatus* status = GetStatus<AnimExt, AnimStatus>(pIdleAnim);
+		status->AttachToObject(pObject, Data->IdleAnim.Offset);
+	}
+}
+
 void AnimationEffect::OnUpdate()
 {
 	if (pTechno && AE && !AE->OwnerIsDead())

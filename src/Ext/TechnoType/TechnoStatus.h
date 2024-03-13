@@ -199,7 +199,7 @@ public:
 		STATE_VAR_INHERITED(Paintball);
 		STATE_VAR_INHERITED(Scatter);
 		STATE_VAR_INHERITED(Teleport);
-		STATE_VAR_INHERITED(Transform);
+		// STATE_VAR_INHERITED(Transform);
 	}
 
 	template <typename T>

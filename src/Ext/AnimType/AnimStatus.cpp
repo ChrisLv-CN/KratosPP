@@ -381,15 +381,18 @@ void AnimStatus::OnDone_SpawnAnims()
 void AnimStatus::OnDone_PlaySuper()
 {
 	_playSuperFlag = false;
-	if (GetPlaySuperData()->Enable)
+	PlaySuperData* data = GetPlaySuperData();
+	if (data->Enable)
 	{
-		switch (GetPlaySuperData()->LaunchMode)
+		switch (data->LaunchMode)
 		{
 		case PlaySuperWeaponMode::LOOP:
 		case PlaySuperWeaponMode::DONE:
+		{
 			CoordStruct targetPos = pAnim->GetCoords();
-			FireSuperManager::Launch(pAnim->Owner, targetPos, GetPlaySuperData()->Data);
+			FireSuperManager::Launch(pAnim->Owner, targetPos, data->Data);
 			break;
+		}
 		}
 	}
 }

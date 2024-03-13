@@ -33,6 +33,8 @@ public:
 	virtual void OnRecover() override;
 	virtual void OnPause() override;
 
+	virtual void ExtChanged() override;
+
 	virtual void OnPut(CoordStruct* pCoord, DirType faceDir) override;
 	virtual void OnUpdate() override;
 	virtual void OnRemove() override;
