@@ -186,6 +186,7 @@ void TechnoStatus::OnUpdate()
 
 		OnUpdate_AntiBullet();
 		OnUpdate_Deselect();
+		OnUpdate_Freeze();
 		OnUpdate_GiftBox();
 		OnUpdate_Paintball();
 		OnUpdate_Passenger();
