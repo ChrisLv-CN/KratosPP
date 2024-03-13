@@ -198,3 +198,87 @@ DEFINE_HOOK(0x4CF780, FlyLocomotionClass_Draw_Matrix_Rolling, 0x5)
 }
 
 #pragma endregion
+
+DEFINE_HOOK(0x418478, AircraftClass_Mission_Attack_Fire_Imcoming_0, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AbstractClass* pTarget = pTechno->Target;
+	int weaponIdx = pTechno->SelectWeapon(pTarget);
+	WeaponStruct* pWeapon = pTechno->GetWeapon(weaponIdx);
+	if (pWeapon && pWeapon->WeaponType && pWeapon->WeaponType->Damage <= 0)
+	{
+		// skip scatter target cell
+		return 0x4184C2;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x4186D7, AircraftClass_Mission_Attack_Fire_Imcoming_1, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AbstractClass* pTarget = pTechno->Target;
+	int weaponIdx = pTechno->SelectWeapon(pTarget);
+	WeaponStruct* pWeapon = pTechno->GetWeapon(weaponIdx);
+	if (pWeapon && pWeapon->WeaponType && pWeapon->WeaponType->Damage <= 0)
+	{
+		// skip scatter target cell
+		return 0x418720;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x418826, AircraftClass_Mission_Attack_Fire_Imcoming_2, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AbstractClass* pTarget = pTechno->Target;
+	int weaponIdx = pTechno->SelectWeapon(pTarget);
+	WeaponStruct* pWeapon = pTechno->GetWeapon(weaponIdx);
+	if (pWeapon && pWeapon->WeaponType && pWeapon->WeaponType->Damage <= 0)
+	{
+		// skip scatter target cell
+		return 0x418870;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x418935, AircraftClass_Mission_Attack_Fire_Imcoming_3, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AbstractClass* pTarget = pTechno->Target;
+	int weaponIdx = pTechno->SelectWeapon(pTarget);
+	WeaponStruct* pWeapon = pTechno->GetWeapon(weaponIdx);
+	if (pWeapon && pWeapon->WeaponType && pWeapon->WeaponType->Damage <= 0)
+	{
+		// skip scatter target cell
+		return 0x41897F;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x418A44, AircraftClass_Mission_Attack_Fire_Imcoming_4, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AbstractClass* pTarget = pTechno->Target;
+	int weaponIdx = pTechno->SelectWeapon(pTarget);
+	WeaponStruct* pWeapon = pTechno->GetWeapon(weaponIdx);
+	if (pWeapon && pWeapon->WeaponType && pWeapon->WeaponType->Damage <= 0)
+	{
+		// skip scatter target cell
+		return 0x418A8E;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x418B40, AircraftClass_Mission_Attack_Fire_Imcoming_5, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	AbstractClass* pTarget = pTechno->Target;
+	int weaponIdx = pTechno->SelectWeapon(pTarget);
+	WeaponStruct* pWeapon = pTechno->GetWeapon(weaponIdx);
+	if (pWeapon && pWeapon->WeaponType && pWeapon->WeaponType->Damage <= 0)
+	{
+		// skip scatter target cell
+		return 0x418B8A;
+	}
+	return 0;
+}
