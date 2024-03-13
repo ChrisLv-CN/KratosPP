@@ -10,3 +10,4 @@ output
 .cproject
 .project
 /scripts/run_ion_shock.bat
+/scripts/run_yr.bat
