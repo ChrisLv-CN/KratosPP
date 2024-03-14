@@ -413,9 +413,11 @@ void AnimStatus::OnDone_PlaySuper()
 void AnimStatus::OnNext(AnimTypeClass* pNext)
 {
 	// 动画next会换类型，刷新设置
+	_animDamageData = nullptr;
 	_expireAnimData = nullptr;
 	_paintballData = nullptr;
 	_playSuperData = nullptr;
+
 	_playSuperFlag = false;
 
 	OnNext_SpawnAnims(pNext);
