@@ -219,7 +219,7 @@ void DrawTargetLaser(DSurface* pSurface,
 	Point2D point2 = ToClientPos(endLocation);
 	// 颜色的随机偏移
 	ColorStruct c = color;
-	BYTE rand = (BYTE)Random::RandomRanged(0, 14);
+	BYTE rand = (BYTE)Random::RandomRanged(0, 64);
 	if (c.R > rand)
 	{
 		c.R -= rand;
@@ -260,7 +260,7 @@ void DrawTargetLaser(DSurface* pSurface,
 		endPos.Y = point1.Y + deltaY2 / 4;
 		endZ2 = startZ + deltaZ2 / 4;
 		// 中心
-		pSurface->DrawLineBlit(&bound, &startPos, &endPos, &color, times / 4 + 255, startZ, endZ2);
+		pSurface->DrawLineBlit(&bound, &startPos, &endPos, &c, times / 4 + 255, startZ, endZ2);
 		// 两侧
 		Point2D start = startPos;
 		Point2D end = endPos;
@@ -268,7 +268,7 @@ void DrawTargetLaser(DSurface* pSurface,
 		{
 			start.X += 1;
 			end.X += 1;
-			pSurface->DrawLineBlit(&bound, &start, &end, &color, length, startZ, endZ2);
+			pSurface->DrawLineBlit(&bound, &start, &end, &c, length, startZ, endZ2);
 			start.X -= 2;
 			end.X -= 2;
 		}
@@ -276,12 +276,12 @@ void DrawTargetLaser(DSurface* pSurface,
 		{
 			start.Y += 1;
 			end.Y += 1;
-			pSurface->DrawLineBlit(&bound, &start, &end, &color, length, startZ, endZ2);
+			pSurface->DrawLineBlit(&bound, &start, &end, &c, length, startZ, endZ2);
 			start.Y -= 2;
 			end.Y -= 2;
 		}
 		// 两侧
-		pSurface->DrawLineBlit(&bound, &start, &end, &color, length, startZ, endZ2);
+		pSurface->DrawLineBlit(&bound, &start, &end, &c, length, startZ, endZ2);
 		// 位移绘制下一节
 		startPos = endPos;
 		startZ = endZ2;
