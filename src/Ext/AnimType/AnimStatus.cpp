@@ -6,6 +6,8 @@
 #include <Ext/Helper/CastEx.h>
 #include <Ext/Helper/Scripts.h>
 
+#include "AnimStand.h"
+
 bool AnimStatus::TryGetCreater(TechnoClass*& pTechno)
 {
 	pTechno = pCreater;
@@ -31,6 +33,11 @@ AnimDamageData* AnimStatus::GetAnimDamageData()
 		_animDamageData = INI::GetConfig<AnimDamageData>(INI::Art, pAnim->Type->ID)->Data;
 	}
 	return _animDamageData;
+}
+
+void AnimStatus::InitExt()
+{
+	_gameObject->FindOrAttach<AnimStand>();
 }
 
 void AnimStatus::Explosion_Damage(bool isBounce, bool bright)

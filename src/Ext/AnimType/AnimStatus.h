@@ -19,8 +19,6 @@
 #include "RelationData.h"
 #include "SpawnAnimsData.h"
 
-#include "AnimStand.h"
-
 class AnimStatus : public AnimScript
 {
 public:
@@ -74,7 +72,7 @@ public:
 	{
 		EventSystems::General.AddHandler(Events::DetachAll, this, &AnimStatus::OnCreaterDetach);
 
-		_gameObject->FindOrAttach<AnimStand>();
+		InitExt();
 	}
 
 	virtual void Destroy() override
@@ -135,6 +133,8 @@ private:
 	bool GetInvisible(Relation visibility);
 
 	void ResetLoopSpawn();
+
+	void InitExt();
 
 	void OnUpdate_Visibility();
 	void OnUpdate_Damage();
