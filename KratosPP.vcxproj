@@ -35,6 +35,7 @@
     <ClCompile Include="src\Extension\VoxelAnimTypeExt.cpp" />
     <ClCompile Include="src\Extension\WarheadTypeExt.cpp" />
     <ClCompile Include="src\Extension\WeaponTypeExt.cpp" />
+    <ClCompile Include="src\Ext\AnimType\AnimStand.cpp" />
     <ClCompile Include="src\Ext\AnimType\AnimStatus.cpp" />
     <ClCompile Include="src\Ext\BulletType\Bounce.cpp" />
     <ClCompile Include="src\Ext\BulletType\BulletStatus.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="src\Extension\WarheadTypeExt.h" />
     <ClInclude Include="src\Extension\WeaponTypeExt.h" />
     <ClInclude Include="src\Ext\AnimType\AnimDamageData.h" />
+    <ClInclude Include="src\Ext\AnimType\AnimStand.h" />
     <ClInclude Include="src\Ext\AnimType\AnimStatus.h" />
     <ClInclude Include="src\Ext\AnimType\ExpireAnimData.h" />
     <ClInclude Include="src\Ext\AnimType\RelationData.h" />

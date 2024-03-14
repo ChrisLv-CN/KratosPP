@@ -19,6 +19,8 @@
 #include "RelationData.h"
 #include "SpawnAnimsData.h"
 
+#include "AnimStand.h"
+
 class AnimStatus : public AnimScript
 {
 public:
@@ -71,6 +73,8 @@ public:
 	virtual void Awake() override
 	{
 		EventSystems::General.AddHandler(Events::DetachAll, this, &AnimStatus::OnCreaterDetach);
+
+		_gameObject->FindOrAttach<AnimStand>();
 	}
 
 	virtual void Destroy() override
