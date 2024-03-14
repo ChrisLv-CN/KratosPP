@@ -67,7 +67,7 @@ DEFINE_HOOK(0x489280, MapClass_DamageArea, 0x6)
 		// Those action won't effects Stand.
 		TechnoClass* pTechno = nullptr;
 		TechnoStatus* status = nullptr;
-		if (!pAttacker && CastToTechno(pAttacker, pTechno) && TryGetStatus<TechnoExt>(pTechno, status))
+		if (pAttacker && CastToTechno(pAttacker, pTechno) && TryGetStatus<TechnoExt>(pTechno, status))
 		{
 			status->Teleport->Teleport(pLocation, pWH);
 		}
