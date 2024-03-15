@@ -30,12 +30,9 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell, 
 		bool dontMove = false;
 		if (BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno))
 		{
-			pBuilding->QueueMission(Mission::Construction, false);
-			pBuilding->DiscoveredBy(pTechno->Owner);
-			pBuilding->IsReadyToCommence = true;
-			pTechno->Owner->RecheckTechTree = true;
-			if (!virtualUnit)
+			if (!virtualUnit && pBuilding->Type->Foundation != Foundation::_0x0)
 			{
+				pBuilding->QueueMission(Mission::Construction, false);
 				pCell->AddContent(pBuilding, false);
 				dontMove = true;
 			}
@@ -43,6 +40,9 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell, 
 			{
 				dontMove = false;
 			}
+			pBuilding->DiscoveredBy(pTechno->Owner);
+			pBuilding->IsReadyToCommence = true;
+			pTechno->Owner->RecheckTechTree = true;
 		}
 		if (!dontMove)
 		{
