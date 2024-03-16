@@ -182,22 +182,30 @@ void AircraftAttitude::OnUpdate()
 			}
 		}
 		// 正事
-		// 角度差比Step大
-		if (_smooth && PitchAngle != _targetAngle && abs(_targetAngle - PitchAngle) > angelStep)
+		// 检查是否处于吊运状态
+		if (dynamic_cast<AircraftClass*>(pTechno)->Type->Carryall && pTechno->Passengers.FirstPassenger)
 		{
-			// 只调整一个step
-			if (_targetAngle > PitchAngle)
-			{
-				PitchAngle += angelStep;
-			}
-			else
-			{
-				PitchAngle -= angelStep;
-			}
+			PitchAngle = 0;
 		}
 		else
 		{
-			PitchAngle = _targetAngle;
+			// 角度差比Step大
+			if (_smooth && PitchAngle != _targetAngle && abs(_targetAngle - PitchAngle) > angelStep)
+			{
+				// 只调整一个step
+				if (_targetAngle > PitchAngle)
+				{
+					PitchAngle += angelStep;
+				}
+				else
+				{
+					PitchAngle -= angelStep;
+				}
+			}
+			else
+			{
+				PitchAngle = _targetAngle;
+			}
 		}
 		// 关闭图像缓存
 		GetTechnoStatus()->DisableVoxelCache = PitchAngle != 0;
