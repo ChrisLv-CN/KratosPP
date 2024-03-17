@@ -103,9 +103,14 @@ void TechnoStatus::Awake()
 
 void TechnoStatus::Destroy()
 {
+	// Stand
+	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &TechnoStatus::OnTechnoDelete);
+	// Airstrike
 	EventSystems::General.RemoveHandler(Events::DetachAll, this, &TechnoStatus::OnAirstrikeDetach);
+	// TargetLaser
 	EventSystems::General.RemoveHandler(Events::DetachAll, this, &TechnoStatus::OnLaserTargetDetach);
 	EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &TechnoStatus::OnGScreenRender);
+
 	((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
 }
 

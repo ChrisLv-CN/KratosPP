@@ -190,7 +190,7 @@ bool TurretAngle::TryTurnBodyToAngle(DirStruct targetDir, int bodyDirIndex, int 
 {
 	TechnoStatus* status = GetTechnoStatue();
 	if (!IsBuilding() && !_isMoving && !pTechno->PrimaryFacing.IsRotating() && status
-		&& (!status->AmIStand() || !status->StandData.Enable || !status->StandData.LockDirection || status->StandData.FreeDirection))
+		&& (!status->AmIStand() || !status->MyStandData.Enable || !status->MyStandData.LockDirection || status->MyStandData.FreeDirection))
 	{
 		TurretAngleData* data = GetTurretAngleData();
 		DirStruct turnDir = targetDir;

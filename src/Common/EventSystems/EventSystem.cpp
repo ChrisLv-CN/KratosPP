@@ -47,10 +47,8 @@ Event Events::ExeTerminate = Event("ExeTerminate", "Raised when YR terminate");
 // 读取命令参数
 Event Events::CmdLineParse = Event("CmdLineParse", "Raised when YR load cmd");
 // 游戏事件
-Event Events::MissileDeleteEvent = Event("MissileDelete", "Raised when an BulletClass is delete");
-Event Events::TechnoDestroyEvent = Event("TechnoDestroy", "Raised when an TechnoClass is take damage to destroy");
-Event Events::TechnoDeleteEvent = Event("TechnoDelete", "Raised when an TechnoClass is delete");
 Event Events::DetachAll = Event("DetachAll", "Raised when an AbstractClass detach from all");
+Event Events::ObjectUnInitEvent = Event("ObjectUnInit", "Raised when an ObjectClass is ready to delete");
 Event Events::PointerExpireEvent = Event("AnnounceExpiredPointer", "Raised when an AbstractClass pointer expired");
 Event Events::ScenarioClearClassesEvent = Event("ScenarioClearClasses", "Raised when scenario is cleaning classes");
 Event Events::ScenarioStartEvent = Event("ScenarioStart", "Raised when scenario start");

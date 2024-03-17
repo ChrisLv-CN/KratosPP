@@ -40,12 +40,6 @@ DEFINE_HOOK(0x4664BA, BulletClass_CTOR, 0x5)
 DEFINE_HOOK(0x4665E9, BulletClass_DTOR, 0xA)
 {
 	GET(BulletClass*, pItem, ECX);
-	// 仅有热诱弹逻辑需要监视抛射体指针失效，只有导弹类型的抛射体删除时广播事件
-	if (pItem->Type->ROT > 1)
-	{
-		// 广播BulletDelete
-		EventSystems::Logic.Broadcast(Events::MissileDeleteEvent, pItem);
-	}
 	BulletExt::ExtData* ext = BulletExt::ExtMap.Find(pItem);
 	if (ext)
 	{

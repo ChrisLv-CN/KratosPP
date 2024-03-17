@@ -20,15 +20,8 @@ void BulletStatus::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	{
 		pSource = nullptr;
 	}
-}
-
-void BulletStatus::OnFakeTargetDetach(EventSystem* sender, Event e, void* args)
-{
-	auto const& argsArray = reinterpret_cast<void**>(args);
-	AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
-	if (pInvalid == _pFakeTarget)
+	if (args == _pFakeTarget)
 	{
-		_hasFakeTarget = false;
 		_pFakeTarget = nullptr;
 	}
 }
@@ -66,14 +59,11 @@ void BulletStatus::InitState()
 void BulletStatus::SetFakeTarget(ObjectClass* pFakeTarget)
 {
 	_pFakeTarget = pFakeTarget;
-	_hasFakeTarget = _pFakeTarget != nullptr;
-
-	EventSystems::General.AddHandler(Events::DetachAll, this, &BulletStatus::OnFakeTargetDetach);
 }
 
 void BulletStatus::Awake()
 {
-	EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &BulletStatus::OnTechnoDelete);
+	EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &BulletStatus::OnTechnoDelete);
 
 	Tag = pBullet->GetType()->Name;
 
@@ -129,11 +119,7 @@ void BulletStatus::Awake()
 
 void BulletStatus::Destroy()
 {
-	EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &BulletStatus::OnTechnoDelete);
-	if (_hasFakeTarget)
-	{
-		EventSystems::General.RemoveHandler(Events::DetachAll, this, &BulletStatus::OnFakeTargetDetach);
-	}
+	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &BulletStatus::OnTechnoDelete);
 }
 
 void BulletStatus::TakeDamage(int damage, bool eliminate, bool harmless, bool checkInterceptable)
@@ -285,9 +271,11 @@ void BulletStatus::OnUpdateEnd_BlackHole(CoordStruct& sourcePos) {};
 
 void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 {
-	if (_pFakeTarget)
+	ObjectClass* pTemp = _pFakeTarget;
+	_pFakeTarget = nullptr;
+	if (pTemp)
 	{
-		_pFakeTarget->UnInit();
+		pTemp->UnInit();
 	}
 	if (!skip)
 	{

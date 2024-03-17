@@ -33,7 +33,7 @@ void AnimStand::CreateAndPutStand()
 			if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pStand))
 			{
 				status->VirtualUnit = data->VirtualUnit;
-				status->StandData = *data;
+				status->SetupStand(*data, nullptr);
 				status->MyMasterIsAnim = true;
 			}
 			pStand->UpdatePlacement(PlacementType::Remove); // Mark(MarkType::Up)
@@ -102,17 +102,18 @@ void AnimStand::OnUpdate()
 void AnimStand::OnDone()
 {
 	// 移除替身
-	if (pStand)
+	TechnoClass* pTemp = pStand;
+	pStand = nullptr;
+	if (pTemp)
 	{
 		StandData* data = GetStandData();
-		bool explodes = (data->Explodes || data->ExplodesWithRocket) && !pStand->BeingWarpedOut && !pStand->WarpingOut;
+		bool explodes = (data->Explodes || data->ExplodesWithRocket) && !pTemp->BeingWarpedOut && !pTemp->WarpingOut;
 		TechnoStatus* standStatus = nullptr;
-		if (TryGetStatus<TechnoExt>(pStand, standStatus))
+		if (TryGetStatus<TechnoExt>(pTemp, standStatus))
 		{
-			// Logger.Log($"{Game.CurrentFrame} 阿伟 [{Data->Type}]{pStand} 要死了 explodes = {explodes}");
 			standStatus->DestroySelf->DestroyNow(!explodes);
 			// 如果替身处于Limbo状态，OnUpdate不会执行，需要手动触发
-			if (pStand->InLimbo)
+			if (pTemp->InLimbo)
 			{
 				standStatus->OnUpdate();
 			}
@@ -121,19 +122,15 @@ void AnimStand::OnDone()
 		{
 			if (explodes)
 			{
-				// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {pStand}[{Type.Type}] 自爆, 没有发现EXT");
-				pStand->TakeDamage(pStand->Health + 1, pStand->GetTechnoType()->Crewed);
+				pTemp->TakeDamage(pTemp->Health + 1, pTemp->GetTechnoType()->Crewed);
 			}
 			else
 			{
-				// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {Type.Type} 移除, 没有发现EXT");
-				pStand->Limbo();
-				// pStand->UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
-				pStand->TakeDamage(pStand->Health + 1, false);
+				pTemp->Limbo();
+				pTemp->UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
 			}
 		}
 	}
-	pStand = nullptr;
 	Disable();
 }
 

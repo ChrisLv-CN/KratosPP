@@ -53,16 +53,14 @@ public:
 	 */
 	void DrawSHP_Paintball(REGISTERS* R);
 
-	void OnCreaterDetach(EventSystem* sender, Event e, void* args)
+	void OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	{
-		auto const& argsArray = reinterpret_cast<void**>(args);
-		AbstractClass* pInvalid = (AbstractClass*)argsArray[0];
-		if (pInvalid == pCreater)
+		if (args == pCreater)
 		{
 			_createrIsDeadth = true;
 			pCreater = nullptr;
 		}
-		if (pInvalid == pAttachOwner)
+		if (args == pAttachOwner)
 		{
 			pAttachOwner = nullptr;
 		}
@@ -70,14 +68,14 @@ public:
 
 	virtual void Awake() override
 	{
-		EventSystems::General.AddHandler(Events::DetachAll, this, &AnimStatus::OnCreaterDetach);
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AnimStatus::OnTechnoDelete);
 
 		InitExt();
 	}
 
 	virtual void Destroy() override
 	{
-		EventSystems::General.RemoveHandler(Events::DetachAll, this, &AnimStatus::OnCreaterDetach);
+		EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &AnimStatus::OnTechnoDelete);
 	}
 
 	virtual void OnUpdate() override;
@@ -119,7 +117,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		EventSystems::General.AddHandler(Events::DetachAll, this, &AnimStatus::OnCreaterDetach);
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AnimStatus::OnTechnoDelete);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

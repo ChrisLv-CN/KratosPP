@@ -180,7 +180,7 @@ public:
 		bool res = this->Serialize(stream);
 		if (_diffSource)
 		{
-			EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AttachEffectScript::OnTechnoDelete);
+			EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AttachEffectScript::OnTechnoDelete);
 		}
 		return res;
 	}

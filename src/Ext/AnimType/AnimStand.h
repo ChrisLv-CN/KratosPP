@@ -35,12 +35,12 @@ public:
 			Disable();
 			return;
 		}
-		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AnimStand::OnTechnoDelete);
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AnimStand::OnTechnoDelete);
 	}
 
 	virtual void Destroy() override
 	{
-		EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &AnimStand::OnTechnoDelete);
+		EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &AnimStand::OnTechnoDelete);
 	}
 
 	virtual void OnUpdate() override;
@@ -62,7 +62,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AnimStand::OnTechnoDelete);
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AnimStand::OnTechnoDelete);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

@@ -272,7 +272,7 @@ void AttachEffectScript::Awake()
 
 void AttachEffectScript::Destroy()
 {
-	EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &AttachEffectScript::OnTechnoDelete);
+	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &AttachEffectScript::OnTechnoDelete);
 }
 
 void AttachEffectScript::Start(TechnoClass* pSource, HouseClass* pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger)
@@ -283,7 +283,7 @@ void AttachEffectScript::Start(TechnoClass* pSource, HouseClass* pSourceHouse, C
 	if (pSource != pObject)
 	{
 		this->_diffSource = true;
-		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &AttachEffectScript::OnTechnoDelete);
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AttachEffectScript::OnTechnoDelete);
 	}
 	if (this->FromWarhead = !warheadLocation.IsEmpty())
 	{

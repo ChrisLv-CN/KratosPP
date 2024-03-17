@@ -45,7 +45,6 @@ public:
 	void DrawVXL_Paintball(REGISTERS* R);
 
 	void OnTechnoDelete(EventSystem* sender, Event e, void* args);
-	void OnFakeTargetDetach(EventSystem* sender, Event e, void* args);
 
 	void ActiveProximity();
 
@@ -128,7 +127,6 @@ public:
 
 			.Process(this->_recordStatus)
 
-			.Process(this->_hasFakeTarget)
 			.Process(this->_pFakeTarget)
 			// 碰撞引信
 			.Process(this->_proximity)
@@ -146,11 +144,7 @@ public:
 	{
 		Component::Load(stream, registerForChange);
 		bool res = this->Serialize(stream);
-		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &BulletStatus::OnTechnoDelete);
-		if (_hasFakeTarget)
-		{
-			EventSystems::General.AddHandler(Events::DetachAll, this, &BulletStatus::OnFakeTargetDetach);
-		}
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &BulletStatus::OnTechnoDelete);
 		return res;
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
@@ -198,7 +192,6 @@ private:
 
 	RecordBulletStatus _recordStatus{};
 
-	bool _hasFakeTarget = false;
 	ObjectClass* _pFakeTarget = nullptr;
 
 	// 碰撞引信配置

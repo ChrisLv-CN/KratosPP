@@ -27,11 +27,12 @@ void StandEffect::CreateAndPutStand()
 		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pStand))
 		{
 			status->VirtualUnit = Data->VirtualUnit;
-			status->StandData = *Data;
+			status->MyStandData = *Data;
+			TechnoClass* pMaster = nullptr;
 			// 设置替身的所有者
 			if (pTechno)
 			{
-				status->pMyMaster = pTechno;
+				pMaster = pTechno;
 				// 同阵营同步状态机，比如染色
 				TechnoStatus* masterStatus = nullptr;
 				if (pTechno->Owner == AE->pSourceHouse && TryGetStatus<TechnoExt>(pTechno, masterStatus))
@@ -42,13 +43,14 @@ void StandEffect::CreateAndPutStand()
 				{
 					masterIsRocket = pTechno->GetTechnoType()->MissileSpawn;
 					masterIsSpawned = masterIsRocket || pTechno->GetTechnoType()->Spawned;
-					status->MyMasterIsSpawned = masterIsSpawned;
 				}
 			}
 			else if (pBullet)
 			{
-				status->pMyMaster = pBullet->Owner;
+				pMaster = pBullet->Owner;
 			}
+			status->SetupStand(*Data, pMaster);
+			status->MyMasterIsSpawned = masterIsSpawned;
 		}
 		pStand->UpdatePlacement(PlacementType::Remove); // Mark(MarkType::Up)
 		bool canGuard = AE->pSourceHouse->IsControlledByHuman();
@@ -91,16 +93,17 @@ void StandEffect::CreateAndPutStand()
 
 void StandEffect::ExplodesOrDisappear(bool peaceful)
 {
-	if (pStand)
+	TechnoClass* pTemp = pStand;
+	pStand = nullptr;
+	if (pTemp)
 	{
-		bool explodes = !peaceful && (Data->Explodes || notBeHuman || (masterIsRocket && Data->ExplodesWithRocket)) && !pStand->BeingWarpedOut && !pStand->WarpingOut;
+		bool explodes = !peaceful && (Data->Explodes || notBeHuman || (masterIsRocket && Data->ExplodesWithRocket)) && !pTemp->BeingWarpedOut && !pTemp->WarpingOut;
 		TechnoStatus* standStatus = nullptr;
-		if (TryGetStatus<TechnoExt>(pStand, standStatus))
+		if (TryGetStatus<TechnoExt>(pTemp, standStatus))
 		{
-			// Logger.Log($"{Game.CurrentFrame} 阿伟 [{Data->Type}]{pStand} 要死了 explodes = {explodes}");
 			standStatus->DestroySelf->DestroyNow(!explodes);
 			// 如果替身处于Limbo状态，OnUpdate不会执行，需要手动触发
-			if (masterIsRocket || pStand->InLimbo)
+			if (masterIsRocket || pTemp->InLimbo)
 			{
 				standStatus->OnUpdate();
 			}
@@ -109,19 +112,15 @@ void StandEffect::ExplodesOrDisappear(bool peaceful)
 		{
 			if (explodes)
 			{
-				// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {pStand}[{Type.Type}] 自爆, 没有发现EXT");
-				pStand->TakeDamage(pStand->Health + 1, pStand->GetTechnoType()->Crewed);
+				pTemp->TakeDamage(pTemp->Health + 1, pTemp->GetTechnoType()->Crewed);
 			}
 			else
 			{
-				// Logger.Log($"{Game.CurrentFrame} {AEType.Name} 替身 {Type.Type} 移除, 没有发现EXT");
-				pStand->Limbo();
-				// pStand->UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
-				pStand->TakeDamage(pStand->Health + 1, false);
+				pTemp->Limbo();
+				pTemp->UnInit(); // 替身攻击建筑时死亡会导致崩溃，莫名其妙的bug
 			}
 		}
 	}
-	pStand = nullptr;
 	Deactivate();
 	AE->TimeToDie();
 }
@@ -560,15 +559,17 @@ void StandEffect::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 
 void StandEffect::OnStart()
 {
-	EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &StandEffect::OnTechnoDelete);
+	EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &StandEffect::OnTechnoDelete);
 	CreateAndPutStand();
+	Debug::Log("Make Stand [%s]%d on master [%s]%d.\n", Data->Type.c_str(), pStand, pObject->GetType()->ID, pObject);
 }
 
 void StandEffect::End(CoordStruct location)
 {
-	EventSystems::Logic.RemoveHandler(Events::TechnoDeleteEvent, this, &StandEffect::OnTechnoDelete);
+	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &StandEffect::OnTechnoDelete);
 	if (pStand)
 	{
+		Debug::Log("Ready to destroy Stand %d\n", pStand);
 		ExplodesOrDisappear(false);
 	}
 }

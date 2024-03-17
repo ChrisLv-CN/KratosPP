@@ -109,7 +109,7 @@ DEFINE_HOOK(0x6FF66C, TechnoClass_Fire_DecreaseAmmo, 0x6)
 	GET(TechnoClass*, pTechno, ESI);
 	TechnoStatus* status = nullptr;
 	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand()
-		&& status->pMyMaster && status->StandData.UseMasterAmmo)
+		&& status->pMyMaster && status->MyStandData.UseMasterAmmo)
 	{
 		int ammo = status->pMyMaster->Ammo;
 		if (ammo > 0)
@@ -132,7 +132,7 @@ DEFINE_HOOK(0x6FCDBE, TechnoClass_SetTarget_Stand, 0x6)
 		TechnoClass* pTechno = nullptr;
 		TechnoStatus* status = nullptr;
 		if (CastToTechno(pTarget, pTechno) && TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand()
-			&& (status->StandData.Immune || !pTechno->GetTechnoType() || pTechno->GetTechnoType()->Insignificant || IsImmune(pTechno))
+			&& (status->MyStandData.Immune || !pTechno->GetTechnoType() || pTechno->GetTechnoType()->Insignificant || IsImmune(pTechno))
 			)
 		{
 			// 替身处于无敌状态，目标设置为替身使者
@@ -219,10 +219,10 @@ DEFINE_HOOK(0x704368, TechnoClass_GetZAdjust_Stand, 0x8)
 	GET(int, height, EAX);
 
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && !status->StandData.IsTrain)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && !status->MyStandData.IsTrain)
 	{
 		int zAdjust = TacticalClass::Instance->AdjustForZ(height);
-		int offset = status->StandData.ZOffset;
+		int offset = status->MyStandData.ZOffset;
 		R->ECX(zAdjust + offset);
 	}
 	return 0;
@@ -233,9 +233,9 @@ DEFINE_HOOK(0x4DB7F7, FootClass_In_Which_Layer_Stand, 0x6)
 	GET(TechnoClass*, pTechno, ESI);
 
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && !status->StandData.IsTrain && status->StandData.ZOffset != 0)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && !status->MyStandData.IsTrain && status->MyStandData.ZOffset != 0)
 	{
-		Layer layer = status->StandData.DrawLayer;
+		Layer layer = status->MyStandData.DrawLayer;
 		if (layer == Layer::None)
 		{
 			layer = pTechno->IsInAir() ? Layer::Top : Layer::Air;
@@ -271,7 +271,7 @@ DEFINE_HOOK(0x414C27, AircraftClass_Update_SkipCreateChronoSparkleAnimOnStand, 0
 	GET(TechnoClass*, pTechno, ESI);
 
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->StandData.Immune)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->MyStandData.Immune)
 	{
 		return 0x414C78;
 	}
@@ -283,7 +283,7 @@ DEFINE_HOOK(0x440406, BuildingClass_Update_SkipCreateChronoSparkleAnimOnStand1, 
 	GET(TechnoClass*, pTechno, ESI);
 
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->StandData.Immune)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->MyStandData.Immune)
 	{
 		return 0x44055D;
 	}
@@ -295,7 +295,7 @@ DEFINE_HOOK(0x44050C, BuildingClass_Update_SkipCreateChronoSparkleAnimOnStand2, 
 	GET(TechnoClass*, pTechno, ESI);
 
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->StandData.Immune)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->MyStandData.Immune)
 	{
 		return 0x44055D;
 	}
@@ -307,7 +307,7 @@ DEFINE_HOOK(0x51BB17, InfantryClass_Update_SkipCreateChronoSparkleAnimOnStand, 0
 	GET(TechnoClass*, pTechno, ESI);
 
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->StandData.Immune)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->MyStandData.Immune)
 	{
 		return 0x51BB6E;
 	}
@@ -319,7 +319,7 @@ DEFINE_HOOK(0x736250, UnitClass_Update_SkipCreateChronoSparkleAnimOnStand, 0x5)
 	GET(TechnoClass*, pTechno, ESI);
 
 	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->StandData.Immune)
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->MyStandData.Immune)
 	{
 		return 0x7362A7;
 	}

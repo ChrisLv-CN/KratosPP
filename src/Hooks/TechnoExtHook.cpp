@@ -47,8 +47,6 @@ DEFINE_HOOK(0x6F3260, TechnoClass_CTOR, 0x5)
 DEFINE_HOOK(0x6F4500, TechnoClass_DTOR, 0x5)
 {
 	GET(TechnoClass*, pItem, ECX);
-	// 广播TechnoDelete
-	EventSystems::Logic.Broadcast(Events::TechnoDeleteEvent, pItem);
 	// 从ExtMap中删除
 	TechnoExt::ExtData* ext = TechnoExt::ExtMap.Find(pItem);
 	if (ext)
@@ -346,8 +344,6 @@ DEFINE_HOOK(0x701DFF, TechnoClass_ReceiveDamageEnd, 0x7)
 DEFINE_HOOK(0x702050, TechnoClass_ReceiveDamage_Destroy, 0x6)
 {
 	GET(TechnoClass*, pThis, ESI);
-
-	EventSystems::Logic.Broadcast(Events::TechnoDestroyEvent, pThis);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	pExt->_GameObject->Foreach([](Component* c)
@@ -807,7 +803,7 @@ DEFINE_HOOK(0x70D773, TechnoClass_Fire_DeathWeapon_OverrideWeapon_Stand, 0x6)
 	{
 		// 修改死亡武器的发射者是JOJO
 		TechnoClass* pMaster = status->pMyMaster;
-		if (status->MyMasterIsSpawned && status->StandData.ExperienceToSpawnOwner && !IsDead(pMaster->SpawnOwner))
+		if (status->MyMasterIsSpawned && status->MyStandData.ExperienceToSpawnOwner && !IsDead(pMaster->SpawnOwner))
 		{
 			pMaster = pMaster->SpawnOwner;
 		}

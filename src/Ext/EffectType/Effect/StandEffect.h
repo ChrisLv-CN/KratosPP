@@ -75,7 +75,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		EffectScript::Load(stream, registerForChange);
-		EventSystems::Logic.AddHandler(Events::TechnoDeleteEvent, this, &StandEffect::OnTechnoDelete);
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &StandEffect::OnTechnoDelete);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

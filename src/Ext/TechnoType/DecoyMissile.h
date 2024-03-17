@@ -56,7 +56,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		EventSystems::Logic.AddHandler(Events::MissileDeleteEvent, this, &DecoyMissile::OnMissileDelete);
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &DecoyMissile::OnMissileDelete);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

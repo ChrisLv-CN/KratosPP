@@ -128,12 +128,12 @@ void DecoyMissile::Setup()
 void DecoyMissile::Awake()
 {
 	Setup();
-	EventSystems::Logic.AddHandler(Events::MissileDeleteEvent, this, &DecoyMissile::OnMissileDelete);
+	EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &DecoyMissile::OnMissileDelete);
 }
 
 void DecoyMissile::Destroy()
 {
-	EventSystems::Logic.RemoveHandler(Events::MissileDeleteEvent, this, &DecoyMissile::OnMissileDelete);
+	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &DecoyMissile::OnMissileDelete);
 }
 
 void DecoyMissile::ExtChanged()

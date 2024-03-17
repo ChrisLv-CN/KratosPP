@@ -180,7 +180,7 @@ bool IsImmune(TechnoClass* pTechno, bool checkStand)
 		TechnoStatus* status = nullptr;
 		if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand())
 		{
-			immune = status->StandData.Immune;
+			immune = status->MyStandData.Immune;
 		}
 	}
 	if (!immune)

@@ -65,7 +65,9 @@ public:
 #endif // DEBUG
 				// delete *m_GameObject;
 				m_GameObject.ForeachChild([](Component* c)
-					{ c->EnsureDestroy(); });
+					{
+						c->EnsureDestroy();
+					}, true);
 			}
 			catch (const std::exception& e)
 			{

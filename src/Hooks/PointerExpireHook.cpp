@@ -22,10 +22,18 @@
 
 // static PointerExpireHook _pointerExpireHook;
 
-DEFINE_HOOK(0x4101F0, AbstractClass_Delete, 0x6)
+DEFINE_HOOK(0x4101F0, AbstractClass_DTOR, 0x6)
 {
 	GET(ObjectClass*, pObject, ECX);
-	EventSystems::General.Broadcast(Events::PointerExpireEvent, &pObject);
+	EventSystems::General.Broadcast(Events::PointerExpireEvent, pObject);
+	return 0;
+}
+
+DEFINE_HOOK(0x5F65F1, ObjectClass_UnInit, 0x5)
+{
+	GET(ObjectClass*, pObject, ECX);
+	// Debug::Log("ObjectClass [%s]%d ready to delete.\n", pObject->GetType()->ID, pObject);
+	EventSystems::General.Broadcast(Events::ObjectUnInitEvent, pObject);
 	return 0;
 }
 

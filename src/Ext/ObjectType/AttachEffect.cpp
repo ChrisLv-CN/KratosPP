@@ -178,7 +178,7 @@ CrateBuffData AttachEffect::CountAttachStatusMultiplier()
 	if (pTechno)
 	{
 		TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno);
-		if (status->AmIStand() && status->StandData.IsVirtualTurret
+		if (status->AmIStand() && status->MyStandData.IsVirtualTurret
 			&& !status->MyMasterIsAnim && !IsDead(status->pMyMaster)
 			)
 		{

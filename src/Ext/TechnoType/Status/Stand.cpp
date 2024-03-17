@@ -7,23 +7,31 @@
 #include <Ext/EffectType/AttachEffectScript.h>
 #include <Ext/EffectType/Effect/StandEffect.h>
 
+void TechnoStatus::SetupStand(StandData data, TechnoClass* pMaster)
+{
+	MyStandData = data;
+	pMyMaster = pMaster;
+
+	EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &TechnoStatus::OnTechnoDelete);
+}
+
 bool TechnoStatus::AmIStand()
 {
 	// 抛射体上的替身可能会因为抛射体的攻击者已经死亡而MyMaster为空
-	return pMyMaster || MyMasterIsAnim || StandData.Enable;
+	return pMyMaster || MyMasterIsAnim || MyStandData.Enable;
 }
 
 void TechnoStatus::OnPut_Stand(CoordStruct* pCoord, DirType dirType)
 {
 	if (AmIStand())
 	{
-		if (StandData.Immune)
+		if (MyStandData.Immune)
 		{
-			TechnoExt::ImmuneStandArray[pTechno] = StandData;
+			TechnoExt::ImmuneStandArray[pTechno] = MyStandData;
 		}
 		else
 		{
-			TechnoExt::StandArray[pTechno] = StandData;
+			TechnoExt::StandArray[pTechno] = MyStandData;
 		}
 	}
 	else if (VirtualUnit)
@@ -68,17 +76,17 @@ void TechnoStatus::OnReceiveDamage_Stand(args_ReceiveDamage* args)
 		if (pMyMaster)
 		{
 			// I'm stand
-			if (*args->Damage >= 0 || StandData.AllowShareRepair)
+			if (*args->Damage >= 0 || MyStandData.AllowShareRepair)
 			{
-				if (StandData.Immune)
+				if (MyStandData.Immune)
 				{
 					*args->Damage = 0;
 				}
-				else if (StandData.DamageToMaster > 0 && !IsDeadOrInvisible(pMyMaster))
+				else if (MyStandData.DamageToMaster > 0 && !IsDeadOrInvisible(pMyMaster))
 				{
 					// 伤害分摊给jojo
 					int damage = *args->Damage;
-					int to = (int)(damage * StandData.DamageToMaster);
+					int to = (int)(damage * MyStandData.DamageToMaster);
 					*args->Damage = damage - to;
 					pMyMaster->ReceiveDamage(&to, args->DistanceToEpicenter, args->WH, args->Attacker, args->IgnoreDefenses, args->PreventsPassengerEscape, args->SourceHouse);
 				}
@@ -123,7 +131,7 @@ void TechnoStatus::OnRegisterDestruction_Stand(TechnoClass* pKiller, int cost, b
 		if (TryGetStatus<TechnoExt>(pKiller, killerStatue) && killerStatue->AmIStand() && !IsDead(killerStatue->pMyMaster))
 		{
 			TechnoClass* pMaster = killerStatue->pMyMaster;
-			if (killerStatue->MyMasterIsSpawned && killerStatue->StandData.ExperienceToSpawnOwner && !IsDead(pMaster->SpawnOwner))
+			if (killerStatue->MyMasterIsSpawned && killerStatue->MyStandData.ExperienceToSpawnOwner && !IsDead(pMaster->SpawnOwner))
 			{
 				pMaster = pMaster->SpawnOwner;
 			}
@@ -143,7 +151,7 @@ void TechnoStatus::OnRegisterDestruction_Stand(TechnoClass* pKiller, int cost, b
 					if (!pMaster->Veterancy.IsElite())
 					{
 						// 使者还能获得经验，转移部分给使者
-						transExp = (int)(cost * killerStatue->StandData.ExperienceToMaster);
+						transExp = (int)(cost * killerStatue->MyStandData.ExperienceToMaster);
 						exp -= transExp;
 					}
 					// 剩余部分自己享用
@@ -172,7 +180,7 @@ void TechnoStatus::OnRegisterDestruction_Stand(TechnoClass* pKiller, int cost, b
 
 bool TechnoStatus::OnSelect_VirtualUnit()
 {
-	if (pMyMaster && StandData.Enable && StandData.SelectToMaster)
+	if (pMyMaster && MyStandData.Enable && MyStandData.SelectToMaster)
 	{
 		pMyMaster->Select();
 	}

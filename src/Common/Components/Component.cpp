@@ -404,14 +404,17 @@ void Component::ForeachLevel(std::function<void(Component*)> action, int& level,
 	ClearDisableComponent();
 }
 
-void Component::ForeachChild(std::function<void(Component*)> action)
+void Component::ForeachChild(std::function<void(Component*)> action, bool force)
 {
 	for (Component* c : _children)
 	{
 		action(c);
-		if (c->IsBreak())
+		if (!force)
 		{
-			break;
+			if (c->IsBreak())
+			{
+				break;
+			}
 		}
 	}
 }

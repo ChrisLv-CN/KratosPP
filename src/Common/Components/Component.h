@@ -171,7 +171,7 @@ public:
 	/// execute action for each child (exclude child's child)
 	/// </summary>
 	/// <param name="action"></param>
-	void ForeachChild(std::function<void(Component*)> action);
+	void ForeachChild(std::function<void(Component*)> action, bool force = false);
 
 	void Break();
 	bool IsBreak();

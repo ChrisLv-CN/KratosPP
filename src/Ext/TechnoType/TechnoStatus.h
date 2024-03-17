@@ -52,7 +52,16 @@ class TechnoStatus : public TechnoScript
 public:
 	TECHNO_SCRIPT(TechnoStatus);
 
+	void SetupStand(StandData data, TechnoClass* pMaster);
 	bool AmIStand();
+
+	void OnTechnoDelete(EventSystem* sender, Event e, void* args)
+	{
+		if (args == pMyMaster)
+		{
+			pMyMaster = nullptr;
+		}
+	}
 
 	void RockerPitch(WeaponTypeClass* pWeapon);
 
@@ -207,7 +216,7 @@ public:
 	{
 		if (false) {}
 		STATE_VAR_TRYGET(AntiBullet)
-		STATE_VAR_TRYGET(DamageReaction)
+			STATE_VAR_TRYGET(DamageReaction)
 			STATE_VAR_TRYGET(Deselect)
 			STATE_VAR_TRYGET(DestroyAnim)
 			STATE_VAR_TRYGET(DestroySelf)
@@ -226,7 +235,7 @@ public:
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
 	// 替身的配置
-	StandData StandData{};
+	StandData MyStandData{};
 	TechnoClass* pMyMaster = nullptr;
 	bool MyMasterIsSpawned = false;
 	bool MyMasterIsAnim = false;
@@ -263,7 +272,7 @@ public:
 	{
 		return stream
 			.Process(this->CrateBuff)
-			.Process(this->StandData)
+			.Process(this->MyStandData)
 			.Process(this->pMyMaster)
 			.Process(this->MyMasterIsSpawned)
 
@@ -305,6 +314,10 @@ public:
 	{
 		Component::Load(stream, registerForChange);
 		bool res = this->Serialize(stream);
+		if (MyStandData.Enable)
+		{
+			EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &TechnoStatus::OnTechnoDelete);
+		}
 		if (!_airstrikes.empty())
 		{
 			EventSystems::General.AddHandler(Events::DetachAll, this, &TechnoStatus::OnAirstrikeDetach);
