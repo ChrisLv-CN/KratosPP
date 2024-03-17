@@ -9,7 +9,7 @@
 class AttachFireData : public FilterData
 {
 public:
-	bool UseROF = true;
+	bool CheckROF = true;
 	bool CheckRange = false;
 	bool CheckAA = false;
 	bool CheckAG = false;
@@ -45,7 +45,8 @@ public:
 
 		FilterData::Read(reader, title);
 
-		UseROF = reader->Get(title + "UseROF", UseROF);
+		CheckROF = reader->Get(title + "UseROF", CheckROF);
+		CheckROF = reader->Get(title + "CheckROF", CheckROF);
 		CheckRange = reader->Get(title + "CheckRange", CheckRange);
 		CheckAA = reader->Get(title + "CheckAA", CheckAA);
 		CheckAG = reader->Get(title + "CheckAG", CheckAG);
@@ -205,7 +206,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
-			.Process(this->UseROF)
+			.Process(this->CheckROF)
 			.Process(this->CheckRange)
 			.Process(this->CheckAA)
 			.Process(this->CheckAG)

@@ -30,7 +30,7 @@ bool AutoWeaponEffect::CheckROF(WeaponTypeClass* pWeapon, WeaponTypeExt::TypeDat
 	bool canFire = false;
 	std::string weaponId = pWeapon->ID;
 	// 进行ROF检查
-	canFire = !weaponData->UseROF;
+	canFire = !weaponData->CheckROF;
 	if (!canFire)
 	{
 		auto it = _rof.find(weaponId);

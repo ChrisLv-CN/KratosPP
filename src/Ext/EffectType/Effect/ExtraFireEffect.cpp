@@ -19,7 +19,7 @@ bool ExtraFireEffect::CheckROF(WeaponTypeClass* pWeapon, WeaponTypeExt::TypeData
 	bool canFire = false;
 	std::string weaponId = pWeapon->ID;
 	// 进行ROF检查
-	canFire = !weaponData->UseROF;
+	canFire = !weaponData->CheckROF;
 	if (!canFire)
 	{
 		auto it = _rof.find(weaponId);
@@ -155,7 +155,7 @@ void ExtraFireEffect::OnFire(AbstractClass* pTarget, int weaponIdx)
 					{
 						WeaponTypeExt::TypeData* weaponData = GetTypeData<WeaponTypeExt, WeaponTypeExt::TypeData>(pWeapon);
 
-						bool canFire = !weaponData->UseROF;
+						bool canFire = !weaponData->CheckROF;
 						if (!canFire)
 						{
 							canFire = CheckROF(pWeapon, weaponData);
