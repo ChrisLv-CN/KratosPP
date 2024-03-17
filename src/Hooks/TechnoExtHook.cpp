@@ -5,6 +5,7 @@
 #include <SpecificStructures.h>
 #include <TechnoClass.h>
 #include <VoxelAnimTypeClass.h>
+#include <JumpjetLocomotionClass.h>
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
@@ -820,27 +821,188 @@ DEFINE_HOOK(0x70D773, TechnoClass_Fire_DeathWeapon_OverrideWeapon_Stand, 0x6)
 }
 #pragma endregion
 
-
-DEFINE_HOOK(0x6FF28F, TechnoClass_Fire_ROFMultiplier, 0x6)
+DEFINE_HOOK(0x6FF29E, TechnoClass_Fire_ROFMultiplier, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
-
+	GET(int, rof, EAX);
 	// check skipRof
 	AutoFireAreaWeapon* autoArea = GetScript<TechnoExt, AutoFireAreaWeapon>(pTechno);
 	if (autoArea && autoArea->SkipROF)
 	{
-		return 0x6FF2BE; // skip ROF
+		// skip ROF
+		R->EAX(0);
 	}
-	// 计算ROF
-	GET(WeaponTypeClass*, pWeapon, EBX);
-	AttachEffect* aem = nullptr;
-	if (pTechno->CurrentBurstIndex >= pWeapon->Burst && TryGetAEManager<TechnoExt>(pTechno, aem))
+	else
 	{
-		GET(int, rof, EAX);
-		double rofMult = aem->CountAttachStatusMultiplier().ROFMultiplier;
-		R->EAX(rof * rofMult);
+		// 计算ROF
+		GET(WeaponTypeClass*, pWeapon, EBX);
+		AttachEffect* aem = nullptr;
+		if (pTechno->CurrentBurstIndex >= pWeapon->Burst && TryGetAEManager<TechnoExt>(pTechno, aem))
+		{
+			double rofMult = aem->CountAttachStatusMultiplier().ROFMultiplier;
+			R->EAX(rof * rofMult);
+		}
 	}
-
 	return 0;
 }
 
+DEFINE_HOOK(0x736A95, UnitClass_Rotation_Update_Freezing_TurretSpins, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	TechnoStatus* status = nullptr;
+	if (pTechno && TryGetStatus<TechnoExt>(pTechno, status) && (status->Freezing || status->Teleport->IsFreezing()))
+	{
+		return 0x736AD5;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x4CCBB3, FlyLocomotionClass_Freeze, 0x5)
+{
+	FlyLocomotionClass* pFly = (FlyLocomotionClass*)(R->ESI() - 4);
+	TechnoClass* pTechno = pFly->LinkedTo;
+	TechnoStatus* status = nullptr;
+	if (pTechno && TryGetStatus<TechnoExt>(pTechno, status) && (status->Freezing || status->Teleport->IsFreezing()))
+	{
+		return 0x4CCBCE;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x54AED0, JumpjetLocomotionClass_Freeze, 0x5)
+{
+	JumpjetLocomotionClass* pJJ = (JumpjetLocomotionClass*)(R->ESI() - 4);
+	TechnoClass* pTechno = pJJ->LinkedTo;
+	TechnoStatus* status = nullptr;
+	if (pTechno && TryGetStatus<TechnoExt>(pTechno, status) && (status->Freezing || status->Teleport->IsFreezing()))
+	{
+		// 被冻结时，保持朝向不变
+		DirStruct dir = pJJ->LocomotionFacing.Current();
+		if (status->JJMark)
+		{
+			status->JJMark = false;
+			dir = status->JJFacing;
+		}
+		pJJ->LocomotionFacing.SetCurrent(dir);
+		pTechno->PrimaryFacing.SetCurrent(dir);
+		return 0x54B16C;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x54D600, JumpjetLocomotionClass_Update_DontTurnInCell, 0x6)
+{
+	GET(JumpjetLocomotionClass*, pJJ, ESI);
+	CoordStruct targetPos = pJJ->DestinationCoords;
+	if (!targetPos.IsEmpty())
+	{
+		TechnoClass* pTechno = pJJ->LinkedTo;
+		TechnoStatus* status = nullptr;
+		if (TryGetStatus<TechnoExt>(pTechno, status) && status->Teleport->IsReadyToMoveWarp())
+		{
+			CoordStruct sourcePos = pTechno->GetCoords();
+			CellStruct s = CellClass::Coord2Cell(sourcePos);
+			CellStruct t = CellClass::Coord2Cell(targetPos);
+			if (s.X == t.X && s.Y == t.Y)
+			{
+				// Same cell, don't move
+				GET_STACK(CoordStruct, fixPos, 0x44);
+				fixPos.X = targetPos.X;
+				fixPos.Y = targetPos.Y;
+				R->Stack(0x44, fixPos);
+			}
+		}
+	}
+	return 0;
+}
+
+// 爬升
+DEFINE_HOOK(0x54BC44, JumpjetLocomotionClass_Update_State1_DontTurnInCell, 0x8)
+{
+	GET(JumpjetLocomotionClass*, pJJ, ESI);
+	TechnoClass* pTechno = pJJ->LinkedTo;
+	CoordStruct sourcePos = pTechno->GetCoords();
+	CoordStruct targetPos = pJJ->DestinationCoords;
+	if (sourcePos.X == targetPos.X && sourcePos.Y == targetPos.Y)
+	{
+		// 完全垂直的升降，不要计算转角，保持朝向不变
+		DirStruct dir = pJJ->LocomotionFacing.Current();
+		TechnoStatus* status = nullptr;
+		if (TryGetStatus<TechnoExt>(pTechno, status))
+		{
+			if (status->JJMark)
+			{
+				status->JJMark = false;
+				dir = status->JJFacing;
+			}
+		}
+		R->Stack(0x10, dir);
+	}
+	return 0;
+}
+
+// 悬停
+DEFINE_HOOK(0x54BF53, JumpjetLocomotionClass_Update_State2_MarkDir, 0x5)
+{
+	GET(JumpjetLocomotionClass*, pJJ, ESI);
+	CoordStruct targetPos = pJJ->DestinationCoords;
+	if (!targetPos.IsEmpty())
+	{
+		TechnoClass* pTechno = pJJ->LinkedTo;
+		TechnoStatus* status = nullptr;
+		if (TryGetStatus<TechnoExt>(pTechno, status))
+		{
+			if (!status->JJMark)
+			{
+				status->JJMark = true;
+				GET_STACK(DirStruct, dir, 0x10); // 自身和目的地之间计算出来的转角
+				CoordStruct sourcePos = pTechno->GetCoords();
+				CellStruct s = CellClass::Coord2Cell(sourcePos);
+				CellStruct t = CellClass::Coord2Cell(targetPos);
+				if (s.X == t.X && s.Y == t.Y)
+				{
+					// 如果在同一个格子，不要乱转
+					dir = pJJ->LocomotionFacing.Current();
+				}
+				status->JJFacing = dir;
+			}
+		}
+	}
+	return 0;
+}
+
+// 下降
+DEFINE_HOOK(0x54C0BB, JumpjetLocomotionClass_Update_State3_DontTurnInCell, 0x7)
+{
+	GET(JumpjetLocomotionClass*, pJJ, ESI);
+	TechnoClass* pTechno = pJJ->LinkedTo;
+	CoordStruct sourcePos = pTechno->GetCoords();
+	CoordStruct targetPos = pJJ->DestinationCoords;
+	if (sourcePos.X == targetPos.X && sourcePos.Y == targetPos.Y)
+	{
+		// 完全垂直的升降，不要计算转角，保持朝向不变
+		DirStruct dir = pJJ->LocomotionFacing.Current();
+		TechnoStatus* status = nullptr;
+		if (TryGetStatus<TechnoExt>(pTechno, status))
+		{
+			if (status->JJMark)
+			{
+				status->JJMark = false;
+				dir = status->JJFacing;
+			}
+		}
+		R->Stack(0x20, dir);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x6622E0, RocketLocomotionClass_Update_Freezing, 0x6)
+{
+	GET(TechnoClass*, pTechno, ECX);
+	TechnoStatus* status = nullptr;
+	if (pTechno && TryGetStatus<TechnoExt>(pTechno, status) && (status->Freezing || status->Teleport->IsFreezing()))
+	{
+		return 0x662FEC;
+	}
+	return 0;
+}

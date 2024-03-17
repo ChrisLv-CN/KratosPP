@@ -40,12 +40,15 @@ void JumpjetFacing::OnUpdate()
 		if (_JJNeedTurn)
 		{
 			FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
-			if (pFoot->GetCurrentSpeed() == 0)
+			JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get());
+			CoordStruct sourcePos = pTechno->GetCoords();
+			CoordStruct targetPos = jjLoco->DestinationCoords;
+			if (targetPos.IsEmpty() || CellClass::Coord2Cell(sourcePos) == CellClass::Coord2Cell(targetPos))
 			{
+				DirStruct dir = jjLoco->LocomotionFacing.Current();
 				// Turning
 				_JJNeedTurn = false;
 				pFoot->StopMoving();
-				JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get());
 				jjLoco->LocomotionFacing.SetDesired(_JJTurnTo);
 			}
 			else

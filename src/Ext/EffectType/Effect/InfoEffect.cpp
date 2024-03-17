@@ -1,5 +1,7 @@
 ﻿#include "InfoEffect.h"
 
+#include <JumpjetLocomotionClass.h>
+
 #include <Extension/WarheadTypeExt.h>
 
 #include <Ext/Helper/FLH.h>
@@ -245,17 +247,38 @@ void InfoEffect::OnGScreenRenderEnd(CoordStruct location)
 			if (Data->BodyDir.Mode != InfoMode::NONE && (Data->BodyDir.ShowEnemy || isPlayerControl) && (!Data->BodyDir.OnlySelected || isSelected))
 			{
 				DirStruct dir = pTechno->PrimaryFacing.Current();
+				DirStruct toDir = pTechno->PrimaryFacing.Desired();
+				if (pTechno->GetTechnoType()->Locomotor == LocomotionClass::CLSIDs::Jumpjet)
+				{
+					FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
+					if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
+					{
+						dir = jjLoco->LocomotionFacing.Current();
+						toDir = jjLoco->LocomotionFacing.Desired();
+					}
+				}
 				CoordStruct flh{ 1024, 0, 0 };
 				CoordStruct targetPos = GetFLHAbsoluteCoords(sourcePos, flh, dir);
 				DrawLine(DSurface::Temp, pos, ToClientPos(targetPos), Data->BodyDir.Color, bounds);
+				if (toDir != dir)
+				{
+					CoordStruct targetToPos = GetFLHAbsoluteCoords(sourcePos, flh, toDir);
+					DrawDashedLine(DSurface::Temp, pos, ToClientPos(targetToPos), Data->BodyDir.Color, bounds);
+				}
 			}
 			// 显示单位炮塔朝向
 			if (Data->TurretDir.Mode != InfoMode::NONE && (Data->TurretDir.ShowEnemy || isPlayerControl) && (!Data->TurretDir.OnlySelected || isSelected))
 			{
-				DirStruct dir = pTechno->SecondaryFacing.Current();
+				DirStruct dir = pTechno->TurretFacing().Current();
+				DirStruct toDir = pTechno->TurretFacing().Desired();
 				CoordStruct flh{ 1024, 0, 0 };
 				CoordStruct targetPos = GetFLHAbsoluteCoords(sourcePos, flh, dir);
 				DrawLine(DSurface::Temp, pos, ToClientPos(targetPos), Data->TurretDir.Color, bounds);
+				if (toDir != dir)
+				{
+					CoordStruct targetToPos = GetFLHAbsoluteCoords(sourcePos, flh, toDir);
+					DrawDashedLine(DSurface::Temp, pos, ToClientPos(targetToPos), Data->BodyDir.Color, bounds);
+				}
 			}
 		}
 

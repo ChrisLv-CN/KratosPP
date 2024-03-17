@@ -35,7 +35,7 @@ void AircraftDive::ExtChanged()
 
 void AircraftDive::OnUpdate()
 {
-	if (!IsDeadOrInvisible(pTechno))
+	if (!IsDeadOrInvisible(pTechno) && !dynamic_cast<AircraftClass*>(pTechno)->Type->Carryall)
 	{
 		AircraftDiveData* data = GetAircraftDiveData();
 		FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);

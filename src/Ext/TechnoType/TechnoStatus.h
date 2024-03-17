@@ -246,6 +246,10 @@ public:
 
 	// 冻结
 	bool Freezing = false;
+	// 冻结JJ时记录下他的面向
+	bool JJMark = false;
+	DirStruct JJFacing{};
+
 
 	// 虚单位
 	bool VirtualUnit = false;
@@ -268,6 +272,8 @@ public:
 			.Process(this->DisableSelectVoice)
 
 			.Process(this->Freezing)
+			.Process(this->JJMark)
+			.Process(this->JJFacing)
 
 			.Process(this->VirtualUnit)
 			.Process(this->Disappear)

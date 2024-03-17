@@ -65,6 +65,8 @@ public:
 	bool ClearTarget = true;
 	bool MoveForward = true;
 
+	bool FreezingInAir = false;
+
 	double RangeMin = 0;
 	double RangeMax = -1;
 	int Distance = -1;
@@ -92,6 +94,8 @@ public:
 		ClearTarget = reader->Get(title + "ClearTarget", ClearTarget);
 		MoveForward = reader->Get(title + "MoveForward", MoveForward);
 
+		FreezingInAir = reader->Get(title + "FreezingInAir", FreezingInAir);
+
 		RangeMin = reader->Get(title + "RangeMin", RangeMin);
 		RangeMax = reader->Get(title + "RangeMax", RangeMax);
 		Distance = reader->Get(title + "Distance", Distance);
@@ -113,6 +117,7 @@ public:
 			.Process(this->Delay)
 			.Process(this->ClearTarget)
 			.Process(this->MoveForward)
+			.Process(this->FreezingInAir)
 			.Process(this->RangeMin)
 			.Process(this->RangeMax)
 			.Process(this->Distance)

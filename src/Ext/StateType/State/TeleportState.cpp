@@ -1,5 +1,6 @@
 ﻿#include "TeleportState.h"
 
+#include <AircraftTrackerClass.h>
 #include <JumpjetLocomotionClass.h>
 #include <TeleportLocomotionClass.h>
 
@@ -29,6 +30,24 @@ bool TeleportState::Teleport(CoordStruct* pLocation, WarheadTypeClass* pWH)
 	return false;
 }
 
+bool TeleportState::IsFreezing()
+{
+	bool freeze = false;
+	switch (_step)
+	{
+	case TeleportStep::TELEPORTED:
+	case TeleportStep::FREEZING:
+		freeze = true;
+		break;
+	}
+	return freeze;
+}
+
+bool TeleportState::IsReadyToMoveWarp()
+{
+	return IsReady() && _step == TeleportStep::READY && Data.Mode != TeleportMode::WARHEAD;
+}
+
 void TeleportState::Reload()
 {
 	if (_delay > 0)
@@ -40,7 +59,7 @@ void TeleportState::Reload()
 
 bool TeleportState::IsReady()
 {
-	return !IsDone() && Timeup();
+	return !IsDone() && Timeup() && _canWarp;
 }
 
 bool TeleportState::Timeup()
@@ -61,25 +80,45 @@ void TeleportState::OnStart()
 	if (status && status->AmIStand())
 	{
 		End();
+		return;
 	}
+	_canWarp = Data.Enable;
 }
 
-CoordStruct TeleportState::GetAndMarkDestination()
+void TeleportState::OnEnd()
+{
+	_canWarp = false;
+}
+
+CoordStruct TeleportState::GetAndMarkDestination(CoordStruct location)
 {
 	CoordStruct targetPos = CoordStruct::Empty;
+	pDest = nullptr;
+	pFocus = nullptr;
 	FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
-	// 是否正在移动
-	if (pFoot->Locomotor->Is_Moving() && pFoot->GetCurrentSpeed() > 0)
-	{
-		pFoot->Locomotor->Destination(&targetPos);
-		// 记录下目的地
-		pDest = pFoot->Destination;
-		pFocus = pTechno->Focus;
-	}
 	// 移动到自身相对位置
 	if (!Data.MoveTo.IsEmpty())
 	{
 		targetPos = GetFLHAbsoluteCoords(pTechno, Data.MoveTo, Data.IsOnTurret);
+	}
+	else
+	{
+		// 是否正在移动, Aircraft pFoot->GetCurrentSpeed always is Zero
+		pFoot->Locomotor->Destination(&targetPos);
+	}
+	// 目的地和本体位置在同一格内就不跳
+	CellStruct s = CellClass::Coord2Cell(location);
+	CellStruct t = CellClass::Coord2Cell(targetPos);
+	if (s.X == t.X && s.Y == t.Y)
+	{
+		// Same cell, don't move
+		targetPos = CoordStruct::Empty;
+	}
+	if (!targetPos.IsEmpty())
+	{
+		// 记录下目的地
+		pDest = pFoot->Destination;
+		pFocus = pTechno->Focus;
 	}
 	return targetPos;
 }
@@ -100,11 +139,10 @@ void TeleportState::OnUpdate()
 			}
 			if (IsReady())
 			{
-				CoordStruct targetPos = CoordStruct::Empty;
+				CoordStruct targetPos = GetAndMarkDestination(location);
 				switch (Data.Mode)
 				{
 				case TeleportMode::MOVE:
-					targetPos = GetAndMarkDestination();
 					break;
 				case TeleportMode::WARHEAD:
 					targetPos = _warpTo;
@@ -115,10 +153,6 @@ void TeleportState::OnUpdate()
 					{
 						targetPos = _warpTo;
 						_warpTo = CoordStruct::Empty;
-					}
-					else
-					{
-						targetPos = GetAndMarkDestination();
 					}
 					break;
 				default:
@@ -144,7 +178,7 @@ void TeleportState::OnUpdate()
 						targetPos = CoordStruct::Empty;
 					}
 				}
-				if (bool teleporting = !targetPos.IsEmpty())
+				if (!targetPos.IsEmpty())
 				{
 					// 跳跃位置偏移
 					if (!Data.Offset.IsEmpty())
@@ -160,8 +194,8 @@ void TeleportState::OnUpdate()
 							}
 							else if (pTargetTechno->GetTechnoType()->Locomotor == LocomotionClass::CLSIDs::Jumpjet)
 							{
-								FootClass* pFoot = dynamic_cast<FootClass*>(pTargetTechno);
-								if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
+								FootClass* pTargetFoot = dynamic_cast<FootClass*>(pTargetTechno);
+								if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pTargetFoot->Locomotor.get()))
 								{
 									facing = jjLoco->LocomotionFacing.Current();
 								}
@@ -178,58 +212,120 @@ void TeleportState::OnUpdate()
 						targetPos = GetFLHAbsoluteCoords(targetPos, Data.Offset, facing);
 					}
 					// 检查目的地是否可以着陆
-					if (!Data.Super)
+					bool isJJ = pTechno->GetTechnoType()->Locomotor == LocomotionClass::CLSIDs::Jumpjet;
+					CellClass* pTargetCell = nullptr;
+					if (CellClass* pCell = MapClass::Instance->TryGetCellAt(targetPos))
 					{
-						if (CellClass* pCell = MapClass::Instance->TryGetCellAt(targetPos))
+						if (pTechno->IsInAir())
+						{
+							pTargetCell = pCell;
+						}
+						else
 						{
 							TechnoTypeClass* pType = pTechno->GetTechnoType();
-							if (!pCell->IsClearToMove(pType->SpeedType, pType->MovementZone, true, true))
+
+							int times = 0;
+							do
 							{
-								// 不能通过，需要找一个新的落脚点
-								teleporting = false;
-							}
+								bool canEnterCell = false;
+								Move move = pTechno->IsCellOccupied(pCell, -1, -1, nullptr, false);
+								switch (move)
+								{
+								case Move::OK:
+									// case Move::MovingBlock:
+									canEnterCell = true;
+									break;
+								}
+								if (isJJ)
+								{
+									canEnterCell = pCell->Jumpjet == nullptr;
+								}
+								bool canMoveTo = pCell->IsClearToMove(pType->SpeedType, pType->MovementZone, true, true) && canEnterCell;
+								if (canMoveTo)
+								{
+									pTargetCell = pCell;
+									break;
+								}
+								CellStruct curretCell = pCell->MapCoords;
+								int zone = MapClass::Instance->GetMovementZoneType(curretCell, pType->MovementZone, pTechno->IsOnBridge());
+								bool alt = (bool)(pCell->Flags & CellFlags::CenterRevealed);
+								CellStruct nextCell = MapClass::Instance->NearByLocation(curretCell, pType->SpeedType, zone, pType->MovementZone, alt, 1, 1, 0, true, false, true, curretCell, false, false);
+								pCell = MapClass::Instance->TryGetCellAt(nextCell);
+							} while (pCell && times++ < 9);
 						}
 					}
 					// 可以跳
-					if (teleporting)
+					if (pTargetCell)
 					{
-						_loco = nullptr;
+						FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
+						targetPos = pTargetCell->GetCoordsWithBridge();
 						_teleportTimer.Stop();
 						if (Data.ClearTarget)
 						{
 							ClearAllTarget(pTechno);
 						}
 						// Warp
-						if (pTechno->IsInAir())
+						if (pTechno->IsInAir() || pTechno->WhatAmI() == AbstractType::Aircraft)
 						{
 							// 空中跳，自定义跳
 							int height = pTechno->GetHeight();
+							if (CellClass* pSourceCell = MapClass::Instance->TryGetCellAt(location))
+							{
+								if (pSourceCell->ContainsBridge())
+								{
+									height -= pSourceCell->BridgeHeight;
+								}
+							}
 							targetPos.Z += height;
+							ForceStopMoving(pFoot);
+							pFoot->Locomotor->Force_Track(-1, location);
+							pFoot->FrozenStill = true;
+							pFoot->SendToEachLink(RadioCommand::NotifyUnlink);
+							// pTechno->IsImmobilized = true;
 							// 移动位置
 							pTechno->UpdatePlacement(PlacementType::Remove);
 							pTechno->SetLocation(targetPos);
+							pTechno->SetDestination(pTargetCell, true);
 							pTechno->UpdatePlacement(PlacementType::Put);
+							if (isJJ)
+							{
+								pFoot->Jumpjet_OccupyCell(pTargetCell->MapCoords);
+							}
+							// 设置面向
+							pTechno->PrimaryFacing.SetCurrent(pTechno->PrimaryFacing.Current());
+							pTechno->SecondaryFacing.SetCurrent(pTechno->SecondaryFacing.Current());
 							// 移除黑幕
 							MapClass::Instance->RevealArea2(&targetPos, pTechno->LastSightRange, pTechno->Owner, false, false, false, true, 0);
 							MapClass::Instance->RevealArea2(&targetPos, pTechno->LastSightRange, pTechno->Owner, false, false, false, true, 1);
 
 							// 播放自定义传送动画
 							TechnoTypeExt::TypeData* typeData = GetTypeData<TechnoTypeExt, TechnoTypeExt::TypeData>(pTechno->GetTechnoType());
-							AnimTypeClass* pAnimType = nullptr;
+							AnimTypeClass* pWarpOut = nullptr;
+							AnimTypeClass* pWarpIn = nullptr;
 							if (IsNotNone(typeData->WarpOut))
 							{
-								pAnimType = AnimTypeClass::Find(typeData->WarpOut.c_str());
+								pWarpOut = AnimTypeClass::Find(typeData->WarpOut.c_str());
 							}
 							else
 							{
-								pAnimType = RulesClass::Instance->WarpOut;
+								pWarpOut = RulesClass::Instance->WarpOut;
 							}
-							if (pAnimType)
+							if (pWarpOut)
 							{
-								AnimClass* pAnimOut = GameCreate<AnimClass>(pAnimType, location);
+								AnimClass* pAnimOut = GameCreate<AnimClass>(pWarpOut, location);
 								SetAnimOwner(pAnimOut, pTechno);
-
-								AnimClass* pAnimIn = GameCreate<AnimClass>(pAnimType, targetPos);
+							}
+							if (IsNotNone(typeData->WarpIn))
+							{
+								pWarpIn = AnimTypeClass::Find(typeData->WarpIn.c_str());
+							}
+							else
+							{
+								pWarpIn = RulesClass::Instance->WarpIn;
+							}
+							if (pWarpIn)
+							{
+								AnimClass* pAnimIn = GameCreate<AnimClass>(pWarpIn, targetPos);
 								SetAnimOwner(pAnimIn, pTechno);
 							}
 							// 播放声音
@@ -244,8 +340,7 @@ void TeleportState::OnUpdate()
 								VocClass::PlayAt(inSound, targetPos);
 							}
 							// 传送冷冻
-							// 空中无法进行冷冻，JJ和飞机依旧会乱跑
-							if (pTechno->GetTechnoType()->Locomotor != LocomotionClass::CLSIDs::Jumpjet && !IsAircraft())
+							if (Data.FreezingInAir)
 							{
 								int delay = typeData->ChronoMinimumDelay;
 								if (typeData->ChronoTrigger)
@@ -265,16 +360,41 @@ void TeleportState::OnUpdate()
 						else if (Data.Super)
 						{
 							// 使用超武跳
-							dynamic_cast<FootClass*>(pTechno)->ChronoWarpTo(targetPos);
+							pFoot->ChronoWarpTo(targetPos);
 						}
 						else
 						{
 							// 普通跳
-							FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
 							ForceStopMoving(pFoot);
-							LocomotionClass::ChangeLocomotorTo(pFoot, LocomotionClass::CLSIDs::Teleport);
-							_loco = pFoot->Locomotor.get();
-							_loco->Move_To(targetPos);
+							// 清除当前格子的占据
+							pFoot->Locomotor->Force_Track(-1, location);
+							pFoot->FrozenStill = true;
+							if (!dynamic_cast<TeleportLocomotionClass*>(pFoot->Locomotor.get()))
+							{
+								LocomotionClass::ChangeLocomotorTo(pFoot, LocomotionClass::CLSIDs::Teleport);
+							}
+							// 移动到目的地
+							// pFoot->IsImmobilized = true;
+							// pFoot->ChronoDestCoords = targetPos;
+							// pFoot->SendToEachLink(RadioCommand::NotifyUnlink);
+							// pFoot->ChronoWarpedByHouse = pTechno->Owner;
+							pFoot->SetDestination(pTargetCell, true);
+
+							// 传送冷冻
+							TechnoTypeExt::TypeData* typeData = GetTypeData<TechnoTypeExt, TechnoTypeExt::TypeData>(pTechno->GetTechnoType());
+							int delay = typeData->ChronoMinimumDelay;
+							if (typeData->ChronoTrigger)
+							{
+								// 根据传送距离计算时间
+								double distance = targetPos.DistanceFrom(location);
+								if (distance > typeData->ChronoRangeMinimum)
+								{
+									int factor = std::max(typeData->ChronoDistanceFactor, 1);
+									delay = (int)(distance / factor);
+								}
+							}
+							pTechno->WarpingOut = true;
+							_teleportTimer.Start(delay);
 						}
 						// 通知AE管理器进行了跳跃
 						if (AttachEffect* aeManager = GetAEManager<TechnoExt>(pTechno))
@@ -296,35 +416,16 @@ void TeleportState::OnUpdate()
 				// 超武跳，不用冷冻计时器
 				if (!pTechno->WarpingOut)
 				{
-					if (Data.MoveForward)
-					{
-						_step = TeleportStep::MOVEFORWARD;
-					}
-					else
-					{
-						_step = TeleportStep::READY;
-					}
+					_step = TeleportStep::MOVEFORWARD;
 				}
 			}
 			else
 			{
-				if (_loco)
-				{
-					// 当前帧切换loco后会切回来，而且下一帧才可以获得计时器
-					_teleportTimer = dynamic_cast<TeleportLocomotionClass*>(_loco)->Timer;
-				}
 				if (_teleportTimer.Expired())
 				{
 					// 解冻，进入下一个阶段
 					pTechno->WarpingOut = false;
-					if (Data.MoveForward)
-					{
-						_step = TeleportStep::MOVEFORWARD;
-					}
-					else
-					{
-						_step = TeleportStep::READY;
-					}
+					_step = TeleportStep::MOVEFORWARD;
 				}
 				else
 				{
@@ -339,30 +440,30 @@ void TeleportState::OnUpdate()
 			{
 				// 解冻，进入下一个阶段
 				pTechno->WarpingOut = false;
-				if (Data.MoveForward)
-				{
-					_step = TeleportStep::MOVEFORWARD;
-				}
-				else
-				{
-					_step = TeleportStep::READY;
-				}
+				_step = TeleportStep::MOVEFORWARD;
 			}
 			break;
 		}
 		case TeleportStep::MOVEFORWARD:
 		{
 			_step = TeleportStep::READY;
+			CellClass* pCell = MapClass::Instance->TryGetCellAt(location);
+			if (pTechno->IsInAir() && pCell)
+			{
+				AircraftTrackerClass::Instance->Update_Entry(pTechno, CellStruct::Empty, pCell->MapCoords);
+			}
 			if (!pTechno->Target)
 			{
-				// 把移动目的地，设回去
-				if (pFocus)
+				if (Data.MoveForward)
 				{
+					// 把移动目的地，设回去
 					pTechno->SetFocus(pFocus);
-				}
-				if (pDest)
-				{
 					pTechno->SetDestination(pDest, true);
+					pTechno->QueueMission(Mission::Move, true);
+				}
+				else if (pCell)
+				{
+					pTechno->SetDestination(pCell, true);
 					pTechno->QueueMission(Mission::Move, true);
 				}
 			}

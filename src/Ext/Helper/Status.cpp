@@ -6,6 +6,7 @@
 #include <MechLocomotionClass.h>
 #include <ShipLocomotionClass.h>
 #include <WalkLocomotionClass.h>
+#include <JumpjetLocomotionClass.h>
 #include <CellClass.h>
 #include <MapClass.h>
 
@@ -482,12 +483,13 @@ void ClearAllTarget(TechnoClass* pAttacker)
 void ForceStopMoving(FootClass* pFoot)
 {
 	// 清除移动目的地
-	pFoot->Focus = nullptr;
+	pFoot->StopMoving();
 	pFoot->SetDestination(nullptr, true);
+	pFoot->SetFocus(nullptr);
 	pFoot->Destination = nullptr;
 	pFoot->LastDestination = nullptr;
+	pFoot->Focus = nullptr;
 	// 清除寻路目的地
-	// LocomotionClass.ChangeLocomotorTo(pFoot, LocomotionClass.Jumpjet);
 	ILocomotion* pLoco = pFoot->Locomotor.get();
 	pLoco->Mark_All_Occupation_Bits((int)PlacementType::Remove); // 清除HeadTo的占领
 	if (pLoco->Apparent_Speed() > 0)
@@ -528,6 +530,12 @@ void ForceStopMoving(ILocomotion* pLoco, GUID locoId)
 		MechLocomotionClass* loco = dynamic_cast<MechLocomotionClass*>(pLoco);
 		loco->Destination = CoordStruct::Empty;
 		loco->HeadToCoord = CoordStruct::Empty;
+		loco->IsMoving = false;
+	}
+	else if (locoId == LocomotionClass::CLSIDs::Jumpjet)
+	{
+		JumpjetLocomotionClass* loco = dynamic_cast<JumpjetLocomotionClass*>(pLoco);
+		loco->DestinationCoords = CoordStruct::Empty;
 		loco->IsMoving = false;
 	}
 }

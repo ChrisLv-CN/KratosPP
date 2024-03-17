@@ -32,7 +32,18 @@ public:
 
 	bool Teleport(CoordStruct* pLocation, WarheadTypeClass* pWH);
 
+	bool IsFreezing();
+
+	bool IsReadyToMoveWarp();
+
+	virtual void Deactivate() override
+	{
+		// 永久激活，不可关闭
+	}
+
 	virtual void OnStart() override;
+
+	virtual void OnEnd() override;
 
 	virtual void OnUpdate() override;
 
@@ -45,9 +56,9 @@ public:
 			.Process(this->_delay)
 			.Process(this->_delayTimer)
 
+			.Process(this->_canWarp)
 			.Process(this->_step)
 			.Process(this->_warpTo)
-			.Process(this->_loco)
 			.Process(this->_teleportTimer)
 			.Process(this->pDest)
 			.Process(this->pFocus)
@@ -78,12 +89,13 @@ private:
 	int _delay = 0;
 	CDTimerClass _delayTimer{};
 
-	CoordStruct GetAndMarkDestination();
+	CoordStruct GetAndMarkDestination(CoordStruct location);
 
+	// 状态机一直处于激活状态，额外开关控制是否可以进行传送
+	bool _canWarp = false;
 	TeleportStep _step = TeleportStep::READY;
 
 	CoordStruct _warpTo; // 弹头传进来的坐标
-	ILocomotion* _loco = nullptr; // 原始的loco
 	CDTimerClass _teleportTimer{}; // 传送冰冻时间
 
 	AbstractClass* pDest = nullptr;
