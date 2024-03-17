@@ -39,6 +39,7 @@ void TechnoStatus::OnUpdate_GiftBox()
 	// 记录单位的状态
 	if (GiftBox->IsAlive())
 	{
+		Debug::Log("GiftBox release\n");
 		// 记录盒子的状态
 		GiftBox->IsSelected = pTechno->IsSelected;
 		GiftBox->Group = pTechno->Group;
@@ -206,7 +207,8 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 
 	boxState.pOwner = pTechno;
 	boxState.pHouse = pHouse;
-
+	CoordStruct pos = pTechno->GetCoords();
+	Debug::Log("Release gift, pos { %d, %d, %d }\n", pos.X, pos.Y, pos.Z);
 	// 开刷
 	ReleaseGifts(gifts, GiftBox->GetGiftData(), boxState,
 		[&](TechnoClass* pGift, TechnoStatus*& pGiftStatus, AttachEffect*& pGiftAEM)

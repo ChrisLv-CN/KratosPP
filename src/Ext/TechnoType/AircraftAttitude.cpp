@@ -217,33 +217,40 @@ void AircraftAttitude::OnUpdate()
 			FlyLocomotionClass* pFly = dynamic_cast<FlyLocomotionClass*>(pFoot->Locomotor.get());
 			CoordStruct nextPos;
 			pFoot->Locomotor->Destination(&nextPos);
-			// 目的地和当前不在一个格子内，取飞机头部前方的格子
-			if (CellClass::Coord2Cell(nextPos) != CellClass::Coord2Cell(_location))
+			if (!nextPos.IsEmpty())
 			{
-				int speed = 0;
-				if (pFoot->Locomotor->Is_Moving())
+				// 目的地和当前不在一个格子内，取飞机头部前方的格子
+				if (CellClass::Coord2Cell(nextPos) != CellClass::Coord2Cell(_location))
 				{
-					speed = Unsorted::LeptonsPerCell;
+					int speed = 0;
+					if (pFoot->Locomotor->Is_Moving())
+					{
+						speed = Unsorted::LeptonsPerCell;
+					}
+					// 飞机使用的是炮塔角度
+					nextPos = GetFLHAbsoluteCoords(_location, CoordStruct{ speed, 0,0 }, pTechno->SecondaryFacing.Current());
 				}
-				// 飞机使用的是炮塔角度
-				nextPos = GetFLHAbsoluteCoords(_location, CoordStruct{ speed, 0,0 }, pTechno->SecondaryFacing.Current());
+				// 高度设置为下一个坐标所处的格子的高度差+-20，游戏上升下降的速度是20
+				if (CellClass* pCell = MapClass::Instance->TryGetCellAt(nextPos))
+				{
+					nextPos.Z = pCell->GetCoordsWithBridge().Z + pFly->FlightLevel;
+					// if (nextPos.Z > _location.Z)
+					// {
+					// 	// 爬升
+					// 	nextPos.Z = _location.Z + 20;
+					// }
+					// else if (nextPos.Z < _location.Z)
+					// {
+					// 	// 俯冲
+					// 	nextPos.Z = _location.Z - 20;
+					// }
+				}
+				UpdateHeadToCoord(nextPos);
 			}
-			// 高度设置为下一个坐标所处的格子的高度差+-20，游戏上升下降的速度是20
-			if (CellClass* pCell = MapClass::Instance->TryGetCellAt(nextPos))
+			else
 			{
-				nextPos.Z = pCell->GetCoordsWithBridge().Z + pFly->FlightLevel;
-				// if (nextPos.Z > _location.Z)
-				// {
-				// 	// 爬升
-				// 	nextPos.Z = _location.Z + 20;
-				// }
-				// else if (nextPos.Z < _location.Z)
-				// {
-				// 	// 俯冲
-				// 	nextPos.Z = _location.Z - 20;
-				// }
+				PitchAngle = 0;
 			}
-			UpdateHeadToCoord(nextPos);
 		}
 	}
 }

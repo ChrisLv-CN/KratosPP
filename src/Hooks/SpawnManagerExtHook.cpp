@@ -275,8 +275,7 @@ DEFINE_HOOK(0x6622C0, RocketLocomotionClass_Process, 0x6)
 
 DEFINE_HOOK(0x662CAC, RocketLocomotionClass_Process_Step5_To_Lazy_4, 0x6)
 {
-	GET(RocketLocomotionClass*, pLoco, ESI);
-	pLoco -= 1; // ESI - 4 才是真正的指针地址
+	RocketLocomotionClass* pLoco = (RocketLocomotionClass*)(R->ESI() - 4);
 	TechnoClass* pRocket = pLoco->LinkedTo;
 	if (MissileHoming* homing = GetScript<TechnoExt, MissileHoming>(pRocket))
 	{

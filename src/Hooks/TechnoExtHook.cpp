@@ -107,7 +107,7 @@ DEFINE_HOOK(0x6F6CA0, TechnoClass_Put, 0x7)
 	GET_STACK(DirType, faceDir, 0x8);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([pCoord, faceDir](Component* c)
+	pExt->_GameObject->Foreach([&pCoord, &faceDir](Component* c)
 		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnPut(pCoord, faceDir); } });
 
 	return 0;
@@ -171,7 +171,7 @@ DEFINE_HOOK(0x71A88D, TemporalClass_Update, 0x0)
 
 	TechnoClass* pThis = pTemporal->Target;
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([pTemporal](Component* c)
+	pExt->_GameObject->Foreach([&pTemporal](Component* c)
 		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnTemporalUpdate(pTemporal); } });
 
 	GET(int, eax, EAX);
@@ -189,7 +189,7 @@ DEFINE_HOOK(0x71A917, TemporalClass_Update_Eliminate, 0x5)
 
 	TechnoClass* pThis = pTemporal->Target;
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([pTemporal](Component* c)
+	pExt->_GameObject->Foreach([&pTemporal](Component* c)
 		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnTemporalEliminate(pTemporal); } });
 
 	return 0;
@@ -203,7 +203,7 @@ DEFINE_HOOK(0x701900, TechnoClass_ReceiveDamage, 0x6)
 	LEA_STACK(args_ReceiveDamage*, args, 0x4);
 
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([args](Component* c)
+	pExt->_GameObject->Foreach([&args](Component* c)
 		{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamage(args); } });
 
 	// Toy warhead

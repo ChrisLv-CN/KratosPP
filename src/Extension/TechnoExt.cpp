@@ -1,11 +1,13 @@
 ﻿#include "TechnoExt.h"
 
 #include <Ext/ObjectType/AttachEffect.h>
+#include <Ext/TechnoType/AircraftPut.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 
 void TechnoExt::AddGlobalScripts(std::list<std::string>& globalScripts, ExtData* ext)
 {
 	// Base Component
+	globalScripts.push_back(AircraftPut::ScriptName);
 	globalScripts.push_back(TechnoStatus::ScriptName);
 	globalScripts.push_back(AttachEffect::ScriptName);
 }

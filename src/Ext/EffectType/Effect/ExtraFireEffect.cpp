@@ -164,7 +164,7 @@ void ExtraFireEffect::OnFire(AbstractClass* pTarget, int weaponIdx)
 								ResetROF(pWeapon, weaponData, rofMultip);
 							}
 						}
-						if (canFire && (!weaponData->OnlyFireInTransport || !pTechno->Transporter))
+						if (canFire && (!weaponData->OnlyFireInTransport || pTechno->Transporter))
 						{
 							if (weaponData->UseAlternateFLH && pTechno->Transporter)
 							{

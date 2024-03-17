@@ -88,7 +88,7 @@ bool CanAffectMe(TechnoClass* pTechno, HouseClass* pAttackingHouse, WarheadTypeC
 
 void ClearAllTarget(TechnoClass* pAttacker);
 void ForceStopMoving(FootClass* pTechno);
-void ForceStopMoving(ILocomotion* ploco, GUID locoId);
+void ForceStopMoving(ILocomotion* ploco);
 #pragma endregion
 
 #pragma region BulletClass

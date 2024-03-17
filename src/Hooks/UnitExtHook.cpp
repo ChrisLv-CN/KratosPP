@@ -333,28 +333,30 @@ DEFINE_HOOK(0x73C71D, UnitClass_DrawSHP_FacingDir, 0x6)
 	if (pTechno->IsDisguised() && !pTechno->IsClearlyVisibleTo(HouseClass::CurrentPlayer))
 	{
 		// WWSB 自己算起始帧
-		UnitTypeClass* pTargetType = dynamic_cast<UnitTypeClass*>(pTechno->GetDisguise(true));
-		if (pTargetType->WhatAmI() == AbstractType::UnitType)
+		if (UnitTypeClass* pTargetType = dynamic_cast<UnitTypeClass*>(pTechno->GetDisguise(true)))
 		{
-			int facing = pTargetType->Facings;
-			// 0的方向是游戏中的北方，是↗，素材0帧是朝向0点，是↑
-			int index = Dir2FrameIndex(pTechno->PrimaryFacing.Current(), facing);
-			// Logger.Log($"{Game.CurrentFrame} OOXX dirIndex = {index}, facing = {facing}, walk = {pTargetType->WalkFrames}, fire = {pTargetType->FiringFrames}, {R->EDX} {R->EBX} x {R->ESI}");
-			// EDX是播放的帧序号
-			GET(int, frameOffset, EDX);
-			if (frameOffset == 0)
+			if (pTargetType->WhatAmI() == AbstractType::UnitType)
 			{
-				frameOffset += index;
-				// 站立状态
-				R->EDX(frameOffset);
-			}
-			else
-			{
-				// 移动状态
-				// ???, UnitTypeClass.WalkFrames拿到的不是WalkFrames
-				int walkFrames = INI::GetSection(INI::Art, pTargetType->ID)->Get("WalkFrames", 1);
-				frameOffset += index * walkFrames + pTargetType->StartWalkFrame;
-				R->EDX(frameOffset);
+				int facing = pTargetType->Facings;
+				// 0的方向是游戏中的北方，是↗，素材0帧是朝向0点，是↑
+				int index = Dir2FrameIndex(pTechno->PrimaryFacing.Current(), facing);
+				// Logger.Log($"{Game.CurrentFrame} OOXX dirIndex = {index}, facing = {facing}, walk = {pTargetType->WalkFrames}, fire = {pTargetType->FiringFrames}, {R->EDX} {R->EBX} x {R->ESI}");
+				// EDX是播放的帧序号
+				GET(int, frameOffset, EDX);
+				if (frameOffset == 0)
+				{
+					frameOffset += index;
+					// 站立状态
+					R->EDX(frameOffset);
+				}
+				else
+				{
+					// 移动状态
+					// ???, UnitTypeClass.WalkFrames拿到的不是WalkFrames
+					int walkFrames = INI::GetSection(INI::Art, pTargetType->ID)->Get("WalkFrames", 1);
+					frameOffset += index * walkFrames + pTargetType->StartWalkFrame;
+					R->EDX(frameOffset);
+				}
 			}
 		}
 	}

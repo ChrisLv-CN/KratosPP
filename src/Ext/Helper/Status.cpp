@@ -492,49 +492,40 @@ void ForceStopMoving(FootClass* pFoot)
 	// 清除寻路目的地
 	ILocomotion* pLoco = pFoot->Locomotor.get();
 	pLoco->Mark_All_Occupation_Bits((int)PlacementType::Remove); // 清除HeadTo的占领
-	if (pLoco->Apparent_Speed() > 0)
-	{
-		GUID locoId = pFoot->GetTechnoType()->Locomotor;
-		ForceStopMoving(pLoco, locoId);
-	}
+	ForceStopMoving(pLoco);
 }
 
-void ForceStopMoving(ILocomotion* pLoco, GUID locoId)
+void ForceStopMoving(ILocomotion* pLoco)
 {
 	pLoco->Stop_Moving();
 	pLoco->Mark_All_Occupation_Bits((int)PlacementType::Remove);
-	if (locoId == LocomotionClass::CLSIDs::Drive)
+	if (DriveLocomotionClass* loco = dynamic_cast<DriveLocomotionClass*>(pLoco))
 	{
-		DriveLocomotionClass* loco = dynamic_cast<DriveLocomotionClass*>(pLoco);
 		loco->Destination = CoordStruct::Empty;
 		loco->HeadToCoord = CoordStruct::Empty;
 		loco->IsDriving = false;
 	}
-	else if (locoId == LocomotionClass::CLSIDs::Ship)
+	else if (ShipLocomotionClass* loco = dynamic_cast<ShipLocomotionClass*>(pLoco))
 	{
-		ShipLocomotionClass* loco = dynamic_cast<ShipLocomotionClass*>(pLoco);
 		loco->Destination = CoordStruct::Empty;
 		loco->HeadToCoord = CoordStruct::Empty;
 		loco->IsDriving = false;
 	}
-	else if (locoId == LocomotionClass::CLSIDs::Walk)
+	else if (WalkLocomotionClass* loco = dynamic_cast<WalkLocomotionClass*>(pLoco))
 	{
-		WalkLocomotionClass* loco = dynamic_cast<WalkLocomotionClass*>(pLoco);
 		loco->Destination = CoordStruct::Empty;
 		loco->HeadToCoord = CoordStruct::Empty;
 		loco->IsMoving = false;
 		loco->IsReallyMoving = false;
 	}
-	else if (locoId == LocomotionClass::CLSIDs::Mech)
+	else if (MechLocomotionClass* loco = dynamic_cast<MechLocomotionClass*>(pLoco))
 	{
-		MechLocomotionClass* loco = dynamic_cast<MechLocomotionClass*>(pLoco);
 		loco->Destination = CoordStruct::Empty;
 		loco->HeadToCoord = CoordStruct::Empty;
 		loco->IsMoving = false;
 	}
-	else if (locoId == LocomotionClass::CLSIDs::Jumpjet)
+	else if (JumpjetLocomotionClass* loco = dynamic_cast<JumpjetLocomotionClass*>(pLoco))
 	{
-		JumpjetLocomotionClass* loco = dynamic_cast<JumpjetLocomotionClass*>(pLoco);
 		loco->DestinationCoords = CoordStruct::Empty;
 		loco->IsMoving = false;
 	}

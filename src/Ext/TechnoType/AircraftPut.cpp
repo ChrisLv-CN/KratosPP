@@ -71,9 +71,12 @@ void AircraftPut::OnPut(CoordStruct* pCoord, DirType dirType)
 			}
 		}
 	}
+	// 修改完put的坐标，又会被机场修改回去，所以必须要在update里进行位置调整
 	CoordStruct offset = data->NoHelipadPutOffset;
 	offset *= Unsorted::LeptonsPerCell;
 	*pCoord += offset;
+	CoordStruct pos = *pCoord;
+	Debug::Log("Aircraft_Put { %d, %d, %d }\n", pos.X, pos.Y, pos.Z);
 	_aircraftPutOffset = true;
 }
 
@@ -86,7 +89,7 @@ void AircraftPut::OnUpdate()
 		_aircraftPutOffset = false;
 		CoordStruct location = pTechno->GetCoords();
 		CoordStruct offset = GetAircraftPutData()->NoHelipadPutOffset;
-		offset *= 256.0;
+		offset *= Unsorted::LeptonsPerCell;
 		CoordStruct pos = location + offset;
 		pTechno->SetLocation(pos);
 		if (CellClass* pCell = MapClass::Instance->TryGetCellAt(pos))
@@ -95,6 +98,8 @@ void AircraftPut::OnUpdate()
 		}
 		pTechno->QueueMission(Mission::Enter, false);
 	}
+	CoordStruct pos = pTechno->GetCoords();
+	Debug::Log("Aircraft_Put_Update { %d, %d, %d }\n", pos.X, pos.Y, pos.Z);
 	// 完成使命
 	Disable();
 }

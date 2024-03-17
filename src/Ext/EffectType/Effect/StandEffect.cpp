@@ -561,7 +561,6 @@ void StandEffect::OnStart()
 {
 	EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &StandEffect::OnTechnoDelete);
 	CreateAndPutStand();
-	Debug::Log("Make Stand [%s]%d on master [%s]%d.\n", Data->Type.c_str(), pStand, pObject->GetType()->ID, pObject);
 }
 
 void StandEffect::End(CoordStruct location)
@@ -569,7 +568,6 @@ void StandEffect::End(CoordStruct location)
 	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &StandEffect::OnTechnoDelete);
 	if (pStand)
 	{
-		Debug::Log("Ready to destroy Stand %d\n", pStand);
 		ExplodesOrDisappear(false);
 	}
 }

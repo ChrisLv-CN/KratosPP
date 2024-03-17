@@ -87,7 +87,7 @@ void TechnoStatus::InitExt()
 			_gameObject->FindOrAttach<AircraftAttitude>();
 			_gameObject->FindOrAttach<AircraftDive>();
 			_gameObject->FindOrAttach<AircraftGuard>();
-			_gameObject->FindOrAttach<AircraftPut>();
+			// _gameObject->FindOrAttach<AircraftPut>();
 			_gameObject->FindOrAttach<SupportSpawns>();
 		}
 	}
