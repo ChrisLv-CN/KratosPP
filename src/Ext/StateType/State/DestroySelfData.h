@@ -17,6 +17,7 @@ public:
 
 	int Delay = -1;
 	bool Peaceful = false;
+	bool InTransport = false;
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -61,6 +62,7 @@ public:
 		Enable = Delay >= 0;
 
 		Peaceful = reader->Get(title + "Peaceful", Peaceful);
+		InTransport = reader->Get(title + "InTransport", InTransport);
 	}
 
 #pragma region save/load
@@ -70,6 +72,7 @@ public:
 		return stream
 			.Process(this->Delay)
 			.Process(this->Peaceful)
+			.Process(this->InTransport)
 			.Success();
 	};
 

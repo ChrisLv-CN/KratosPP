@@ -6,7 +6,7 @@
 
 void TechnoStatus::OnUpdate_DestroySelf()
 {
-	if (DestroySelf->AmIDead() && !IsDead(pTechno))
+	if (DestroySelf->AmIDead() && !IsDead(pTechno) && (DestroySelf->Data.InTransport || !pTechno->Transporter))
 	{
 		// 通知AE管理器
 		if (AEManager())
