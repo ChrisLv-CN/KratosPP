@@ -84,7 +84,7 @@ void StandEffect::CreateAndPutStand()
 		}
 		// 攻击来源
 		TechnoClass* pSource = AE->pSource;
-		if (Data->AttackSource && !IsDeadOrInvisible(pSource) && CanAttack(pStand, pSource))
+		if (Data->AttackSource && !IsDeadOrInvisible(pSource) && CanAttack(pStand, pSource, true))
 		{
 			pStand->SetTarget(pSource);
 		}
@@ -306,7 +306,7 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 			if (pStand->BeingWarpedOut && pStand->TemporalImUsing)
 			{
 				pStand->BeingWarpedOut = false;
-				if (CanAttack(pStand, pTechno))
+				if (CanAttack(pStand, pTechno, true))
 				{
 					// 检查ROF
 					if (pStand->ROFTimer.Expired())
@@ -328,7 +328,7 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 			}
 			else
 			{
-				if (CanAttack(pStand, pTechno))
+				if (CanAttack(pStand, pTechno, true))
 				{
 					pStand->SetTarget(pTechno);
 				}
@@ -344,7 +344,7 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 			AbstractClass* pTarget = pTechno->Target;
 			if (pTarget)
 			{
-				if (Data->SameTarget && canFire && CanAttack(pStand, pTarget))
+				if (Data->SameTarget && canFire && CanAttack(pStand, pTarget, true))
 				{
 					pStand->SetTarget(pTarget);
 				}
@@ -460,7 +460,7 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 void StandEffect::RemoveStandIllegalTarget()
 {
 	AbstractClass* pTarget = pStand->Target;
-	if (pTarget && !CanAttack(pStand, pTarget))
+	if (pTarget && !CanAttack(pStand, pTarget, true))
 	{
 		ClearAllTarget(pStand);
 	}

@@ -87,6 +87,10 @@ DEFINE_HOOK(0x4CF4C5, FlyLocomotionClass_FlightLevel_ResetA, 0xA)
 		{
 			flightLevel = dive->GetAircraftDiveData()->FlightLevel;
 		}
+		else
+		{
+			flightLevel = pTechno->GetTechnoType()->GetFlightLevel();
+		}
 	}
 	R->EAX(flightLevel);
 	return 0x4CF4CF;

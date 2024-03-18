@@ -234,7 +234,7 @@ bool AircraftGuard::CheckTarget(TechnoClass* pTarget)
 	if (pick)
 	{
 		// 能否对其进行攻击
-		pick = CanAttack(pTechno, pTarget, -1, true);
+		pick = CanAttack(pTechno, pTarget, false, -1, true);
 	}
 	return pick;
 }

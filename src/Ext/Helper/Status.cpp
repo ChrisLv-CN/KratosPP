@@ -349,7 +349,7 @@ bool CanAttack(BulletClass* pBullet, TechnoClass* pTarget, bool isPassiveAcquire
 	return canAttack;
 }
 
-bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx, bool isPassiveAcquire)
+bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, bool inRange, int weaponIdx, bool isPassiveAcquire)
 {
 	bool canAttack = false;
 	if (weaponIdx < 0)
@@ -358,7 +358,7 @@ bool CanAttack(TechnoClass* pAttacker, AbstractClass* pTarget, int weaponIdx, bo
 	}
 	WeaponStruct* pWeaponStruct = pAttacker->GetWeapon(weaponIdx);
 	WeaponTypeClass* pWeapon = nullptr;
-	if (pWeaponStruct && (pWeapon = pWeaponStruct->WeaponType) != nullptr)
+	if (pWeaponStruct && (pWeapon = pWeaponStruct->WeaponType) != nullptr && (!inRange || pAttacker->IsCloseEnough(pTarget, weaponIdx)))
 	{
 		double versus = 1;
 		bool forceFire = true;

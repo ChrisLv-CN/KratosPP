@@ -160,48 +160,42 @@ DEFINE_HOOK(0x4D9947, FootClass_Greatest_Threat_GetTarget, 0x6)
 				// 是否可以攻击，并获得攻击使用的武器序号
 				pTarget = pStand;
 				int weaponIdx = pTechno->SelectWeapon(pTarget);
-				bool canFire = CanAttack(pTechno, pTarget, weaponIdx);
-
-				// 检查射程
+				bool canFire = CanAttack(pTechno, pTarget, true, weaponIdx);
 				if (canFire)
 				{
-					canFire = pTechno->IsCloseEnough(pTarget, weaponIdx);
-					if (canFire)
+					// 检查所属
+					int damage = pTechno->CombatDamage(weaponIdx);
+					if (damage < 0)
 					{
-						// 检查所属
-						int damage = pTechno->CombatDamage(weaponIdx);
-						if (damage < 0)
+						// 维修武器
+						canFire = pTechno->Owner->IsAlliedWith(pStand->Owner) && pStand->Health < pStand->GetTechnoType()->Strength;
+					}
+					else
+					{
+						// 只允许攻击敌人
+						canFire = !pTechno->Owner->IsAlliedWith(pStand->Owner);
+						if (canFire)
 						{
-							// 维修武器
-							canFire = pTechno->Owner->IsAlliedWith(pStand->Owner) && pStand->Health < pStand->GetTechnoType()->Strength;
-						}
-						else
-						{
-							// 只允许攻击敌人
-							canFire = !pTechno->Owner->IsAlliedWith(pStand->Owner);
-							if (canFire)
+							// 检查平民
+							if (IsCivilian(pStand->Owner))
 							{
-								// 检查平民
-								if (IsCivilian(pStand->Owner))
+								// Ares 的平民敌对目标
+								canFire = INI::GetSection(INI::Rules, pStand->GetTechnoType()->ID)->Get("CivilianEnemy", false);
+								// Ares 的反击平民
+								TechnoClass* pStandTarget = nullptr;
+								if (!canFire && AutoRepel(pTechno->Owner) && CastToTechno(pStand->Target, pStandTarget))
 								{
-									// Ares 的平民敌对目标
-									canFire = INI::GetSection(INI::Rules, pStand->GetTechnoType()->ID)->Get("CivilianEnemy", false);
-									// Ares 的反击平民
-									TechnoClass* pStandTarget = nullptr;
-									if (!canFire && AutoRepel(pTechno->Owner) && CastToTechno(pStand->Target, pStandTarget))
-									{
-										canFire = pTechno->Owner->IsAlliedWith(pStandTarget->Owner);
-									}
+									canFire = pTechno->Owner->IsAlliedWith(pStandTarget->Owner);
 								}
 							}
 						}
 					}
-					if (canFire)
-					{
-						// Pick this Stand as Target
-						R->EAX(pStand);
-						break;
-					}
+				}
+				if (canFire)
+				{
+					// Pick this Stand as Target
+					R->EAX(pStand);
+					break;
 				}
 			}
 		}

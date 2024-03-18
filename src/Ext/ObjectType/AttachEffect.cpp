@@ -1100,7 +1100,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 	{
 		return;
 	}
-	CoordStruct location = _location;
+	CoordStruct location = pObject->GetCoords();
 	if (args)
 	{
 		// EndRender
