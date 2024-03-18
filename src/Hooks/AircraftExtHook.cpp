@@ -282,3 +282,115 @@ DEFINE_HOOK(0x418B40, AircraftClass_Mission_Attack_Fire_Imcoming_5, 0x6)
 	}
 	return 0;
 }
+
+DEFINE_HOOK(0x418072, AircraftClass_Mission_Attack_GoodFirePostion, 0x5)
+{
+	GET(AircraftClass*, pAir, ESI);
+	if (!pAir->Type->Fighter && !pAir->Is_Strafe())
+	{
+		AbstractClass* pTarget = pAir->Target;
+		int weaponIdx = pAir->SelectWeapon(pTarget);
+		if (pAir->IsCloseEnough(pTarget, weaponIdx))
+		{
+			pAir->IsLocked = true;
+			CoordStruct pos = pAir->GetCoords();
+			CellClass* pCell = MapClass::Instance->TryGetCellAt(pos);
+			pAir->SetDestination(pCell, true);
+			return 0x418087;
+		}
+		else
+		{
+			// 计算一个新位置，wwsb往目标的前方飞
+			int dest = pAir->DistanceFrom(pAir->Target);
+			WeaponTypeClass* pWeapon = pAir->GetWeapon(weaponIdx)->WeaponType;
+			CoordStruct nextPos = CoordStruct::Empty;
+			if (dest < pWeapon->MinimumRange)
+			{
+				// 向后撤退 半个武器射程
+				CoordStruct flh = CoordStruct::Empty;
+				flh.X = (int)(pWeapon->Range * 0.5);
+				nextPos = GetFLHAbsoluteCoords(pAir, flh, true);
+			}
+			else if (dest > pWeapon->Range)
+			{
+				// 向前追击至与目标相隔半个武器射程
+				int length = (int)(pWeapon->Range * 0.5);
+				// 随机向左或者向右移动一个ROT的距离
+				int flipY = 1;
+				if (Random::RandomRanged(0, 1) == 1)
+				{
+					flipY *= -1;
+				}
+				CoordStruct sourcePos = pAir->GetCoords();
+				int r = dest - length;
+				r = Random::RandomRanged(0, r);
+				CoordStruct flh{ 0, r * flipY, 0 };
+				CoordStruct targetPos = pAir->Target->GetCoords();
+				DirStruct dir = Point2Dir(sourcePos, targetPos);
+				sourcePos = GetFLHAbsoluteCoords(sourcePos, flh, dir);
+				sourcePos.Z = 0;
+				targetPos.Z = 0;
+				// 从目标位置往回找半个武器射程
+				nextPos = GetForwardCoords(targetPos, sourcePos, length);
+			}
+			if (!nextPos.IsEmpty())
+			{
+				// 计算下一个位置
+				CellClass* pCell = MapClass::Instance->TryGetCellAt(nextPos);
+				pAir->SetDestination(pCell, true);
+				return 0x418087;
+			}
+		}
+	}
+	return 0;
+}
+
+// 已经过滤了扫射
+DEFINE_HOOK(0x4181CF, AircraftClass_Mission_Attack_FlyToPostion, 0x5)
+{
+	GET(AircraftClass*, pAir, ESI);
+	if (!pAir->Type->Fighter)
+	{
+		pAir->MissionStatus = 0x4; // AIR_ATT_FIRE_AT_TARGET0
+		return 0x4181E6;
+	}
+	return 0;
+}
+
+// Skip fire twice,
+// IsLocked always is False, so the game will jump to MissionStatus=AIR_ATT_FIRE_AT_TARGET1, and fire weapon again.
+// this skip looks no effect for ROT=0 or Arcing.
+DEFINE_HOOK(0x4184FC, AircraftClass_Mission_Attack_Fire_Zero, 0x6)
+{
+	return 0x418506;
+}
+
+// Aircrate hover attack
+DEFINE_HOOK(0x4CDCFD, FlyLocomotionClass_MovingUpdate_HoverAttack, 0x7)
+{
+	GET(FlyLocomotionClass*, pFly, ESI);
+	AircraftClass* pAir = dynamic_cast<AircraftClass*>(pFly->LinkedTo);
+	if (pAir && !pAir->Type->MissileSpawn && !pAir->Type->Fighter && !pAir->Is_Strafe() && pAir->CurrentMission == Mission::Attack)
+	{
+		if (AbstractClass* pDest = pAir->Destination)
+		{
+			CoordStruct sourcePos = pAir->GetCoords();
+			int dist = pAir->DistanceFrom(pDest);
+			// 进入开火位置的判定距离是16，有时候距离50就可以开火
+			if (dist < 64 && dist >= 16)
+			{
+				CoordStruct targetPos = pDest->GetCoords();
+				sourcePos.X = targetPos.X;
+				sourcePos.Y = targetPos.Y;
+				dist = 0;
+			}
+			if (dist < 16)
+			{
+				// 固定位置不动
+				R->Stack(0x50, sourcePos);
+			}
+		}
+	}
+	return 0;
+}
+
