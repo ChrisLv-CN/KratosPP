@@ -24,16 +24,19 @@ class CrateBuffEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(CrateBuff);
 
-	virtual void OnStart() override;
-
 	virtual void End(CoordStruct location) override;
 
 	virtual void OnPause() override;
+
+	virtual void OnRecover() override;
+
+	virtual void OnUpdate() override;
 
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
+			.Process(this->_updateFlag)
 			.Success();
 	};
 
@@ -50,5 +53,7 @@ public:
 #pragma endregion
 private:
 	void UpdateStatus();
+
+	bool _updateFlag = false;
 
 };

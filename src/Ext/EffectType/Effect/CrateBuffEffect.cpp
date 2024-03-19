@@ -16,11 +16,6 @@ void CrateBuffEffect::UpdateStatus()
 	}
 }
 
-void CrateBuffEffect::OnStart()
-{
-	UpdateStatus();
-}
-
 void CrateBuffEffect::End(CoordStruct location)
 {
 	UpdateStatus();
@@ -28,6 +23,19 @@ void CrateBuffEffect::End(CoordStruct location)
 
 void CrateBuffEffect::OnPause()
 {
-	UpdateStatus();
+	_updateFlag = false;
 }
 
+void CrateBuffEffect::OnRecover()
+{
+	_updateFlag = false;
+}
+
+void CrateBuffEffect::OnUpdate()
+{
+	if (!_updateFlag)
+	{
+		_updateFlag = true;
+		UpdateStatus();
+	}
+}

@@ -91,7 +91,6 @@ void DamageSelfEffect::OnUpdate()
 						TechnoStatus* status = nullptr;
 						if (TryGetStatus<TechnoExt>(pTechno, status))
 						{
-							// Logger.Log($"{Game.CurrentFrame} 阿伟 [{Data->Type}]{pStand} 要死了 explodes = {explodes}");
 							status->DestroySelf->DestroyNow(true);
 							Deactivate();
 							AE->TimeToDie();
