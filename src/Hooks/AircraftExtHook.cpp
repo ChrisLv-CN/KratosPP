@@ -290,7 +290,7 @@ DEFINE_HOOK(0x418B40, AircraftClass_Mission_Attack_Fire_Imcoming_5, 0x6)
 DEFINE_HOOK(0x418072, AircraftClass_Mission_Attack_GoodFirePostion, 0x5)
 {
 	GET(AircraftClass*, pAir, ESI);
-	if (!pAir->Type->Fighter && !pAir->Is_Strafe())
+	if (!pAir->Type->MissileSpawn && !pAir->Type->Fighter && !pAir->Is_Strafe())
 	{
 		AbstractClass* pTarget = pAir->Target;
 		int weaponIdx = pAir->SelectWeapon(pTarget);
@@ -353,7 +353,7 @@ DEFINE_HOOK(0x418072, AircraftClass_Mission_Attack_GoodFirePostion, 0x5)
 DEFINE_HOOK(0x4181CF, AircraftClass_Mission_Attack_FlyToPostion, 0x5)
 {
 	GET(AircraftClass*, pAir, ESI);
-	if (!pAir->Type->Fighter)
+	if (!pAir->Type->MissileSpawn && !pAir->Type->Fighter)
 	{
 		pAir->MissionStatus = 0x4; // AIR_ATT_FIRE_AT_TARGET0
 		return 0x4181E6;

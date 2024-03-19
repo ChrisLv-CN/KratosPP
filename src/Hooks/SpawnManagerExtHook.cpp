@@ -4,6 +4,7 @@
 #include <AircraftClass.h>
 #include <AircraftTypeClass.h>
 #include <Kamikaze.h>
+#include <JumpjetLocomotionClass.h>
 #include <SpawnManagerClass.h>
 #include <TechnoTypeClass.h>
 #include <TechnoClass.h>
@@ -91,6 +92,34 @@ DEFINE_HOOK(0x6B78E4, SpawnManagerClass_Update_CreateAircraft, 0x6)
 		}
 	}
 
+	return 0;
+}
+
+DEFINE_HOOK(0x6B7317, SpawnManagerClass_Update_MissileSpawn_SkipMovingCheck, 0x7)
+{
+	GET(SpawnManagerClass*, pManager, ESI);
+	TechnoClass* pTechno = pManager->Owner;
+	FootClass* pFoot = nullptr;
+	if (pTechno && pTechno->GetTechnoType()->BalloonHover && CastToFoot(pTechno, pFoot))
+	{
+		GET(ILocomotion**, ppLoco, EBP);
+		if (JumpjetLocomotionClass* pJJ = dynamic_cast<JumpjetLocomotionClass*>(*ppLoco))
+		{
+			// 检查是否站住了
+			AbstractClass* pDest = pFoot->Destination;
+			if (!pDest)
+			{
+				CoordStruct location = pFoot->GetCoords();
+				pDest = MapClass::Instance->TryGetCellAt(location);
+			}
+			// 和目的地的距离小于16就算站住了
+			if (pTechno->DistanceFrom(pDest) < 16)
+			{
+				// Launch spawn
+				return 0x6B735C;
+			}
+		}
+	}
 	return 0;
 }
 
