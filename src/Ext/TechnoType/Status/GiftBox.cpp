@@ -39,7 +39,6 @@ void TechnoStatus::OnUpdate_GiftBox()
 	// 记录单位的状态
 	if (GiftBox->IsAlive())
 	{
-		Debug::Log("GiftBox release\n");
 		// 记录盒子的状态
 		GiftBox->IsSelected = pTechno->IsSelected;
 		GiftBox->Group = pTechno->Group;
@@ -59,11 +58,12 @@ void TechnoStatus::OnUpdate_GiftBox()
 		{
 			// 开盒
 			GiftBox->IsOpen = true;
+			GiftBoxData data = GiftBox->Data;
 			// 释放礼物
 			std::vector<std::string> gifts = GetGiftList(GiftBox->GetGiftData());
 			if (!gifts.empty())
 			{
-				ReleaseGift(gifts, GiftBox->Data);
+				ReleaseGift(gifts, data);
 			}
 		}
 
@@ -109,11 +109,12 @@ void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass
 		{
 			// 开盒
 			GiftBox->IsOpen = true;
+			GiftBoxData data = GiftBox->Data;
 			// 释放礼物
 			std::vector<std::string> gifts = GetGiftList(GiftBox->GetGiftData());
 			if (!gifts.empty())
 			{
-				ReleaseGift(gifts, GiftBox->Data);
+				ReleaseGift(gifts, data);
 			}
 			// 此处不重置或销毁，而是进入下一帧的Update事件中重置或销毁
 		}
@@ -126,11 +127,12 @@ void TechnoStatus::OnReceiveDamageDestroy_GiftBox()
 	{
 		// 开盒
 		GiftBox->IsOpen = true;
+		GiftBoxData data = GiftBox->Data;
 		// 释放礼物
 		std::vector<std::string> gifts = GetGiftList(GiftBox->GetGiftData());
 		if (!gifts.empty())
 		{
-			ReleaseGift(gifts, GiftBox->Data);
+			ReleaseGift(gifts, data);
 		}
 	}
 }
@@ -207,8 +209,6 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 
 	boxState.pOwner = pTechno;
 	boxState.pHouse = pHouse;
-	CoordStruct pos = pTechno->GetCoords();
-	Debug::Log("Release gift, pos { %d, %d, %d }\n", pos.X, pos.Y, pos.Z);
 	// 开刷
 	ReleaseGifts(gifts, GiftBox->GetGiftData(), boxState,
 		[&](TechnoClass* pGift, TechnoStatus*& pGiftStatus, AttachEffect*& pGiftAEM)
@@ -278,12 +278,18 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				// 交换AE管理器
 				AttachEffect* boxAEM = boxGO->GetComponent<AttachEffect>();
 				// 关闭不可继承的AE，以及含有GiftBox的AE
-				boxAEM->ForeachChild([](Component* c) {
+				boxAEM->ForeachChild([&](Component* c) {
 					if (auto ae = dynamic_cast<AttachEffectScript*>(c))
 					{
 						if (!ae->AEData.Inheritable || ae->AEData.GiftBox.Enable || ae->AEData.Transform.Enable)
 						{
 							ae->TimeToDie();
+						}
+						else if (ae->pSource == pTechno)
+						{
+							// 如果来源是盒子，继承时，来源修改为礼物
+							ae->pSource = pGift;
+							ae->pSourceHouse = boxState.pHouse;
 						}
 					}
 					});

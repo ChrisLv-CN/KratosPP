@@ -29,11 +29,12 @@ void BulletStatus::OnUpdate_GiftBox()
 		{
 			// 开盒
 			GiftBox->IsOpen = true;
+			GiftBoxData data = GiftBox->Data;
 			// 释放礼物
 			std::vector<std::string> gifts = GetGiftList(GiftBox->GetGiftData());
 			if (!gifts.empty())
 			{
-				ReleaseGift(gifts, GiftBox->Data);
+				ReleaseGift(gifts, data);
 			}
 		}
 
@@ -61,11 +62,12 @@ bool BulletStatus::OnDetonate_GiftBox(CoordStruct* pCoords)
 	{
 		// 开盒
 		GiftBox->IsOpen = true;
+		GiftBoxData data = GiftBox->Data;
 		// 释放礼物
 		std::vector<std::string> gifts = GetGiftList(GiftBox->GetGiftData());
 		if (!gifts.empty())
 		{
-			ReleaseGift(gifts, GiftBox->Data);
+			ReleaseGift(gifts, data);
 		}
 	}
 	return false;
