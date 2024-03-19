@@ -23,6 +23,7 @@ public:
 	static HANDLE hInstance;
 
 	static bool IsLoadGame;
+	static bool IsScenarioClear;
 
 	static bool DebugAE;
 

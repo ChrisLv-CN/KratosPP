@@ -27,7 +27,7 @@
 #define BUILD_NUMBER 1
 
 // version infomation
-#define PRODUCT_NAME "Kratos PP"
+#define PRODUCT_NAME "Kratos"
 #define COMPANY_NAME "ChrisLv_CN"
 #define LEGAL_COPYRIGHT "© The ChrisLv_CN 🐼 Contributors 2023"
 #define FILE_DESCRIPTION "Kratos, Ares-like YR engine extension"

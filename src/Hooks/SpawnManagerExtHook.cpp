@@ -291,9 +291,12 @@ DEFINE_HOOK(0x66304F, RocketLocomotionClass_663030, 0x5)
 {
 	GET(TechnoClass*, pThis, EDX);
 
-	auto pExt = TechnoExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component* c)
-		{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnRocketExplosion(); } });
+	if (auto pExt = TechnoExt::ExtMap.Find(pThis))
+	{
+		pExt->_GameObject->Foreach([](Component* c)
+			{ if (auto cc = dynamic_cast<TechnoScript*>(c)) { cc->OnRocketExplosion(); } });
+	}
+
 	return 0;
 }
 #pragma endregion

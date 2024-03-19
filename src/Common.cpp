@@ -15,6 +15,7 @@ bool InChinese = GetSystemDefaultLangID() == 0x0804;
 HANDLE Common::hInstance = 0;
 
 bool Common::IsLoadGame = false;
+bool Common::IsScenarioClear = false;
 
 bool Common::DebugAE = false;
 

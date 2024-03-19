@@ -113,7 +113,7 @@ void AnimStand::OnDone()
 		{
 			standStatus->DestroySelf->DestroyNow(!explodes);
 			// 如果替身处于Limbo状态，OnUpdate不会执行，需要手动触发
-			if (pTemp->InLimbo)
+			if (pTemp->InLimbo && !Common::IsScenarioClear)
 			{
 				standStatus->OnUpdate();
 			}

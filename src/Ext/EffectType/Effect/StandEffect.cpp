@@ -103,7 +103,7 @@ void StandEffect::ExplodesOrDisappear(bool peaceful)
 		{
 			standStatus->DestroySelf->DestroyNow(!explodes);
 			// 如果替身处于Limbo状态，OnUpdate不会执行，需要手动触发
-			if (masterIsRocket || pTemp->InLimbo)
+			if ((masterIsRocket || pTemp->InLimbo) && !Common::IsScenarioClear)
 			{
 				standStatus->OnUpdate();
 			}
@@ -766,9 +766,9 @@ void StandEffect::OnGuardCommand()
 	if (!pStand->IsSelected)
 	{
 		// 执行替身的OnStop
-		auto ext = TechnoExt::ExtMap.Find(pStand);
-		ext->_GameObject->Foreach([](Component* c)
-			{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnGuardCommand(); } });
+		if (auto ext = TechnoExt::ExtMap.Find(pStand))
+			ext->_GameObject->Foreach([](Component* c)
+				{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnGuardCommand(); } });
 	}
 }
 
@@ -784,9 +784,9 @@ void StandEffect::OnStopCommand()
 	{
 		pStand->ClickedEvent(NetworkEvents::Idle);
 		// 执行替身的OnStop
-		auto ext = TechnoExt::ExtMap.Find(pStand);
-		ext->_GameObject->Foreach([](Component* c)
-			{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnStopCommand(); } });
+		if (auto ext = TechnoExt::ExtMap.Find(pStand))
+			ext->_GameObject->Foreach([](Component* c)
+				{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnStopCommand(); } });
 	}
 }
 

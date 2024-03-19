@@ -22,7 +22,7 @@ void Component::EnsureAwaked()
 		char t_this[1024];
 		sprintf_s(t_this, "%p", this);
 		std::string thisId2 = { t_this };
-		Debug::Log("Component [%s]%s - %s calling awake, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _disableComponents.size(), _children.size());
+		Debug::Log("Component [%s]%s - %s calling awake, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _children.size());
 #endif // DEBUG
 		Awake();
 		// 在Awake中可能出现移除自身的操作，_awaked标记也用于控制Remove时是否延迟删除
@@ -48,7 +48,7 @@ void Component::EnsureDestroy()
 	char t_this[1024];
 	sprintf_s(t_this, "%p", this);
 	std::string thisId2 = { t_this };
-	Debug::Log("Component [%s]%s - %s calling destroy, has %d disable components, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _disableComponents.size(), _children.size());
+	Debug::Log("Component [%s]%s - %s calling destroy, children has %d\n", this->thisName.c_str(), this->thisId.c_str(), thisId2.c_str(), _children.size());
 #endif // DEBUG
 	_disable = true;
 	Destroy();

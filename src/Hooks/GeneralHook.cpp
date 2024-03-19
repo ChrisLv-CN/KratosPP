@@ -74,9 +74,17 @@ void NAKED _ExeTerminate()
 }
 DEFINE_JUMP(LJMP, 0x7CD8EA, GET_OFFSET(_ExeTerminate));
 
-DEFINE_HOOK(0x685659, Scenario_ClearClasses, 0xA)
+DEFINE_HOOK(0x6851F0, Scenario_ClearClasses_Start, 0x6)
+{
+	Common::IsScenarioClear = true;
+	return 0;
+}
+
+
+DEFINE_HOOK(0x685659, Scenario_ClearClasses_End, 0xA)
 {
 	EventSystems::General.Broadcast(Events::ScenarioClearClassesEvent);
+	Common::IsScenarioClear = false;
 	return 0;
 }
 

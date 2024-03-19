@@ -50,7 +50,9 @@ DEFINE_HOOK(0x426598, AnimClass_SDDTOR, 0x7)
 	GET(AnimClass*, pItem, ESI);
 
 	if(AnimExt::ExtMap.Find(pItem))
-	AnimExt::ExtMap.Remove(pItem);
+	{
+		AnimExt::ExtMap.Remove(pItem);
+	}
 
 	return 0;
 }
@@ -89,9 +91,11 @@ DEFINE_HOOK(0x423AC0, AnimClass_Update, 0x6)
 {
 	GET(AnimClass*, pThis, ECX);
 
-	auto pExt = AnimExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component* c)
-		{ c->OnUpdate(); });
+	if (auto pExt = AnimExt::ExtMap.Find(pThis))
+	{
+		pExt->_GameObject->Foreach([](Component* c)
+			{ c->OnUpdate(); });
+	}
 
 	return 0;
 }
@@ -109,9 +113,9 @@ DEFINE_HOOK(0x424B1B, AnimClass_UpdateEnd, 0x6)
 {
 	GET(AnimClass*, pThis, ESI);
 
-	auto pExt = AnimExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component* c)
-		{ c->OnUpdateEnd(); });
+	if (auto pExt = AnimExt::ExtMap.Find(pThis))
+		pExt->_GameObject->Foreach([](Component* c)
+			{ c->OnUpdateEnd(); });
 
 	return 0;
 }
@@ -120,9 +124,11 @@ DEFINE_HOOK(0x424785, AnimClass_Loop, 0x6)
 {
 	GET(AnimClass*, pThis, ESI);
 
-	auto pExt = AnimExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component* c)
-		{if (auto cc = dynamic_cast<AnimScript*>(c)) { cc->OnLoop(); } });
+	if (auto pExt = AnimExt::ExtMap.Find(pThis))
+	{
+		pExt->_GameObject->Foreach([](Component* c)
+			{if (auto cc = dynamic_cast<AnimScript*>(c)) { cc->OnLoop(); } });
+	}
 
 	return 0;
 }
@@ -132,9 +138,11 @@ DEFINE_HOOK(0x424298, AnimClass_Done, 0x6)
 {
 	GET(AnimClass*, pThis, ESI);
 
-	auto pExt = AnimExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([](Component* c)
-		{ if (auto cc = dynamic_cast<AnimScript*>(c)) { cc->OnDone(); } });
+	if (auto pExt = AnimExt::ExtMap.Find(pThis))
+	{
+		pExt->_GameObject->Foreach([](Component* c)
+			{ if (auto cc = dynamic_cast<AnimScript*>(c)) { cc->OnDone(); } });
+	}
 
 	return 0;
 }
@@ -144,9 +152,11 @@ DEFINE_HOOK(0x424807, AnimClass_Next, 0x6)
 	GET(AnimClass*, pThis, ESI);
 	GET(AnimTypeClass*, pNextAnimType, ECX);
 
-	auto pExt = AnimExt::ExtMap.Find(pThis);
-	pExt->_GameObject->Foreach([pNextAnimType](Component* c)
-		{ if (auto cc = dynamic_cast<AnimScript*>(c)) { cc->OnNext(pNextAnimType); } });
+	if (auto pExt = AnimExt::ExtMap.Find(pThis))
+	{
+		pExt->_GameObject->Foreach([pNextAnimType](Component* c)
+			{ if (auto cc = dynamic_cast<AnimScript*>(c)) { cc->OnNext(pNextAnimType); } });
+	}
 
 	return 0;
 }

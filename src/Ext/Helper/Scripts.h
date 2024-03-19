@@ -13,8 +13,7 @@ static bool TryGetScript(TBase* p, TScript*& pComponent)
 {
 	if (p != nullptr)
 	{
-		auto* ext = TExt::ExtMap.Find(p);
-		if (ext)
+		if (auto* ext = TExt::ExtMap.Find(p))
 		{
 			pComponent = ext->GetScript<TScript>();
 			return pComponent != nullptr;
@@ -37,8 +36,7 @@ static TScript* FindOrAttachScript(TBase* p)
 	TScript* pComponent = nullptr;
 	if (p != nullptr)
 	{
-		auto* ext = TExt::ExtMap.Find(p);
-		if (ext)
+		if (auto* ext = TExt::ExtMap.Find(p))
 		{
 			pComponent = ext->FindOrAttach<TScript>();
 		}
@@ -51,8 +49,7 @@ static bool TryGetStatus(TBase* p, TStatus*& status)
 {
 	if (p != nullptr)
 	{
-		auto* ext = TExt::ExtMap.Find(p);
-		if (ext)
+		if (auto* ext = TExt::ExtMap.Find(p))
 		{
 			status = ext->GetExtStatus<TStatus>();
 			return status != nullptr;
@@ -86,8 +83,7 @@ static bool TryGetAEData(TBase* pWH, AttachEffectTypeData*& data)
 {
 	if (pWH != nullptr)
 	{
-		auto* typeExt = TypeExt::ExtMap.Find(pWH);
-		if (typeExt)
+		if (auto* typeExt = TypeExt::ExtMap.Find(pWH))
 		{
 			data = typeExt->pTypeAEData;
 			if (!data)
@@ -114,8 +110,7 @@ static bool TryGetTypeData(TBase* p, TypeData*& data)
 {
 	if (p != nullptr)
 	{
-		auto* typeExt = TypeExt::ExtMap.Find(p);
-		if (typeExt)
+		if (auto* typeExt = TypeExt::ExtMap.Find(p))
 		{
 			INIConfigReader<TypeData>* pTypeData = static_cast<INIConfigReader<TypeData>*>(typeExt->pTypeData);
 			if (!pTypeData)
