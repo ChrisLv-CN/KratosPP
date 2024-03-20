@@ -97,7 +97,7 @@ public:
 		}
 
 		AffectTerrain = reader->Get(title + "AffectTerrain", AffectTerrain);
-		AffectCell = reader->Get(title + "AffectCell", CheckAG);
+		AffectCell = reader->Get(title + "AffectCell", AffectCell);
 
 		AffectsAllies = reader->Get(title + "AffectsAllies", AffectsAllies);
 		AffectsOwner = reader->Get(title + "AffectsOwner", AffectsAllies);
