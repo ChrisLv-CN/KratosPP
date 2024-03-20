@@ -721,6 +721,7 @@ DEFINE_HOOK(0x6FC833, TechnoClass_NavalTargeting, 0x7)
 
 DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon_AntiMissile, 0xA)
 {
+	enum { Primary = 0x6F37AD, Secondary = 0x6F3807 };
 	GET(TechnoClass*, pTechno, ESI);
 	GET_STACK(AbstractClass*, pTarget, 0x1C);
 	GET_STACK(WeaponTypeClass*, pPrimary, 0x14);
@@ -749,11 +750,11 @@ DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon_AntiMissile, 0xA)
 						// 自己捕获的目标，按设置选择武器
 						if (status->AntiBullet->Data.Weapon == 1)
 						{
-							return 0x6F3807; // 返回副武器
+							return Secondary; // 返回副武器
 						}
 						else
 						{
-							return 0x6F37AD; // 返回主武器
+							return Primary; // 返回主武器
 						}
 					}
 				}
@@ -761,7 +762,7 @@ DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon_AntiMissile, 0xA)
 			// 自动选择可以使用的武器
 			if (pSecondary->Projectile->AA && (!pPrimary->Projectile->AA || pTechno->IsCloseEnough(pTarget, 1)))
 			{
-				return 0x6F3807; // 返回副武器
+				return Secondary; // 返回副武器
 			}
 			break;
 		case AbstractType::Terrain:
@@ -769,35 +770,36 @@ DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon_AntiMissile, 0xA)
 			SelectWeaponData* data = INI::GetConfig<SelectWeaponData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
 			if (pSecondary->Projectile->AG && data->UseSecondary(pTechno, pTarget, pPrimary, pSecondary))
 			{
-				return 0x6F3807; // 返回副武器
+				return Secondary; // 返回副武器
 			}
 			break;
 		}
 	}
-	return 0x6F37AD; // 返回主武器
+	return Primary; // 返回主武器
 }
 
 // change form Otamaa
 DEFINE_HOOK(0x6F37EB, TechnoClass_SelectWeapon_SecondaryCheckAA_SwitchByRange, 0x6)
 {
+	enum { Primary = 0x6F37AD, Secondary = 0x6F3807 };
 	GET(TechnoClass*, pTechno, ESI);
 	GET(AbstractClass*, pTarget, EBP);
 	GET_STACK(WeaponTypeClass*, pPrimary, 0x18 - 0x4);
 	GET(WeaponTypeClass*, pSecondary, EAX);
+	// 默认使用主武器
+	int select = Primary;
+	// 根据距离选择应该使用主武器或者副武器
+	SelectWeaponData* data = INI::GetConfig<SelectWeaponData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+	if (data->UseSecondary(pTechno, pTarget, pPrimary, pSecondary))
+	{
+		select = Secondary; // 返回副武器
+	}
 	// check AA
-	if (pSecondary->Projectile->AA && pTarget->IsInAir())
+	if (!pPrimary->Projectile->AA && pSecondary->Projectile->AA && pTarget && pTarget->IsInAir())
 	{
-		return 0x6F3807; // 返回副武器
+		select = Secondary; // 返回副武器
 	}
-	else
-	{
-		SelectWeaponData* data = INI::GetConfig<SelectWeaponData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
-		if (data->UseSecondary(pTechno, pTarget, pPrimary, pSecondary))
-		{
-			return 0x6F3807; // 返回副武器
-		}
-	}
-	return 0x6F37AD; // 返回主武器
+	return select;
 }
 
 DEFINE_HOOK(0x6FDD61, TechnoClass_Fire_OverrideWeapon, 0x5)
