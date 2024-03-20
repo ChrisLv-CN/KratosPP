@@ -13,8 +13,6 @@
 bool RevengeEffect::CanRevenge(TechnoClass*& pRevenger, HouseClass*& pRevengerHouse, TechnoClass*& pRevengeTarget,
 	WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
 {
-	pRevenger = pTechno; // 复仇者
-	pRevengerHouse = pTechno->Owner; // 复仇者的阵营
 	// 检查弹头
 	WarheadTypeExt::TypeData* warheadTypeData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
 	if (warheadTypeData->IgnoreRevenge || !Data->OnMark(pWH))
@@ -75,10 +73,10 @@ void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH,
 		}
 	}
 	// 检查复仇者
-	TechnoClass* pRevenger = pTechno; // 复仇者
-	HouseClass* pRevengerHouse = pTechno->Owner; // 复仇者的阵营
+	pRevenger = pTechno; // 复仇者
+	pRevengerHouse = pTechno->Owner; // 复仇者的阵营
 	// 检查报复对象
-	TechnoClass* pRevengeTarget = nullptr; // 报复对象
+	pRevengeTarget = nullptr; // 报复对象
 	_skip = !CanRevenge(pRevenger, pRevengerHouse, pRevengeTarget, pWH, pAttacker, pAttackingHouse);
 	if (!_skip)
 	{
@@ -127,15 +125,10 @@ void RevengeEffect::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, 
 					if (Data->CanAffectHouse(pRevengerHouse, pAttackingHouse) && Data->CanAffectType(pRevengeTarget) && IsOnMark(pRevengeTarget, *Data))
 					{
 						// 使用武器复仇
-						if (!Data->Types.empty() || Data->WeaponIndex > -1)
+						if ((!Data->Types.empty() || Data->WeaponIndex > -1) && !IsDeadOrInvisible(pRevenger))
 						{
-							Component* rgo = nullptr;
-							AttachFire* attachFire = nullptr;
-							if (TryGetScript<TechnoExt, Component>(pRevenger, rgo))
-							{
-								attachFire = rgo->FindOrAttach<AttachFire>();
-							}
-							if (attachFire)
+							TechnoClass* pShooter = WhoIsShooter(pRevenger);
+							if (AttachFire* attachFire = FindOrAttachScript<TechnoExt, AttachFire>(pShooter))
 							{
 								// 发射自定义武器
 								for (std::string weaponId : Data->Types)

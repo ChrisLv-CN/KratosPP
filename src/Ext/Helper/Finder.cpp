@@ -320,7 +320,7 @@ void FindBulletOnMark(std::function<void(BulletClass*, AttachEffect*)> func,
 {
 	std::set<BulletClass*> pBulletSet;
 	FindObject<BulletClass>(BulletClass::Array.get(), [&](BulletClass* pTarget)->bool {
-		if (IsDeadOrInvisible(pTarget) && (data.AffectSelf || pTarget != exclude) && data.CanAffectType(pTarget)) pBulletSet.insert(pTarget); return false;
+		if (!IsDeadOrInvisible(pTarget) && (data.AffectSelf || pTarget != exclude) && data.CanAffectType(pTarget)) pBulletSet.insert(pTarget); return false;
 		}, location, maxSpread, minSpread, fullAirspace, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
 	// 去除不符合的目标
 	for (BulletClass* pTarget : pBulletSet)

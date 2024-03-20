@@ -70,6 +70,19 @@ public:
 	BroadcastEntity Data{};
 	BroadcastEntity EliteData{};
 
+	BroadcastData() : EffectData()
+	{
+		AffectBullet = false;
+
+		AffectSelf = false;
+		AffectStand = false;
+
+		AffectsOwner = true;
+		AffectsAllies = false;
+		AffectsEnemies = false;
+		AffectsCivilian = false;
+	}
+
 	virtual void Read(INIBufferReader* reader) override
 	{
 		Read(reader, "Broadcast.");

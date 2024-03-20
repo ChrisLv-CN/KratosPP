@@ -1132,7 +1132,13 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 					states.push_back(Component::ComponentState{ uiName, !pTechno->InLimbo });
 					ii = -1;
 				}
-				int level = 0;
+				else if (pBullet)
+				{
+					std::string uiName = std::string{ "" }.append("[").append(pBullet->GetType()->ID).append("]");
+					states.push_back(Component::ComponentState{ uiName, !pBullet->InLimbo });
+					ii = -1;
+				}
+					int level = 0;
 				GetComponentStates(states, level);
 				Point2D pos = ToClientPos(location);
 				for (Component::ComponentState& state : states)
