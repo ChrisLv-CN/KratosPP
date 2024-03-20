@@ -86,6 +86,8 @@ public:
 	bool ReceiverAttack = true; // 武器由AE的接受者发射
 	bool ReceiverOwnBullet = true; // 武器所属是AE的接受者
 
+	bool AttackFromSpawnOwner = false; // 武器所属是母鸡
+
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -126,6 +128,8 @@ public:
 		}
 		ReceiverOwnBullet = reader->Get(title + "ReceiverOwnBullet", ReceiverOwnBullet);
 
+		AttackFromSpawnOwner = reader->Get(title + "AttackFromSpawnOwner", AttackFromSpawnOwner);
+
 		Enable = Data.Enable || EliteData.Enable;
 	}
 
@@ -144,6 +148,7 @@ public:
 			.Process(this->IsAttackerMark)
 			.Process(this->ReceiverAttack)
 			.Process(this->ReceiverOwnBullet)
+			.Process(this->AttackFromSpawnOwner)
 			.Success();
 	};
 
