@@ -70,7 +70,7 @@ void MissileHoming::OnUpdate()
 		if (!HomingTargetLocation.IsEmpty())
 		{
 			RocketLocomotionClass* pLoco = static_cast<RocketLocomotionClass*>(dynamic_cast<FootClass*>(pTechno)->Locomotor.get());
-			if (pLoco->MissionState > 2)
+			if (pLoco && pLoco->MissionState > 2)
 			{
 				pLoco->MovingDestination = HomingTargetLocation;
 			}

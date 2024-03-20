@@ -47,12 +47,6 @@ public:
 	 * @param location 定位
 	 */
 	virtual void OnGScreenRenderEnd(CoordStruct location) {};
-
-	/**
-	 *@brief 子机导弹爆炸
-	 *
-	 */
-	virtual void OnRocketExplosion() {};
 };
 
 /// @brief AE组件

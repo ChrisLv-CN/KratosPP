@@ -97,7 +97,7 @@ void StandEffect::ExplodesOrDisappear(bool peaceful)
 	pStand = nullptr;
 	if (pTemp)
 	{
-		bool explodes = !peaceful && (Data->Explodes || notBeHuman || (masterIsRocket && Data->ExplodesWithRocket)) && !pTemp->BeingWarpedOut && !pTemp->WarpingOut;
+		bool explodes = !peaceful && (Data->Explodes || notBeHuman || (masterIsRocket && onRocketExplosion && Data->ExplodesWithRocket)) && !pTemp->BeingWarpedOut && !pTemp->WarpingOut;
 		TechnoStatus* standStatus = nullptr;
 		if (TryGetStatus<TechnoExt>(pTemp, standStatus))
 		{
@@ -792,6 +792,7 @@ void StandEffect::OnStopCommand()
 
 void StandEffect::OnRocketExplosion()
 {
+	onRocketExplosion = true;
 	if (!onReceiveDamageDestroy)
 	{
 		ExplodesOrDisappear(Data->ExplodesWithMaster);

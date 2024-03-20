@@ -127,7 +127,7 @@ DEFINE_HOOK(0x424785, AnimClass_Loop, 0x6)
 	if (auto pExt = AnimExt::ExtMap.Find(pThis))
 	{
 		pExt->_GameObject->Foreach([](Component* c)
-			{if (auto cc = dynamic_cast<AnimScript*>(c)) { cc->OnLoop(); } });
+			{if (auto cc = dynamic_cast<IAnimScript*>(c)) { cc->OnLoop(); } });
 	}
 
 	return 0;
@@ -141,7 +141,7 @@ DEFINE_HOOK(0x424298, AnimClass_Done, 0x6)
 	if (auto pExt = AnimExt::ExtMap.Find(pThis))
 	{
 		pExt->_GameObject->Foreach([](Component* c)
-			{ if (auto cc = dynamic_cast<AnimScript*>(c)) { cc->OnDone(); } });
+			{ if (auto cc = dynamic_cast<IAnimScript*>(c)) { cc->OnDone(); } });
 	}
 
 	return 0;
@@ -155,7 +155,7 @@ DEFINE_HOOK(0x424807, AnimClass_Next, 0x6)
 	if (auto pExt = AnimExt::ExtMap.Find(pThis))
 	{
 		pExt->_GameObject->Foreach([pNextAnimType](Component* c)
-			{ if (auto cc = dynamic_cast<AnimScript*>(c)) { cc->OnNext(pNextAnimType); } });
+			{ if (auto cc = dynamic_cast<IAnimScript*>(c)) { cc->OnNext(pNextAnimType); } });
 	}
 
 	return 0;

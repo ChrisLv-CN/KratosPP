@@ -65,6 +65,7 @@ public:
 			.Process(this->onStopCommand)
 			.Process(this->notBeHuman)
 			.Process(this->onReceiveDamageDestroy)
+			.Process(this->onRocketExplosion)
 
 			.Process(this->_lastLocationMark)
 			.Process(this->_isMoving)
@@ -90,7 +91,8 @@ private:
 	bool standIsBuilding = false;
 	bool onStopCommand = false;
     bool notBeHuman = false;
-    bool onReceiveDamageDestroy = false;
+	bool onReceiveDamageDestroy = false;
+	bool onRocketExplosion = false;
 
     LocationMark _lastLocationMark;
     bool _isMoving = false;
