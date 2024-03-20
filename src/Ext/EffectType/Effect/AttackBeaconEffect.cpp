@@ -21,12 +21,13 @@ bool AttackBeaconEffect::RecruitMission(Mission mission)
 
 int AttackBeaconEffect::RecruitNumber(std::string typeId, std::map<std::string, int> numbers)
 {
+	int num = -1;
 	auto it = numbers.find(typeId);
 	if (it != numbers.end())
 	{
-		return it->second;
+		num = it->second;
 	}
-	return INT16_MAX;
+	return num >= 0 ? num : INT16_MAX;
 }
 
 void AttackBeaconEffect::OnUpdate()

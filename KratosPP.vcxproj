@@ -258,6 +258,7 @@
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\ExtraFireData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\ExtraFireEffect.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\ExtraFireFLHData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\FireSuperData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\FireSuperEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\HostData.h" />
