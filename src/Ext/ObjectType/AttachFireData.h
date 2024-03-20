@@ -34,6 +34,7 @@ public:
 	Vector2D<double> OnlyFireWhenTargetHP = Vector2D<double>::Empty;
 
 	bool AffectTerrain = true;
+	bool AffectCell = true;
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -95,7 +96,9 @@ public:
 			CheckTargetHP = !OnlyFireWhenTargetHP.IsEmpty();
 		}
 
-		AffectTerrain = reader->Get(title + "AffectsTerrain", AffectTerrain);
+		AffectTerrain = reader->Get(title + "AffectTerrain", AffectTerrain);
+		AffectCell = reader->Get(title + "AffectCell", CheckAG);
+
 		AffectsAllies = reader->Get(title + "AffectsAllies", AffectsAllies);
 		AffectsOwner = reader->Get(title + "AffectsOwner", AffectsAllies);
 		AffectsEnemies = reader->Get(title + "AffectsEnemies", AffectsEnemies);
@@ -138,7 +141,7 @@ public:
 				break;
 			case AbstractType::Cell:
 				// 检查A地板
-				if (CheckAG && !pWeapon->Projectile->AG)
+				if (CheckAG && !pWeapon->Projectile->AG || !AffectCell)
 				{
 					canFire = false;
 				}
@@ -231,6 +234,7 @@ public:
 			.Process(this->OnlyFireWhenTargetHP)
 
 			.Process(this->AffectTerrain)
+			.Process(this->AffectCell)
 			.Success();
 	};
 
