@@ -49,5 +49,5 @@ private:
 	void PrintInfoNumber(int number, ColorStruct houseColor, Point2D pos, InfoEntity data);
 	void PrintInfoText(std::string text, ColorStruct houseColor, Point2D pos, InfoEntity data);
 
-	void OffsetAlign(Point2D& pos, std::string text, InfoEntity data);
+	void OffsetAlign(Point2D& pos, std::wstring text, InfoEntity data);
 };

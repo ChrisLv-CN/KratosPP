@@ -351,8 +351,18 @@ void InfoEffect::OnGScreenRenderEnd(CoordStruct location)
 
 void InfoEffect::PrintInfoNumber(int number, ColorStruct houseColor, Point2D location, InfoEntity data)
 {
-	std::string text = std::to_string(number);
-	PrintInfoText(text, houseColor, location, data);
+	// 调整锚点
+	Point2D pos = location;
+	pos.X += data.Offset.X; // 锚点向右的偏移值
+	pos.Y += data.Offset.Y; // 锚点向下的偏移值
+
+	// 修正锚点
+	if (!data.UseSHP)
+	{
+		// 根据对其方式修正锚点
+		OffsetAlign(pos, std::to_wstring(number), data);
+	}
+	PrintTextManager::PrintNumber(number, houseColor, pos, data);
 }
 
 void InfoEffect::PrintInfoText(std::string text, ColorStruct houseColor, Point2D location, InfoEntity data)
@@ -366,19 +376,18 @@ void InfoEffect::PrintInfoText(std::string text, ColorStruct houseColor, Point2D
 	if (!data.UseSHP)
 	{
 		// 根据对其方式修正锚点
-		OffsetAlign(pos, text, data);
+		OffsetAlign(pos, String2WString(text), data);
 	}
 	PrintTextManager::PrintText(text, houseColor, pos, data);
 }
 
-void InfoEffect::OffsetAlign(Point2D& pos, std::string text, InfoEntity data)
+void InfoEffect::OffsetAlign(Point2D& pos, std::wstring text, InfoEntity data)
 {
 	// 使用文字显示数字，文字的锚点在左上角
 	// 重新调整锚点位置，向上抬起半个字的高度
 	pos.Y = pos.Y - PrintTextManager::GetFontSize().Y / 2; // 字是20格高，上4中9下7
-	std::wstring t = String2WString(text);
 	// 按照文字对齐方式修正X的偏移值
-	RectangleStruct textRect = Drawing::GetTextDimensions(t.c_str(), { 0, 0 }, 0, 2, 0);
+	RectangleStruct textRect = Drawing::GetTextDimensions(text.c_str(), { 0, 0 }, 0, 2, 0);
 	int width = textRect.Width;
 	switch (data.Align)
 	{

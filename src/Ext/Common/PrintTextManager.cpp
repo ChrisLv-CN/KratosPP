@@ -212,17 +212,42 @@ void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTex
 	}
 }
 
-void PrintTextManager::Print(std::wstring text, ColorStruct houseColor, PrintTextData data, Point2D pos, DSurface* pSurface, bool isBuilding)
+void PrintTextManager::Print(int number, ColorStruct houseColor, PrintTextData data, Point2D pos, RectangleStruct* pBound, DSurface* pSurface, bool isBuilding)
 {
-	RectangleStruct bound = pSurface->GetRect();
-	Print(text, houseColor, data, pos, &bound, pSurface, isBuilding);
+	if (data.UseSHP && data.SHPDrawStyle == SHPDrawStyle::PROGRESS)
+	{
+		// 进度条
+		std::string file = data.SHPFileName;
+		int frameIndex = data.ZeroFrameIndex + number / data.Wrap;
+		if (data.MaxFrameIndex >= 0)
+		{
+			frameIndex = std::min(data.MaxFrameIndex, frameIndex);
+		}
+		if (IsNotNone(file))
+		{
+			if (SHPStruct* pCustomSHP = FileSystem::LoadSHPFile(data.SHPFileName.c_str()))
+			{
+				// 显示对应的帧
+				pSurface->DrawSHP(FileSystem::PALETTE_PAL.get(), pCustomSHP, frameIndex, &pos, pBound);
+			}
+		}
+	}
+	else
+	{
+		Print(std::to_wstring(number), houseColor, data, pos, pBound, pSurface, isBuilding);
+	}
 }
 
 void PrintTextManager::PrintText(std::string text, ColorStruct houseColor, Point2D pos, PrintTextData data)
 {
 	std::wstring wText = String2WString(text);
 	DSurface* pSurface = DSurface::Temp;
-	Print(wText, houseColor, data, pos, pSurface);
+	RectangleStruct bound = pSurface->GetRect();
+	bound.Height -= 34;
+	if (InRect(pos, bound))
+	{
+		Print(wText, houseColor, data, pos, &bound, pSurface);
+	}
 }
 
 void PrintTextManager::PrintText(std::string text, ColorStruct houseColor, CoordStruct location, PrintTextData data)
@@ -242,6 +267,17 @@ void PrintTextManager::PrintText(std::string text, ColorStruct color, CoordStruc
 {
 	Point2D pos = ToClientPos(location);
 	PrintText(text, color, pos);
+}
+
+void PrintTextManager::PrintNumber(int number, ColorStruct houseColor, Point2D pos, PrintTextData data)
+{
+	DSurface* pSurface = DSurface::Temp;
+	RectangleStruct bound = pSurface->GetRect();
+	bound.Height -= 34;
+	if (InRect(pos, bound))
+	{
+		Print(number, houseColor, data, pos, &bound, pSurface);
+	}
 }
 
 #pragma region Rolling Text

@@ -219,6 +219,14 @@ DEFINE_HOOK(0x6B796A, SpawnManagerClass_Update_PutSpawns_FireOnce, 0x5)
 	return 0;
 }
 
+// DEFINE_HOOK(0x6B77B4, SpawnManagerClass_Update_Callback, 0x7)
+// {
+// 	GET(SpawnManagerClass*, pManager, ESI);
+// 	GET_STACK(int, i, 0x14);
+// 	pManager->SpawnedNodes[i]->Status = SpawnNodeStatus::Reloading;
+// 	return 0x6B7838;
+// }
+
 #pragma region Rocket Homing
 // 如果子机管理器输入的预设目标在天上，自动开启跟踪模式
 DEFINE_HOOK(0x6B7A32, SpawnManagerClass_Update_Add_Missile_Target, 0x5)

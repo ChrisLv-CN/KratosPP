@@ -28,13 +28,26 @@ public:
 	 */
 	static void Print(std::wstring text, ColorStruct houseColor, PrintTextData data, Point2D pos, RectangleStruct* pBound, DSurface* pSurface, bool isBuilding = false);
 
-	static void Print(std::wstring text, ColorStruct houseColor, PrintTextData data, Point2D pos, DSurface* pSurface, bool isBuilding = false);
+	/**
+	 *@brief 在指定位置打印一个数字/进度
+	 *
+	 * @param number 内容
+	 * @param houseColor 颜色
+	 * @param data 格式
+	 * @param pos 位置
+	 * @param pBound 范围
+	 * @param pSurface 渲染器
+	 * @param isBuilding 是否是建筑
+	 */
+	static void Print(int number, ColorStruct houseColor, PrintTextData data, Point2D pos, RectangleStruct* pBound, DSurface* pSurface, bool isBuilding = false);
 
 	static void PrintText(std::string text, ColorStruct houseColor, Point2D pos, PrintTextData data);
 	static void PrintText(std::string text, ColorStruct houseColor, CoordStruct location, PrintTextData data);
 
 	static void PrintText(std::string text, ColorStruct color, Point2D pos);
 	static void PrintText(std::string text, ColorStruct color, CoordStruct location);
+
+	static void PrintNumber(int number, ColorStruct houseColor, Point2D pos, PrintTextData data);
 #pragma region Rolling Text
 	static void Clear(EventSystem* sender, Event e, void* args);
 
