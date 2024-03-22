@@ -379,6 +379,31 @@ int Dir2FrameIndex(DirStruct dir, int facing)
 	return index;
 }
 
+DirType ToDirType(DirStruct dir)
+{
+	int i = Dir2FacingIndex(dir, 8);
+	switch (i)
+	{
+	case 0:
+		return DirType::North;
+	case 1:
+		return DirType::NorthEast;
+	case 2:
+		return DirType::East;
+	case 3:
+		return DirType::SouthEast;
+	case 4:
+		return DirType::South;
+	case 5:
+		return DirType::SouthWest;
+	case 6:
+		return DirType::West;
+	case 7:
+		return DirType::NorthWest;
+	}
+	return DirType::North;
+}
+
 DirStruct Radians2Dir(double radians)
 {
 	short d = (short)(radians / BINARY_ANGLE_MAGIC);

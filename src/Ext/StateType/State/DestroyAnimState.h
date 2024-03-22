@@ -15,6 +15,15 @@ public:
 
 	HouseClass* pKillerHouse = nullptr;
 
+	DestroyAnimState& operator=(const DestroyAnimState& other)
+	{
+		if (this != &other)
+		{
+			StateScript<DestroyAnimData>::operator=(other);
+			pKillerHouse = other.pKillerHouse;
+		}
+		return *this;
+	}
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

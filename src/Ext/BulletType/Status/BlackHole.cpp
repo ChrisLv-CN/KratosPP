@@ -98,7 +98,6 @@ void BulletStatus::OnUpdateEnd_BlackHole(CoordStruct& sourcePos)
 		{
 			nextPos = GetForwardCoords(sourcePos, targetPos, speed);
 		}
-		int deltaZ = sourcePos.Z - targetPos.Z;
 		// 抛射体撞到地面
 		bool canMove = pBullet->GetHeight() > 0;
 		// 检查悬崖

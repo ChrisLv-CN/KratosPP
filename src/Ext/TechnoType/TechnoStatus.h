@@ -34,6 +34,7 @@
 #include <Ext/StateType/State/NoMoneyNoTalkState.h>
 #include <Ext/StateType/State/OverrideWeaponState.h>
 #include <Ext/StateType/State/PaintballState.h>
+#include <Ext/StateType/State/PumpState.h>
 #include <Ext/StateType/State/ScatterState.h>
 #include <Ext/StateType/State/TeleportState.h>
 #include <Ext/StateType/State/TransformState.h>
@@ -128,6 +129,10 @@ public:
 	void BlackHoleCapture(ObjectClass* pBlackHole, BlackHoleData data);
 	void BlackHoleCancel();
 
+	// 气泵
+	bool PumpAction(CoordStruct targetPos, bool isLobber); // 爆炸冲击
+	void HumanCannon(CoordStruct sourcePos, CoordStruct targetPos, int height, bool isLobber = false); // 人间大炮
+
 	virtual void Awake() override;
 
 	virtual void Destroy() override;
@@ -177,6 +182,7 @@ public:
 	STATE_VAR_DEFINE(NoMoneyNoTalk);
 	STATE_VAR_DEFINE(OverrideWeapon);
 	STATE_VAR_DEFINE(Paintball);
+	STATE_VAR_DEFINE(Pump);
 	STATE_VAR_DEFINE(Scatter);
 	STATE_VAR_DEFINE(Teleport);
 	STATE_VAR_DEFINE(Transform);
@@ -195,6 +201,7 @@ public:
 		STATE_VAR_INIT(NoMoneyNoTalk);
 		STATE_VAR_INIT(OverrideWeapon);
 		STATE_VAR_INIT(Paintball);
+		STATE_VAR_INIT(Pump);
 		STATE_VAR_INIT(Scatter);
 		STATE_VAR_INIT(Teleport);
 		STATE_VAR_INIT(Transform);
@@ -214,6 +221,7 @@ public:
 		STATE_VAR_INHERITED(NoMoneyNoTalk);
 		STATE_VAR_INHERITED(OverrideWeapon);
 		STATE_VAR_INHERITED(Paintball);
+		STATE_VAR_INHERITED(Pump);
 		STATE_VAR_INHERITED(Scatter);
 		STATE_VAR_INHERITED(Teleport);
 		// STATE_VAR_INHERITED(Transform);
@@ -235,6 +243,7 @@ public:
 			STATE_VAR_TRYGET(NoMoneyNoTalk)
 			STATE_VAR_TRYGET(OverrideWeapon)
 			STATE_VAR_TRYGET(Paintball)
+			STATE_VAR_TRYGET(Pump)
 			STATE_VAR_TRYGET(Scatter)
 			STATE_VAR_TRYGET(Teleport)
 			STATE_VAR_TRYGET(Transform)

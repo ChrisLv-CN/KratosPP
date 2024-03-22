@@ -129,6 +129,8 @@ int Dir2FacingIndex(DirStruct dir, int facing);
 /// @return index
 int Dir2FrameIndex(DirStruct dir, int facing);
 
+DirType ToDirType(DirStruct dir);
+
 DirStruct Radians2Dir(double radians);
 DirStruct Point2Dir(CoordStruct source, CoordStruct target);
 

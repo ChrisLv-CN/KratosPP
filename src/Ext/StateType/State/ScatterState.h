@@ -10,6 +10,16 @@ public:
 
 	virtual void OnUpdate() override;
 
+	ScatterState& operator=(const ScatterState& other)
+	{
+		if (this != &other)
+		{
+			StateScript<ScatterData>::operator=(other);
+			_forceMoving = other._forceMoving;
+			_panic = other._panic;
+		}
+		return *this;
+	}
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

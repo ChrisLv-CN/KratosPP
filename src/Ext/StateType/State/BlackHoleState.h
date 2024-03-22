@@ -17,6 +17,18 @@ public:
 
 	virtual void OnUpdate() override;
 
+	BlackHoleState& operator=(const BlackHoleState& other)
+	{
+		if (this != &other)
+		{
+			StateScript<BlackHoleData>::operator=(other);
+			_count = other._count;
+			_delay = other._delay;
+			_delayTimer = other._delayTimer;
+			_isElite = other._isElite;
+		}
+		return *this;
+	}
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

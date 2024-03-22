@@ -19,6 +19,18 @@ public:
 
 	virtual void OnUpdate() override;
 
+	ECMState& operator=(const ECMState& other)
+	{
+		if (this != &other)
+		{
+			StateScript<ECMData>::operator=(other);
+			_count = other._count;
+			_delay = other._delay;
+			_delayTimer = other._delayTimer;
+			_lockTimer = other._lockTimer;
+		}
+		return *this;
+	}
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

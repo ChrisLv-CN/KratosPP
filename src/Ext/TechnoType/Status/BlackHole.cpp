@@ -229,4 +229,4 @@ void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeCla
 			}
 		}
 	}
-};
+}

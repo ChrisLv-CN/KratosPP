@@ -6,6 +6,8 @@
 #include <Ext/Helper/Physics.h>
 #include <Ext/Helper/Scripts.h>
 
+#include <Ext/TechnoType/TechnoStatus.h>
+
 void BulletStatus::OnUpdate_SelfLaunchOrPumpAction()
 {
 	if (!_movingSelfInitFlag)
@@ -14,8 +16,10 @@ void BulletStatus::OnUpdate_SelfLaunchOrPumpAction()
 		if (WeaponTypeClass* pWeapon = pBullet->WeaponType)
 		{
 			WeaponTypeExt::TypeData* weaponData = GetTypeData<WeaponTypeExt, WeaponTypeExt::TypeData>(pWeapon);
+			TechnoStatus* status = nullptr;
 			if (weaponData && (weaponData->SelfLaunch || weaponData->PumpAction || weaponData->HumanCannon > -1)
 				&& !IsDeadOrInvisible(pSource)
+				&& TryGetStatus<TechnoExt>(pSource, status)
 				&& pSource->WhatAmI() != AbstractType::Building)
 			{
 				if (weaponData->SelfLaunch)
@@ -29,12 +33,12 @@ void BulletStatus::OnUpdate_SelfLaunchOrPumpAction()
 				}
 				else if (weaponData->PumpAction)
 				{
-					// TODO PumpAction
+					status->PumpAction(pBullet->TargetCoords, pWeapon->Lobber);
 				}
 				// 人间大炮可以和自身移动一起生效
 				if (weaponData->HumanCannon > -1)
 				{
-					// TODO 人间大炮
+					status->HumanCannon(pBullet->SourceCoords, pBullet->TargetCoords, weaponData->HumanCannon, pWeapon->Lobber);
 				}
 			}
 		}

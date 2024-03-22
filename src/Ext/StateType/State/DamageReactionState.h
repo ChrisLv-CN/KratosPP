@@ -19,6 +19,21 @@ public:
 
 	bool ForceDone = false;
 
+	DamageReactionState& operator=(const DamageReactionState& other)
+	{
+		if (this != &other)
+		{
+			StateScript<DamageReactionData>::operator=(other);
+			ForceDone = other.ForceDone;
+			_count = other._count;
+			_delay = other._delay;
+			_delayTimer = other._delayTimer;
+			_animDelay = other._animDelay;
+			_animDelayTimer = other._animDelayTimer;
+			_isElite = other._isElite;
+		}
+		return *this;
+	}
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
@@ -29,6 +44,9 @@ public:
 			.Process(this->_count)
 			.Process(this->_delay)
 			.Process(this->_delayTimer)
+
+			.Process(this->_animDelay)
+			.Process(this->_animDelayTimer)
 
 			.Process(this->_isElite)
 			.Success();

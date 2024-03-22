@@ -76,7 +76,7 @@ void TeleportState::OnStart()
 {
 	_count = 0;
 	_delay = Data.Delay;
-	TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno);
+	TechnoStatus* status = dynamic_cast<TechnoStatus*>(_parent);
 	if (status && status->AmIStand())
 	{
 		End();

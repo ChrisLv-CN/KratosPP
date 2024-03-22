@@ -12,6 +12,15 @@ public:
 
 	virtual void OnFire(AbstractClass* pTarget, int weaponIndex) override;
 
+	OverrideWeaponState& operator=(const OverrideWeaponState& other)
+	{
+		if (this != &other)
+		{
+			StateScript<OverrideWeaponData>::operator=(other);
+			_weaponIndex = other._weaponIndex;
+		}
+		return *this;
+	}
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)
