@@ -30,7 +30,7 @@ public:
 	virtual void OnPut(CoordStruct* pCoords, DirType faceDir) {};
 	virtual void OnRemove() {};
 	virtual void OnReceiveDamage(args_ReceiveDamage* args) {};
-	virtual void OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, bool ignoreDefenses, TechnoClass* pAttacker, HouseClass* pAttacingHouse) {};
+	virtual void OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, TechnoClass* pAttacker, HouseClass* pAttacingHouse) {};
 	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse) {};
 	virtual void OnReceiveDamageDestroy() {};
 };

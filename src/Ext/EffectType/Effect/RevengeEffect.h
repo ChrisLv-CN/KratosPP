@@ -25,7 +25,9 @@ class RevengeEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Revenge);
 
-	virtual void OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, bool ignoreDefenses, TechnoClass* pAttacker, HouseClass* pAttackingHouse) override;
+	virtual void OnReceiveDamage(args_ReceiveDamage* args) override;
+
+	virtual void OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, TechnoClass* pAttacker, HouseClass* pAttackingHouse) override;
 
 	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse) override;
 
@@ -36,6 +38,7 @@ public:
 			.Process(this->pRevenger)
 			.Process(this->pRevengerHouse)
 			.Process(this->pRevengeTarget)
+			.Process(this->_ignoreDefenses)
 			.Process(this->_skip)
 			.Process(this->_bingo)
 			.Process(this->_count)
@@ -74,6 +77,8 @@ private:
 	HouseClass* pRevengerHouse = nullptr; // 复仇者的阵营
 	// 检查报复对象
 	TechnoClass* pRevengeTarget = nullptr; // 报复对象
+
+	bool _ignoreDefenses = false; // 本次伤害是否真伤
 
 	bool _skip = false;
 	bool _bingo = false;

@@ -54,7 +54,12 @@ bool RevengeEffect::CanRevenge(TechnoClass*& pRevenger, HouseClass*& pRevengerHo
 	return true;
 }
 
-void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, bool ignoreDefenses, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
+void RevengeEffect::OnReceiveDamage(args_ReceiveDamage* args)
+{
+	_ignoreDefenses = args->IgnoreDefenses;
+}
+
+void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	// 检查持续帧内触发
 	if (Data->ActiveOnce)
@@ -82,7 +87,7 @@ void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH,
 	{
 		_bingo = Bingo(Data->Chance);
 		// 准备报复
-		if (_bingo && !ignoreDefenses)
+		if (_bingo && !_ignoreDefenses)
 		{
 			int damage = *pRealDamage;
 			// 减伤
@@ -106,6 +111,7 @@ void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH,
 
 void RevengeEffect::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
 {
+	_ignoreDefenses = false;
 	if (_skip)
 	{
 		return;
