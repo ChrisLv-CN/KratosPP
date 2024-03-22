@@ -188,7 +188,6 @@ private:
 	void OnUpdate_DestroySelf();
 
 	void OnUpdate_BlackHole();
-	void OnUpdate_ECM();
 	void OnUpdate_GiftBox();
 	void OnUpdate_RecalculateStatus();
 	void OnUpdate_SelfLaunchOrPumpAction();
