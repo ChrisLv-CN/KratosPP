@@ -77,7 +77,7 @@ void DamageText::OnUpdate()
 	}
 }
 
-void DamageText::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+void DamageText::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	DamageTextData* whDamageTextType = nullptr;
 	if (SkipDrawDamageText(pWH, whDamageTextType))

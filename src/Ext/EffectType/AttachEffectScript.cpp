@@ -338,7 +338,7 @@ void AttachEffectScript::End(CoordStruct location)
 		});
 }
 
-void AttachEffectScript::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+void AttachEffectScript::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	if (!_started)
 	{

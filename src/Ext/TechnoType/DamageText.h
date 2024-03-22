@@ -38,7 +38,7 @@ public:
 
 	virtual void OnUpdate() override;
 
-	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
+	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse) override;
 
 	// 本次伤害不记录伤害数字
 	bool SkipDamageText = false;

@@ -25,9 +25,9 @@ class RevengeEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Revenge);
 
-	virtual void OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
+	virtual void OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, bool ignoreDefenses, TechnoClass* pAttacker, HouseClass* pAttackingHouse) override;
 
-	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse) override;
+	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse) override;
 
 #pragma region Save/Load
 	template <typename T>

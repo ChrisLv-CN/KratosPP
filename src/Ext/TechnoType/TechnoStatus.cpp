@@ -287,7 +287,7 @@ void TechnoStatus::OnReceiveDamage(args_ReceiveDamage* args)
 	OnReceiveDamage_Stand(args);
 }
 
-void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	if (damageState == DamageState::NowDead)
 	{
@@ -299,7 +299,7 @@ void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, D
 	OnReceiveDamageEnd_Vampire(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
 }
 
-void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
 {
 
 };

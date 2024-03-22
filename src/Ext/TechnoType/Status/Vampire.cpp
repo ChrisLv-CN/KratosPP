@@ -5,13 +5,12 @@
 #include <Ext/EffectType/AttachEffectScript.h>
 #include <Ext/EffectType/Effect/VampireEffect.h>
 
-void TechnoStatus::OnReceiveDamageEnd_Vampire(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+void TechnoStatus::OnReceiveDamageEnd_Vampire(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
 {
-	TechnoClass* pAttackerTechno = nullptr;
 	AttachEffect* aem = nullptr;
 	bool inAir = pTechno->IsInAir();
 	HouseClass* pHouse = pTechno->Owner;
-	if (CastToTechno(pAttacker, pAttackerTechno) && !IsDead(pAttackerTechno) && TryGetAEManager<TechnoExt>(pAttackerTechno, aem))
+	if (!IsDead(pAttacker) && TryGetAEManager<TechnoExt>(pAttacker, aem))
 	{
 		aem->ForeachChild([&](Component* c) {
 			if (auto ae = dynamic_cast<AttachEffectScript*>(c))

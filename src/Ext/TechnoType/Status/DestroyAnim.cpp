@@ -4,7 +4,7 @@
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/Gift.h>
 
-void TechnoStatus::OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+void TechnoStatus::OnReceiveDamageEnd_DestroyAnim(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	// 记录下击杀方
 	DestroyAnim->pKillerHouse = pAttackingHouse ? pAttackingHouse : HouseClass::FindSpecial();

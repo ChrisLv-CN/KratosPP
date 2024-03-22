@@ -325,6 +325,7 @@ DEFINE_HOOK(0x5F5498, ObjectClass_ReceiveDamage_RealDamage, 0xC)
 	GET(int*, pRealDamage, EDI);
 	GET_STACK(WarheadTypeClass*, pWH, 0x34 - 0x4);
 	GET_STACK(TechnoClass*, pAttacker, 0x34);
+	GET_STACK(bool, ignoreDefenses, 0x38);
 	GET_STACK(HouseClass*, pAttackingHouse, 0x40);
 
 	TechnoClass* pTechno = nullptr;
@@ -333,7 +334,7 @@ DEFINE_HOOK(0x5F5498, ObjectClass_ReceiveDamage_RealDamage, 0xC)
 		if (auto pExt = TechnoExt::ExtMap.Find(pTechno))
 		{
 			pExt->_GameObject->Foreach([&](Component* c)
-				{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamageReal(pRealDamage, pWH, pAttacker, pAttackingHouse); } });
+				{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamageReal(pRealDamage, pWH, ignoreDefenses, pAttacker, pAttackingHouse); } });
 
 			R->ECX(*pRealDamage);
 			if (*pRealDamage < 0)
@@ -351,7 +352,7 @@ DEFINE_HOOK(0x701DFF, TechnoClass_ReceiveDamageEnd, 0x7)
 	GET(int*, pRealDamage, EBX);
 	GET(WarheadTypeClass*, pWH, EBP);
 	GET(DamageState, damageState, EDI);
-	GET_STACK(ObjectClass*, pAttacker, 0xD4);
+	GET_STACK(TechnoClass*, pAttacker, 0xD4);
 	GET_STACK(HouseClass*, pAttackingHouse, 0xE0);
 
 	if (auto pExt = TechnoExt::ExtMap.Find(pThis))

@@ -135,7 +135,7 @@ public:
 	 */
 	virtual void End(CoordStruct location) override;
 
-	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse);
+	virtual void OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse);
 
 	virtual void OnGScreenRender(CoordStruct location) override;
 	virtual void OnGScreenRenderEnd(CoordStruct location) override;

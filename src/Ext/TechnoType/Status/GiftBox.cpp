@@ -96,7 +96,7 @@ void TechnoStatus::OnUpdate_GiftBox()
 
 }
 
-void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, ObjectClass* pAttacker, HouseClass* pAttackingHouse)
+void TechnoStatus::OnReceiveDamageEnd_GiftBox(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
 {
 	if (damageState != DamageState::NowDead && IsDeadOrInvisible(pTechno)
 		&& GiftBox->CanOpen() && GiftBox->Data.OpenWhenHealthPercent
