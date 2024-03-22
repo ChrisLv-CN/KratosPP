@@ -7,9 +7,10 @@
 
 class AttachEffectTypeData;
 class AttachEffect;
+class BlackHoleState;
 
 template <typename TExt, typename TScript, typename TBase>
-static bool TryGetScript(TBase* p, TScript*& pComponent)
+bool TryGetScript(TBase* p, TScript*& pComponent)
 {
 	if (p != nullptr)
 	{
@@ -23,7 +24,7 @@ static bool TryGetScript(TBase* p, TScript*& pComponent)
 }
 
 template <typename TExt, typename TScript, typename TBase>
-static TScript* GetScript(TBase* p)
+TScript* GetScript(TBase* p)
 {
 	TScript* pComponent = nullptr;
 	TryGetScript<TExt>(p, pComponent);
@@ -31,7 +32,7 @@ static TScript* GetScript(TBase* p)
 }
 
 template <typename TExt, typename TScript, typename TBase>
-static TScript* FindOrAttachScript(TBase* p)
+TScript* FindOrAttachScript(TBase* p)
 {
 	TScript* pComponent = nullptr;
 	if (p != nullptr)
@@ -45,7 +46,7 @@ static TScript* FindOrAttachScript(TBase* p)
 }
 
 template <typename TExt, typename TStatus, typename TBase>
-static bool TryGetStatus(TBase* p, TStatus*& status)
+bool TryGetStatus(TBase* p, TStatus*& status)
 {
 	if (p != nullptr)
 	{
@@ -59,7 +60,7 @@ static bool TryGetStatus(TBase* p, TStatus*& status)
 }
 
 template <typename TExt, typename TStatus, typename TBase>
-static TStatus* GetStatus(TBase* p)
+TStatus* GetStatus(TBase* p)
 {
 	TStatus* status = nullptr;
 	TryGetStatus<TExt>(p, status);
@@ -67,19 +68,22 @@ static TStatus* GetStatus(TBase* p)
 }
 
 template <typename TExt, typename TBase>
-static bool TryGetAEManager(TBase* p, AttachEffect*& aeManager)
+bool TryGetAEManager(TBase* p, AttachEffect*& aeManager)
 {
 	return TryGetScript<TExt>(p, aeManager);
 }
 
 template <typename TExt, typename TBase>
-static AttachEffect* GetAEManager(TBase* p)
+AttachEffect* GetAEManager(TBase* p)
 {
 	return GetScript<TExt, AttachEffect>(p);
 }
 
+BlackHoleState* GetBlackHoleState(ObjectClass* pObject);
+bool TryGetBlackHoleState(ObjectClass* pObject, BlackHoleState*& state);
+
 template <typename TypeExt, typename TBase>
-static bool TryGetAEData(TBase* pWH, AttachEffectTypeData*& data)
+bool TryGetAEData(TBase* pWH, AttachEffectTypeData*& data)
 {
 	if (pWH != nullptr)
 	{
@@ -98,7 +102,7 @@ static bool TryGetAEData(TBase* pWH, AttachEffectTypeData*& data)
 }
 
 template <typename TypeExt, typename TBase>
-static AttachEffectTypeData* GetAEData(TBase* p)
+AttachEffectTypeData* GetAEData(TBase* p)
 {
 	AttachEffectTypeData* data = nullptr;
 	TryGetAEData<TypeExt>(p, data);
@@ -106,7 +110,7 @@ static AttachEffectTypeData* GetAEData(TBase* p)
 }
 
 template <typename TypeExt, typename TypeData, typename TBase>
-static bool TryGetTypeData(TBase* p, TypeData*& data)
+bool TryGetTypeData(TBase* p, TypeData*& data)
 {
 	if (p != nullptr)
 	{
@@ -126,9 +130,10 @@ static bool TryGetTypeData(TBase* p, TypeData*& data)
 }
 
 template <typename TypeExt, typename TypeData, typename TBase>
-static TypeData* GetTypeData(TBase* p)
+TypeData* GetTypeData(TBase* p)
 {
 	TypeData* data = nullptr;
 	TryGetTypeData<TypeExt>(p, data);
 	return data;
 }
+

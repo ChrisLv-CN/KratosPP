@@ -23,6 +23,7 @@
 
 // TODO Add new State
 #include <Ext/StateType/State/AntiBulletState.h>
+#include <Ext/StateType/State/BlackHoleState.h>
 #include <Ext/StateType/State/DamageReactionState.h>
 #include <Ext/StateType/State/DeselectState.h>
 #include <Ext/StateType/State/DestroyAnimState.h>
@@ -123,6 +124,10 @@ public:
 	void DrawSHP_Colour(REGISTERS* R);
 	void DrawVXL_Paintball(REGISTERS* R, bool isBuilding);
 
+	// 黑洞
+	void BlackHoleCapture(ObjectClass* pBlackHole, BlackHoleData data);
+	void BlackHoleCancel();
+
 	virtual void Awake() override;
 
 	virtual void Destroy() override;
@@ -161,6 +166,7 @@ public:
 	// TODO Add new State
 	// 状态机
 	STATE_VAR_DEFINE(AntiBullet);
+	STATE_VAR_DEFINE(BlackHole);
 	STATE_VAR_DEFINE(DamageReaction);
 	STATE_VAR_DEFINE(Deselect);
 	STATE_VAR_DEFINE(DestroyAnim);
@@ -178,6 +184,7 @@ public:
 	void AttachState()
 	{
 		STATE_VAR_INIT(AntiBullet);
+		STATE_VAR_INIT(BlackHole);
 		STATE_VAR_INIT(DamageReaction);
 		STATE_VAR_INIT(Deselect);
 		STATE_VAR_INIT(DestroyAnim);
@@ -196,6 +203,7 @@ public:
 	void InheritedStatsTo(TechnoStatus*& heir)
 	{
 		STATE_VAR_INHERITED(AntiBullet);
+		STATE_VAR_INHERITED(BlackHole);
 		STATE_VAR_INHERITED(DamageReaction);
 		STATE_VAR_INHERITED(Deselect);
 		STATE_VAR_INHERITED(DestroyAnim);
@@ -216,6 +224,7 @@ public:
 	{
 		if (false) {}
 		STATE_VAR_TRYGET(AntiBullet)
+			STATE_VAR_TRYGET(BlackHole)
 			STATE_VAR_TRYGET(DamageReaction)
 			STATE_VAR_TRYGET(Deselect)
 			STATE_VAR_TRYGET(DestroyAnim)
@@ -308,6 +317,13 @@ public:
 			.Process(this->_transformLocked)
 
 			.Process(this->pExtraSparkleAnim)
+
+			// 黑洞
+			.Process(this->CaptureByBlackHole)
+			.Process(this->_pBlackHole)
+			.Process(this->_blackHoleData)
+			.Process(this->_blackHoleDamageDelay)
+			.Process(this->_lostControl)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
@@ -370,6 +386,7 @@ private:
 	void OnRemove_TargetLaser();
 
 	void OnUpdate_AntiBullet();
+	void OnUpdate_BlackHole();
 	void OnUpdate_Deselect();
 	void OnUpdate_Freeze();
 	void OnUpdate_GiftBox();
@@ -458,4 +475,10 @@ private:
 	// FLH
 	FireFLHData* _fireFLHData = nullptr;
 	FireFLHData* GetFireFLHData();
+
+	// 黑洞
+	ObjectClass* _pBlackHole = nullptr;
+	BlackHoleData _blackHoleData{};
+	CDTimerClass _blackHoleDamageDelay{};
+	bool _lostControl = false;
 };

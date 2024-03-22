@@ -48,6 +48,8 @@ public:
 
 	void GetMarks(std::vector<std::string>& marks);
 	std::vector<std::string> GetMarks();
+	bool IsOnMark(FilterData data);
+
 	void GetAENames(std::vector<std::string>& names);
 	bool HasStand();
 
@@ -263,7 +265,6 @@ private:
 
 	void AttachStateEffect();
 
-	bool IsOnMark(FilterData data);
 	bool HasContradiction(AttachEffectData data);
 
 	bool IsOnDelay(AttachEffectData data);

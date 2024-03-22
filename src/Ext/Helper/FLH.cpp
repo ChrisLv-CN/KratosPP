@@ -1,6 +1,7 @@
 ﻿#include "FLH.h"
 #include "CastEx.h"
 #include "MathEx.h"
+#include "Status.h"
 
 #include <LocomotionClass.h>
 #include <JumpjetLocomotionClass.h>
@@ -150,6 +151,31 @@ CoordStruct GetFLHAbsoluteCoords(TechnoClass* pTechno, CoordStruct flh, bool isO
 		}
 	}
 	return source;
+}
+
+CoordStruct GetFLHAbsoluteCoords(BulletClass* pBullet, CoordStruct flh, int flipY)
+{
+	CoordStruct location = pBullet->GetCoords();
+	DirStruct bulletFacing = Facing(pBullet, location);
+
+	CoordStruct tempFLH = flh;
+	tempFLH.Y *= flipY;
+	return GetFLHAbsoluteCoords(location, tempFLH, bulletFacing);
+}
+
+CoordStruct GetFLHAbsoluteCoords(ObjectClass* pObject, CoordStruct flh, bool isOnTurret, int flipY, CoordStruct turretOffset)
+{
+	BulletClass* pBullet = nullptr;
+	TechnoClass* pTechno = nullptr;
+	if (CastToTechno(pObject, pTechno))
+	{
+		return GetFLHAbsoluteCoords(pTechno, flh, isOnTurret, flipY, turretOffset);
+	}
+	else if (CastToBullet(pObject, pBullet))
+	{
+		return GetFLHAbsoluteCoords(pBullet, flh, flipY);
+	}
+	return CoordStruct::Empty;
 }
 #pragma endregion
 

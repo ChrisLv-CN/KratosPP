@@ -114,9 +114,9 @@ enum class BulletType
  */
 BulletType WhatAmI(BulletClass* pBullet);
 
-bool IsDead(BulletClass* pBullet, BulletStatus*& status);
+bool IsDead(BulletClass* pBullet, BulletStatus* status);
 bool IsDead(BulletClass* pBullet);
-bool IsDeadOrInvisible(BulletClass* pBullet, BulletStatus*& status);
+bool IsDeadOrInvisible(BulletClass* pBullet, BulletStatus* status);
 bool IsDeadOrInvisible(BulletClass* pBullet);
 void SetSourceHouse(BulletClass* pBullet, HouseClass* pHouse);
 /**

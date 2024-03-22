@@ -18,11 +18,10 @@ enum class PassError : int
 	NONE = 0,
 	PASS = 1, // 可通行
 	UNDERGROUND = 2, // 潜地
-	ONWATER = 3, // 掉水上
-	HITWALL = 4, // 不可通行
-	HITBUILDING = 5, // 撞建筑
-	DOWNBRIDGE = 6, // 从上方撞桥
-	UPBRIDEG = 7 // 从下方撞桥
+	HITWALL = 3, // 不可通行
+	HITBUILDING = 4, // 撞建筑
+	DOWNBRIDGE = 5, // 从上方撞桥
+	UPBRIDEG = 6 // 从下方撞桥
 };
 
 static bool CanHit(BuildingClass* pBuilding, int targetZ, bool blade = false, int zOffset = 0)
@@ -41,7 +40,6 @@ static PassError CanMoveTo(CoordStruct sourcePos, CoordStruct nextPos, bool pass
 {
 	PassError canPass = PassError::PASS;
 	nextCellPos = sourcePos;
-	onBridge = false;
 	int deltaZ = sourcePos.Z - nextPos.Z;
 	// 检查地面
 	if (CellClass* pTargetCell = MapClass::Instance->TryGetCellAt(nextPos))

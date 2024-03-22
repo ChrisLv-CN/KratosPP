@@ -499,35 +499,35 @@ void ForceStopMoving(ILocomotion* pLoco)
 {
 	pLoco->Stop_Moving();
 	pLoco->Mark_All_Occupation_Bits((int)PlacementType::Remove);
-	if (DriveLocomotionClass* loco = dynamic_cast<DriveLocomotionClass*>(pLoco))
+	if (DriveLocomotionClass* dLoco = dynamic_cast<DriveLocomotionClass*>(pLoco))
 	{
-		loco->Destination = CoordStruct::Empty;
-		loco->HeadToCoord = CoordStruct::Empty;
-		loco->IsDriving = false;
+		dLoco->Destination = CoordStruct::Empty;
+		dLoco->HeadToCoord = CoordStruct::Empty;
+		dLoco->IsDriving = false;
 	}
-	else if (ShipLocomotionClass* loco = dynamic_cast<ShipLocomotionClass*>(pLoco))
+	else if (ShipLocomotionClass* sLoco = dynamic_cast<ShipLocomotionClass*>(pLoco))
 	{
-		loco->Destination = CoordStruct::Empty;
-		loco->HeadToCoord = CoordStruct::Empty;
-		loco->IsDriving = false;
+		sLoco->Destination = CoordStruct::Empty;
+		sLoco->HeadToCoord = CoordStruct::Empty;
+		sLoco->IsDriving = false;
 	}
-	else if (WalkLocomotionClass* loco = dynamic_cast<WalkLocomotionClass*>(pLoco))
+	else if (WalkLocomotionClass* wLoco = dynamic_cast<WalkLocomotionClass*>(pLoco))
 	{
-		loco->Destination = CoordStruct::Empty;
-		loco->HeadToCoord = CoordStruct::Empty;
-		loco->IsMoving = false;
-		loco->IsReallyMoving = false;
+		wLoco->Destination = CoordStruct::Empty;
+		wLoco->HeadToCoord = CoordStruct::Empty;
+		wLoco->IsMoving = false;
+		wLoco->IsReallyMoving = false;
 	}
-	else if (MechLocomotionClass* loco = dynamic_cast<MechLocomotionClass*>(pLoco))
+	else if (MechLocomotionClass* mLoco = dynamic_cast<MechLocomotionClass*>(pLoco))
 	{
-		loco->Destination = CoordStruct::Empty;
-		loco->HeadToCoord = CoordStruct::Empty;
-		loco->IsMoving = false;
+		mLoco->Destination = CoordStruct::Empty;
+		mLoco->HeadToCoord = CoordStruct::Empty;
+		mLoco->IsMoving = false;
 	}
-	else if (JumpjetLocomotionClass* loco = dynamic_cast<JumpjetLocomotionClass*>(pLoco))
+	else if (JumpjetLocomotionClass* jLoco = dynamic_cast<JumpjetLocomotionClass*>(pLoco))
 	{
-		loco->DestinationCoords = CoordStruct::Empty;
-		loco->IsMoving = false;
+		jLoco->DestinationCoords = CoordStruct::Empty;
+		jLoco->IsMoving = false;
 	}
 }
 #pragma endregion
@@ -572,27 +572,28 @@ BulletType WhatAmI(BulletClass* pBullet)
 	return BulletType::UNKNOWN;
 }
 
-bool IsDead(BulletClass* pBullet, BulletStatus*& status)
+bool IsDead(BulletClass* pBullet, BulletStatus* status)
 {
-	status = nullptr;
-	return !pBullet || !pBullet->Type || pBullet->Health == 0 || !pBullet->IsAlive || !TryGetStatus<BulletExt>(pBullet, status) || !status || status->life.IsDetonate;
+	if (!status)
+	{
+		TryGetStatus<BulletExt>(pBullet, status);
+	}
+	return !pBullet || !pBullet->Type || pBullet->Health == 0 || !pBullet->IsAlive || !status || status->life.IsDetonate;
 }
 
 bool IsDead(BulletClass* pBullet)
 {
-	BulletStatus* status = nullptr;
-	return IsDead(pBullet, status);
+	return IsDead(pBullet, nullptr);
 }
 
-bool IsDeadOrInvisible(BulletClass* pBullet, BulletStatus*& status)
+bool IsDeadOrInvisible(BulletClass* pBullet, BulletStatus* status)
 {
 	return IsDead(pBullet, status) || pBullet->InLimbo;
 }
 
 bool IsDeadOrInvisible(BulletClass* pBullet)
 {
-	BulletStatus* status = nullptr;
-	return IsDeadOrInvisible(pBullet, status);
+	return IsDeadOrInvisible(pBullet, nullptr);
 }
 
 void SetSourceHouse(BulletClass* pBullet, HouseClass* pHouse)

@@ -24,6 +24,10 @@ void BulletStatus::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	{
 		_pFakeTarget = nullptr;
 	}
+	if (args == _pBlackHole)
+	{
+		BlackHoleCancel();
+	}
 }
 
 AttachEffect* BulletStatus::AEManager()
@@ -246,7 +250,7 @@ void BulletStatus::OnUpdate()
 		life.IsDetonate = true;
 	}
 	// 其他逻辑
-	if (!IsDeadOrInvisible(pBullet) && !life.IsDetonate)
+	if (!IsDeadOrInvisible(pBullet, this))
 	{
 		OnUpdate_BlackHole();
 		OnUpdate_GiftBox();
@@ -255,11 +259,9 @@ void BulletStatus::OnUpdate()
 	}
 }
 
-void BulletStatus::OnUpdate_BlackHole() {};
-
 void BulletStatus::OnUpdateEnd()
 {
-	if (!IsDeadOrInvisible(pBullet) && !life.IsDetonate)
+	if (!IsDeadOrInvisible(pBullet, this))
 	{
 		CoordStruct location = pBullet->GetCoords();
 		OnUpdateEnd_BlackHole(location); // 黑洞会更新位置，要第一个执行
@@ -267,7 +269,6 @@ void BulletStatus::OnUpdateEnd()
 	}
 };
 
-void BulletStatus::OnUpdateEnd_BlackHole(CoordStruct& sourcePos) {};
 
 void BulletStatus::OnDetonate(CoordStruct* pCoords, bool& skip)
 {

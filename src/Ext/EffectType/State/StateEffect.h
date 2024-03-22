@@ -47,6 +47,7 @@ public: \
 // TODO Add State effects
 
 STATE_EFFECT_DEFINE(AntiBullet);
+STATE_EFFECT_DEFINE(BlackHole);
 STATE_EFFECT_DEFINE(DamageReaction);
 STATE_EFFECT_DEFINE(Deselect);
 STATE_EFFECT_DEFINE(DestroyAnim);

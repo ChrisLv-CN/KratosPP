@@ -190,6 +190,7 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_Transform();
 
 		OnUpdate_AntiBullet();
+		OnUpdate_BlackHole();
 		OnUpdate_Deselect();
 		OnUpdate_Freeze();
 		OnUpdate_GiftBox();
@@ -298,11 +299,6 @@ void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, D
 	OnReceiveDamageEnd_GiftBox(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
 	OnReceiveDamageEnd_Vampire(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
 }
-
-void TechnoStatus::OnReceiveDamageEnd_BlackHole(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
-{
-
-};
 
 void TechnoStatus::OnReceiveDamageDestroy()
 {

@@ -140,6 +140,7 @@ void AttachEffect::AEStateToStand(EffectData* pData, int duration, std::string t
 						// 状态机
 						if (state) {}
 						GET_STAND_STATE(AntiBullet)
+							GET_STAND_STATE(BlackHole)
 							GET_STAND_STATE(DamageReaction)
 							GET_STAND_STATE(Deselect)
 							GET_STAND_STATE(DestroyAnim)
@@ -1138,7 +1139,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 					states.push_back(Component::ComponentState{ uiName, !pBullet->InLimbo });
 					ii = -1;
 				}
-					int level = 0;
+				int level = 0;
 				GetComponentStates(states, level);
 				Point2D pos = ToClientPos(location);
 				for (Component::ComponentState& state : states)
