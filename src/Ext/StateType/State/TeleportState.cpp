@@ -273,7 +273,7 @@ void TeleportState::OnUpdate()
 						if (pTechno->IsInAir() || pTechno->WhatAmI() == AbstractType::Aircraft)
 						{
 							// 空中跳，自定义跳
-							int height = pTechno->GetHeight();
+							int height = pTechno->GetHeight() + Data.Offset.Z;
 							if (CellClass* pSourceCell = MapClass::Instance->TryGetCellAt(location))
 							{
 								if (pSourceCell->ContainsBridge())

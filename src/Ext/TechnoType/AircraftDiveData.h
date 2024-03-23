@@ -26,7 +26,7 @@ public:
 
 		Distance = reader->Get("Dive.Distance", Distance);
 
-		FlightLevel = reader->Get("Dive.ForcePutOffset", FlightLevel);
+		FlightLevel = reader->Get("Dive.FlightLevel", FlightLevel);
 
 		PullUpAfterFire = reader->Get("Dive.PullUpAfterFire", PullUpAfterFire);
 

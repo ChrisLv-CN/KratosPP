@@ -19,9 +19,10 @@
 #include <Ext/TechnoType/AirstrikeData.h>
 
 // 鲍里斯的副武器使用空袭是强制指定目标类型必须为建筑
-DEFINE_HOOK(0x6F348F, TechnoClass_SelectWeapon_Airstrike, 0xA)
+DEFINE_HOOK(0x6F3477, TechnoClass_SelectWeapon_Airstrike, 0xA)
 {
-	return 0x6F3807;
+	// 跳过副武器空袭弹头的检查，执行常规检查
+	return 0x6F3528;
 }
 
 // 武器的空袭指针强制只对建筑显示
