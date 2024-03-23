@@ -95,30 +95,35 @@ CoordStruct TeleportState::GetAndMarkDestination(CoordStruct location)
 	CoordStruct targetPos = CoordStruct::Empty;
 	pDest = nullptr;
 	pFocus = nullptr;
+
 	FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
-	// 移动到自身相对位置
-	if (!Data.MoveTo.IsEmpty())
+	// 没有被磁电抬起
+	if (!pFoot->IsAttackedByLocomotor)
 	{
-		targetPos = GetFLHAbsoluteCoords(pTechno, Data.MoveTo, Data.IsOnTurret);
-	}
-	else
-	{
-		// 是否正在移动, Aircraft pFoot->GetCurrentSpeed always is Zero
-		pFoot->Locomotor->Destination(&targetPos);
-	}
-	// 目的地和本体位置在同一格内就不跳
-	CellStruct s = CellClass::Coord2Cell(location);
-	CellStruct t = CellClass::Coord2Cell(targetPos);
-	if (s.X == t.X && s.Y == t.Y)
-	{
-		// Same cell, don't move
-		targetPos = CoordStruct::Empty;
-	}
-	if (!targetPos.IsEmpty())
-	{
-		// 记录下目的地
-		pDest = pFoot->Destination;
-		pFocus = pTechno->Focus;
+		// 移动到自身相对位置
+		if (!Data.MoveTo.IsEmpty())
+		{
+			targetPos = GetFLHAbsoluteCoords(pTechno, Data.MoveTo, Data.IsOnTurret);
+		}
+		else
+		{
+			// 是否正在移动, Aircraft pFoot->GetCurrentSpeed always is Zero
+			pFoot->Locomotor->Destination(&targetPos);
+		}
+		// 目的地和本体位置在同一格内就不跳
+		CellStruct s = CellClass::Coord2Cell(location);
+		CellStruct t = CellClass::Coord2Cell(targetPos);
+		if (s.X == t.X && s.Y == t.Y)
+		{
+			// Same cell, don't move
+			targetPos = CoordStruct::Empty;
+		}
+		if (!targetPos.IsEmpty())
+		{
+			// 记录下目的地
+			pDest = pFoot->Destination;
+			pFocus = pTechno->Focus;
+		}
 	}
 	return targetPos;
 }
@@ -277,15 +282,16 @@ void TeleportState::OnUpdate()
 								}
 							}
 							targetPos.Z += height;
-							ForceStopMoving(pFoot);
-							pFoot->Locomotor->Force_Track(-1, location);
-							pFoot->FrozenStill = true;
-							pFoot->SendToEachLink(RadioCommand::NotifyUnlink);
-							// pTechno->IsImmobilized = true;
+							if (isJJ)
+							{
+								ForceStopMoving(pFoot);
+								pFoot->Locomotor->Force_Track(-1, location);
+								pFoot->FrozenStill = true;
+								pFoot->SendToEachLink(RadioCommand::NotifyUnlink);
+							}
 							// 移动位置
 							pTechno->UpdatePlacement(PlacementType::Remove);
 							pTechno->SetLocation(targetPos);
-							pTechno->SetDestination(pTargetCell, true);
 							pTechno->UpdatePlacement(PlacementType::Put);
 							if (isJJ)
 							{
@@ -448,9 +454,11 @@ void TeleportState::OnUpdate()
 		{
 			_step = TeleportStep::READY;
 			CellClass* pCell = MapClass::Instance->TryGetCellAt(location);
+			// 空中单位需要更新在空中的追踪位置，关系到防空武器的命中判定
+			FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
 			if (pTechno->IsInAir() && pCell)
 			{
-				AircraftTrackerClass::Instance->Update_Entry(pTechno, CellStruct::Empty, pCell->MapCoords);
+				AircraftTrackerClass::Instance->Update_Entry(pTechno, pFoot->LastJumpjetMapCoords, pCell->MapCoords);
 			}
 			if (!pTechno->Target)
 			{
