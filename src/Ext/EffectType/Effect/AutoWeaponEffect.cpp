@@ -283,7 +283,7 @@ void AutoWeaponEffect::OnUpdate()
 					if (pTarget)
 					{
 						// 如果攻击者是子机，调整攻击者为母鸡
-						if (pAttacker->SpawnOwner && Data->AttackFromSpawnOwner)
+						if (pAttacker && pAttacker->SpawnOwner && Data->AttackFromSpawnOwner)
 						{
 							pAttacker = pAttacker->SpawnOwner;
 						}
@@ -322,7 +322,7 @@ void AutoWeaponEffect::OnUpdate()
 			double rofMultip = GetROFMulti(pAttacker);
 			rofMultip *= AE->AEManager->CountAttachStatusMultiplier().ROFMultiplier;
 			// 如果攻击者是子机，调整攻击者为母鸡
-			if (pAttacker->SpawnOwner && Data->AttackFromSpawnOwner)
+			if (pAttacker && pAttacker->SpawnOwner && Data->AttackFromSpawnOwner)
 			{
 				pAttacker = pAttacker->SpawnOwner;
 			}
