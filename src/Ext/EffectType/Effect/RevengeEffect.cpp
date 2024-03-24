@@ -131,7 +131,7 @@ void RevengeEffect::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, 
 					if (Data->CanAffectHouse(pRevengerHouse, pAttackingHouse) && Data->CanAffectType(pRevengeTarget) && IsOnMark(pRevengeTarget, *Data))
 					{
 						// 使用武器复仇
-						if ((!Data->Types.empty() || Data->WeaponIndex > -1) && !IsDeadOrInvisible(pRevenger))
+						if ((!Data->Types.empty() || Data->WeaponIndex > -1) && pRevenger)
 						{
 							TechnoClass* pShooter = WhoIsShooter(pRevenger);
 							if (AttachFire* attachFire = FindOrAttachScript<TechnoExt, AttachFire>(pShooter))
