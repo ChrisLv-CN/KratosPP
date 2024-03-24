@@ -90,7 +90,33 @@ void StackEffect::Watch()
 		{
 			if (!Data->RemoveEffects.empty())
 			{
-				AE->AEManager->DetachByName(Data->RemoveEffects);
+				if (!Data->RemoveEffectsLevel.empty())
+				{
+					// 移除指定的层数
+					std::map<std::string, int> aeTypes;
+					int idx = 0;
+					int count = Data->RemoveEffects.size();
+					for (std::string removeAE : Data->RemoveEffects)
+					{
+						int level = -1;
+						if (idx < count)
+						{
+							level = Data->RemoveEffectsLevel[idx];
+						}
+						if (level > 0)
+						{
+							aeTypes[removeAE] = level;
+						}
+					}
+					if (!aeTypes.empty())
+					{
+						AE->AEManager->DetachByName(aeTypes);
+					}
+				}
+				else
+				{
+					AE->AEManager->DetachByName(Data->RemoveEffects);
+				}
 			}
 			if (!Data->RemoveEffectsWithMarks.empty())
 			{

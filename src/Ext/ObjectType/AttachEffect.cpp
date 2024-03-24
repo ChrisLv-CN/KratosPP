@@ -738,7 +738,8 @@ void AttachEffect::DetachByName(std::map<std::string, int> aeTypes)
 			// 通过名字关闭掉AE
 			if (ae && std::find(names.begin(), names.end(), name) != names.end())
 			{
-				if (counts[name] < levels[name])
+				int l = levels[name];
+				if (l < 0 || counts[name] < l)
 				{
 					ae->TimeToDie();
 					counts[name]++;
