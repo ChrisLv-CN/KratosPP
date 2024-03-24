@@ -215,15 +215,18 @@ public:
 					retaliate = versus > 0.1;
 					passiveAcquire = versus > 0.2;
 				}
-				else if (index < size)
+				else
 				{
 					index -= 11;
-					// 扩展护甲
-					AresVersus aresVersus = AresVersusArray[index];
-					versus = aresVersus.Versus;
-					forceFire = aresVersus.ForceFire;
-					retaliate = aresVersus.Retaliate;
-					passiveAcquire = aresVersus.PassiveAcquire;
+					if (index < size)
+					{
+						// 扩展护甲
+						AresVersus aresVersus = AresVersusArray[index];
+						versus = aresVersus.Versus;
+						forceFire = aresVersus.ForceFire;
+						retaliate = aresVersus.Retaliate;
+						passiveAcquire = aresVersus.PassiveAcquire;
+					}
 				}
 			}
 			return versus;
