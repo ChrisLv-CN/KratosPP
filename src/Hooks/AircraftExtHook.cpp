@@ -42,15 +42,67 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 {
 	GET(TechnoClass*, pTechno, EBP);
 	GET(Matrix3D*, pMatrix, EAX);
-	if (pTechno->GetTechnoType()->ConsideredAircraft || pTechno->WhatAmI() == AbstractType::Aircraft)
+	TechnoTypeClass* pType = pTechno->GetTechnoType();
+	if (pType->ConsideredAircraft || pTechno->WhatAmI() == AbstractType::Aircraft)
 	{
+		// 修复子机导弹的影子位置
+		if (pType->MissileSpawn && !pType->NoShadow)
+		{
+			CoordStruct location = pTechno->GetCoords();
+			CellClass* pCell = MapClass::Instance->TryGetCellAt(location);
+			location.Z = pCell->GetCoordsWithBridge().Z;
+			Point2D pos = ToClientPos(location);
+			R->Stack(0x30, pos);
+		}
 		// 缩放影子
 		pMatrix->Scale(AudioVisual::Data()->VoxelShadowScaleInAir);
-
 		// 调整倾斜时影子的纵向比例
-		Matrix3D matrix = dynamic_cast<FootClass*>(pTechno)->Locomotor->Draw_Matrix(nullptr);
-		double scale = Math::cos(abs(matrix.GetYRotation()));
-		pMatrix->ScaleX(static_cast<float>(scale));
+		FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
+		// 从Matrix中读取的角度不可用
+		float x = 0; // 倾转轴
+		float y = 0; // 俯仰轴
+		// 火箭的俯仰角度，由RocketLoco记录
+		if (RocketLocomotionClass* rLoco = dynamic_cast<RocketLocomotionClass*>(pFoot->Locomotor.get()))
+		{
+			x = pTechno->AngleRotatedSideways;
+			y = rLoco->CurrentPitch;
+		}
+		else if (FlyLocomotionClass* fLoco = dynamic_cast<FlyLocomotionClass*>(pFoot->Locomotor.get()))
+		{
+			if (fLoco->Is_Moving_Now())
+			{
+				x = pType->RollAngle;
+			}
+			else
+			{
+				x = pTechno->AngleRotatedSideways;
+			}
+			// 飞行器的俯仰角度有Techno->AngleRotatedForwards, tt.PitchAngle
+			// 根据速度结算
+			if (fLoco->TargetSpeed <= pType->PitchSpeed)
+			{
+				y = pTechno->AngleRotatedForwards;
+			}
+			else
+			{
+				y = pType->PitchAngle;
+			}
+			// 加上姿态的角度
+			if (AircraftAttitude* attitude = GetScript<TechnoExt, AircraftAttitude>(pTechno))
+			{
+				y += attitude->PitchAngle;
+			}
+		}
+		else
+		{
+			x = pTechno->AngleRotatedSideways;
+			y = pTechno->AngleRotatedForwards;
+		}
+		float scaleY = (float)Math::cos(abs(x));
+		pMatrix->ScaleY(scaleY);
+		float scaleX = (float)Math::cos(abs(y));
+		pMatrix->ScaleX(scaleX);
+		pType->DestroyVoxelShadowCache();
 	}
 	return 0;
 }

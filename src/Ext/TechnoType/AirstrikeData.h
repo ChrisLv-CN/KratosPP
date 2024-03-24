@@ -19,6 +19,8 @@ public:
 	bool AirstrikeDisableColor = false;
 	bool AirstrikeDisableBlink = false;
 
+	CoordStruct AirstrikePutOffset = CoordStruct::Empty;
+
 	virtual void Read(INIBufferReader* reader) override
 	{
 		AirstrikeTargetLaser = reader->Get("AirstrikeTargetLaser", AirstrikeTargetLaser);
@@ -35,5 +37,7 @@ public:
 		AirstrikeDisableLine = reader->Get("AirstrikeDisableLine", AirstrikeDisableLine);
 		AirstrikeDisableColor = reader->Get("AirstrikeDisableColor", AirstrikeDisableColor);
 		AirstrikeDisableBlink = reader->Get("AirstrikeDisableBlink", AirstrikeDisableBlink);
+
+		AirstrikePutOffset = reader->Get("AirstrikePutOffset", AirstrikePutOffset);
 	}
 };

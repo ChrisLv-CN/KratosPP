@@ -136,6 +136,47 @@ DEFINE_HOOK(0x41DBD4, AirstrikeClass_ClearTarget, 0x7)
 // 	return 0;
 // }
 
+namespace AirstrikePutOffset
+{
+	int flipY = -1;
+	int GetFlipY()
+	{
+		flipY = -flipY;
+		return flipY;
+	}
+}
+
+// Phobos hook here and skip gamecode
+DEFINE_HOOK(0x65E997, Airstrike_Supported_Reinforcements_Put, 0x6)
+{
+	enum { SkipGameCode = 0x65E9EE, SkipGameCodeNoSuccess = 0x65EA8B };
+
+	GET(AircraftClass*, pAircraft, ESI);
+	AirstrikeClass* pAirstrike = pAircraft->Airstrike;
+	if (pAirstrike && pAirstrike->Owner)
+	{
+		TechnoClass* pTechno = pAirstrike->Owner;
+		AirstrikeData* data = INI::GetConfig<AirstrikeData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+		CoordStruct offset = data->AirstrikePutOffset;
+		if (!offset.IsEmpty())
+		{
+			GET(CellStruct, edgeCell, EDI);
+			GET_STACK(AbstractClass*, pTarget, 0x44);
+			CoordStruct sourcePos = CellClass::Cell2Coord(edgeCell);
+			CoordStruct targetPos = pTarget->GetCoords();
+			DirStruct dir = Point2Dir(sourcePos, targetPos);
+			offset.Y *= AirstrikePutOffset::GetFlipY();
+			CoordStruct newPos = GetFLHAbsoluteCoords(targetPos, offset, dir);
+			bool result = TryPutTechno(pAircraft, newPos);
+			pAircraft->SetHeight(offset.Z + pAircraft->Type->GetFlightLevel());
+			pAircraft->PrimaryFacing.SetCurrent(dir);
+			pAircraft->SecondaryFacing.SetCurrent(dir);
+			return result ? SkipGameCode : SkipGameCodeNoSuccess;
+		}
+	}
+	return 0;
+}
+
 namespace AirstrikeLaser
 {
 	bool CustomColor = false;

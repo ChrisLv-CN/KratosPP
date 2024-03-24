@@ -109,6 +109,14 @@ CoordStruct TeleportState::GetAndMarkDestination(CoordStruct location)
 		{
 			// 是否正在移动, Aircraft pFoot->GetCurrentSpeed always is Zero
 			pFoot->Locomotor->Destination(&targetPos);
+			// 子机导弹不一定具有移动目的地，有目标时，亦可使用目标位置作为跳跃点位置
+			if (targetPos.IsEmpty()
+				&& pTechno->WhatAmI() == AbstractType::Aircraft
+				&& pTechno->GetTechnoType()->MissileSpawn
+				&& pTechno->Target)
+			{
+				targetPos = pTechno->Target->GetCoords();
+			}
 		}
 		// 目的地和本体位置在同一格内就不跳
 		CellStruct s = CellClass::Coord2Cell(location);

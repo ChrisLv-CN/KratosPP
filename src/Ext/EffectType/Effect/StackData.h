@@ -90,6 +90,7 @@ public:
 	bool Remove = false;
 	std::vector<std::string> RemoveEffects{};
 	std::vector<std::string> RemoveEffectsWithMarks{};
+	std::vector<int> RemoveEffectsLevel{};
 
 	std::vector<int> RemoveLevel{};
 	bool RemoveAll = true;
@@ -119,6 +120,7 @@ public:
 		ClearIfGetNone(RemoveEffects);
 		RemoveEffectsWithMarks = reader->GetList(title + "RemoveEffectsWithMarks", RemoveEffectsWithMarks);
 		ClearIfGetNone(RemoveEffectsWithMarks);
+		RemoveLevel = reader->GetList(title + "RemoveEffectsLevel", RemoveLevel);
 		Remove = !RemoveEffects.empty() || !RemoveEffectsWithMarks.empty();
 
 		RemoveLevel = reader->GetList(title + "RemoveLevel", RemoveLevel);
