@@ -102,7 +102,7 @@ enum class AttachOwnerType
 #define EFFECT_VAR_SCRIPT_NAME(EFFECT_DATA_NAME) \
 	if (EFFECT_DATA_NAME.Enable) \
 	{ \
-		names.insert(EFFECT_DATA_NAME.GetEffectScriptName()); \
+		names.push_back(EFFECT_DATA_NAME.GetEffectScriptName()); \
 	} \
 
 // 保存读取
@@ -143,9 +143,9 @@ public:
 	bool Inheritable = true; // 是否可以被礼盒礼物继承
 
 	// TODO Add new Effects
-	EFFECT_VAR_DEFINE(AutoWeapon);
-	EFFECT_VAR_DEFINE(AttackBeacon);
 	EFFECT_VAR_DEFINE(Animation);
+	EFFECT_VAR_DEFINE(AttackBeacon);
+	EFFECT_VAR_DEFINE(AutoWeapon);
 	EFFECT_VAR_DEFINE(Broadcast);
 	EFFECT_VAR_DEFINE(CrateBuff);
 	EFFECT_VAR_DEFINE(DamageSelf);
@@ -180,9 +180,9 @@ public:
 
 	void ReadEffects(INIBufferReader* reader)
 	{
-		EFFECT_VAR_READ(AutoWeapon);
-		EFFECT_VAR_READ(AttackBeacon);
 		EFFECT_VAR_READ(Animation);
+		EFFECT_VAR_READ(AttackBeacon);
+		EFFECT_VAR_READ(AutoWeapon);
 		EFFECT_VAR_READ(Broadcast);
 		EFFECT_VAR_READ(CrateBuff);
 		EFFECT_VAR_READ(DamageSelf);
@@ -216,12 +216,15 @@ public:
 		EFFECT_VAR_READ(Transform);
 	}
 
-	std::set<std::string> GetScriptNames()
+	std::vector<std::string> GetScriptNames()
 	{
-		std::set<std::string> names{};
-		EFFECT_VAR_SCRIPT_NAME(AutoWeapon);
-		EFFECT_VAR_SCRIPT_NAME(AttackBeacon);
+		std::vector<std::string> names{};
+		// 替身要放在第一位，状态类型会附加状态给替身，此时若替身没有初始化，整个AE都会被判定为失效
+		EFFECT_VAR_SCRIPT_NAME(Stand);
+
 		EFFECT_VAR_SCRIPT_NAME(Animation);
+		EFFECT_VAR_SCRIPT_NAME(AttackBeacon);
+		EFFECT_VAR_SCRIPT_NAME(AutoWeapon);
 		EFFECT_VAR_SCRIPT_NAME(Broadcast);
 		EFFECT_VAR_SCRIPT_NAME(CrateBuff);
 		EFFECT_VAR_SCRIPT_NAME(DamageSelf);
@@ -233,7 +236,6 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Mark);
 		EFFECT_VAR_SCRIPT_NAME(Revenge);
 		EFFECT_VAR_SCRIPT_NAME(Stack);
-		EFFECT_VAR_SCRIPT_NAME(Stand);
 		EFFECT_VAR_SCRIPT_NAME(Vampire);
 		// State Effects
 		EFFECT_VAR_SCRIPT_NAME(AntiBullet);
@@ -261,9 +263,9 @@ public:
 	void ProcessEffects(T& stream)
 	{
 		stream
-			EFFECT_VAR_PROCESS(AutoWeapon)
-			EFFECT_VAR_PROCESS(AttackBeacon)
 			EFFECT_VAR_PROCESS(Animation)
+			EFFECT_VAR_PROCESS(AttackBeacon)
+			EFFECT_VAR_PROCESS(AutoWeapon)
 			EFFECT_VAR_PROCESS(Broadcast)
 			EFFECT_VAR_PROCESS(CrateBuff)
 			EFFECT_VAR_PROCESS(DamageSelf)

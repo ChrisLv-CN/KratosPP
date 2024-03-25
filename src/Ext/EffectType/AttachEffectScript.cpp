@@ -108,6 +108,9 @@ void AttachEffectScript::ResetEffectsDuration()
 
 void AttachEffectScript::TimeToDie()
 {
+#ifdef DEBUG_AE
+	Debug::Log("AE[%s] TimeToDie.\n", AEData.Name.c_str());
+#endif
 	_hold = false;
 	_immortal = false;
 	_lifeTimer.Stop();
@@ -235,12 +238,19 @@ bool AttachEffectScript::IsAlive()
 		if (IsActive() && !_hold)
 		{
 			bool hasDead = false;
+#ifdef DEBUG_AE
+			ForeachChild([&](Component* c) {
+#else
 			ForeachChild([&hasDead](Component* c) {
+#endif
 				if (auto e = dynamic_cast<EffectScript*>(c))
 				{
 					hasDead = !e->IsActive() || !e->IsAlive();
 					if (hasDead)
 					{
+#ifdef DEBUG_AE
+						Debug::Log(" - AE[%s]的效果器[%s]失效了\n", AEData.Name.c_str(), e->Name.c_str());
+#endif
 						c->Break();
 					}
 				}
@@ -385,9 +395,12 @@ void AttachEffectScript::OnGScreenRenderEnd(CoordStruct location)
 
 void AttachEffectScript::InitEffects()
 {
-	std::set<std::string> scriptNames = AEData.GetScriptNames();
+	std::vector<std::string> scriptNames = AEData.GetScriptNames();
 	for (std::string scriptName : scriptNames)
 	{
+#ifdef DEBUG_AE
+		Debug::Log(" - AE[%s]初始化添加效果器组件[%s]\n", AEData.Name.c_str(), scriptName.c_str());
+#endif
 		Component* c = AddComponent(scriptName);
 		if (c)
 		{
