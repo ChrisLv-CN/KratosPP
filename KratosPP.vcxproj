@@ -121,6 +121,7 @@
     <ClCompile Include="src\Ext\TechnoType\JumpjetFacing.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Airstrike.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\AntiBullet.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\BalloonTransporter.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\BlackHole.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\CrateBuff.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Deselect.cpp" />

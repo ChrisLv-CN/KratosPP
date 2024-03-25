@@ -75,8 +75,6 @@ void AircraftPut::OnPut(CoordStruct* pCoord, DirType dirType)
 	CoordStruct offset = data->NoHelipadPutOffset;
 	offset *= Unsorted::LeptonsPerCell;
 	*pCoord += offset;
-	CoordStruct pos = *pCoord;
-	Debug::Log("Aircraft_Put { %d, %d, %d }\n", pos.X, pos.Y, pos.Z);
 	_aircraftPutOffset = true;
 }
 
@@ -98,8 +96,6 @@ void AircraftPut::OnUpdate()
 		}
 		pTechno->QueueMission(Mission::Enter, false);
 	}
-	CoordStruct pos = pTechno->GetCoords();
-	Debug::Log("Aircraft_Put_Update { %d, %d, %d }\n", pos.X, pos.Y, pos.Z);
 	// 完成使命
 	Disable();
 }

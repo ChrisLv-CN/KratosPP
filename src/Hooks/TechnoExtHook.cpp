@@ -904,6 +904,21 @@ DEFINE_HOOK(0x4CCBB3, FlyLocomotionClass_Freeze, 0x5)
 	return 0;
 }
 
+DEFINE_HOOK(0x54B1D1, JumpjetLocomotionClass_MoveTo, 0x6)
+{
+	JumpjetLocomotionClass* pJJ = (JumpjetLocomotionClass*)(R->ESI() - 4);
+	TechnoClass* pTechno = pJJ->LinkedTo;
+	if (pTechno && pTechno->GetTechnoType()->BalloonHover)
+	{
+		TechnoStatus* status = nullptr;
+		if (pTechno && TryGetStatus<TechnoExt>(pTechno, status))
+		{
+			status->BalloonFall = false;
+		}
+	}
+	return 0;
+}
+
 DEFINE_HOOK(0x54AED0, JumpjetLocomotionClass_Freeze, 0x5)
 {
 	JumpjetLocomotionClass* pJJ = (JumpjetLocomotionClass*)(R->ESI() - 4);
@@ -925,27 +940,28 @@ DEFINE_HOOK(0x54AED0, JumpjetLocomotionClass_Freeze, 0x5)
 	return 0;
 }
 
-DEFINE_HOOK(0x54D600, JumpjetLocomotionClass_Update_DontTurnInCell, 0x6)
+DEFINE_HOOK(0x54D600, JumpjetLocomotionClass_MovingUpdate_DontTurnInCell, 0x6)
 {
 	GET(JumpjetLocomotionClass*, pJJ, ESI);
 	CoordStruct targetPos = pJJ->DestinationCoords;
 	if (!targetPos.IsEmpty())
 	{
 		TechnoClass* pTechno = pJJ->LinkedTo;
-		TechnoStatus* status = nullptr;
-		if (TryGetStatus<TechnoExt>(pTechno, status) && status->Teleport->IsReadyToMoveWarp())
+		bool isBalloon = pTechno->GetTechnoType()->BalloonHover;
+		CoordStruct sourcePos = pTechno->GetCoords();
+		// JJ移动到目的地后，高度不一致导致无法转换任务，需要手动转换
+		if (isBalloon && sourcePos.X == targetPos.X && sourcePos.Y == targetPos.Y)
 		{
-			CoordStruct sourcePos = pTechno->GetCoords();
-			CellStruct s = CellClass::Coord2Cell(sourcePos);
-			CellStruct t = CellClass::Coord2Cell(targetPos);
-			if (s.X == t.X && s.Y == t.Y)
+			if (pTechno->CurrentMission == Mission::Move)
 			{
-				// Same cell, don't move
-				GET_STACK(CoordStruct, fixPos, 0x44);
-				fixPos.X = targetPos.X;
-				fixPos.Y = targetPos.Y;
-				R->Stack(0x44, fixPos);
+				// 强制清空Mission
+				pTechno->ForceMission(Mission::None);
 			}
+			// 垂直起降
+			GET_STACK(CoordStruct, fixPos, 0x44);
+			fixPos.X = targetPos.X;
+			fixPos.Y = targetPos.Y;
+			R->Stack(0x44, fixPos);
 		}
 	}
 	return 0;
@@ -1006,6 +1022,20 @@ DEFINE_HOOK(0x54BF53, JumpjetLocomotionClass_Update_State2_MarkDir, 0x5)
 	return 0;
 }
 
+// 气球强制下降
+DEFINE_HOOK(0x54BE6D, JumpjetLocomotionClass_Update_State2_BalloonHover, 0x6)
+{
+	GET(JumpjetLocomotionClass*, pJJ, ESI);
+	TechnoClass* pTechno = pJJ->LinkedTo;
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->BalloonFall)
+	{
+		// skip BallonHover check
+		return 0x54BEA3;
+	}
+	return 0;
+}
+
 // 下降
 DEFINE_HOOK(0x54C0BB, JumpjetLocomotionClass_Update_State3_DontTurnInCell, 0x7)
 {
@@ -1027,6 +1057,19 @@ DEFINE_HOOK(0x54C0BB, JumpjetLocomotionClass_Update_State3_DontTurnInCell, 0x7)
 			}
 		}
 		R->Stack(0x20, dir);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x54C0FC, JumpjetLocomotionClass_Update_State3_BalloonHover, 0x6)
+{
+	GET(JumpjetLocomotionClass*, pJJ, ESI);
+	TechnoClass* pTechno = pJJ->LinkedTo;
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->BalloonFall)
+	{
+		// BalloonHover = false
+		R->Stack(0x17, 0);
 	}
 	return 0;
 }

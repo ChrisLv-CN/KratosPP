@@ -277,6 +277,8 @@ public:
 	bool JJMark = false;
 	DirStruct JJFacing{};
 
+	// 气球强制降落
+	bool BalloonFall = false;
 
 	// 虚单位
 	bool VirtualUnit = false;
@@ -395,6 +397,7 @@ private:
 	void OnRemove_TargetLaser();
 
 	void OnUpdate_AntiBullet();
+	void OnUpdate_BalloonTransporter();
 	void OnUpdate_BlackHole();
 	void OnUpdate_Deselect();
 	void OnUpdate_Freeze();

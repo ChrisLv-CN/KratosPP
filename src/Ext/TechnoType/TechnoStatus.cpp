@@ -190,6 +190,7 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_Transform();
 
 		OnUpdate_AntiBullet();
+		OnUpdate_BalloonTransporter();
 		OnUpdate_BlackHole();
 		OnUpdate_Deselect();
 		OnUpdate_Freeze();

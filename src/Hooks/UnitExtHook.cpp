@@ -512,3 +512,37 @@ DEFINE_HOOK(0x73C485, UnitClass_Draw_Voxel_Shadow_WO_Skip, 0x8)
 	}
 	return 0;
 }
+
+DEFINE_HOOK(0x73D6F8, UnitClass_Mission_Unload_Transporter, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	if (pTechno->GetTechnoType()->BalloonHover && pTechno->IsInAir())
+	{
+		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+		{
+			status->BalloonFall = true;
+		}
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x73FFF4, UnitClass_WhatAction_TransportHover, 0x8)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	if (pTechno->GetTechnoType()->BalloonHover && pTechno->IsInAir())
+	{
+		bool canDeploy = true;
+		CoordStruct location = pTechno->GetCoords();
+		if (CellClass* pCell = MapClass::Instance->TryGetCellAt(location))
+		{
+			canDeploy = !pCell->ContainsBridge() && pCell->LandType != LandType::Water;
+		}
+		if (canDeploy)
+		{
+			R->Stack(0x28, Action::Self_Deploy);
+			return 0x73FFFC;
+		}
+	}
+	return 0;
+}
+
