@@ -27,11 +27,14 @@ static Vector3D<double> ToVelocity(Vector3D<T>& vector)
 	return ToVector3D<double>(vector);
 }
 
+static CoordStruct ToCoords(Point2D point)
+{
+	return TacticalClass::Instance->ClientToCoords(point);
+}
+
 static Point2D ToClientPos(CoordStruct& coords)
 {
-	Point2D pos{ 0, 0 };
-	TacticalClass::Instance->CoordsToClient(coords, &pos);
-	return pos;
+	return TacticalClass::Instance->CoordsToClient(coords);
 }
 
 static Point2D CoordsToScreen(CoordStruct coords)

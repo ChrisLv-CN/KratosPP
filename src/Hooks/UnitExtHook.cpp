@@ -8,15 +8,17 @@
 #include <Utilities/Macro.h>
 
 #include <Extension/TechnoExt.h>
+#include <Extension/TechnoTypeExt.h>
 
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/Scripts.h>
 
-#include <Ext/TechnoType/TechnoStatus.h>
-#include <Ext/TechnoType/TurretAngle.h>
 #include <Ext/TechnoType/DisguiseData.h>
+#include <Ext/TechnoType/JumpjetCarryall.h>
 #include <Ext/TechnoType/SHPFVTurretData.h>
 #include <Ext/TechnoType/Spawn.h>
+#include <Ext/TechnoType/TechnoStatus.h>
+#include <Ext/TechnoType/TurretAngle.h>
 
 #pragma region Unit Deploy
 DEFINE_HOOK(0x6FF923, TechnoClass_Fire_FireOnce, 0x6)
@@ -518,12 +520,55 @@ DEFINE_HOOK(0x73D6F8, UnitClass_Mission_Unload_Transporter, 0x6)
 	GET(TechnoClass*, pTechno, ESI);
 	if (pTechno->GetTechnoType()->BalloonHover && pTechno->IsInAir())
 	{
-		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+		bool canFall = true;
+		if (JumpjetCarryall* jjCarryall = GetScript<TechnoExt, JumpjetCarryall>(pTechno))
 		{
-			status->BalloonFall = true;
+			canFall = !jjCarryall->InMission();
+		}
+		if (canFall)
+		{
+			if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+			{
+				status->BalloonFall = true;
+			}
+		}
+		else
+		{
+			// skip this mission
+			return 0x73DFB0;
 		}
 	}
 	return 0;
+}
+
+DEFINE_HOOK(0x73DB70, UnitClass_Mission_Unload_Carryall, 0x6)
+{
+	GET(TechnoClass*, pTechno, EDI);
+	if (!pTechno->InLimbo && pTechno->IsOnCarryall)
+	{
+		pTechno->IsOnCarryall = false;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x74041B, UnitClass_WhatAction_Carryall, 0x5)
+{
+	enum { Attack = 0x740420, Other = 0x74043B };
+
+	GET(Action, action, EBX);
+	GET(TechnoClass*, pTechno, ESI);
+	GET(TechnoClass*, pTarget, EDI);
+
+	if (action == Action::Select)
+	{
+		JumpjetCarryall* carry = GetScript<TechnoExt, JumpjetCarryall>(pTechno);
+		if (carry && carry->CanLift(pTarget))
+		{
+			action = Action::Tote;
+			R->EBX(action);
+		}
+	}
+	return action == Action::Attack ? Attack : Other;
 }
 
 DEFINE_HOOK(0x73FFF4, UnitClass_WhatAction_TransportHover, 0x8)
@@ -545,4 +590,90 @@ DEFINE_HOOK(0x73FFF4, UnitClass_WhatAction_TransportHover, 0x8)
 	}
 	return 0;
 }
+
+DEFINE_HOOK(0x7388FD, UnitClass_ActionClick_Carryall, 0x5)
+{
+	GET(Action, action, ECX);
+	GET(TechnoClass*, pTechno, ESI);
+	if (JumpjetCarryall* jjCarryall = GetScript<TechnoExt, JumpjetCarryall>(pTechno))
+	{
+		GET(TechnoClass*, pTarget, EDI);
+		if (FootClass* pTargetFoot = dynamic_cast<FootClass*>(pTarget))
+		{
+			jjCarryall->ActionClick(action, pTargetFoot);
+		}
+	}
+	return 0;
+}
+
+namespace UnitCarryall
+{
+	bool SkipCarryallOffset = false;
+	TechnoTypeExt::TypeData* TypeData = nullptr;
+}
+
+DEFINE_HOOK(0x73CF16, UnitClass_Draw_It_Carryall_HightOffset, 0x7)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	TechnoTypeExt::TypeData* typeData = GetTypeData<TechnoTypeExt, TechnoTypeExt::TypeData>(pTechno->GetTechnoType());
+	if (!typeData->CarryallOffset.IsEmpty())
+	{
+		// 如果是飞机吊运，需要计算偏移
+		if (!UnitCarryall::SkipCarryallOffset)
+		{
+			CoordStruct flh = -typeData->CarryallOffset;
+			GET_STACK(int, x, 0x1C);
+			GET_STACK(int, y, 0x20);
+			Point2D point{ x, y };
+			CoordStruct location = ToCoords(point);
+			CoordStruct pos = GetFLHAbsoluteCoords(location, flh, pTechno->PrimaryFacing.Current());
+			point = ToClientPos(pos);
+			R->EDI(point.Y);
+			R->Stack(0x1C, point.X);
+			R->Stack(0x20, point.Y);
+		}
+		return 0x73CF1D;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(0x73D317, UnitClass_Draw_It_Carryall, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	JumpjetCarryall* carry = GetScript<TechnoExt, JumpjetCarryall>(pTechno);
+	if (carry && carry->pPayload)
+	{
+		GET_STACK(int, x, 0x1C);
+		GET_STACK(int, y, 0x20);
+		Point2D point{ x, y };
+		GET(RectangleStruct*, rect, EBX);
+		TechnoClass* pPayload = carry->pPayload;
+		TechnoTypeExt::TypeData* typeData = GetTypeData<TechnoTypeExt, TechnoTypeExt::TypeData>(pPayload->GetTechnoType());
+		if (!typeData->CarryallOffset.IsEmpty())
+		{
+			CoordStruct flh = -typeData->CarryallOffset;
+			CoordStruct newPos = GetFLHAbsoluteCoords(pTechno, flh, false);
+			point = ToClientPos(newPos);
+		}
+		UnitCarryall::SkipCarryallOffset = true;
+		UnitCarryall::TypeData = typeData;
+		carry->pPayload->DrawIt(&point, rect);
+		UnitCarryall::SkipCarryallOffset = false;
+		UnitCarryall::TypeData = nullptr;
+	}
+	return 0;
+}
+
+// DEFINE_HOOK(0x4DB157, FootClass_DrawVoxel_Shadow_Carryall, 0x8)
+// {
+// 	if (UnitCarryall::SkipCarryallOffset && UnitCarryall::TypeData)
+// 	{
+// 		GET(TechnoClass*, pTechno, EBP);
+// 		GET_STACK(VoxelStruct*, pVxl, 0x38 - 0x4);
+// 		TechnoTypeClass* pType = pTechno->GetTechnoType();
+// 		VoxelStruct vxl = pType->MainVoxel;
+// 		Debug::Log("vxl = %d, hva = %d, vxl = %d, hva = %d\n", pVxl->VXL, pVxl, vxl.VXL, vxl.HVA);
+// 	}
+// 	return 0;
+// }
 

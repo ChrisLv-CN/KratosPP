@@ -924,18 +924,25 @@ DEFINE_HOOK(0x54AED0, JumpjetLocomotionClass_Freeze, 0x5)
 	JumpjetLocomotionClass* pJJ = (JumpjetLocomotionClass*)(R->ESI() - 4);
 	TechnoClass* pTechno = pJJ->LinkedTo;
 	TechnoStatus* status = nullptr;
-	if (pTechno && TryGetStatus<TechnoExt>(pTechno, status) && (status->Freezing || status->Teleport->IsFreezing()))
+	if (pTechno && TryGetStatus<TechnoExt>(pTechno, status))
 	{
-		// 被冻结时，保持朝向不变
-		DirStruct dir = pJJ->LocomotionFacing.Current();
-		if (status->JJMark)
+		bool lockDir = status->Freezing || status->Teleport->IsFreezing();
+		if (lockDir)
 		{
-			status->JJMark = false;
-			dir = status->JJFacing;
+			// 被冻结时，保持朝向不变
+			DirStruct dir = pJJ->LocomotionFacing.Current();
+			if (status->JJMark)
+			{
+				status->JJMark = false;
+				dir = status->JJFacing;
+			}
+			pJJ->LocomotionFacing.SetCurrent(dir);
+			pTechno->PrimaryFacing.SetCurrent(dir);
 		}
-		pJJ->LocomotionFacing.SetCurrent(dir);
-		pTechno->PrimaryFacing.SetCurrent(dir);
-		return 0x54B16C;
+		if (lockDir || status->CarryallLanding)
+		{
+			return 0x54B16C;
+		}
 	}
 	return 0;
 }

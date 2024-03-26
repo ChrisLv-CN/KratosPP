@@ -118,6 +118,7 @@
     <ClCompile Include="src\Ext\TechnoType\DecoyMissile.cpp" />
     <ClCompile Include="src\Ext\TechnoType\HealthText.cpp" />
     <ClCompile Include="src\Ext\TechnoType\MissileHoming.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\JumpjetCarryall.cpp" />
     <ClCompile Include="src\Ext\TechnoType\JumpjetFacing.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\Airstrike.cpp" />
     <ClCompile Include="src\Ext\TechnoType\Status\AntiBullet.cpp" />
@@ -361,6 +362,7 @@
     <ClInclude Include="src\Ext\TechnoType\FireFLHData.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthText.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />
+    <ClInclude Include="src\Ext\TechnoType\JumpjetCarryall.h" />
     <ClInclude Include="src\Ext\TechnoType\JumpjetFacing.h" />
     <ClInclude Include="src\Ext\TechnoType\JumpjetFacingData.h" />
     <ClInclude Include="src\Ext\TechnoType\MissileHoming.h" />

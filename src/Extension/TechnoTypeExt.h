@@ -13,6 +13,9 @@ public:
 	public:
 		// Ares
 		bool AllowCloakable = true;
+		bool Carryall = false;
+		int CarryallSizeLimit = -1;
+		bool CarryallAllowed = true;
 
 		// Phobos
 		CoordStruct TurretOffset = CoordStruct::Empty;
@@ -25,9 +28,16 @@ public:
 		int ChronoMinimumDelay = 0;
 		int ChronoRangeMinimum = 0;
 
+		// Kratos
+		CoordStruct CarryallOffset = CoordStruct::Empty;
+		std::string CarryallImage{ "" };
+
 		virtual void Read(INIBufferReader* reader) override
 		{
 			AllowCloakable = reader->Get("Cloakable.Allowed", AllowCloakable);
+			Carryall = reader->Get("Carryall", Carryall);
+			CarryallSizeLimit = reader->Get("Carryall.SizeLimit", CarryallSizeLimit);
+			CarryallAllowed = reader->Get("Carryall.Allowed", CarryallAllowed);
 
 			TurretOffset = reader->Get("TurretOffset", TurretOffset);
 
@@ -41,6 +51,9 @@ public:
 			ChronoTrigger = reader->Get("ChronoTrigger", rules->ChronoTrigger);
 			ChronoMinimumDelay = reader->Get("ChronoMinimumDelay", rules->ChronoMinimumDelay);
 			ChronoRangeMinimum = reader->Get("ChronoRangeMinimum", rules->ChronoRangeMinimum);
+
+			CarryallOffset = reader->Get("Carryall.Offset", CarryallOffset);
+			CarryallImage = reader->Get("Carryall.Image", CarryallImage);
 		}
 	};
 

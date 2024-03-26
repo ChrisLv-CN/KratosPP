@@ -20,6 +20,7 @@
 #include "DamageText.h"
 #include "DecoyMissile.h"
 #include "HealthText.h"
+#include "JumpjetCarryall.h"
 #include "JumpjetFacing.h"
 #include "MissileHoming.h"
 #include "Spawn.h"
@@ -76,6 +77,7 @@ void TechnoStatus::InitExt()
 		}
 		if (IsJumpjet())
 		{
+			_gameObject->FindOrAttach<JumpjetCarryall>();
 			_gameObject->FindOrAttach<JumpjetFacing>();
 		}
 		if (IsRocket())

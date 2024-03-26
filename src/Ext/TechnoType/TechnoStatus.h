@@ -279,6 +279,8 @@ public:
 
 	// 气球强制降落
 	bool BalloonFall = false;
+	// Jumpjet强制降落，接管移动
+	bool CarryallLanding = false;
 
 	// 虚单位
 	bool VirtualUnit = false;
