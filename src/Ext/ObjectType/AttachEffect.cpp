@@ -609,46 +609,56 @@ void AttachEffect::AttachUploadAE()
 {
 	// 读取所有的乘客，获取Id清单，并依据乘客的设置，为载具添加AE
 	PassengerIds.clear();
+	// 坦克碉堡
+	if (IsBuilding())
+	{
+		CheckAndAttachUploadAE(pTechno->BunkerLinkedItem);
+	}
+	// 乘客舱
 	if (pTechno->Passengers.NumPassengers > 0)
 	{
 		// 有乘客
 		ObjectClass* pPassenger = pTechno->Passengers.FirstPassenger;
 		do
 		{
-			TechnoClass* pPT = dynamic_cast<TechnoClass*>(pPassenger);
-			if (!IsDead(pPT))
+			CheckAndAttachUploadAE(dynamic_cast<TechnoClass*>(pPassenger));
+		} while ((pPassenger = pPassenger->NextObject) != nullptr);
+	}
+}
+
+void AttachEffect::CheckAndAttachUploadAE(TechnoClass* pPassenger)
+{
+	if (!IsDead(pPassenger))
+	{
+		// 查找乘客身上的AEMode设置
+		AttachEffect* aeManager = nullptr;
+		if (TryGetAEManager<TechnoExt>(pPassenger, aeManager))
+		{
+			int aeMode = aeManager->GetTypeData()->AEMode;
+			if (aeMode >= 0)
 			{
-				// 查找乘客身上的AEMode设置
-				AttachEffect* aeManager = nullptr;
-				if (TryGetAEManager<TechnoExt>(pPT, aeManager))
+				PassengerIds.push_back(aeMode);
+			}
+		}
+		// 查找乘客身上的AE设置，赋予载具
+		UploadAttachData* uploadData = INI::GetConfig<UploadAttachData>(INI::Rules, pPassenger->GetType()->ID)->Data;
+		if (uploadData->Enable)
+		{
+			std::map<int, UploadAttachEntity> uploadDatas = uploadData->Datas;
+			for (auto it = uploadDatas.begin(); it != uploadDatas.end(); it++)
+			{
+				UploadAttachEntity e = it->second;
+				if (e.Enable
+					&& e.CanAffectType(pTechno)
+					&& (e.AffectInAir || !pTechno->IsInAir())
+					// && (e.AffectStand || !AmIStand(pTechno))
+					&& this->IsOnMark(e)
+					)
 				{
-					int aeMode = aeManager->GetTypeData()->AEMode;
-					if (aeMode >= 0)
-					{
-						PassengerIds.push_back(aeMode);
-					}
-				}
-				// 查找乘客身上的AE设置，赋予载具
-				UploadAttachData* uploadData = INI::GetConfig<UploadAttachData>(INI::Rules, pPT->GetType()->ID)->Data;
-				if (uploadData->Enable)
-				{
-					std::map<int, UploadAttachEntity> uploadDatas = uploadData->Datas;
-					for (auto it = uploadDatas.begin(); it != uploadDatas.end(); it++)
-					{
-						UploadAttachEntity e = it->second;
-						if (e.Enable
-							&& e.CanAffectType(pTechno)
-							&& (e.AffectInAir || !pTechno->IsInAir())
-							// && (e.AffectStand || !AmIStand(pTechno))
-							&& this->IsOnMark(e)
-							)
-						{
-							Attach(e.AttachEffects, {}, false, pPT, nullptr, CoordStruct::Empty, -1, e.SourceIsPassenger);
-						}
-					}
+					Attach(e.AttachEffects, {}, false, pPassenger, nullptr, CoordStruct::Empty, -1, e.SourceIsPassenger);
 				}
 			}
-		} while ((pPassenger = pPassenger->NextObject) != nullptr);
+		}
 	}
 }
 

@@ -233,7 +233,11 @@ bool AttachEffectScript::IsAlive()
 		// AE来源于乘客，检查乘客是否已经下车
 		if (FromPassenger)
 		{
-			if (IsDead(pSource) || !pSource->Transporter)
+			if (IsDead(pSource)
+				|| !(pSource->InLimbo
+					|| pSource->BunkerLinkedItem == pObject
+					|| pSource->Transporter
+					|| pSource->Absorbed))
 			{
 				// 乘客已经下车
 				Deactivate();

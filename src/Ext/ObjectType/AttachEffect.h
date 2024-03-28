@@ -256,6 +256,7 @@ private:
 	 *
 	 */
 	void AttachUploadAE();
+	void CheckAndAttachUploadAE(TechnoClass* pPassenger);
 
 	/**
 	 *@brief 赋予自身的多组AE，读取乘客身上的AEMode来赋予指定的一组AE
