@@ -1115,6 +1115,13 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 			int offsetZ = PrintTextManager::GetFontSize().Y;
 			// 打印Component结构
 			/// GameObject
+			///		|__ TechnoStatus
+			///				|__ AntiBullet
+			///				|__ BlackHole
+			///				|__ GiftBoxState
+			///				|__ Paintball
+			///				|__ ...
+			///				|__ Transform
 			///		|__ AttachEffect
 			///				|__ AttachEffectScript#0
 			///						|__ EffectScript#0
@@ -1123,6 +1130,10 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 			///						|__ EffectScript#0
 			///						|__ EffectScript#1
 			///						|__ EffectScript#2
+			///		|__ HealthText
+			///		|__ AircraftGuard
+			///		|__ ...
+			///		|__ TechnoTrail
 			if (_gameObject)
 			{
 				int ii = 0;
