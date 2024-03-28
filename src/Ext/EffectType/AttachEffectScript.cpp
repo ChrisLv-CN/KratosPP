@@ -182,6 +182,22 @@ void AttachEffectScript::UpdateAnimOffset(CoordStruct offset)
 	}
 }
 
+TechnoClass* AttachEffectScript::GetStand()
+{
+	TechnoClass* pTechno = nullptr;
+	if (StandEffect* c = GetComponent<StandEffect>())
+	{
+		pTechno = c->pStand;
+	}
+	return pTechno;
+}
+
+bool AttachEffectScript::TryGetStand(TechnoClass*& pStand)
+{
+	pStand = GetStand();
+	return pStand != nullptr;
+}
+
 bool AttachEffectScript::IsAlive()
 {
 #ifdef DEBUG

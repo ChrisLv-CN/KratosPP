@@ -29,6 +29,8 @@ public:
 
 	void ActionClick(Action action, FootClass* pTarget);
 
+	void DropPayload();
+
 	void OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	{
 		if (args == _pTarget)

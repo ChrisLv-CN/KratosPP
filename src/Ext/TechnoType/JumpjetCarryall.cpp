@@ -3,6 +3,7 @@
 #include <JumpjetLocomotionClass.h>
 
 #include <Ext/Helper/FLH.h>
+#include <Ext/Helper/Physics.h>
 #include <Ext/Helper/Scripts.h>
 
 TechnoStatus* JumpjetCarryall::GetTechnoStatus()
@@ -88,7 +89,7 @@ bool JumpjetCarryall::CanLift(TechnoClass* pTarget, bool& toPayload)
 		if (pTechnoData->Carryall
 			&& (pTechnoData->CarryallSizeLimit < 0 || pTechnoData->CarryallSizeLimit >= targetSize))
 		{
-			if (maxPassengers <= 0 || pType->SizeLimit < targetSize)
+			if (maxPassengers == 0 || pType->SizeLimit < targetSize)
 			{
 				toPayload = true;
 				// 塞不进乘客舱，检查是否可以吊运
@@ -129,6 +130,39 @@ void JumpjetCarryall::ActionClick(Action action, FootClass* pTarget)
 	if (action == Action::Tote && _status == CarryStatus::READY && CanLift(pTarget, toPayload) && (!toPayload || !pPayload))
 	{
 		StartMission(pTarget, toPayload);
+	}
+}
+
+void JumpjetCarryall::DropPayload()
+{
+	TechnoClass* pTarget = pPayload;
+	pPayload = nullptr;
+	if (pTarget)
+	{
+		CoordStruct location = pTechno->GetCoords();
+		DirStruct dir = pTarget->PrimaryFacing.Current();
+		pTarget->IsOnCarryall = false;
+		TechnoTypeExt::TypeData* typeData = GetTypeData<TechnoTypeExt, TechnoTypeExt::TypeData>(pTarget->GetTechnoType());
+		if (!typeData->CarryallOffset.IsEmpty())
+		{
+			CoordStruct flh = -typeData->CarryallOffset;
+			location = GetFLHAbsoluteCoords(location, flh, dir);
+		}
+		if (TryPutTechno(pTarget, location))
+		{
+			pTarget->PrimaryFacing.SetCurrent(dir);
+			pTarget->SecondaryFacing.SetCurrent(dir);
+			FallingDown(pTarget, 0, true);
+			int sound = pTechno->GetTechnoType()->LeaveTransportSound;
+			if (sound != -1)
+			{
+				VocClass::PlayAt(sound, location, nullptr);
+			}
+		}
+		else
+		{
+			pTarget->UnInit();
+		}
 	}
 }
 
@@ -188,7 +222,7 @@ void JumpjetCarryall::OnUpdate()
 	{
 		TechnoTypeClass* pType = pTechno->GetTechnoType();
 		int maxPassengers = pType->Passengers;
-		_remainingSpace = maxPassengers <= 0 ? 0 : (maxPassengers - pTechno->Passengers.GetTotalSize());
+		_remainingSpace = maxPassengers == 0 ? 0 : (maxPassengers - pTechno->Passengers.GetTotalSize());
 		if (pTechno->Target || (InMission() && NotToTarget()))
 		{
 			CancelMission();
@@ -245,6 +279,7 @@ void JumpjetCarryall::OnUpdate()
 			if (t.X != s.X || t.Y != s.Y)
 			{
 				// 目标润了，中断下降
+				GetTechnoStatus()->CarryallLanding = false;
 				_status = CarryStatus::FLYTO;
 				break;
 			}
@@ -309,6 +344,11 @@ void JumpjetCarryall::OnUpdate()
 						_pTarget->NextObject = pTechno->Passengers.FirstPassenger;
 						pTechno->Passengers.FirstPassenger = _pTarget;
 						pTechno->Passengers.NumPassengers++;
+					}
+					int sound = pTechno->GetTechnoType()->EnterTransportSound;
+					if (sound != -1)
+					{
+						VocClass::PlayAt(sound, location, nullptr);
 					}
 				}
 				_status = CarryStatus::TAKEOFF;

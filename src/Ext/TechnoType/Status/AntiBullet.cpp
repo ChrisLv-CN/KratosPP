@@ -57,7 +57,7 @@ void TechnoStatus::OnUpdate_AntiBullet()
 	{
 		AntiBulletData data = AntiBullet->Data;
 		// 没有乘客也没有防空武器，关闭反抛射体搜索
-		if (!data.Self || WeaponNoAA(data.Weapon) && (!data.ForPassengers || pTechno->GetTechnoType()->Passengers <= 0))
+		if (!data.Self || WeaponNoAA(data.Weapon) && (!data.ForPassengers || pTechno->GetTechnoType()->Passengers == 0))
 		{
 			AntiBullet->End();
 			return;

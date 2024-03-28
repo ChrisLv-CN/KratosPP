@@ -220,7 +220,7 @@ void InfoEffect::OnGScreenRenderEnd(CoordStruct location)
 			if (Data->Mission.Mode != InfoMode::NONE && (Data->Mission.ShowEnemy || isPlayerControl) && (!Data->Mission.OnlySelected || isSelected))
 			{
 				Mission mission = pObject->GetCurrentMission();
-				std::string text;
+				std::string text = std::to_string((int)mission);
 				for (auto it : MissionTypeStrings)
 				{
 					if (it.second == mission)

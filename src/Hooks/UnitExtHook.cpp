@@ -515,6 +515,26 @@ DEFINE_HOOK(0x73C485, UnitClass_Draw_Voxel_Shadow_WO_Skip, 0x8)
 	return 0;
 }
 
+#pragma region Balloon Jumpjet Carryall and Landing
+// Check CanDeploy when push the DeployCommand button
+DEFINE_HOOK(0x700E8B, TechnoClass_CanDeploy_Carryall_Drop, 0x6)
+{
+	GET(TechnoTypeClass*, pType, EAX);
+	if (pType->Passengers == 0 && pType->BalloonHover && pType->Locomotor == LocomotionClass::CLSIDs::Jumpjet)
+	{
+		GET(TechnoClass*, pTechno, ESI);
+		JumpjetCarryall* carry = GetScript<TechnoExt, JumpjetCarryall>(pTechno);
+		if (carry && carry->pPayload)
+		{
+			// skip check other, goto check LandType when pTechno has Passengers
+			return 0x700EEC;
+		}
+	}
+	// continue to check !IsSimpleDeploy and other, then return false
+	return 0;
+}
+
+// Landing to pickup the passengers
 DEFINE_HOOK(0x73D6F8, UnitClass_Mission_Unload_Transporter, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
@@ -541,17 +561,29 @@ DEFINE_HOOK(0x73D6F8, UnitClass_Mission_Unload_Transporter, 0x6)
 	return 0;
 }
 
-DEFINE_HOOK(0x73DB70, UnitClass_Mission_Unload_Carryall, 0x6)
+DEFINE_HOOK(0x73D6E6, UnitClass_Mission_Unload_Carryall_Drop, 0x6)
 {
-	GET(TechnoClass*, pTechno, EDI);
-	if (!pTechno->InLimbo && pTechno->IsOnCarryall)
+	GET(TechnoClass*, pTechno, ESI);
+	JumpjetCarryall* carry = GetScript<TechnoExt, JumpjetCarryall>(pTechno);
+	if (carry && carry->pPayload)
 	{
-		pTechno->IsOnCarryall = false;
+		carry->DropPayload();
+		bool noPassengers = pTechno->GetTechnoType()->Passengers == 0;
+		if (noPassengers)
+		{
+			pTechno->QueueMission(Mission::Guard, false);
+		}
+		if (pTechno->Passengers.FirstPassenger || noPassengers)
+		{
+			// countine to landing nearby and unload passenger
+			return 0x73D772;
+		}
 	}
 	return 0;
 }
 
-DEFINE_HOOK(0x74041B, UnitClass_WhatAction_Carryall, 0x5)
+// 选中JJ后鼠标指向其他单位的时候，显示吊运的图标
+DEFINE_HOOK(0x74041B, UnitClass_WhatAction_Carryall_Lifting, 0x5)
 {
 	enum { Attack = 0x740420, Other = 0x74043B };
 
@@ -559,7 +591,7 @@ DEFINE_HOOK(0x74041B, UnitClass_WhatAction_Carryall, 0x5)
 	GET(TechnoClass*, pTechno, ESI);
 	GET(TechnoClass*, pTarget, EDI);
 
-	if (action == Action::Select)
+	if (action == Action::Select && pTarget != pTechno && !pTarget->IsInAir())
 	{
 		JumpjetCarryall* carry = GetScript<TechnoExt, JumpjetCarryall>(pTechno);
 		if (carry && carry->CanLift(pTarget))
@@ -571,18 +603,24 @@ DEFINE_HOOK(0x74041B, UnitClass_WhatAction_Carryall, 0x5)
 	return action == Action::Attack ? Attack : Other;
 }
 
+// 没有乘客位的JJ鼠标指向自己的时候，显示部署图标
+DEFINE_HOOK(0x74000B, UnitClass_WhatAction_Carryall_Droping, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	if (pTechno->CanDeploySlashUnload())
+	{
+		return 0x7400FA; // Action::Self_Deploy
+	}
+	return 0;
+}
+
+// 有乘客位的JJ鼠标指向自己的时候，显示部署图标
 DEFINE_HOOK(0x73FFF4, UnitClass_WhatAction_TransportHover, 0x8)
 {
 	GET(TechnoClass*, pTechno, ESI);
 	if (pTechno->GetTechnoType()->BalloonHover && pTechno->IsInAir())
 	{
-		bool canDeploy = true;
-		CoordStruct location = pTechno->GetCoords();
-		if (CellClass* pCell = MapClass::Instance->TryGetCellAt(location))
-		{
-			canDeploy = !pCell->ContainsBridge() && pCell->LandType != LandType::Water;
-		}
-		if (canDeploy)
+		if (pTechno->CanDeploySlashUnload())
 		{
 			R->Stack(0x28, Action::Self_Deploy);
 			return 0x73FFFC;
@@ -606,8 +644,9 @@ DEFINE_HOOK(0x7388FD, UnitClass_ActionClick_Carryall, 0x5)
 	return 0;
 }
 
-namespace UnitCarryall
+namespace UnitPayloadDraw
 {
+	// 控制对吊运单位的绘制
 	bool SkipCarryallOffset = false;
 	TechnoTypeExt::TypeData* TypeData = nullptr;
 }
@@ -619,7 +658,7 @@ DEFINE_HOOK(0x73CF16, UnitClass_Draw_It_Carryall_HightOffset, 0x7)
 	if (!typeData->CarryallOffset.IsEmpty())
 	{
 		// 如果是飞机吊运，需要计算偏移
-		if (!UnitCarryall::SkipCarryallOffset)
+		if (!UnitPayloadDraw::SkipCarryallOffset)
 		{
 			CoordStruct flh = -typeData->CarryallOffset;
 			GET_STACK(int, x, 0x1C);
@@ -637,9 +676,11 @@ DEFINE_HOOK(0x73CF16, UnitClass_Draw_It_Carryall_HightOffset, 0x7)
 	return 0;
 }
 
-DEFINE_HOOK(0x73D317, UnitClass_Draw_It_Carryall, 0x6)
+DEFINE_HOOK(0x73D317, UnitClass_Draw_It, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
+
+	// 绘制自身的吊运货物
 	JumpjetCarryall* carry = GetScript<TechnoExt, JumpjetCarryall>(pTechno);
 	if (carry && carry->pPayload)
 	{
@@ -647,23 +688,26 @@ DEFINE_HOOK(0x73D317, UnitClass_Draw_It_Carryall, 0x6)
 		GET_STACK(int, y, 0x20);
 		Point2D point{ x, y };
 		GET(RectangleStruct*, rect, EBX);
+
 		TechnoClass* pPayload = carry->pPayload;
 		TechnoTypeExt::TypeData* typeData = GetTypeData<TechnoTypeExt, TechnoTypeExt::TypeData>(pPayload->GetTechnoType());
+		Point2D newPoint = point;
 		if (!typeData->CarryallOffset.IsEmpty())
 		{
 			CoordStruct flh = -typeData->CarryallOffset;
 			CoordStruct newPos = GetFLHAbsoluteCoords(pTechno, flh, false);
-			point = ToClientPos(newPos);
+			newPoint = ToClientPos(newPos);
 		}
-		UnitCarryall::SkipCarryallOffset = true;
-		UnitCarryall::TypeData = typeData;
-		carry->pPayload->DrawIt(&point, rect);
-		UnitCarryall::SkipCarryallOffset = false;
-		UnitCarryall::TypeData = nullptr;
+		UnitPayloadDraw::SkipCarryallOffset = true;
+		UnitPayloadDraw::TypeData = typeData;
+		carry->pPayload->DrawIt(&newPoint, rect);
+		UnitPayloadDraw::SkipCarryallOffset = false;
+		UnitPayloadDraw::TypeData = nullptr;
 	}
 	return 0;
 }
 
+// 被捕获时切换图像
 // DEFINE_HOOK(0x4DB157, FootClass_DrawVoxel_Shadow_Carryall, 0x8)
 // {
 // 	if (UnitCarryall::SkipCarryallOffset && UnitCarryall::TypeData)
@@ -677,3 +721,4 @@ DEFINE_HOOK(0x73D317, UnitClass_Draw_It_Carryall, 0x6)
 // 	return 0;
 // }
 
+#pragma endregion // Balloon Jumpjet Carryall and Landing

@@ -51,7 +51,7 @@ public:
 	bool FreeDirection = false; // 完全不控制朝向
 
 	Layer DrawLayer = Layer::None; // 渲染的层
-	int ZOffset = 14; // ZAdjust偏移值
+	int ZOffset = 2; // ZAdjust偏移值
 	bool SameTilter = true; // 同步倾斜
 	bool SameMoving = false; // 同步移动动画
 	bool StickOnFloor = true; // 同步移动动画时贴在地上

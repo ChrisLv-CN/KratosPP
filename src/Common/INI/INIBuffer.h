@@ -85,40 +85,41 @@ enum class Mission : int
 
 static std::map<std::string, Mission> MissionTypeStrings
 {
-	{ "none", Mission::None },
-	{ "sleep", Mission::Sleep },
-	{ "attack", Mission::Attack },
-	{ "move", Mission::Move },
-	{ "qmove", Mission::QMove },
-	{ "retreat", Mission::Retreat },
-	{ "sticky", Mission::Sticky },
-	{ "enter", Mission::Enter },
-	{ "capture", Mission::Capture },
-	{ "eaten", Mission::Eaten },
-	{ "harvest", Mission::Harvest },
-	{ "areaguard", Mission::Area_Guard }, // AreaGuard
-	{ "area_guard", Mission::Area_Guard },
-	{ "return", Mission::Return },
-	{ "stop", Mission::Stop },
-	{ "ambush", Mission::Ambush },
-	{ "hunt", Mission::Hunt },
-	{ "deploy", Mission::Unload }, // Deploy
-	{ "unload", Mission::Unload },
-	{ "sabotage", Mission::Sabotage },
-	{ "construction", Mission::Construction },
-	{ "selling", Mission::Selling },
-	{ "repair", Mission::Repair },
-	{ "rescue", Mission::Rescue },
-	{ "missile", Mission::Missile },
-	{ "harmless", Mission::Harmless },
-	{ "open", Mission::Open },
-	{ "patrol", Mission::Patrol },
-	{ "paradropApproach", Mission::ParadropApproach },
-	{ "paradropOverfly", Mission::ParadropOverfly },
-	{ "wait", Mission::Wait },
-	{ "attackMove", Mission::AttackMove },
-	{ "spyplaneApproach", Mission::SpyplaneApproach },
-	{ "spyplaneOverfly", Mission::SpyplaneOverfly }
+	{ "none", Mission::None }, // -1
+	{ "sleep", Mission::Sleep }, // 0
+	{ "attack", Mission::Attack }, // 1
+	{ "move", Mission::Move }, // 2
+	{ "qmove", Mission::QMove }, // 3
+	{ "retreat", Mission::Retreat }, // 4
+	{ "Guard", Mission::Guard }, // 5
+	{ "sticky", Mission::Sticky }, // 6
+	{ "enter", Mission::Enter }, // 7
+	{ "capture", Mission::Capture }, // 8
+	{ "eaten", Mission::Eaten }, // 9
+	{ "harvest", Mission::Harvest }, // 10
+	{ "areaguard", Mission::Area_Guard }, // 11 AreaGuard
+	{ "area_guard", Mission::Area_Guard }, // 11
+	{ "return", Mission::Return }, // 12
+	{ "stop", Mission::Stop }, // 13
+	{ "ambush", Mission::Ambush }, // 14
+	{ "hunt", Mission::Hunt }, // 15
+	{ "deploy", Mission::Unload }, // 16 Deploy
+	{ "unload", Mission::Unload }, // 16
+	{ "sabotage", Mission::Sabotage }, //17
+	{ "construction", Mission::Construction }, // 18
+	{ "selling", Mission::Selling }, // 19
+	{ "repair", Mission::Repair }, // 20
+	{ "rescue", Mission::Rescue }, // 21
+	{ "missile", Mission::Missile }, // 22
+	{ "harmless", Mission::Harmless }, // 23
+	{ "open", Mission::Open }, // 24
+	{ "patrol", Mission::Patrol }, // 25
+	{ "paradropApproach", Mission::ParadropApproach }, // 26
+	{ "paradropOverfly", Mission::ParadropOverfly }, // 27
+	{ "wait", Mission::Wait }, // 28
+	{ "attackMove", Mission::AttackMove }, // 29
+	{ "spyplaneApproach", Mission::SpyplaneApproach }, // 30
+	{ "spyplaneOverfly", Mission::SpyplaneOverfly } // 31
 };
 
 template <>
