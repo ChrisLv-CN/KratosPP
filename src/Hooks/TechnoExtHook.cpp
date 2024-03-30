@@ -5,7 +5,9 @@
 #include <SpecificStructures.h>
 #include <TechnoClass.h>
 #include <VoxelAnimTypeClass.h>
+#include <DriveLocomotionClass.h>
 #include <JumpjetLocomotionClass.h>
+#include <ShipLocomotionClass.h>
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
@@ -877,6 +879,19 @@ DEFINE_HOOK(0x6FF29E, TechnoClass_Fire_ROFMultiplier, 0x6)
 			double rofMult = aem->CountAttachStatusMultiplier().ROFMultiplier;
 			R->EAX(rof * rofMult);
 		}
+	}
+	return 0;
+}
+
+DEFINE_HOOK_AGAIN(0x4B0521, LocomotionClass_Update_Ramp, 0x5) // DriveLoco
+DEFINE_HOOK(0x69FC31, LocomotionClass_Update_Ramp, 0x5) // ShipLoco
+{
+	LocomotionClass* pLoco = (LocomotionClass*)(R->ESI() - 4);
+	TechnoClass* pTechno = pLoco->LinkedTo;
+	UnitClass* pUnit = dynamic_cast<UnitClass*>(pTechno);
+	if (pTechno->IsInAir() || (pUnit && !pUnit->Type->IsTilter))
+	{
+		R->ECX(0); // set Ramp1 = 0
 	}
 	return 0;
 }

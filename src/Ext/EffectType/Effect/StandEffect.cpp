@@ -645,26 +645,33 @@ void StandEffect::OnGScreenRender(CoordStruct location)
 					pStand->RockingForwardsPerFrame = forwards;
 					pStand->RockingSidewaysPerFrame = sideways;
 
-					// 同步 替身 与 JOJO 的翻车角度
+					// 同步 替身 与 JOJO 的地形角度
 					ILocomotion* masterLoco = dynamic_cast<FootClass*>(pTechno)->Locomotor.get();
 					ILocomotion* standLoco = dynamic_cast<FootClass*>(pStand)->Locomotor.get();
 
-					GUID masterLocoId = pTechno->GetTechnoType()->Locomotor;
-					GUID standLocoId = pStand->GetTechnoType()->Locomotor;
+					DWORD previousRamp = 0;
+					DWORD currentRamp = 0;
 
-					if (masterLocoId == LocomotionClass::CLSIDs::Drive && standLocoId == LocomotionClass::CLSIDs::Drive)
+					if (DriveLocomotionClass* pMasterDriveLoco = dynamic_cast<DriveLocomotionClass*>(masterLoco))
 					{
-						DriveLocomotionClass* pMasterLoco = dynamic_cast<DriveLocomotionClass*>(masterLoco);
-						DriveLocomotionClass* pStandLoco = dynamic_cast<DriveLocomotionClass*>(standLoco);
-						pStandLoco->PreviousRamp = pMasterLoco->PreviousRamp;
-						pStandLoco->CurrentRamp = pMasterLoco->CurrentRamp;
+						previousRamp = pMasterDriveLoco->PreviousRamp;
+						currentRamp = pMasterDriveLoco->CurrentRamp;
 					}
-					else if (masterLocoId == LocomotionClass::CLSIDs::Ship && standLocoId == LocomotionClass::CLSIDs::Ship)
+					else if (ShipLocomotionClass* pMasterShipLoco = dynamic_cast<ShipLocomotionClass*>(masterLoco))
 					{
-						ShipLocomotionClass* pMasterLoco = dynamic_cast<ShipLocomotionClass*>(masterLoco);
-						ShipLocomotionClass* pStandLoco = dynamic_cast<ShipLocomotionClass*>(standLoco);
-						pStandLoco->Ramp1 = pMasterLoco->Ramp1;
-						pStandLoco->Ramp2 = pMasterLoco->Ramp2;
+						previousRamp = pMasterShipLoco->PreviousRamp;
+						currentRamp = pMasterShipLoco->CurrentRamp;
+					}
+
+					if (DriveLocomotionClass* pStandDriveLoco = dynamic_cast<DriveLocomotionClass*>(standLoco))
+					{
+						pStandDriveLoco->PreviousRamp = previousRamp;
+						pStandDriveLoco->CurrentRamp = currentRamp;
+					}
+					else if (ShipLocomotionClass* pStandShipLoco = dynamic_cast<ShipLocomotionClass*>(standLoco))
+					{
+						pStandShipLoco->PreviousRamp = previousRamp;
+						pStandShipLoco->CurrentRamp = currentRamp;
 					}
 				}
 			}

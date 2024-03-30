@@ -5,6 +5,9 @@
 #include <TechnoClass.h>
 #include <FootClass.h>
 #include <AircraftClass.h>
+#include <DriveLocomotionClass.h>
+#include <JumpjetLocomotionClass.h>
+#include <ShipLocomotionClass.h>
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
@@ -15,6 +18,17 @@
 #include <Ext/Common/CommonStatus.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/ObjectType/AttachEffect.h>
+
+DEFINE_HOOK(0x6FA2A2, TechnoClass_Update_DrawBehind, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	if (AmIStand(pTechno))
+	{
+		// skip draw behind anim
+		return 0x6FA2DA;
+	}
+	return 0;
+}
 
 // AI的替身在攻击友军时会强制取消目标
 DEFINE_HOOK(0x6FA45D, TechnoClass_Update_NotHuman_ClearTarget_Stand, 0x6)
@@ -207,51 +221,150 @@ DEFINE_HOOK(0x4D9947, FootClass_Greatest_Threat_GetTarget, 0x6)
 #pragma endregion
 
 #pragma region Stand Drawing
-DEFINE_HOOK(0x704368, TechnoClass_GetZAdjust_Stand, 0x8)
+// WWSB只排序在地面的layer，不排序在空中的layer
+DEFINE_HOOK(0x55DBC3, MainLoop_ShortLayerClass, 0x5)
 {
-	GET(TechnoClass*, pTechno, ESI);
-	GET(int, height, EAX);
-
-	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && !status->MyStandData.IsTrain)
-	{
-		int zAdjust = TacticalClass::Instance->AdjustForZ(height);
-		int offset = status->MyStandData.ZOffset;
-		R->ECX(zAdjust + offset);
-	}
+	DisplayClass::GetLayer(Layer::Air)->Sort();
 	return 0;
 }
 
-DEFINE_HOOK(0x4DB7F7, FootClass_In_Which_Layer_Stand, 0x6)
+DEFINE_HOOK(0x4DA87A, FootClass_Update_UpdateLayer, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
-
-	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && !status->MyStandData.IsTrain && status->MyStandData.ZOffset != 0)
+	if (pTechno->IsAlive)
 	{
-		Layer layer = status->MyStandData.DrawLayer;
-		if (layer == Layer::None)
+		if (pTechno->InWhichLayer() != pTechno->LastLayer)
 		{
-			layer = pTechno->IsInAir() ? Layer::Top : Layer::Air;
+			DisplayClass::Instance->Submit(pTechno);
 		}
-		// R->ECX((DWORD)layer);
-		// return 0x4DB803; //Get Error
 	}
 	return 0;
 }
 
+namespace StandZAdjust
+{
+	TechnoClass* pStand = nullptr;
+	int zAdjust = -1;
+}
+
+DEFINE_HOOK(0x4DB091, FootClass_GetZAdjustment, 0x6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+	if (pTechno == StandZAdjust::pStand)
+	{
+		R->EDI(0);
+		R->Stack(0x8, 0);
+		R->EAX(StandZAdjust::zAdjust);
+	}
+	else
+	{
+		int z = -1;
+		TechnoStatus* status = nullptr;
+		if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->pMyMaster && !status->MyStandData.IsTrain)
+		{
+			// 从JOJO身上获取ZAdjust
+			TechnoClass* pMaster = status->pMyMaster;
+			z = pMaster->GetZAdjustment();
+		}
+		else
+		{
+			z = R->EDI() + R->Stack<int>(0x8) + R->EAX();
+		}
+		StandZAdjust::pStand = pTechno;
+		StandZAdjust::zAdjust = z;
+		R->EDI(0);
+		R->Stack(0x8, 0);
+		R->EAX(z);
+	}
+	return 0;
+}
+
+namespace StandYSort
+{
+	ObjectClass* pStand = nullptr;
+	int X = 0;
+	int Y = 0;
+}
+
+// Whether to render in the upper or lower layers is controlled by sorting DesplayClass::LayerClass[Layer].
+// When Layer==Ground, use the YSort function for sorting,
+// and the return value is the X + Y of the rendering coordinates.
+DEFINE_HOOK(0x5F6BF7, ObjectClass_GetYSort, 0x5)
+{
+	GET(ObjectClass*, pObject, ESI);
+	GET(int*, x, EAX);
+	int* y = (int*)(R->EDI() + 4);
+
+	if (pObject == StandYSort::pStand)
+	{
+		*x = StandYSort::X;
+		*y = StandYSort::Y;
+	}
+	else if (TechnoClass* pTechno = dynamic_cast<TechnoClass*>(pObject))
+	{
+		TechnoStatus* status = nullptr;
+		if (TryGetStatus<TechnoExt, TechnoStatus>(pTechno, status) && status->AmIStand() && status->pMyMaster && !status->MyStandData.IsTrain)
+		{
+			// 替身从Master身上获取渲染坐标
+			CoordStruct r = status->pMyMaster->GetRenderCoords();
+			int offset = status->MyStandData.ZOffset;
+			// 修改返回值
+			*x = r.X + offset;
+			*y = r.Y + offset;
+		}
+		StandYSort::pStand = pObject;
+		StandYSort::X = *x;
+		StandYSort::Y = *y;
+	}
+	return 0;
+}
+
+namespace StandLayer
+{
+	TechnoClass* pStand = nullptr;
+	Layer layer = Layer::Ground;
+}
+
+DEFINE_HOOK_AGAIN(0x75C7E0, LocomotionClass_In_Which_Layer, 0x5) // WalkLoco
+DEFINE_HOOK_AGAIN(0x6A3E50, LocomotionClass_In_Which_Layer, 0x5) // ShipLoco
+DEFINE_HOOK_AGAIN(0x5B19D0, LocomotionClass_In_Which_Layer, 0x5) // MechLoco
+DEFINE_HOOK_AGAIN(0x517100, LocomotionClass_In_Which_Layer, 0x5) // HoverLoco
+DEFINE_HOOK(0x4B4820, LocomotionClass_In_Which_Layer, 0x5) // DriveLoco
+{
+	GET(TechnoClass*, pTechno, ESI);
+	Layer layer = pTechno->IsInAir() ? Layer::Air : Layer::Ground;
+	if (pTechno == StandLayer::pStand)
+	{
+		layer = StandLayer::layer;
+	}
+	else
+	{
+		TechnoStatus* status = nullptr;
+		if (TryGetStatus<TechnoExt, TechnoStatus>(pTechno, status) && status->AmIStand() && status->pMyMaster && !status->MyStandData.IsTrain)
+		{
+			// 替身从Master身上获取渲染层
+			Layer l = status->pMyMaster->LastLayer;
+			if (l != Layer::None)
+			{
+				layer = l;
+			}
+		}
+		StandLayer::pStand = pTechno;
+		StandLayer::layer = layer;
+	}
+	R->EAX(layer);
+	return 0x4B4825;
+}
+
+// 不允许JJ类型，layer设置为top
 DEFINE_HOOK(0x54B8E9, JumpjetLocomotionClass_In_Which_Layer_Deviation, 0x6)
 {
 	GET(TechnoClass*, pTechno, EAX);
 
 	if (pTechno->IsInAir()) {
-		AttachEffect* aeManager = nullptr;
-		if (TryGetAEManager<TechnoExt>(pTechno, aeManager) && aeManager->HasStand())
-		{
-			// Override JumpjetHeight / CruiseHeight check so it always results in 3 / Layer::Air.
-			R->EDX(INT32_MAX);
-			return 0x54B96B;
-		}
+		// Override JumpjetHeight / CruiseHeight check so it always results in 3 / Layer::Air.
+		R->EDX(INT32_MAX);
+		return 0x54B96B;
 	}
 	return 0;
 }

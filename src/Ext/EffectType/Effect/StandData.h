@@ -50,8 +50,7 @@ public:
 	bool LockDirection = false; // 强制朝向，不论替身在做什么
 	bool FreeDirection = false; // 完全不控制朝向
 
-	Layer DrawLayer = Layer::None; // 渲染的层
-	int ZOffset = 2; // ZAdjust偏移值
+	int ZOffset = 1; // YSort偏移值
 	bool SameTilter = true; // 同步倾斜
 	bool SameMoving = false; // 同步移动动画
 	bool StickOnFloor = true; // 同步移动动画时贴在地上
@@ -113,7 +112,6 @@ public:
 			LockDirection = reader->Get(title + "LockDirection", LockDirection);
 			FreeDirection = reader->Get(title + "FreeDirection", FreeDirection);
 
-			DrawLayer = reader->Get(title + "DrawLayer", DrawLayer);
 			ZOffset = reader->Get(title + "ZOffset", ZOffset);
 			SameTilter = reader->Get(title + "SameTilter", SameTilter);
 			SameMoving = reader->Get(title + "SameMoving", SameMoving);
@@ -174,8 +172,7 @@ public:
 			.Process(this->LockDirection) // 强制朝向，不论替身在做什么
 			.Process(this->FreeDirection) // 完全不控制朝向
 
-			.Process(this->DrawLayer) // 渲染的层
-			.Process(this->ZOffset) // ZAdjust偏移值
+			.Process(this->ZOffset) // YSort偏移值
 			.Process(this->SameTilter) // 同步倾斜
 			.Process(this->SameMoving) // 同步移动动画
 			.Process(this->StickOnFloor) // 同步移动动画时贴在地上

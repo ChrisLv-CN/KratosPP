@@ -208,8 +208,16 @@ void JumpjetCarryall::OnUpdate()
 	{
 		CoordStruct location = pTechno->GetCoords();
 		pPayload->SetLocation(location);
-		pPayload->AngleRotatedForwards = pTechno->AngleRotatedForwards;
-		pPayload->AngleRotatedSideways = pTechno->AngleRotatedSideways;
+		if (pTechno->IsInAir())
+		{
+			pPayload->AngleRotatedForwards = 0;
+			pPayload->AngleRotatedSideways = 0;
+		}
+		else
+		{
+			pPayload->AngleRotatedForwards = pTechno->AngleRotatedForwards;
+			pPayload->AngleRotatedSideways = pTechno->AngleRotatedSideways;
+		}
 		DirStruct dir = pTechno->PrimaryFacing.Current();
 		pPayload->PrimaryFacing.SetCurrent(dir);
 		pPayload->SecondaryFacing.SetCurrent(dir);
