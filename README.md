@@ -55,8 +55,8 @@ Run `RunAres.bat` to start the game.
 
 帮助文档 (Documents)
 ------------
-* [食用说明书](https://github.com/ChrisLv-CN/KratosPP/blob/main/Kratos%E9%A3%9F%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.ini)
-* [Wiki](https://github.com/ChrisLv-CN/DPKratos-Lite/wiki)
+* [食用说明书](https://github.com/ChrisLv-CN/KratosPP/blob/main/%E9%99%84%E4%BB%B6%E5%8C%85/Kratos%E9%A3%9F%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.ini)
+* [Wiki](https://github.com/ChrisLv-CN/KratosPP/wiki)
 
 开发者 (Developers)
 ------------
