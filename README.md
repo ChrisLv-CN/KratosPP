@@ -1,5 +1,19 @@
 [![license](https://www.gnu.org/graphics/lgplv3-147x51.png)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
 
+前言 (Foreword)
+============
+**如果你是DPKratos用户，请在使用本产品前，务必完全删除DPKratos。**：
+- 文件夹`"DynamicPatcher"`
+- DLL文件`"DynamicPatcher.dll"`
+- DLL文件`"DynamicPatcher_RELEASE.dll"`
+- DLL文件`"PatcherLoader.dll"`
+
+**If you are a DPKratos user, please be sure to completely remove DPKratos before using this product.**:
+- Folder `"DynamicPatcher"`
+- DLL `"DynamicPatcher.dll"`
+- DLL `"DynamicPatcher_RELEASE.dll"`
+- DLL `"PatcherLoader.dll"`
+
 关于Kratos-PP（About Kratos-PP）
 ============
 
@@ -27,8 +41,8 @@ Project DPKratos is a Yuri's revenge extension platform developed using DP and p
 1. 前往[Release](https://github.com/ChrisLv-CN/KratosPP/releases)下载最新的压缩包。  
 Go to [Release](https://github.com/ChrisLv-CN/KratosPP/releases) to download the latest package.
 
-2. 把文件`KratosPP.dll`放入尤里的复仇游戏根目录下。  
-Put the file `KratosPP.dll` into Yuri's Revenge game root directory.
+2. 把文件`Kratos.dll`放入尤里的复仇游戏根目录下。  
+Put the file `Kratos.dll` into Yuri's Revenge game root directory.
 
 3. 在`ini`中添加对应的内容。  
 Edit `ini` file

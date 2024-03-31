@@ -420,9 +420,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{5413a93f-29de-4c87-9dba-fc307f19a87e}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>KratosPP</RootNamespace>
+    <RootNamespace>Kratos</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>KratosPP</ProjectName>
+    <ProjectName>Kratos</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

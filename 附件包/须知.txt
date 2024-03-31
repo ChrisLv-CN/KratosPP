@@ -1,0 +1,46 @@
+更新地址：
+https://github.com/ChrisLv-CN/KratosPP
+
+作者主页：
+https://space.bilibili.com/276838
+
+如果你是DPKratos用户，请在使用本产品前，务必完全删除DPKratos：
+- 文件夹`"DynamicPatcher"`
+- DLL文件`"DynamicPatcher.dll"`
+- DLL文件`"DynamicPatcher_RELEASE.dll"`
+- DLL文件`"PatcherLoader.dll"`
+
+If you are a DPKratos user, please be sure to completely remove DPKratos before using this product:
+- Folder `"DynamicPatcher"`
+- DLL `"DynamicPatcher.dll"`
+- DLL `"DynamicPatcher_RELEASE.dll"`
+- DLL `"PatcherLoader.dll"`
+
+附带的 pips.shp 和 pipsnum.shp 和 pipstext.shp 这两个文件是为新功能 显示血量 和 显示伤害 和 显示伤害响应 准备的。
+The 'pips.shp' and 'pipsnum.shp' and 'pipstext.shp' These two files for new features 'Display Health Number' and 'Display Damage Number' and 'Display Damage Reaction'.
+
+下面是使用方法：
+There is how to use:
+
+shp文件的帧顺序分别是 0123456789+-*/% 共 15 帧。
+The frame order of the shp file is 0123456789+-*/% for a total of 15 frames.
+
+"pips.shp" 为默认设置使用的shp文件，第24帧 到 第68帧 分别为 绿色、黄色、红色 血量的显示数字。
+"pips.shp" is the SHP file used by default settings, and the 24th frames to 68th frames are green, yellow, red blood volume display numbers.
+
+只需要在[AudioVisual]下添加 HealthText.UseSHP=yes 即可使用。
+Just add HealthText.UseSHP=yes under [AudioVisual] to use.
+
+"pipsnum.shp" 则是独立的数字 shp，第0-14帧为绿色，第15-29为黄色，第30-44帧为红色。使用参数如下：
+"pipsnum.shp" is an independent number shp, frames 0-14 are green, frames 15-29 are yellow, and frames 30-44 are red. The parameters used are as follows:
+
+[AudioVisual]
+HealthText.UseSHP=yes
+HealthText.SHP=pipsnum.shp
+HealthText.ImageSize=5,8
+HealthText.Green.ZeroFrameIndex=0
+HealthText.Yellow.ZeroFrameIndex=15
+HealthText.Red.ZeroFrameIndex=30
+
+伤害数字设置方式相同。
+Damage numbers are set the same way.

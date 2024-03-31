@@ -28,7 +28,7 @@
 
 // version infomation
 #define PRODUCT_NAME "Kratos"
-#define COMPANY_NAME "ChrisLv_CN"
+#define COMPANY_NAME "ChrisLv_CN (https://space.bilibili.com/276838)"
 #define LEGAL_COPYRIGHT "© The ChrisLv_CN 🐼 Contributors 2023"
 #define FILE_DESCRIPTION "Kratos, Ares-like YR engine extension"
 #define FILE_VERSION_STR STR(VERSION_MAJOR) "." STR(VERSION_MINOR) "." STR(VERSION_REVISION) "." STR(VERSION_PATCH)
@@ -40,8 +40,8 @@
 	#define SAVEGAME_ID ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (VERSION_REVISION << 8) | VERSION_PATCH)
 	#define PRODUCT_VERSION STR(VERSION_MAJOR) "." STR(VERSION_MINOR)
 #endif // DEBUG
-#define INTERNAL_NAME "KratosPP.dll"
-#define ORIGINAL_FILENAME "KratosPP.dll"
+#define INTERNAL_NAME "Kratos.dll"
+#define ORIGINAL_FILENAME "Kratos.dll"
 
 #define VERSION_SHORT_STR STR(VERSION_MAJOR) "." STR(VERSION_MINOR)
 #ifdef DEBUG
