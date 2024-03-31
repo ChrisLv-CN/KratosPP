@@ -83,44 +83,76 @@ void StackEffect::Watch()
 		// 添加AE
 		if (Data->Attach)
 		{
-			AE->AEManager->Attach(Data->AttachEffects, Data->AttachChances, false, AE->pSource, AE->pSourceHouse);
+			AttachEffect* aeManager = AE->AEManager;
+			TechnoClass* pSource = AE->pSource;
+			HouseClass* pSourceHouse = AE->pSourceHouse;
+			if (Data->AttachToSource)
+			{
+				aeManager = GetAEManager<TechnoExt>(AE->pSource);
+				if (pTechno)
+				{
+					pSource = pTechno;
+					pSourceHouse = pTechno->Owner;
+				}
+				else if (pBullet)
+				{
+					pSource = pBullet->Owner;
+					pSourceHouse = GetHouse(pBullet);
+				}
+				else
+				{
+					aeManager = nullptr;
+				}
+			}
+			if (aeManager)
+			{
+				aeManager->Attach(Data->AttachEffects, Data->AttachChances, false, pSource, pSourceHouse);
+			}
 		}
 		// 移除AE
 		if (Data->Remove)
 		{
-			if (!Data->RemoveEffects.empty())
+			AttachEffect* aeManager = AE->AEManager;
+			if (Data->RemoveToSource)
 			{
-				if (!Data->RemoveEffectsLevel.empty())
-				{
-					// 移除指定的层数
-					std::map<std::string, int> aeTypes;
-					int idx = 0;
-					int count = Data->RemoveEffects.size();
-					for (std::string removeAE : Data->RemoveEffects)
-					{
-						int level = -1;
-						if (idx < count)
-						{
-							level = Data->RemoveEffectsLevel[idx];
-						}
-						if (level > 0)
-						{
-							aeTypes[removeAE] = level;
-						}
-					}
-					if (!aeTypes.empty())
-					{
-						AE->AEManager->DetachByName(aeTypes);
-					}
-				}
-				else
-				{
-					AE->AEManager->DetachByName(Data->RemoveEffects);
-				}
+				aeManager = GetAEManager<TechnoExt>(AE->pSource);
 			}
-			if (!Data->RemoveEffectsWithMarks.empty())
+			if (aeManager)
 			{
-				AE->AEManager->DetachByMarks(Data->RemoveEffectsWithMarks);
+				if (!Data->RemoveEffects.empty())
+				{
+					if (!Data->RemoveEffectsLevel.empty())
+					{
+						// 移除指定的层数
+						std::map<std::string, int> aeTypes;
+						int idx = 0;
+						int count = Data->RemoveEffects.size();
+						for (std::string removeAE : Data->RemoveEffects)
+						{
+							int level = -1;
+							if (idx < count)
+							{
+								level = Data->RemoveEffectsLevel[idx];
+							}
+							if (level > 0)
+							{
+								aeTypes[removeAE] = level;
+							}
+						}
+						if (!aeTypes.empty())
+						{
+							aeManager->DetachByName(aeTypes);
+						}
+					}
+					else
+					{
+						aeManager->DetachByName(Data->RemoveEffects);
+					}
+				}
+				if (!Data->RemoveEffectsWithMarks.empty())
+				{
+					aeManager->DetachByMarks(Data->RemoveEffectsWithMarks);
+				}
 			}
 		}
 		// 移除被监视者

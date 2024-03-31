@@ -9,8 +9,10 @@ class AttachEffectTypeData : public INIConfig
 {
 public:
 	std::vector<std::string> AttachEffectTypes{};
-
 	std::vector<double> AttachEffectChances{}; // 附加成功率，应该只对弹头有用
+
+	bool AttachToSource = false; // 用弹头附加时，反过来附加给攻击者
+
 	bool AttachFullAirspace = false; // 搜索圆柱体范围
 
 	int StandTrainCabinLength = 512; // 火车替身间隔
@@ -23,8 +25,10 @@ public:
 	virtual void Read(INIBufferReader* reader) override
 	{
 		AttachEffectTypes = reader->GetList("AttachEffectTypes", AttachEffectTypes);
-
 		AttachEffectChances = reader->GetChanceList("AttachEffectChances", AttachEffectChances);
+
+		AttachToSource = reader->Get("AttachToSource", AttachToSource);
+
 		AttachFullAirspace = reader->Get("AttachFullAirspace", AttachFullAirspace);
 
 		StandTrainCabinLength = reader->Get("StandTrainCabinLength", StandTrainCabinLength);
@@ -40,8 +44,8 @@ public:
 		std::string title = "AttachEffectTypes" + std::to_string(index);
 
 		AttachEffectTypes = reader->GetList(title, AttachEffectTypes);
-
 		AttachEffectChances = reader->GetChanceList(title + ".Chances", AttachEffectChances);
+
 		AttachByPassenger = reader->Get(title + ".AttachByPassenger", AttachByPassenger);
 		AEModeIndex = index;
 

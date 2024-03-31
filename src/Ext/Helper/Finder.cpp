@@ -339,6 +339,13 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 	AttachEffectTypeData* aeTypeData = GetAEData<WarheadTypeExt>(pWH);
 	if (aeTypeData->Enable)
 	{
+		bool attachToSource = aeTypeData->AttachToSource;
+		AttachEffect* sourceAEM = nullptr;
+		if (attachToSource && !TryGetAEManager<TechnoExt>(dynamic_cast<TechnoClass*>(pAttacker), sourceAEM))
+		{
+			return;
+		}
+
 		bool fullAirspace = aeTypeData->AttachFullAirspace;
 		bool findTechno = false;
 		bool findBullet = false;
@@ -409,10 +416,17 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 					)
 				{
 					// 赋予AE
-					AttachEffect* aeManager = nullptr;
-					if (TryGetAEManager<TechnoExt>(pTarget, aeManager))
+					if (attachToSource)
 					{
-						aeManager->Attach(aeTypeData->AttachEffectTypes, aeTypeData->AttachEffectChances, false, pAttacker, pAttackingHouse, location);
+						sourceAEM->Attach(aeTypeData->AttachEffectTypes, aeTypeData->AttachEffectChances, false, pTarget, pTargetHouse, location);
+					}
+					else
+					{
+						AttachEffect* aeManager = nullptr;
+						if (TryGetAEManager<TechnoExt>(pTarget, aeManager))
+						{
+							aeManager->Attach(aeTypeData->AttachEffectTypes, aeTypeData->AttachEffectChances, false, pAttacker, pAttackingHouse, location);
+						}
 					}
 				}
 			}
@@ -429,10 +443,17 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 					if (CanAffectHouse(pAttackingHouse, pTargetSourceHouse, warheadTypeData->AffectsOwner, warheadTypeData->AffectsAllies, warheadTypeData->AffectsEnemies))
 					{
 						// 赋予AE
-						AttachEffect* aeManager = nullptr;
-						if (TryGetAEManager<BulletExt>(pTarget, aeManager))
+						if (attachToSource)
 						{
-							aeManager->Attach(aeTypeData->AttachEffectTypes, aeTypeData->AttachEffectChances, false, pAttacker, pAttackingHouse, location);
+							sourceAEM->Attach(aeTypeData->AttachEffectTypes, aeTypeData->AttachEffectChances, false, pTarget, pTargetSourceHouse, location);
+						}
+						else
+						{
+							AttachEffect* aeManager = nullptr;
+							if (TryGetAEManager<BulletExt>(pTarget, aeManager))
+							{
+								aeManager->Attach(aeTypeData->AttachEffectTypes, aeTypeData->AttachEffectChances, false, pAttacker, pAttackingHouse, location);
+							}
 						}
 					}
 				}

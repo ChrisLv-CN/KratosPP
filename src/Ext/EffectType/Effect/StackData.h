@@ -86,11 +86,13 @@ public:
 	bool Attach = false;
 	std::vector<std::string> AttachEffects{};
 	std::vector<double> AttachChances{};
+	bool AttachToSource = false;
 
 	bool Remove = false;
 	std::vector<std::string> RemoveEffects{};
 	std::vector<int> RemoveEffectsLevel{};
 	std::vector<std::string> RemoveEffectsWithMarks{};
+	bool RemoveToSource = false;
 
 	std::vector<int> RemoveLevel{};
 	bool RemoveAll = true;
@@ -115,6 +117,7 @@ public:
 		ClearIfGetNone(AttachEffects);
 		AttachChances = reader->GetChanceList(title + "AttachChances", AttachChances);
 		Attach = !AttachEffects.empty();
+		AttachToSource = reader->Get(title + "AttachToSource", AttachToSource);
 
 		RemoveEffects = reader->GetList(title + "RemoveEffects", RemoveEffects);
 		ClearIfGetNone(RemoveEffects);
@@ -122,6 +125,7 @@ public:
 		RemoveEffectsWithMarks = reader->GetList(title + "RemoveEffectsWithMarks", RemoveEffectsWithMarks);
 		ClearIfGetNone(RemoveEffectsWithMarks);
 		Remove = !RemoveEffects.empty() || !RemoveEffectsWithMarks.empty();
+		RemoveToSource = reader->Get(title + "RemoveToSource", RemoveToSource);
 
 		RemoveLevel = reader->GetList(title + "RemoveLevel", RemoveLevel);
 		RemoveAll = reader->Get(title + "RemoveAll", RemoveAll);
@@ -142,11 +146,13 @@ public:
 			.Process(this->Attach)
 			.Process(this->AttachEffects)
 			.Process(this->AttachChances)
+			.Process(this->AttachToSource)
 
 			.Process(this->Remove)
 			.Process(this->RemoveEffects)
 			.Process(this->RemoveEffectsLevel)
 			.Process(this->RemoveEffectsWithMarks)
+			.Process(this->RemoveToSource)
 
 			.Process(this->RemoveLevel)
 			.Process(this->RemoveAll)
