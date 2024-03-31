@@ -13,10 +13,10 @@
 #define VERSION_MAJOR 0
 
 // Indicates major changes and significant additions, like new logics
-#define VERSION_MINOR 2
+#define VERSION_MINOR 1
 
 // Indicates minor changes, like vanilla bugfixes, unhardcodings or hacks
-#define VERSION_REVISION 0
+#define VERSION_REVISION 1
 
 // Indicates Kratos-related bugfixes only
 #define VERSION_PATCH 0
@@ -47,6 +47,6 @@
 #ifdef DEBUG
 	#define VERSION_SHORT_WSTR L"Debug " WSTR(VERSION_MAJOR) L"." WSTR(VERSION_MINOR) L" B" WSTR(BUILD_NUMBER)
 #else // Release build
-	#define VERSION_SHORT_WSTR L"Ver." WSTR(VERSION_MAJOR) L"." WSTR(VERSION_MINOR)
+	#define VERSION_SHORT_WSTR L"Ver." WSTR(VERSION_MAJOR) L"." WSTR(VERSION_MINOR) L"." WSTR(VERSION_REVISION)
 #endif // DEBUG
 #endif // VERSION_H

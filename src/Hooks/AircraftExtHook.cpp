@@ -56,53 +56,59 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 		}
 		// 缩放影子
 		pMatrix->Scale(AudioVisual::Data()->VoxelShadowScaleInAir);
-		// 调整倾斜时影子的纵向比例
-		FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
-		// 从Matrix中读取的角度不可用
-		float x = 0; // 倾转轴
-		float y = 0; // 俯仰轴
-		// 火箭的俯仰角度，由RocketLoco记录
-		if (RocketLocomotionClass* rLoco = dynamic_cast<RocketLocomotionClass*>(pFoot->Locomotor.get()))
+		if (pType->MissileSpawn || pTechno->IsInAir())
 		{
-			x = pTechno->AngleRotatedSideways;
-			y = rLoco->CurrentPitch;
-		}
-		else if (FlyLocomotionClass* fLoco = dynamic_cast<FlyLocomotionClass*>(pFoot->Locomotor.get()))
-		{
-			if (fLoco->Is_Moving_Now())
+			// 调整倾斜时影子的纵向比例
+			FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
+			// 从Matrix中读取的角度不可用
+			float x = 0; // 倾转轴
+			float y = 0; // 俯仰轴
+			// 火箭的俯仰角度，由RocketLoco记录
+			if (RocketLocomotionClass* rLoco = dynamic_cast<RocketLocomotionClass*>(pFoot->Locomotor.get()))
 			{
-				x = pType->RollAngle;
+				x = pTechno->AngleRotatedSideways;
+				y = rLoco->CurrentPitch;
+			}
+			else if (FlyLocomotionClass* fLoco = dynamic_cast<FlyLocomotionClass*>(pFoot->Locomotor.get()))
+			{
+				if (fLoco->Is_Moving_Now())
+				{
+					x = pType->RollAngle;
+				}
+				else
+				{
+					x = pTechno->AngleRotatedSideways;
+				}
+				// 飞行器的俯仰角度有Techno->AngleRotatedForwards, tt.PitchAngle
+				// 根据速度结算
+				if (fLoco->TargetSpeed <= pType->PitchSpeed)
+				{
+					y = pTechno->AngleRotatedForwards;
+				}
+				else
+				{
+					y = pType->PitchAngle;
+				}
+				// 加上姿态的角度
+				if (AircraftAttitude* attitude = GetScript<TechnoExt, AircraftAttitude>(pTechno))
+				{
+					y += attitude->PitchAngle;
+				}
 			}
 			else
 			{
 				x = pTechno->AngleRotatedSideways;
-			}
-			// 飞行器的俯仰角度有Techno->AngleRotatedForwards, tt.PitchAngle
-			// 根据速度结算
-			if (fLoco->TargetSpeed <= pType->PitchSpeed)
-			{
 				y = pTechno->AngleRotatedForwards;
 			}
-			else
+			float scaleY = (float)Math::cos(abs(x));
+			pMatrix->ScaleY(scaleY);
+			float scaleX = (float)Math::cos(abs(y));
+			pMatrix->ScaleX(scaleX);
+			if (scaleY != 1.0 || scaleX != 1.0)
 			{
-				y = pType->PitchAngle;
-			}
-			// 加上姿态的角度
-			if (AircraftAttitude* attitude = GetScript<TechnoExt, AircraftAttitude>(pTechno))
-			{
-				y += attitude->PitchAngle;
+				pType->DestroyVoxelShadowCache();
 			}
 		}
-		else
-		{
-			x = pTechno->AngleRotatedSideways;
-			y = pTechno->AngleRotatedForwards;
-		}
-		float scaleY = (float)Math::cos(abs(x));
-		pMatrix->ScaleY(scaleY);
-		float scaleX = (float)Math::cos(abs(y));
-		pMatrix->ScaleX(scaleX);
-		pType->DestroyVoxelShadowCache();
 	}
 	return 0;
 }
