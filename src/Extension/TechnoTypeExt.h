@@ -29,7 +29,7 @@ public:
 		int ChronoRangeMinimum = 0;
 
 		// Kratos
-		CoordStruct CarryallOffset = CoordStruct::Empty;
+		CoordStruct CarryallOffset{ 0, 0, Unsorted::LevelHeight };
 		std::string CarryallImage{ "" };
 
 		virtual void Read(INIBufferReader* reader) override

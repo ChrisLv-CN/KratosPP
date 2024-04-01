@@ -607,7 +607,8 @@ DEFINE_HOOK(0x74041B, UnitClass_WhatAction_Carryall_Lifting, 0x5)
 DEFINE_HOOK(0x74000B, UnitClass_WhatAction_Carryall_Droping, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
-	if (pTechno->CanDeploySlashUnload())
+	JumpjetCarryall* carry = GetScript<TechnoExt, JumpjetCarryall>(pTechno);
+	if (carry && carry->pPayload)
 	{
 		return 0x7400FA; // Action::Self_Deploy
 	}
