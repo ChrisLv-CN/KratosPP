@@ -384,7 +384,7 @@ DEFINE_HOOK(0x418072, AircraftClass_Mission_Attack_GoodFirePostion, 0x5)
 					flipY *= -1;
 				}
 				CoordStruct sourcePos = pAir->GetCoords();
-				int r = dest - length;
+				int r = (dest - length) * Unsorted::LeptonsPerCell;
 				r = Random::RandomRanged(0, r);
 				CoordStruct flh{ 0, r * flipY, 0 };
 				CoordStruct targetPos = pAir->Target->GetCoords();

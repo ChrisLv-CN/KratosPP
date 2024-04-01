@@ -231,7 +231,7 @@ DEFINE_HOOK(0x55DBC3, MainLoop_ShortLayerClass, 0x5)
 DEFINE_HOOK(0x4DA87A, FootClass_Update_UpdateLayer, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
-	if (pTechno->IsAlive)
+	if (pTechno->IsAlive && !pTechno->InLimbo)
 	{
 		if (pTechno->InWhichLayer() != pTechno->LastLayer)
 		{
