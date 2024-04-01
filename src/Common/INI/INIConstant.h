@@ -12,16 +12,17 @@
 
 #include <Common/EventSystems/EventSystem.h>
 
-namespace INIConstant
+class INIConstant
 {
-	static std::string _rulesName{ "RULESMD.INI" }; // rulesmd.ini
-	static std::string _artName{ "ARTMD.INI" };   // artmd.ini
-	static std::string _aiName{ "AIMD.INI" };	 // aimd.ini
+public:
+	inline static std::string _rulesName{ "RULESMD.INI" }; // rulesmd.ini
+	inline static std::string _artName{ "ARTMD.INI" };   // artmd.ini
+	inline static std::string _aiName{ "AIMD.INI" };	 // aimd.ini
 
-	static std::string _ra2md{ "RA2MD.INI" }; // ra2md.ini
+	inline static std::string _ra2md{ "RA2MD.INI" }; // ra2md.ini
 
-	static std::string _gameModeName{};
-	static std::string _mapName{};
+	inline static std::string _gameModeName{};
+	inline static std::string _mapName{};
 
 	static std::string_view GetRulesName()
 	{

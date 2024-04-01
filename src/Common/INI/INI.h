@@ -14,11 +14,11 @@ using GetDependency = Dependency(*)();
 /// INI操作类，读取配置信息
 /// INI.GetConfig<T>(INI.Rules, section);
 /// </summary>
-namespace INI
+class INI
 {
+public:
+
 #pragma region MakeDependency
-	// ini文件名，文件名列表
-	static std::map<std::string, Dependency> s_Dependency{};
 
 	static bool ICaseCompare(std::string_view a, std::string_view b)
 	{
@@ -84,10 +84,6 @@ namespace INI
 #pragma endregion
 
 #pragma region GetDependency
-	static Dependency s_Rules{};
-	static Dependency s_Art{};
-	static Dependency s_AI{};
-
 	static Dependency GetRules()
 	{
 		if (s_Rules.empty())
@@ -150,12 +146,20 @@ namespace INI
 	}
 #pragma endregion
 
-	static GetDependency Rules = GetRules;
-	static GetDependency Art = GetArt;
-	static GetDependency AI = GetAI;
+	inline static GetDependency Rules = GetRules;
+	inline static GetDependency Art = GetArt;
+	inline static GetDependency AI = GetAI;
 
-	static const char* SectionGeneral = "General";
-	static const char* SectionCombatDamage = "CombatDamage";
-	static const char* SectionAudioVisual = "AudioVisual";
+	inline static const char* SectionGeneral = "General";
+	inline static const char* SectionCombatDamage = "CombatDamage";
+	inline static const char* SectionAudioVisual = "AudioVisual";
+
+private:
+	// ini文件名，文件名列表
+	inline static std::map<std::string, Dependency> s_Dependency{};
+
+	inline static Dependency s_Rules{};
+	inline static Dependency s_Art{};
+	inline static Dependency s_AI{};
 
 };

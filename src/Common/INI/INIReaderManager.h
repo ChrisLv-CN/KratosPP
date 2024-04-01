@@ -10,9 +10,9 @@
 
 #include <Common/EventSystems/EventSystem.h>
 
-namespace INIReaderManager
+class INIReaderManager
 {
-
+public:
 	struct INIReaderKey
 	{
 		std::vector<std::string> dependency;
@@ -30,9 +30,6 @@ namespace INIReaderManager
 
 		auto operator<=>(const INIConfigKey&) const = default;
 	};
-
-	static std::map<INIReaderKey, INIBufferReader*> s_BufferReader{};
-	static std::map<INIConfigKey, INIReader*> s_ConfigReader{};
 
 	static void ClearBuffer(EventSystem* sender, Event e, void* args)
 	{
@@ -82,4 +79,8 @@ namespace INIReaderManager
 
 		return reader;
 	}
+private:
+	inline static std::map<INIReaderKey, INIBufferReader*> s_BufferReader{};
+	inline static std::map<INIConfigKey, INIReader*> s_ConfigReader{};
+
 };

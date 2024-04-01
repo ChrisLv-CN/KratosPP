@@ -7,22 +7,18 @@
 #include "INIBuffer.h"
 #include "INIFileBuffer.h"
 
-namespace INIBufferManager
+class INIBufferManager
 {
+public:
 	struct LinkedBufferKey
 	{
 		std::vector<std::string> dependency;
 		std::string section;
 
-		auto operator<=>(const LinkedBufferKey &) const = default;
+		auto operator<=>(const LinkedBufferKey&) const = default;
 	};
 
-	// 每一个ini文件对应一个INIFileBuffer，为了保持顺序，用向量存储
-	static std::vector<INIFileBuffer*> s_File{};
-
-	static std::map<LinkedBufferKey, INILinkedBuffer*> s_LinkedBuffer{};
-
-	static void ClearBuffer(EventSystem *sender, Event e, void *args)
+	static void ClearBuffer(EventSystem* sender, Event e, void* args)
 	{
 		// 释放INIFileBuffer
 		for (auto fileBuffer : s_File)
@@ -44,9 +40,9 @@ namespace INIBufferManager
 	/// </summary>
 	/// <param name="fileName"></param>
 	/// <returns></returns>
-	static INIFileBuffer *FindFile(std::string fileName)
+	static INIFileBuffer* FindFile(std::string fileName)
 	{
-		for (auto buffer : s_File)
+		for (INIFileBuffer* buffer : s_File)
 		{
 			if (buffer->FileName == fileName)
 			{
@@ -61,7 +57,7 @@ namespace INIBufferManager
 		return buffer;
 	}
 
-	static INIBuffer *FindBuffer(std::string fileName, std::string section)
+	static INIBuffer* FindBuffer(std::string fileName, std::string section)
 	{
 		// ini文件按顺序储存，在查找时先读取Map.ini，GameMode.ini，最后读取Rules.ini
 		return FindFile(fileName)->GetSection(section);
@@ -74,7 +70,7 @@ namespace INIBufferManager
 	/// <param name="dependency"></param>
 	/// <param name="section"></param>
 	/// <returns></returns>
-	static INILinkedBuffer *FindLinkedBuffer(std::vector<std::string> dependency, std::string section)
+	static INILinkedBuffer* FindLinkedBuffer(std::vector<std::string> dependency, std::string section)
 	{
 		const LinkedBufferKey key{ dependency, section };
 		auto it = s_LinkedBuffer.find(key);
@@ -95,5 +91,12 @@ namespace INIBufferManager
 
 		return linkedBuffer;
 	}
+
+private:
+
+	// 每一个ini文件对应一个INIFileBuffer，为了保持顺序，用向量存储
+	inline static std::vector<INIFileBuffer*> s_File{};
+
+	inline static std::map<LinkedBufferKey, INILinkedBuffer*> s_LinkedBuffer{};
 
 };
