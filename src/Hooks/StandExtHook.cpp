@@ -243,6 +243,7 @@ DEFINE_HOOK(0x4DA87A, FootClass_Update_UpdateLayer, 0x6)
 
 namespace StandZAdjust
 {
+	TechnoClass* pSkip = nullptr;
 	TechnoClass* pStand = nullptr;
 	int zAdjust = -1;
 }
@@ -256,31 +257,39 @@ DEFINE_HOOK(0x4DB091, FootClass_GetZAdjustment, 0x6)
 		R->Stack(0x8, 0);
 		R->EAX(StandZAdjust::zAdjust);
 	}
+	else if (pTechno == StandZAdjust::pSkip)
+	{
+		// 什么都不做
+	}
 	else
 	{
-		int z = -1;
 		TechnoStatus* status = nullptr;
 		if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->pMyMaster && !status->MyStandData.IsTrain)
 		{
 			// 从JOJO身上获取ZAdjust
 			TechnoClass* pMaster = status->pMyMaster;
-			z = pMaster->GetZAdjustment();
+			int z = pMaster->GetZAdjustment();
+
+			StandZAdjust::pSkip = nullptr;
+			StandZAdjust::pStand = pTechno;
+			StandZAdjust::zAdjust = z;
+			R->EDI(0);
+			R->Stack(0x8, 0);
+			R->EAX(z);
 		}
 		else
 		{
-			z = R->EDI() + R->Stack<int>(0x8) + R->EAX();
+			StandZAdjust::pSkip = pTechno;
+			StandZAdjust::pStand = nullptr;
+			StandZAdjust::zAdjust = -1;
 		}
-		StandZAdjust::pStand = pTechno;
-		StandZAdjust::zAdjust = z;
-		R->EDI(0);
-		R->Stack(0x8, 0);
-		R->EAX(z);
 	}
 	return 0;
 }
 
 namespace StandYSort
 {
+	ObjectClass* pSkip = nullptr;
 	ObjectClass* pStand = nullptr;
 	int X = 0;
 	int Y = 0;
@@ -300,6 +309,10 @@ DEFINE_HOOK(0x5F6BF7, ObjectClass_GetYSort, 0x5)
 		*x = StandYSort::X;
 		*y = StandYSort::Y;
 	}
+	else if (pObject == StandYSort::pSkip)
+	{
+		// 什么都不做
+	}
 	else if (TechnoClass* pTechno = dynamic_cast<TechnoClass*>(pObject))
 	{
 		TechnoStatus* status = nullptr;
@@ -312,9 +325,15 @@ DEFINE_HOOK(0x5F6BF7, ObjectClass_GetYSort, 0x5)
 			*x = r.X + offset;
 			*y = r.Y + offset;
 		}
+		StandYSort::pSkip = nullptr;
 		StandYSort::pStand = pObject;
 		StandYSort::X = *x;
 		StandYSort::Y = *y;
+	}
+	else
+	{
+		StandYSort::pSkip = pObject;
+		StandYSort::pStand = nullptr;
 	}
 	return 0;
 }
