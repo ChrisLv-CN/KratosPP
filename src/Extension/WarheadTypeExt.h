@@ -291,61 +291,26 @@ public:
 		 */
 		void ReadAresVersus(INIBufferReader* reader)
 		{
-			if (!GetAresArmorValueArray().empty())
+			std::vector<std::pair<std::string, AresVersus>> armorValues = GetAresArmorValueArray();
+			std::string title = "Versus.";
+			for (auto it : armorValues)
 			{
-				std::string title = "Versus.";
-				for (auto& it : GetAresArmorValueArray())
-				{
-					// 获得所有自定义护甲的信息
-					std::string key = it.first;
-					// 护甲类型对应的比例字符串
-					std::string value = it.second;
-
-					AresVersus aresVersus;
-					// 实际的比例
-					if (!value.empty())
-					{
-						// 比例字符串转成数值
-						int armorIndex = -1;
-						if (IsDefaultArmor(value, armorIndex) && armorIndex >= 0 && armorIndex < 11)
-						{
-							double vs = Versus[armorIndex]; // 从弹头比例中读取比例
-							if (LESS_EQUAL(vs, 0.02)) {
-								aresVersus.PassiveAcquire = false;
-							}
-							if (LESS_EQUAL(vs, 0.01)) {
-								aresVersus.Retaliate = false;
-							}
-							if (LESS_EQUAL(vs, 0.00)) {
-								aresVersus.ForceFire = false;
-							}
-						}
-						else
-						{
-							// 自定义护甲
-							aresVersus.Parse(value.c_str());
-						}
-					}
-					// 读取弹头上的护甲设置
-					// 如果是嵌套护甲，没有明写，那么就需要去读嵌套的
-					std::stack<std::string> armorNames{};
-					GetArmorKeys(key, GetAresArmorArray(), armorNames);
-					// 开始读取护甲的设置
-					while (!armorNames.empty())
-					{
-						std::string armor = armorNames.top();
-						armorNames.pop();
-						aresVersus.Read(reader, title, armor);
-					}
-					AresVersusArray.emplace_back(aresVersus);
-				}
+				// 获得所有自定义护甲的信息
+				std::string armor = it.first;
+				// 护甲类型对应的比例字符串
+				AresVersus defaultValue = it.second;
+				// 实际的比例
+				AresVersus aresVersus = defaultValue;
+				// 读取弹头上的护甲设置
+				aresVersus.Read(reader, title, armor);
+				AresVersusArray.emplace_back(aresVersus);
 			}
 		}
 	};
 
-	static int ReadAresArmorTypes()
+	static void ReadAresArmorTypes()
 	{
-		return GetAresArmorValueArray().size();
+		GetAresArmorValueArray();
 	}
 
 	static constexpr DWORD Canary = 0x22222222;
@@ -362,43 +327,7 @@ private:
 	 * @return true
 	 * @return false
 	 */
-	static bool IsDefaultArmor(std::string armor, int& index)
-	{
-		index = 0;
-		std::string a = lowercase(armor);
-		auto it = ArmorTypeStrings.find(a);
-		if (it != ArmorTypeStrings.end())
-		{
-			Armor aa = it->second;
-			index = static_cast<int>(aa);
-			return true;
-		}
-		return false;
-	}
-
-	static void GetArmorKeys(std::string key, std::vector<std::pair<std::string, std::string>> array, std::stack<std::string>& keys)
-	{
-		for (auto& kv : array)
-		{
-			if (kv.first == key)
-			{
-				keys.push(key);
-				// 查找是否嵌套
-				std::string value = kv.second;
-				int index = 0;
-				if (value.find("%") != std::string::npos || IsDefaultArmor(value, index))
-				{
-					return;
-				}
-				// 迭代查找
-				if (value != key)
-				{
-					GetArmorKeys(value, array, keys);
-				}
-				break;
-			}
-		}
-	}
+	static bool IsDefaultArmor(std::string armor, int& index);
 
 	/**
 	 *@brief 迭代查找嵌套护甲的最底层的数值
@@ -407,30 +336,7 @@ private:
 	 * @param array
 	 * @return std::string
 	 */
-	static std::string GetArmorValue(std::string key, std::vector<std::pair<std::string, std::string>> array)
-	{
-		for (auto& kv : array)
-		{
-			if (kv.first == key)
-			{
-				std::string value = kv.second;
-				// 如果是百分比则返回百分比，如果是游戏默认护甲，则返回默认护甲
-				int index = 0;
-				if (value.find("%", 0) != std::string::npos || IsDefaultArmor(value, index))
-				{
-					return value;
-				}
-				// 迭代查找
-				if (value != key)
-				{
-					return GetArmorValue(value, array);
-				}
-				break;
-			}
-		}
-		Debug::Log("Warning: Try to read Ares's [ArmorTypes] but type [%s] value is wrong.", key.c_str());
-		return "0%";
-	}
+	static std::string GetArmorValue(std::string key, std::vector<std::pair<std::string, std::string>> array);
 
 	/**
 	 *@brief 读取Ares护甲注册表，护甲的对应关系.\n
@@ -439,35 +345,7 @@ private:
 	 * XXOO = OOXX\n
 	 * @return std::vector<std::pair<std::string, std::string>>
 	 */
-	static std::vector<std::pair<std::string, std::string>> GetAresArmorArray()
-	{
-		if (_aresArmorArray.empty())
-		{
-			const char* section = "ArmorTypes";
-			if (INI::HasSection(INI::Rules, section))
-			{
-				CCINIClass* pINI = CCINIClass::INI_Rules;
-				int count = pINI->GetKeyCount(section);
-				if (count > 0)
-				{
-					INIBufferReader* reader = INI::GetSection(INI::Rules, section);
-					Debug::Log("Try to read Ares's [ArmorTypes], get %d custom types.\n", count);
-					for (int i = 0; i < count; i++)
-					{
-						std::string keyName = pINI->GetKeyName(section, i);
-						std::string value = reader->Get(keyName.c_str(), std::string{ "" });
-						if (value.empty())
-						{
-							Debug::Log("Warning: Try to read Ares's [ArmorTypes], ArmorType %s is %s\n", keyName.c_str(), value.c_str());
-							value = "0%";
-						}
-						_aresArmorArray.push_back(std::pair<std::string, std::string>{ keyName, value });
-					}
-				}
-			}
-		}
-		return _aresArmorArray;
-	}
+	static std::vector<std::pair<std::string, std::string>> GetAresArmorArray();
 
 	/**
 	 * @brief 读取整理之后的护甲和比例.\n
@@ -475,67 +353,14 @@ private:
 	 * OOXX = 100%\n
 	 * XXOO = 100%\n
 	 *
-	 * @return std::vector<std::pair<std::string, std::string>>
+	 * @return std::vector<std::pair<std::string, AresVersus>>
 	 */
-	static std::vector<std::pair<std::string, std::string>> GetAresArmorValueArray()
-	{
-		if (_aresArmorValueArray.empty() && !GetAresArmorArray().empty())
-		{
-			// 格式化所有的自定义护甲，包含嵌套护甲，获取实际的护甲信息，作为默认值
-			_aresArmorValueArray = { GetAresArmorArray() };
-			for (auto& it : GetAresArmorArray())
-			{
-				std::string key = it.first;
-				std::string value = GetArmorValue(key, GetAresArmorArray());
-				for (auto& kv : _aresArmorValueArray)
-				{
-					if (kv.first == key)
-					{
-						kv.second = value; // 更新为新的值
-						break;
-					}
-				}
-			}
-			// 输出日志检查是否正确
-			std::string logMsg = "[ArmorTypes]\n";
-			int i = 11;
-			for (auto it : GetAresArmorArray())
-			{
-				std::string key = it.first;
-				std::string value = it.second;
-				int nPos = value.find("%", 0);
-				int index = 0;
-				if (nPos != std::string::npos || IsDefaultArmor(value, index))
-				{
-					char sp = '%';
-					value = nPos >= 0 ? value.insert(nPos, 1, sp) : value;
-					logMsg += "     Armor " + std::to_string(i) + " - " + key + " = " + value + "\n";
-				}
-				else
-				{
-					std::string vv = "";
-					for (auto& kv : _aresArmorValueArray)
-					{
-						if (kv.first == key)
-						{
-							vv = kv.second;
-							break;
-						}
-					}
-					nPos = vv.find("%", 0);
-					char sp = '%';
-					vv = nPos >= 0 ? vv.insert(nPos, 1, sp) : vv;
-					logMsg += "     Armor " + std::to_string(i) + " - " + key + " = " + value + " = " + vv + "\n";
-				}
-				i++;
-			}
-			Debug::Log(logMsg.c_str());
-		}
-		return _aresArmorValueArray;
-	}
+	static std::vector<std::pair<std::string, AresVersus>> GetAresArmorValueArray();
 
-	inline static std::vector<std::pair<std::string, std::string>> _aresArmorArray{}; // Ares护甲注册表，护甲的对应关系
-	inline static std::vector<std::pair<std::string, std::string>> _aresArmorValueArray{}; // 读取完所有嵌套护甲对应的百分比默认值
+	// Ares护甲注册表，护甲的对应关系，OOXX=none，XXOO=OOXX
+	static std::vector<std::pair<std::string, std::string>> _aresArmorArray;
+	// 读取完所有嵌套护甲对应的百分比默认值，OOXX=100%，XXOO=100%
+	static std::vector<std::pair<std::string, AresVersus>> _aresArmorValueArray;
 
 
 };
