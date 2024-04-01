@@ -163,18 +163,77 @@ public:
 	/// execute action for each components in root (include itself)
 	/// </summary>
 	/// <param name="action"></param>
-	void Foreach(std::function<void(Component*)> action);
+	template<typename F>
+	void Foreach(F action)
+	{
+		// 执行全部
+		int level = 0;
+		int maxLevel = -1;
+		ForeachLevel(action, level, maxLevel);
 
-	void ForeachLevel(std::function<void(Component*)> action, int& level, int& maxLevel);
+		OnForeachEnd();
+	}
+
+	template<typename F>
+	void ForeachLevel(F action, int& level, int& maxLevel)
+	{
+		// 执行自身
+		if (IsEnable() && IsActive())
+		{
+			Component* _this = this;
+			action(_this);
+			int nextLevel = level + 1;
+			if (maxLevel < 0 || nextLevel < maxLevel)
+			{
+				// 执行子模块
+				for (Component* c : _children)
+				{
+					c->ForeachLevel(action, nextLevel, maxLevel);
+					if (c->IsBreak())
+					{
+						break;
+					}
+				}
+			}
+		}
+		// 清理失效的子模块
+		ClearDisableComponent();
+	}
 
 	/// <summary>
 	/// execute action for each child (exclude child's child)
 	/// </summary>
 	/// <param name="action"></param>
-	void ForeachChild(std::function<void(Component*)> action, bool force = false);
+	template<typename F>
+	void ForeachChild(F action, bool force = false)
+	{
+		for (Component* c : _children)
+		{
+			action(c);
+			if (!force)
+			{
+				if (c->IsBreak())
+				{
+					break;
+				}
+			}
+		}
+	}
 
-	void Break();
-	bool IsBreak();
+	void Break()
+	{
+		_break = true;
+	}
+
+	bool IsBreak()
+	{
+		if (_break)
+		{
+			_break = false;
+			return true;
+		}
+		return _break;
+	}
 #pragma endregion
 
 #pragma region GetComponent
@@ -329,7 +388,8 @@ public:
 		return instance;
 	}
 
-	using ComponentCreator = std::function<Component* (void)>;
+	// using ComponentCreator = std::function<Component* (void)>;
+	using ComponentCreator = Component * (*) (void);
 
 	int Register(const std::string& name, ComponentCreator creator)
 	{
