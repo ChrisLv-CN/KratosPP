@@ -59,6 +59,7 @@ DEFINE_HOOK(0x75DEA0, WarheadTypeClass_LoadFromINI, 0x5)
 	GET_STACK(CCINIClass *, pINI, 0x150);
 
 	WarheadTypeExt::ExtMap.LoadFromINI(pItem, pINI);
+	WarheadTypeExt::ReadAresArmorTypes();
 
 	return 0;
 }

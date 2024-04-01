@@ -29,15 +29,15 @@ public:
 
 		virtual void LoadFromINIFile(CCINIClass *pINI) override
 		{
-			auto pThis = this->OwnerObject();
-			const char *pSection = pThis->ID;
+			// auto pThis = this->OwnerObject();
+			// const char *pSection = pThis->ID;
 
-			if (!pINI->GetSection(pSection))
-			{
-				return;
-			}
+			// if (!pINI->GetSection(pSection))
+			// {
+			// 	return;
+			// }
 
-			INI_EX exINI(pINI);
+			// INI_EX exINI(pINI);
 
 			// read ini
 		};
