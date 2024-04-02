@@ -146,17 +146,20 @@ ObjectClass* AutoWeaponEffect::MakeFakeTarget(HouseClass* pHouse, ObjectClass* p
 		else if (CastToBullet(pShooter, pShooterBullet))
 		{
 			dir = Facing(pBullet, location);
+			targetPos = GetFLHAbsoluteCoords(location, targetFLH, dir);
 		}
-		targetPos = GetFLHAbsoluteCoords(location, targetFLH, dir);
 	}
-	// 创建假想敌
-	if (OverlayTypeClass* pOverlayType = OverlayTypeClass::Array.get()->GetItem(0))
+	if (!targetPos.IsEmpty())
 	{
-		ObjectClass* pFakeTarget = pOverlayType->CreateObject(pHouse);
-		pFakeTarget->SetLocation(targetPos);
-		pFakeTarget->InLimbo = false;
-		pFakeTarget->IsVisible = false;
-		return pFakeTarget;
+		// 创建假想敌
+		if (OverlayTypeClass* pOverlayType = OverlayTypeClass::Array.get()->GetItem(0))
+		{
+			ObjectClass* pFakeTarget = pOverlayType->CreateObject(pHouse);
+			pFakeTarget->SetLocation(targetPos);
+			pFakeTarget->InLimbo = false;
+			pFakeTarget->IsVisible = false;
+			return pFakeTarget;
+		}
 	}
 	return nullptr;
 }
