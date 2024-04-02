@@ -73,7 +73,7 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 			{
 				if (fLoco->Is_Moving_Now())
 				{
-					x = pType->RollAngle;
+					x = (float)pType->RollAngle;
 				}
 				else
 				{
@@ -87,7 +87,7 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 				}
 				else
 				{
-					y = pType->PitchAngle;
+					y = (float)pType->PitchAngle;
 				}
 				// 加上姿态的角度
 				if (AircraftAttitude* attitude = GetScript<TechnoExt, AircraftAttitude>(pTechno))

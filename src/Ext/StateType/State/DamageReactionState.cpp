@@ -109,7 +109,7 @@ void DamageReactionState::OnReceiveDamage(args_ReceiveDamage* args)
 					if (action)
 					{
 						// 调整伤害系数
-						*args->Damage *= data.ReducePercent;
+						*args->Damage = (int)(damage * data.ReducePercent);
 					}
 					break;
 				}

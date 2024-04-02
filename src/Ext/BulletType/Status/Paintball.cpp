@@ -17,9 +17,12 @@ void BulletStatus::DrawVXL_Paintball(REGISTERS* R)
 
 void BulletStatus::OnUpdate_Paintball()
 {
-	if (Paintball && Paintball->NeedPaint(MyPaintData.ChangeColor, MyPaintData.ChangeBright))
+	if (Paintball->IsAlive())
 	{
-		MyPaintData.Data = Paintball->Data;
+		PaintballData data = Paintball->Data;
+		MyPaintData.ChangeColor = data.ChangeColor;
+		MyPaintData.ChangeBright = data.ChangeBright;
+		MyPaintData.Data = data;
 	}
 	else
 	{

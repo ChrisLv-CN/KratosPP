@@ -19,7 +19,7 @@ void BulletStatus::OnUpdate_RecalculateStatus()
 		int newHealth = _recordStatus.Health;
 		if (aeBuff.FirepowerMultiplier != 1)
 		{
-			newHealth *= aeBuff.FirepowerMultiplier;
+			newHealth = (int)(newHealth * aeBuff.FirepowerMultiplier);
 		}
 		// 重设伤害值
 		pBullet->Health = newHealth;

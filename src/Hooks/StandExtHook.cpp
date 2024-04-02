@@ -342,35 +342,69 @@ namespace StandLayer
 {
 	TechnoClass* pStand = nullptr;
 	Layer layer = Layer::Ground;
+
+	static Layer GetLayer(TechnoClass* pTechno)
+	{
+		Layer layer = pTechno->IsInAir() && !pTechno->IsFallingDown ? Layer::Air : Layer::Ground;
+		if (pTechno == pStand)
+		{
+			layer = layer;
+		}
+		else
+		{
+			TechnoStatus* status = nullptr;
+			if (TryGetStatus<TechnoExt, TechnoStatus>(pTechno, status) && status->AmIStand() && status->pMyMaster && !status->MyStandData.IsTrain)
+			{
+				// 替身从Master身上获取渲染层
+				Layer l = status->pMyMaster->LastLayer;
+				if (l != Layer::None)
+				{
+					layer = l;
+				}
+			}
+			pStand = pTechno;
+			layer = layer;
+		}
+		return layer;
+	}
 }
 
-DEFINE_HOOK_AGAIN(0x75C7E0, LocomotionClass_In_Which_Layer, 0x5) // WalkLoco
-DEFINE_HOOK_AGAIN(0x6A3E50, LocomotionClass_In_Which_Layer, 0x5) // ShipLoco
-DEFINE_HOOK_AGAIN(0x5B19D0, LocomotionClass_In_Which_Layer, 0x5) // MechLoco
-DEFINE_HOOK_AGAIN(0x517100, LocomotionClass_In_Which_Layer, 0x5) // HoverLoco
-DEFINE_HOOK(0x4B4820, LocomotionClass_In_Which_Layer, 0x5) // DriveLoco
+DEFINE_HOOK(0x75C7E0, WalkLocomotionClass_In_Which_Layer, 0x5) // WalkLoco
 {
 	GET(TechnoClass*, pTechno, ESI);
-	Layer layer = pTechno->IsInAir() ? Layer::Air : Layer::Ground;
-	if (pTechno == StandLayer::pStand)
-	{
-		layer = StandLayer::layer;
-	}
-	else
-	{
-		TechnoStatus* status = nullptr;
-		if (TryGetStatus<TechnoExt, TechnoStatus>(pTechno, status) && status->AmIStand() && status->pMyMaster && !status->MyStandData.IsTrain)
-		{
-			// 替身从Master身上获取渲染层
-			Layer l = status->pMyMaster->LastLayer;
-			if (l != Layer::None)
-			{
-				layer = l;
-			}
-		}
-		StandLayer::pStand = pTechno;
-		StandLayer::layer = layer;
-	}
+	Layer layer = StandLayer::GetLayer(pTechno);
+	R->EAX(layer);
+	return 0x75C7E5;
+}
+
+DEFINE_HOOK(0x6A3E50, ShipLocomotionClass_In_Which_Layer, 0x5) // ShipLoco
+{
+	GET(TechnoClass*, pTechno, ESI);
+	Layer layer = StandLayer::GetLayer(pTechno);
+	R->EAX(layer);
+	return 0x6A3E55;
+}
+
+DEFINE_HOOK(0x5B19D0, MechLocomotionClass_In_Which_Layer, 0x5) // MechLoco
+{
+	GET(TechnoClass*, pTechno, ESI);
+	Layer layer = StandLayer::GetLayer(pTechno);
+	R->EAX(layer);
+	return 0x5B19D5;
+}
+
+DEFINE_HOOK(0x517100, HoverLocomotionClass_In_Which_Layer, 0x5) // HoverLoco
+{
+	GET(TechnoClass*, pTechno, ESI);
+	Layer layer = StandLayer::GetLayer(pTechno);
+	R->EAX(layer);
+	return 0x517105;
+}
+
+DEFINE_HOOK(0x4B4820, DriveLocomotionClass_In_Which_Layer, 0x5) // DriveLoco
+{
+	GET(TechnoClass*, pTechno, ESI);
+	Layer layer = StandLayer::GetLayer(pTechno);
 	R->EAX(layer);
 	return 0x4B4825;
 }
@@ -387,7 +421,6 @@ DEFINE_HOOK(0x54B8E9, JumpjetLocomotionClass_In_Which_Layer_Deviation, 0x6)
 	}
 	return 0;
 }
-
 #pragma endregion
 
 #pragma region Amin ChronoSparkle

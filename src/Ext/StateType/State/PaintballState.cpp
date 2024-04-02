@@ -44,7 +44,7 @@ bool PaintballState::NeedPaint(bool& changeColor, bool& changeBright)
 {
 	changeColor = false;
 	changeBright = false;
-	if (IsAlive())
+	if (this->IsAlive())
 	{
 		changeColor = Data.ChangeColor;
 		changeBright = Data.ChangeBright;

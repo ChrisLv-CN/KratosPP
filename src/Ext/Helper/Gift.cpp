@@ -20,8 +20,9 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell, 
 	{
 		auto occFlags = pCell->OccupationFlags;
 		pTechno->OnBridge = pCell->ContainsBridge();
+		CoordStruct xyz = pCell->GetCoordsWithBridge();
 		++Unsorted::IKnowWhatImDoing;
-		pTechno->Unlimbo(pCell->GetCoordsWithBridge(), DirType::East);
+		pTechno->Unlimbo(xyz, DirType::East);
 		--Unsorted::IKnowWhatImDoing;
 		if (virtualUnit)
 		{
@@ -47,9 +48,8 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell, 
 		if (!dontMove)
 		{
 			// 单位移动到指定位置
-			CoordStruct pos = pTechno->GetCoords();
-			pos.Z = location.Z;
-			pTechno->SetLocation(pos);
+			xyz.Z = location.Z;
+			pTechno->SetLocation(xyz);
 		}
 		return true;
 	}

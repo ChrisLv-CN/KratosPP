@@ -216,7 +216,7 @@ void DecoyMissile::OnUpdate()
 				{
 					CoordStruct initTarget = targetL;
 					CoordStruct port = portL;
-					BulletVelocity v{ velocityL.X, velocityL.Y, velocityL.Z };
+					BulletVelocity v{ (double)velocityL.X, (double)velocityL.Y, (double)velocityL.Z };
 					if (i > 0)
 					{
 						initTarget = targetR;

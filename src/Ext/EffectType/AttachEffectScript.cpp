@@ -315,7 +315,8 @@ void AttachEffectScript::Start(TechnoClass* pSource, HouseClass* pSourceHouse, C
 		this->_diffSource = true;
 		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AttachEffectScript::OnTechnoDelete);
 	}
-	if (this->FromWarhead = !warheadLocation.IsEmpty())
+	this->FromWarhead = !warheadLocation.IsEmpty();
+	if (FromWarhead)
 	{
 		this->WarheadLocation = warheadLocation;
 	}

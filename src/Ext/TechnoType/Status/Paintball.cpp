@@ -210,9 +210,13 @@ void TechnoStatus::DrawVXL_Paintball(REGISTERS* R, bool isBuilding)
 
 void TechnoStatus::OnUpdate_Paintball()
 {
-	if (Paintball->NeedPaint(MyPaintData.ChangeColor, MyPaintData.ChangeBright))
+	bool needPaint = Paintball->IsAlive();
+	if (needPaint)
 	{
-		MyPaintData.Data = Paintball->Data;
+		PaintballData data = Paintball->Data;
+		MyPaintData.ChangeColor = data.ChangeColor;
+		MyPaintData.ChangeBright = data.ChangeBright;
+		MyPaintData.Data = data;
 	}
 	else
 	{
@@ -261,7 +265,7 @@ void TechnoStatus::OnUpdate_Paintball()
 			}
 		}
 
-		if (Paintball && Paintball->IsAlive())
+		if (needPaint)
 		{
 			if (!_buildingWasColor || Paintball->IfReset())
 			{

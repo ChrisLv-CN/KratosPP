@@ -56,7 +56,8 @@ void PumpState::SetupPump()
 		{
 			// 单位在爆炸范围内
 			targetPos = GetForwardCoords(AEWarheadLocation, sourcePos, dist + forward);
-			velocity = GetBulletArcingVelocity(sourcePos, targetPos, 0, gravity, Data.Lobber, Data.Inaccurate, Data.ScatterMin, Data.ScatterMax, gravity, straightDistance, realSpeed, pTargetCell);
+			int zOffset = (int)gravity;
+			velocity = GetBulletArcingVelocity(sourcePos, targetPos, 0, gravity, Data.Lobber, Data.Inaccurate, Data.ScatterMin, Data.ScatterMax, zOffset, straightDistance, realSpeed, pTargetCell);
 		}
 	}
 	if (ActionJump(velocity, (int)gravity, straightDistance))

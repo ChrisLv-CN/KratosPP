@@ -56,21 +56,21 @@ DEFINE_HOOK(0x5185C8, Infantry_ReceiveDamage_DeathAnim_Remap, 0x6)
 
 #pragma endregion
 
-DEFINE_HOOK(0x51F5C0, Infantry_Mission_Hunt_Deploy, 0x6)
-{
-	GET(InfantryClass*, pInf, ESI);
-	Sequence doing = pInf->SequenceAnim;
-	AbstractClass* pTarget = pInf->Target;
-	if (!pInf->Owner->IsControlledByHuman()
-		&& pTarget && pInf->IsCloseEnough(pTarget, pInf->SelectWeapon(pTarget))
-		&& doing != Sequence::Deploy && doing != Sequence::Deployed && doing != Sequence::DeployedFire && doing != Sequence::DeployedIdle)
-	{
-		int result = pInf->UpdateDeplory();
-		if (result != -1)
-		{
-			R->EAX(result);
-			return 0x51F5BE;
-		}
-	}
-	return 0;
-}
+// DEFINE_HOOK(0x51F5C0, Infantry_Mission_Hunt_Deploy, 0x6)
+// {
+// 	GET(InfantryClass*, pInf, ESI);
+// 	Sequence doing = pInf->SequenceAnim;
+// 	AbstractClass* pTarget = pInf->Target;
+// 	if (!pInf->Owner->IsControlledByHuman()
+// 		&& pTarget && pInf->IsCloseEnough(pTarget, pInf->SelectWeapon(pTarget))
+// 		&& doing != Sequence::Deploy && doing != Sequence::Deployed && doing != Sequence::DeployedFire && doing != Sequence::DeployedIdle)
+// 	{
+// 		int result = pInf->UpdateDeplory();
+// 		if (result != -1)
+// 		{
+// 			R->EAX(result);
+// 			return 0x51F5BE;
+// 		}
+// 	}
+// 	return 0;
+// }

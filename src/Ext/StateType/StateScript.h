@@ -127,7 +127,7 @@ public:
 	virtual void OnStart() {};
 	virtual void OnEnd() {};
 
-	virtual bool IsAlive()
+	bool IsAlive()
 	{
 		if (IsActive())
 		{

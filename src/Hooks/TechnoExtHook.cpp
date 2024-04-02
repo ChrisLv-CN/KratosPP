@@ -550,7 +550,7 @@ DEFINE_HOOK(0x6F72E3, TechnoClass_IsRange, 0x6)
 	{
 		CrateBuffData data = aeManager->CountAttachStatusMultiplier();
 		range += (int)(data.RangeCell * Unsorted::LeptonsPerCell);
-		range *= data.RangeMultiplier;
+		range = (int)(range * data.RangeMultiplier);
 	}
 	R->EDI(range);
 	return 0;

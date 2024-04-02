@@ -52,7 +52,7 @@ std::string WString2String(std::wstring wstr)
 	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), buffer, len, NULL, NULL);
 	buffer[len] = '\0';
 	res.append(buffer);
-	delete buffer;
+	delete[] buffer;
 	return res;
 }
 
@@ -76,7 +76,7 @@ std::wstring String2WString(std::string str)
 	MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), buffer, len);
 	buffer[len] = '\0';
 	res.append(buffer);
-	delete buffer;
+	delete[] buffer;
 	return res;
 }
 
@@ -97,7 +97,7 @@ std::string GetUUID()
 {
     std::string strUUID;
     GUID guid;
-    if (!CoCreateGuid(&guid)) {
+    if (SUCCEEDED(CoCreateGuid(&guid))) {
         char buffer[64] = { 0 };
         _snprintf_s(buffer, sizeof(buffer),
             "%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",    //大写

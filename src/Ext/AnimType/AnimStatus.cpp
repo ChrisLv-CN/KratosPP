@@ -277,7 +277,8 @@ void AnimStatus::OnUpdate_Damage()
 		{
 			if (!pCreater)
 			{
-				if (!(_createrIsDeadth = !GetAnimDamageData()->KillByCreater))
+				_createrIsDeadth = !GetAnimDamageData()->KillByCreater;
+				if (!_createrIsDeadth)
 				{
 					TechnoClass* pCreater = nullptr;
 					ObjectClass* pOwner = pAttachOwner;

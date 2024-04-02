@@ -304,7 +304,7 @@ void JumpjetCarryall::OnUpdate()
 			JumpjetLocomotionClass* pJJ = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get());
 			if (pJJ)
 			{
-				climb = pJJ->Climb;
+				climb = (int)pJJ->Climb;
 			}
 			bool close = (location.Z <= z + climb) || pTechno->GetHeight() <= Unsorted::LevelHeight;
 			if (!close)
