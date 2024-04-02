@@ -345,10 +345,10 @@ namespace StandLayer
 
 	static Layer GetLayer(TechnoClass* pTechno)
 	{
-		Layer layer = pTechno->IsInAir() && !pTechno->IsFallingDown ? Layer::Air : Layer::Ground;
+		Layer result = pTechno->IsInAir() && !pTechno->IsFallingDown ? Layer::Air : Layer::Ground;
 		if (pTechno == pStand)
 		{
-			layer = layer;
+			result = layer;
 		}
 		else
 		{
@@ -359,13 +359,13 @@ namespace StandLayer
 				Layer l = status->pMyMaster->LastLayer;
 				if (l != Layer::None)
 				{
-					layer = l;
+					result = l;
 				}
 			}
 			pStand = pTechno;
-			layer = layer;
+			layer = result;
 		}
-		return layer;
+		return result;
 	}
 }
 
