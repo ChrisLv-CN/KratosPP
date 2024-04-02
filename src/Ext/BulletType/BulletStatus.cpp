@@ -254,6 +254,7 @@ void BulletStatus::OnUpdate()
 	{
 		OnUpdate_BlackHole();
 		OnUpdate_GiftBox();
+		OnUpdate_Paintball();
 		OnUpdate_RecalculateStatus();
 		OnUpdate_SelfLaunchOrPumpAction();
 	}

@@ -230,16 +230,27 @@ DEFINE_HOOK(0x469EB4, BulletClass_Detonate_WHDebris_Remap, 0x6)
 	return 0;
 }
 
+namespace BulletColour
+{
+	BulletClass* pBullet = nullptr;
+	PaintData myData{};
+}
+
 DEFINE_HOOK(0x4683E2, BulletClass_DrawSHP_Colour, 0x5)
 {
 	GET(BulletClass*, pBullet, ESI);
+	BulletColour::pBullet = nullptr;
 	if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pBullet))
 	{
-		bool changeColor = false;
-		bool changeBright = false;
-		if (status->Paintball->NeedPaint(changeColor, changeBright) && changeColor)
+		PaintData data = status->MyPaintData;
+		if (data.ChangeColor || data.ChangeBright)
 		{
-			R->Stack(0, status->Paintball->Data.Color2);
+			BulletColour::pBullet = pBullet;
+			BulletColour::myData = data;
+			if (data.ChangeColor)
+			{
+				R->Stack(0, data.Data.Color2);
+			}
 		}
 	}
 	return 0;
@@ -248,15 +259,11 @@ DEFINE_HOOK(0x4683E2, BulletClass_DrawSHP_Colour, 0x5)
 DEFINE_HOOK(0x4683E7, BulletClass_DrawSHP_Bright, 0x9)
 {
 	GET(BulletClass*, pBullet, ESI);
-	if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pBullet))
+	if (pBullet == BulletColour::pBullet && BulletColour::myData.ChangeBright)
 	{
-		bool changeColor = false;
-		bool changeBright = false;
-		if (status->Paintball->NeedPaint(changeColor, changeBright) && changeBright)
-		{
-			R->Stack(0, GetBright(1000, status->Paintball->Data.BrightMultiplier));
-		}
+		R->Stack(0, GetBright(1000, BulletColour::myData.Data.BrightMultiplier));
 	}
+	BulletColour::pBullet = nullptr;
 	return 0;
 }
 

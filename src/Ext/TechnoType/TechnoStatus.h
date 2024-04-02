@@ -252,12 +252,16 @@ public:
 
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
+
 	// 替身的配置
 	StandData MyStandData{};
 	TechnoClass* pMyMaster = nullptr;
 	bool MyMasterIsSpawned = false;
 	bool MyMasterIsAnim = false;
 	bool StandIsMoving = false;
+
+	// 染色配置
+	PaintData MyPaintData{};
 
 	DrivingState drivingState = DrivingState::Moving;
 
@@ -297,6 +301,8 @@ public:
 			.Process(this->MyStandData)
 			.Process(this->pMyMaster)
 			.Process(this->MyMasterIsSpawned)
+
+			.Process(this->MyPaintData)
 
 			.Process(this->DisableVoxelCache)
 

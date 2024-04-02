@@ -29,18 +29,16 @@ void TechnoStatus::SetExtraSparkleAnim(AnimClass* pAnim)
 
 void TechnoStatus::DrawSHP_Paintball(REGISTERS* R)
 {
-	bool changeColor = false;
-	bool changeBright = false;
-	if (Paintball->NeedPaint(changeColor, changeBright) && !pTechno->Berzerk && !pTechno->IsIronCurtained())
+	if (!pTechno->Berzerk && !pTechno->IsIronCurtained())
 	{
-		if (changeColor)
+		if (MyPaintData.ChangeColor)
 		{
-			R->EAX(Paintball->Data.Color2);
+			R->EAX(MyPaintData.Data.Color2);
 		}
-		if (changeBright)
+		if (MyPaintData.ChangeBright)
 		{
 			GET(unsigned int, bright, EBP);
-			R->EBP(GetBright(bright, Paintball->Data.BrightMultiplier));
+			R->EBP(GetBright(bright, MyPaintData.Data.BrightMultiplier));
 		}
 	}
 }
@@ -74,18 +72,16 @@ void TechnoStatus::DrawSHP_Paintball_BuildingAnim(REGISTERS* R)
 		R->Stack(0x38, GetBright(bright, _deactivateDimEMP));
 	}
 
-	bool changeColor = false;
-	bool changeBright = false;
 	// pTechno.Ref.ForceShielded 在护盾启用一次后，一直是1，所以不能用来判断是否正处于护盾状态，只能通过判断pTechno.Ref.Base.IsIronCurtained()来判断处于无敌状态
-	if (Paintball->NeedPaint(changeColor, changeBright) && !pTechno->Berzerk && !pTechno->IsIronCurtained())
+	if (!pTechno->Berzerk && !pTechno->IsIronCurtained())
 	{
-		if (changeColor)
+		if (MyPaintData.ChangeColor)
 		{
-			R->EBP(Paintball->Data.Color2);
+			R->EBP(MyPaintData.Data.Color2);
 		}
-		if (changeBright)
+		if (MyPaintData.ChangeBright)
 		{
-			R->Stack(0x38, GetBright(bright, Paintball->Data.BrightMultiplier));
+			R->Stack(0x38, GetBright(bright, MyPaintData.Data.BrightMultiplier));
 		}
 	}
 }
@@ -180,36 +176,33 @@ void TechnoStatus::DrawVXL_Paintball(REGISTERS* R, bool isBuilding)
 		}
 	}
 
-
-	bool changeColor = false;
-	bool changeBright = false;
 	// pTechno.Ref.ForceShielded 在护盾启用一次后，一直是1，所以不能用来判断是否正处于护盾状态，只能通过判断pTechno.Ref.Base.IsIronCurtained()来判断处于无敌状态
-	if (Paintball->NeedPaint(changeColor, changeBright) && !pTechno->Berzerk && !pTechno->IsIronCurtained())
+	if (!pTechno->Berzerk && !pTechno->IsIronCurtained())
 	{
-		if (changeColor)
+		if (MyPaintData.ChangeColor)
 		{
 			if (isBuilding)
 			{
 				// Vxl turret
-				R->Stack(0x24, Paintball->Data.Color2);
+				R->Stack(0x24, MyPaintData.Data.Color2);
 			}
 			else
 			{
-				R->ESI(Paintball->Data.Color2);
+				R->ESI(MyPaintData.Data.Color2);
 			}
 		}
-		if (changeBright)
+		if (MyPaintData.ChangeBright)
 		{
 			if (isBuilding)
 			{
 				// Vxl turret
 				GET_STACK(unsigned int, bright, 0x20);
-				R->Stack(0x20, GetBright(bright, Paintball->Data.BrightMultiplier));
+				R->Stack(0x20, GetBright(bright, MyPaintData.Data.BrightMultiplier));
 			}
 			else
 			{
 				GET_STACK(unsigned int, bright, 0x1E0);
-				R->Stack(0x1E0, GetBright(bright, Paintball->Data.BrightMultiplier));
+				R->Stack(0x1E0, GetBright(bright, MyPaintData.Data.BrightMultiplier));
 			}
 		}
 	}
@@ -217,6 +210,15 @@ void TechnoStatus::DrawVXL_Paintball(REGISTERS* R, bool isBuilding)
 
 void TechnoStatus::OnUpdate_Paintball()
 {
+	if (Paintball->NeedPaint(MyPaintData.ChangeColor, MyPaintData.ChangeBright))
+	{
+		MyPaintData.Data = Paintball->Data;
+	}
+	else
+	{
+		MyPaintData.Reset();
+	}
+
 	// 修改建筑动画的染色状态
 	if (IsBuilding() && !AmIStand())
 	{
@@ -259,7 +261,7 @@ void TechnoStatus::OnUpdate_Paintball()
 			}
 		}
 
-		if (Paintball->IsAlive())
+		if (Paintball && Paintball->IsAlive())
 		{
 			if (!_buildingWasColor || Paintball->IfReset())
 			{

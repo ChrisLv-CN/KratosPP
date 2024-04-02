@@ -87,3 +87,16 @@ public:
 private:
 	inline static std::string TITLE = "Paintball.";
 };
+
+struct PaintData
+{
+	bool ChangeColor = false;
+	bool ChangeBright = false;
+	PaintballData Data{};
+
+	void Reset()
+	{
+		ChangeColor = false;
+		ChangeBright = false;
+	}
+};

@@ -99,8 +99,11 @@ public:
 	HouseClass* pSourceHouse = nullptr;
 
 	// 生命值和伤害值
-	BulletLife life = {};
-	BulletDamage damage = {};
+	BulletLife life{};
+	BulletDamage damage{};
+
+	// 染色
+	PaintData MyPaintData{};
 
 	// 碰触地面会炸
 	bool SubjectToGround = false;
@@ -124,6 +127,8 @@ public:
 			.Process(this->pSourceHouse)
 			.Process(this->life)
 			.Process(this->damage)
+
+			.Process(this->MyPaintData)
 
 			.Process(this->SubjectToGround)
 
@@ -189,6 +194,7 @@ private:
 
 	void OnUpdate_BlackHole();
 	void OnUpdate_GiftBox();
+	void OnUpdate_Paintball();
 	void OnUpdate_RecalculateStatus();
 	void OnUpdate_SelfLaunchOrPumpAction();
 
