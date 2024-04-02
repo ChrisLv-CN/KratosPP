@@ -420,7 +420,7 @@ public:
 	{
 		if (!_creatorMap.empty())
 		{
-			Debug::Log("Component List: \n");
+			Debug::Log("Component List:\n");
 			for (auto it : _creatorMap)
 			{
 				std::string scriptName = it.first;

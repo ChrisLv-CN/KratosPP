@@ -45,11 +45,11 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 
 	if (InChinese)
 	{
-		Debug::Log("初始化完成 版本: " PRODUCT_VERSION "\n");
+		Debug::Log("初始化完成 版本: " VERSION_SHORT_STR "\n");
 	}
 	else
 	{
-		Debug::Log("Initialized version: " PRODUCT_VERSION "\n");
+		Debug::Log("Initialized version: " VERSION_SHORT_STR "\n");
 	}
 }
 

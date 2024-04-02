@@ -21,19 +21,12 @@ void Kratos::SendActiveMessage(EventSystem* sender, Event e, void* args)
 {
 	if (args)
 	{
-#ifdef DEBUG
-		const wchar_t* message = L"Debug Version " VERSION_SHORT_WSTR L" is active, have fun.";
+		const wchar_t* message = L"Kratos " VERSION_SHORT_WSTR L" is active, have fun.";
 		if (InChinese)
 		{
-			message = L"测试版本 " VERSION_SHORT_WSTR L" 已经激活，愉快的玩耍吧。";
+			message = L"奎秃斯 " VERSION_SHORT_WSTR L" 已经激活，愉快的玩耍吧。";
 		}
-#else // DEBUG
-		const wchar_t* message = L"Version " VERSION_SHORT_WSTR L" is active, have fun.";
-		if (InChinese)
-		{
-			message = L"版本 " VERSION_SHORT_WSTR L" 已经激活，愉快的玩耍吧。";
-		}
-#endif // DEBUG
+
 		MessageListClass::Instance->PrintMessage(L"[" PRODUCT_NAME L"]", message, 150, HouseClass::CurrentPlayer->ColorSchemeIndex, true);
 		sender->RemoveHandler(e, SendActiveMessage);
 	}

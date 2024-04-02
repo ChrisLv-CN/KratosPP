@@ -46,7 +46,7 @@ DEFINE_HOOK(0x52F639, YR_CmdLineParse, 0x5)
 	void *args[]{ppArgs, (void *)nNumArgs};
 	EventSystems::General.Broadcast(Events::CmdLineParse, args);
 
-	Debug::LogDeferredFinalize();
+	// Debug::LogDeferredFinalize();
 	return 0;
 }
 
@@ -97,7 +97,7 @@ DEFINE_HOOK(0x6875F3, Scenario_Start1, 0x6)
 	Random::SetRandomSeed(seed);
 
 	// 打印ComponentFactory清单，用于Debug
-	ComponentFactory::GetInstance().PrintCreaterInfo();
+	// ComponentFactory::GetInstance().PrintCreaterInfo();
 
 	EventSystems::General.Broadcast(Events::ScenarioStartEvent);
 	return 0;
