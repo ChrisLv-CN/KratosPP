@@ -121,7 +121,7 @@ public:
 			{
 				int buffer = 0;
 				const char* pFmt = "%d";
-				if (sscanf_s(v.c_str(), pFmt, &value) == 1)
+				if (sscanf_s(v.c_str(), pFmt, &buffer) == 1)
 				{
 					value = buffer;
 				}
