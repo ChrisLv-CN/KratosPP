@@ -20,6 +20,15 @@ void Debug::Log(const char* pFormat, ...)
 	va_end(args);
 }
 
+void Debug::LogNotTitle(const char* pFormat, ...)
+{
+	va_list args;
+	va_start(args, pFormat);
+	vsprintf_s(FinalStringBuffer, pFormat, args);
+	LogGame("%s", FinalStringBuffer);
+	va_end(args);
+}
+
 void Debug::LogGame(const char* pFormat, ...)
 {
 	JMP_STD(0x4068E0);

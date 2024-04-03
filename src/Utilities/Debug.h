@@ -17,6 +17,7 @@ public:
 	static int CurrentBufferSize;
 
 	static void Log(const char* pFormat, ...);
+	static void LogNotTitle(const char* pFormat, ...);
 	static void LogGame(const char* pFormat, ...);
 	static void LogDeferred(const char* pFormat, ...);
 	static void LogDeferredFinalize();
