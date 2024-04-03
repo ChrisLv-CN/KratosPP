@@ -24,6 +24,8 @@ public:
 	float ScatterMin = 0; // 散布范围
 	float ScatterMax = 0; // 散布范围
 
+	Sequence InfSequence = Sequence::Ready;
+
 	PumpData() : EffectData()
 	{
 		AffectBuilding = false;
@@ -48,6 +50,8 @@ public:
 		Inaccurate = reader->Get(title + "Inaccurate", Inaccurate);
 		ScatterMin = reader->Get(title + "ScatterMin", ScatterMin);
 		ScatterMax = reader->Get(title + "ScatterMax", ScatterMax);
+
+		InfSequence = reader->Get(title + "InfSequence", InfSequence);
 
 		Enable = Range > 0;
 	}

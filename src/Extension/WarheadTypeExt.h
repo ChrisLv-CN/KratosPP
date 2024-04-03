@@ -101,7 +101,12 @@ public:
 
 	void Read(INIBufferReader* reader, std::string title, std::string armor)
 	{
-		Versus = reader->Get(title + armor, Versus);
+		if (reader->TryGet(title + armor, Versus))
+		{
+			PassiveAcquire = !LESS_EQUAL(Versus, 0.02);
+			Retaliate = !LESS_EQUAL(Versus, 0.01);
+			ForceFire = !LESS_EQUAL(Versus, 0.00);
+		}
 		ForceFire = reader->Get(title + armor + ".ForceFire", ForceFire);
 		Retaliate = reader->Get(title + armor + ".Retaliate", Retaliate);
 		PassiveAcquire = reader->Get(title + armor + ".PassiveAcquire", PassiveAcquire);

@@ -130,8 +130,8 @@ public:
 	void BlackHoleCancel();
 
 	// 气泵
-	bool PumpAction(CoordStruct targetPos, bool isLobber); // 爆炸冲击
-	void HumanCannon(CoordStruct sourcePos, CoordStruct targetPos, int height, bool isLobber = false); // 人间大炮
+	bool PumpAction(CoordStruct targetPos, bool isLobber, Sequence flySequence); // 爆炸冲击
+	void HumanCannon(CoordStruct sourcePos, CoordStruct targetPos, int height, bool isLobber, Sequence flySequence); // 人间大炮
 
 	virtual void Awake() override;
 

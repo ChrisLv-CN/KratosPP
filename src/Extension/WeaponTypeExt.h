@@ -24,28 +24,30 @@ public:
 		float RockerPitch = 0;
 		bool SelfLaunch = false;
 		bool PumpAction = false;
+		Sequence PumpInfSequence = Sequence::Crawl;
 		int HumanCannon = -1;
 
 		int NoMoneyNoTalk = 0;
 		bool DontNeedMoney = false;
 
-		virtual void Read(INIBufferReader* ini) override
+		virtual void Read(INIBufferReader* reader) override
 		{
-			AttachFireData::Read(ini);
+			AttachFireData::Read(reader);
 
-			Ammo = ini->Get("Ammo", Ammo);
+			Ammo = reader->Get("Ammo", Ammo);
 
-			LaserThickness = ini->Get("LaserThickness", LaserThickness);
-			LaserFade = ini->Get("LaserFade", LaserFade);
-			IsSupported = ini->Get("IsSupported", IsSupported);
+			LaserThickness = reader->Get("LaserThickness", LaserThickness);
+			LaserFade = reader->Get("LaserFade", LaserFade);
+			IsSupported = reader->Get("IsSupported", IsSupported);
 
-			RockerPitch = ini->Get("RockerPitch", RockerPitch);
-			SelfLaunch = ini->Get("SelfLaunch", SelfLaunch);
-			PumpAction = ini->Get("PumpAction", PumpAction);
-			HumanCannon = ini->Get("HumanCannon", HumanCannon);
+			RockerPitch = reader->Get("RockerPitch", RockerPitch);
+			SelfLaunch = reader->Get("SelfLaunch", SelfLaunch);
+			PumpAction = reader->Get("PumpAction", PumpAction);
+			PumpInfSequence = reader->Get("PumpAction.InfSequence", PumpInfSequence);
+			HumanCannon = reader->Get("HumanCannon", HumanCannon);
 
-			NoMoneyNoTalk = ini->Get("NoMoneyNoTalk", NoMoneyNoTalk);
-			DontNeedMoney = ini->Get("DontNeedMoney", DontNeedMoney);
+			NoMoneyNoTalk = reader->Get("NoMoneyNoTalk", NoMoneyNoTalk);
+			DontNeedMoney = reader->Get("DontNeedMoney", DontNeedMoney);
 		}
 
 #pragma region save/load
@@ -62,6 +64,7 @@ public:
 				.Process(this->RockerPitch)
 				.Process(this->SelfLaunch)
 				.Process(this->PumpAction)
+				.Process(this->PumpInfSequence)
 				.Process(this->HumanCannon)
 
 				.Process(this->NoMoneyNoTalk)

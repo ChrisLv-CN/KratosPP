@@ -11,7 +11,7 @@ class PumpState : public StateScript<PumpData>
 public:
 	STATE_SCRIPT(Pump);
 
-	bool Jump(CoordStruct targetPos, bool isLobber, bool isHumanCannon = false);
+	bool Jump(CoordStruct targetPos, bool isLobber, Sequence flySequence, bool isHumanCannon = false);
 
 	virtual void Deactivate() override
 	{
@@ -49,6 +49,8 @@ public:
 			.Process(this->_gravity)
 			.Process(this->_velocity)
 
+			.Process(this->_flySequence)
+
 			.Process(this->_canJump)
 			.Success();
 	};
@@ -75,6 +77,8 @@ private:
 
 	int _gravity = 0;
 	BulletVelocity _velocity = BulletVelocity::Empty; // 飞行向量
+
+	Sequence _flySequence = Sequence::Ready; // 步兵飞行时的序列
 
 	// 状态机一直处于激活状态，额外开关控制是否可以进行跳跃
 	bool _canJump = false;

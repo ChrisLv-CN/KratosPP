@@ -1,5 +1,7 @@
 ﻿#include "PumpState.h"
 
+#include <JumpjetLocomotionClass.h>
+
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Physics.h>
@@ -60,6 +62,9 @@ void PumpState::SetupPump()
 			velocity = GetBulletArcingVelocity(sourcePos, targetPos, 0, gravity, Data.Lobber, Data.Inaccurate, Data.ScatterMin, Data.ScatterMax, zOffset, straightDistance, realSpeed, pTargetCell);
 		}
 	}
+	// 步兵飞行姿态
+	_flySequence = Data.InfSequence;
+	// 生效后开始跳
 	if (ActionJump(velocity, (int)gravity, straightDistance))
 	{
 		// 清空所有目标和任务
@@ -68,7 +73,7 @@ void PumpState::SetupPump()
 	}
 }
 
-bool PumpState::Jump(CoordStruct targetPos, bool isLobber, bool isHumanCannon)
+bool PumpState::Jump(CoordStruct targetPos, bool isLobber, Sequence flySequence, bool isHumanCannon)
 {
 	CoordStruct sourcePos = pTechno->GetCoords();
 	int gravity = RulesClass::Instance->Gravity;
@@ -86,11 +91,28 @@ bool PumpState::Jump(CoordStruct targetPos, bool isLobber, bool isHumanCannon)
 			int frame = (int)(straightDistance / realSpeed);
 			_flyTimer.Start(frame);
 		}
+		_flySequence = flySequence;
 		// 从占据的格子中移除自己
 		pTechno->UnmarkAllOccupationBits(sourcePos);
 		FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
 		// 停止移动
 		ForceStopMoving(pFoot);
+		// 调整朝向飞行的方向
+		if (sourcePos.X != targetPos.X || sourcePos.Y != targetPos.Y)
+		{
+			DirStruct facingDir = Point2Dir(sourcePos, targetPos);
+			pTechno->PrimaryFacing.SetDesired(facingDir);
+			if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
+			{
+				// JJ朝向是单独的Facing
+				jjLoco->LocomotionFacing.SetDesired(facingDir);
+			}
+			else if (IsAircraft())
+			{
+				// 飞机使用的炮塔的Facing
+				pTechno->SecondaryFacing.SetDesired(facingDir);
+			}
+		}
 		return true;
 	}
 	return false;
@@ -216,6 +238,10 @@ void PumpState::OnUpdate()
 			// 移除黑幕
 			MapClass::Instance->RevealArea2(&nextPos, pTechno->LastSightRange, pTechno->Owner, false, false, false, true, 0);
 			MapClass::Instance->RevealArea2(&nextPos, pTechno->LastSightRange, pTechno->Owner, false, false, false, true, 1);
+			if (IsInfantry())
+			{
+				dynamic_cast<InfantryClass*>(pTechno)->PlayAnim(_flySequence);
+			}
 			switch (passError)
 			{
 			case PassError::UNDERGROUND:

@@ -202,6 +202,65 @@ inline bool Parser<TileType>::TryParse(const char* pValue, TileType* outValue)
 	return false;
 }
 
+static std::map<std::string, Sequence> SequenceStrings
+{
+	{ "Ready", Sequence::Ready },
+	{ "Guard", Sequence::Guard },
+	{ "Prone", Sequence::Prone },
+	{ "Walk", Sequence::Walk },
+	{ "FireUp", Sequence::FireUp },
+	{ "Down", Sequence::Down },
+	{ "Crawl", Sequence::Crawl },
+	{ "Up", Sequence::Up },
+	{ "FireProne", Sequence::FireProne },
+	{ "Idle1", Sequence::Idle1 },
+	{ "Idle2", Sequence::Idle2 },
+	{ "Die1", Sequence::Die1 },
+	{ "Die2", Sequence::Die2 },
+	{ "Die3", Sequence::Die3 },
+	{ "Die4", Sequence::Die4 },
+	{ "Die5", Sequence::Die5 },
+	{ "Tread", Sequence::Tread },
+	{ "Swim", Sequence::Swim },
+	{ "WetIdle1", Sequence::WetIdle1 },
+	{ "WetIdle2", Sequence::WetIdle2 },
+	{ "WetDie1", Sequence::WetDie1 },
+	{ "WetDie2", Sequence::WetDie2 },
+	{ "WetAttack", Sequence::WetAttack },
+	{ "Hover", Sequence::Hover },
+	{ "Fly", Sequence::Fly },
+	{ "Tumble", Sequence::Tumble },
+	{ "FireFly", Sequence::FireFly },
+	{ "Deploy", Sequence::Deploy },
+	{ "Deployed", Sequence::Deployed },
+	{ "DeployedFire", Sequence::DeployedFire },
+	{ "DeployedIdle", Sequence::DeployedIdle },
+	{ "Undeploy", Sequence::Undeploy },
+	{ "Cheer", Sequence::Cheer },
+	{ "Paradrop", Sequence::Paradrop },
+	{ "AirDeathStart", Sequence::AirDeathStart },
+	{ "AirDeathFalling", Sequence::AirDeathFalling },
+	{ "AirDeathFinish", Sequence::AirDeathFinish },
+	{ "Panic", Sequence::Panic },
+	{ "Shovel", Sequence::Shovel },
+	{ "Carry", Sequence::Carry },
+	{ "SecondaryFire", Sequence::SecondaryFire },
+	{ "SecondaryProne", Sequence::SecondaryProne }
+};
+
+template <>
+inline bool Parser<Sequence>::TryParse(const char* pValue, Sequence* outValue)
+{
+	std::string key = pValue;
+	auto it = SequenceStrings.find(key);
+	if (it != SequenceStrings.end())
+	{
+		*outValue = it->second;
+		return true;
+	}
+	return false;
+}
+
 /// <summary>
 /// 储存一个Section在一个ini文件中的全部KV对
 /// </summary>

@@ -33,12 +33,12 @@ void BulletStatus::OnUpdate_SelfLaunchOrPumpAction()
 				}
 				else if (weaponData->PumpAction)
 				{
-					status->PumpAction(pBullet->TargetCoords, pWeapon->Lobber);
+					status->PumpAction(pBullet->TargetCoords, pWeapon->Lobber, weaponData->PumpInfSequence);
 				}
 				// 人间大炮可以和自身移动一起生效
 				if (weaponData->HumanCannon > -1)
 				{
-					status->HumanCannon(pBullet->SourceCoords, pBullet->TargetCoords, weaponData->HumanCannon, pWeapon->Lobber);
+					status->HumanCannon(pBullet->SourceCoords, pBullet->TargetCoords, weaponData->HumanCannon, pWeapon->Lobber, weaponData->PumpInfSequence);
 				}
 			}
 		}
