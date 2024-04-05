@@ -23,35 +23,8 @@ void StandEffect::CreateAndPutStand()
 	}
 	if (pStand)
 	{
-		// 初始化设置
-		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pStand))
-		{
-			status->VirtualUnit = Data->VirtualUnit;
-			status->MyStandData = *Data;
-			TechnoClass* pMaster = nullptr;
-			// 设置替身的所有者
-			if (pTechno)
-			{
-				pMaster = pTechno;
-				// 同阵营同步状态机，比如染色
-				TechnoStatus* masterStatus = nullptr;
-				if (pTechno->Owner == AE->pSourceHouse && TryGetStatus<TechnoExt>(pTechno, masterStatus))
-				{
-					status->_Paintball = masterStatus->Paintball;
-				}
-				if (IsAircraft())
-				{
-					masterIsRocket = pTechno->GetTechnoType()->MissileSpawn;
-					masterIsSpawned = masterIsRocket || pTechno->GetTechnoType()->Spawned;
-				}
-			}
-			else if (pBullet)
-			{
-				pMaster = pBullet->Owner;
-			}
-			status->SetupStand(*Data, pMaster);
-			status->MyMasterIsSpawned = masterIsSpawned;
-		}
+		// 初始化替身的状态设置
+		TechnoStatus* status = SetupStandStatus();
 		pStand->UpdatePlacement(PlacementType::Remove); // Mark(MarkType::Up)
 		bool canGuard = AE->pSourceHouse->IsControlledByHuman();
 		if (pStand->WhatAmI() == AbstractType::Building)
@@ -89,6 +62,41 @@ void StandEffect::CreateAndPutStand()
 			pStand->SetTarget(pSource);
 		}
 	}
+}
+
+TechnoStatus* StandEffect::SetupStandStatus()
+{
+	TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pStand);
+	// 初始化设置
+	if (status)
+	{
+		status->VirtualUnit = Data->VirtualUnit;
+		status->MyStandData = *Data;
+		TechnoClass* pMaster = nullptr;
+		// 设置替身的所有者
+		if (pTechno)
+		{
+			pMaster = pTechno;
+			// 同阵营同步状态机，比如染色
+			TechnoStatus* masterStatus = nullptr;
+			if (pTechno->Owner == AE->pSourceHouse && TryGetStatus<TechnoExt>(pTechno, masterStatus))
+			{
+				status->_Paintball = masterStatus->Paintball;
+			}
+			if (IsAircraft())
+			{
+				masterIsRocket = pTechno->GetTechnoType()->MissileSpawn;
+				masterIsSpawned = masterIsRocket || pTechno->GetTechnoType()->Spawned;
+			}
+		}
+		else if (pBullet)
+		{
+			pMaster = pBullet->Owner;
+		}
+		status->SetupStand(*Data, pMaster);
+		status->MyMasterIsSpawned = masterIsSpawned;
+	}
+	return status;
 }
 
 void StandEffect::ExplodesOrDisappear(bool peaceful)
@@ -555,6 +563,11 @@ void StandEffect::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	{
 		pStand = nullptr;
 	}
+}
+
+void StandEffect::ExtChanged()
+{
+	SetupStandStatus();
 }
 
 void StandEffect::OnStart()

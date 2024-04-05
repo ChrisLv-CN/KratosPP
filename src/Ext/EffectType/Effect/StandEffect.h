@@ -29,6 +29,8 @@ public:
 
 	void OnTechnoDelete(EventSystem* sender, Event e, void* args);
 
+	virtual void ExtChanged() override;
+
 	virtual void OnStart() override;
 
 	virtual void End(CoordStruct location) override;
@@ -99,6 +101,7 @@ private:
 	CDTimerClass _walkRateTimer;
 
 	void CreateAndPutStand();
+	TechnoStatus* SetupStandStatus();
 	void SetLocation(CoordStruct location);
 	void SetFacing(DirStruct dir, bool forceSetTurret);
 	void ForceFacing(DirStruct dir);

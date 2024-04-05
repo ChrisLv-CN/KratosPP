@@ -47,7 +47,7 @@ public:
 		state = STATE_NAME; \
 
 #define STATE_VAR_INHERITED(STATE_NAME) \
-	*heir->STATE_NAME = *STATE_NAME \
+	*(heir->STATE_NAME) = *STATE_NAME \
 
 template <typename TData>
 class StateScript : public ObjectScript, public IStateScript

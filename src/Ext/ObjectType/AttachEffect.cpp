@@ -1120,7 +1120,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 			if (auto ae = dynamic_cast<AttachEffectScript*>(c)) { ae->OnGScreenRenderEnd(location); }
 			});
 #ifdef DEBUG
-		if (Common::DebugAE && pObject->IsSelected)
+		if (Common::DebugAE)
 		{
 			int offsetZ = PrintTextManager::GetFontSize().Y;
 			// 打印Component结构
