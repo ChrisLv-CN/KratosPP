@@ -269,6 +269,27 @@ DEFINE_HOOK(0x4DB091, FootClass_GetZAdjustment, 0x6)
 			// 从JOJO身上获取ZAdjust
 			TechnoClass* pMaster = status->pMyMaster;
 			int z = pMaster->GetZAdjustment();
+			if (BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pMaster))
+			{
+				if (status->MyStandData.ZOffset < 0)
+				{
+					z += 3;
+				}
+				else
+				{
+					BuildingTypeClass* pType = pBuilding->Type;
+					int bZ = 0;
+					for (int i = 0; i < 0x15; i++)
+					{
+						int zAdjust = pType->BuildingAnim[i].ZAdjust;
+						if (bZ > zAdjust)
+						{
+							bZ = zAdjust;
+						}
+					}
+					z += bZ - 14;
+				}
+			}
 
 			StandZAdjust::pSkip = nullptr;
 			StandZAdjust::pStand = pTechno;
@@ -321,7 +342,24 @@ DEFINE_HOOK(0x5F6BF7, ObjectClass_GetYSort, 0x5)
 			// 替身从Master身上获取渲染坐标
 			CoordStruct r = status->pMyMaster->GetRenderCoords();
 			int offset = status->MyStandData.ZOffset;
-			// 修改返回值
+			if (offset >= 0)
+			{
+				if (BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(status->pMyMaster))
+				{
+					BuildingTypeClass* pType = pBuilding->Type;
+					int bY = 0;
+					for (int i = 0; i < 0x15; i++)
+					{
+						int ySort = pType->BuildingAnim[i].YSort;
+						if (bY < ySort)
+						{
+							bY = ySort;
+						}
+					}
+					offset += bY + 16;
+				}
+			}
+				// 修改返回值
 			*x = r.X + offset;
 			*y = r.Y + offset;
 		}
