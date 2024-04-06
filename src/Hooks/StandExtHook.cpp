@@ -277,6 +277,11 @@ DEFINE_HOOK(0x4DB091, FootClass_GetZAdjustment, 0x6)
 				}
 				else
 				{
+					// 加上自身的zAdjust
+					int zz = pTechno->GetZ();
+					int zzz = -TacticalClass::Instance->AdjustForZ(zz);
+					z += zzz;
+					// 加上建筑动画的zAdjust
 					BuildingTypeClass* pType = pBuilding->Type;
 					int bZ = 0;
 					for (int i = 0; i < 0x15; i++)
@@ -287,6 +292,7 @@ DEFINE_HOOK(0x4DB091, FootClass_GetZAdjustment, 0x6)
 							bZ = zAdjust;
 						}
 					}
+					// 再加上一层，每一层高度是15
 					z += bZ - 14;
 				}
 			}
