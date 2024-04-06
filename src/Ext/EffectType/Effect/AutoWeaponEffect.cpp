@@ -312,7 +312,7 @@ void AutoWeaponEffect::OnUpdate()
 				int max = (int)data.WeaponTypes.size();
 				for (int i = 0; i < randomNum; i++)
 				{
-					int index = Random::RandomRanged(0, max);
+					int index = Random::RandomRanged(0, max - 1);
 					std::string weaponType = data.WeaponTypes[index];
 					weaponTypes.push_back(weaponType);
 				}
