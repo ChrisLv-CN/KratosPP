@@ -101,12 +101,13 @@ public:
 
 	bool IsAlternateColor = false;
 	// custom color and line
-	ColorStruct Color1{ 0, 0, 0 };
-	ColorStruct Color2{ 0, 0, 0 };
-	ColorStruct Color3{ 0, 0, 0 };
+	ColorStruct Color1 = Colors::Empty;
+	ColorStruct Color2 = Colors::Empty;
+	ColorStruct Color3 = Colors::Empty;
 	bool Disable1 = false;
 	bool Disable2 = false;
 	bool Disable3 = false;
+	bool DisableParticle = false;
 };
 
 void DrawBolt(CoordStruct sourcePos, CoordStruct targetPos, BoltType type);

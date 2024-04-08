@@ -21,6 +21,8 @@ public:
 	bool Disable2 = false;
 	bool Disable3 = false;
 
+	bool DisableParticle = false;
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T &stream)
@@ -32,6 +34,8 @@ public:
 			.Process(this->Disable1)
 			.Process(this->Disable2)
 			.Process(this->Disable3)
+
+			.Process(this->DisableParticle)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override

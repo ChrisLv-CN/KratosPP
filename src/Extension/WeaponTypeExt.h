@@ -20,6 +20,15 @@ public:
 		bool LaserFade = false;
 		bool IsSupported = false;
 
+		// Phobos
+		ColorStruct BoltColor1 = Colors::Empty;
+		ColorStruct BoltColor2 = Colors::Empty;
+		ColorStruct BoltColor3 = Colors::Empty;
+		bool BoltDisable1 = false;
+		bool BoltDisable2 = false;
+		bool BoltDisable3 = false;
+		bool BoltDisableParticle = false;
+
 		// Kratos
 		float RockerPitch = 0;
 		bool SelfLaunch = false;
@@ -39,6 +48,15 @@ public:
 			LaserThickness = reader->Get("LaserThickness", LaserThickness);
 			LaserFade = reader->Get("LaserFade", LaserFade);
 			IsSupported = reader->Get("IsSupported", IsSupported);
+
+			BoltColor1 = reader->Get("Bolt.Color1", BoltColor1);
+			BoltColor2 = reader->Get("Bolt.Color2", BoltColor2);
+			BoltColor3 = reader->Get("Bolt.Color3", BoltColor3);
+
+			BoltDisable1 = reader->Get("Bolt.Disable1", BoltDisable1);
+			BoltDisable2 = reader->Get("Bolt.Disable2", BoltDisable2);
+			BoltDisable3 = reader->Get("Bolt.Disable3", BoltDisable3);
+			BoltDisableParticle = reader->Get("Bolt.DisableParticle", BoltDisableParticle);
 
 			RockerPitch = reader->Get("RockerPitch", RockerPitch);
 			SelfLaunch = reader->Get("SelfLaunch", SelfLaunch);
@@ -60,6 +78,14 @@ public:
 				.Process(this->LaserThickness)
 				.Process(this->LaserFade)
 				.Process(this->IsSupported)
+
+				.Process(this->BoltColor1)
+				.Process(this->BoltColor2)
+				.Process(this->BoltColor3)
+				.Process(this->BoltDisable1)
+				.Process(this->BoltDisable2)
+				.Process(this->BoltDisable3)
+				.Process(this->BoltDisableParticle)
 
 				.Process(this->RockerPitch)
 				.Process(this->SelfLaunch)

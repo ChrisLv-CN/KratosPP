@@ -197,6 +197,8 @@ void DrawBolt(CoordStruct sourcePos, CoordStruct targetPos, BoltType type)
 			status->Disable1 = type.Disable1;
 			status->Disable2 = type.Disable2;
 			status->Disable3 = type.Disable3;
+
+			status->DisableParticle = type.DisableParticle;
 		}
 		pBolt->AlternateColor = type.IsAlternateColor;
 		pBolt->Fire(sourcePos, targetPos, 0);

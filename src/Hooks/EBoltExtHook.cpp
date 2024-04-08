@@ -8,6 +8,7 @@
 #include <Utilities/Macro.h>
 
 #include <Extension/EBoltExt.h>
+#include <Extension/WeaponTypeExt.h>
 
 #include <Ext/Helper/Scripts.h>
 
@@ -38,6 +39,27 @@ DEFINE_HOOK(0x4C2951, EBolt_DTOR, 0x5)
 // ----------------
 // Feature
 // ----------------
+
+DEFINE_HOOK(0x6FD494, TechnoClass_FireEBolt_SetWeaponData, 0x7)
+{
+	GET(EBolt*, pThis, EAX);
+	GET_STACK(WeaponTypeClass*, pWeapon, 0x30 + 0x8);
+
+	if (WeaponTypeExt::TypeData* weaponData = GetTypeData<WeaponTypeExt, WeaponTypeExt::TypeData>(pWeapon))
+	{
+		if (EBoltStatus* status = GetStatus<EBoltExt, EBoltStatus>(pThis))
+		{
+			status->Color1 = weaponData->BoltColor1;
+			status->Color2 = weaponData->BoltColor2;
+			status->Color3 = weaponData->BoltColor3;
+			status->Disable1 = weaponData->BoltDisable1;
+			status->Disable2 = weaponData->BoltDisable2;
+			status->Disable3 = weaponData->BoltDisable3;
+			status->DisableParticle = weaponData->BoltDisableParticle;
+		}
+	}
+	return 0;
+}
 
 DEFINE_HOOK(0x4C24BE, EBolt_Draw_Color1, 0x5)
 {
@@ -123,6 +145,23 @@ DEFINE_HOOK(0x4C26EE, EBolt_Draw_Disable3, 0x8)
 		if (status->Disable3)
 		{
 			return 0x4C2710;
+		}
+	}
+	return 0;
+}
+
+// Can not hook in 0x4C2AFF, maybe it was skipped by Ares
+DEFINE_HOOK(0x4C2AE7, EBolt_Fire_DisableParticle, 0x6)
+{
+	GET(EBolt*, pThis, ESI);
+
+	if (EBoltStatus* status = GetStatus<EBoltExt, EBoltStatus>(pThis))
+	{
+		if (status->DisableParticle)
+		{
+			EBolt::Array->AddItem(pThis);
+			R->EAX(0);
+			return 0x4C2B0C;
 		}
 	}
 	return 0;
