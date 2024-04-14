@@ -25,6 +25,14 @@ class BroadcastEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Broadcast);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_count = 0;
+		_delayTimer = {};
+	}
+
 	virtual void OnUpdate() override;
 
 #pragma region Save/Load

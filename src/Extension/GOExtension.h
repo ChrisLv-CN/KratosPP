@@ -61,7 +61,7 @@ public:
 			try
 			{
 #ifdef DEBUG_COMPONENT
-				Debug::Log("[%s]%s [%s]%s  calling GameObject [%s]%s destroy all component.\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), m_GameObject.thisId.c_str());
+				Debug::Log("[%s]%s [%s]%s  calling GameObject [%s]%d destroy all component.\n", this->thisName.c_str(), this->thisId.c_str(), this->baseName.c_str(), this->baseId.c_str(), m_GameObject.thisName.c_str(), &m_GameObject);
 #endif // DEBUG
 				// delete *m_GameObject;
 				m_GameObject.ForeachChild([](Component* c)

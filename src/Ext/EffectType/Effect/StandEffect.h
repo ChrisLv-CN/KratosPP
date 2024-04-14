@@ -31,6 +31,25 @@ public:
 
 	virtual void ExtChanged() override;
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		pStand = nullptr;
+		masterIsRocket = false;
+		masterIsSpawned = false;
+		standIsBuilding = false;
+		onStopCommand = false;
+		notBeHuman = false;
+		onReceiveDamageDestroy = false;
+		onRocketExplosion = false;
+
+		_lastLocationMark = {};
+		_isMoving = false;
+		_walkRateTimer = {};
+
+	}
+
 	virtual void OnStart() override;
 
 	virtual void End(CoordStruct location) override;
@@ -88,18 +107,6 @@ public:
 	}
 #pragma endregion
 private:
-    bool masterIsRocket = false;
-    bool masterIsSpawned = false;
-	bool standIsBuilding = false;
-	bool onStopCommand = false;
-    bool notBeHuman = false;
-	bool onReceiveDamageDestroy = false;
-	bool onRocketExplosion = false;
-
-    LocationMark _lastLocationMark;
-    bool _isMoving = false;
-	CDTimerClass _walkRateTimer;
-
 	void CreateAndPutStand();
 	TechnoStatus* SetupStandStatus();
 	void SetLocation(CoordStruct location);
@@ -112,4 +119,16 @@ private:
 	void UpdateStateTechno(bool masterIsDead);
 
 	void RemoveStandIllegalTarget();
+
+	bool masterIsRocket = false;
+	bool masterIsSpawned = false;
+	bool standIsBuilding = false;
+	bool onStopCommand = false;
+	bool notBeHuman = false;
+	bool onReceiveDamageDestroy = false;
+	bool onRocketExplosion = false;
+
+	LocationMark _lastLocationMark{};
+	bool _isMoving = false;
+	CDTimerClass _walkRateTimer{};
 };

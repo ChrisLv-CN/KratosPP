@@ -22,6 +22,19 @@ public:
 
 	TECHNO_SCRIPT(AircraftDive);
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		DiveStatus = AircraftDiveStatus::NONE;
+
+		_attitude = nullptr;
+
+		_data = nullptr;
+
+		_activeDive = false;
+	}
+
 	virtual void Awake() override;
 
 	virtual void ExtChanged() override;

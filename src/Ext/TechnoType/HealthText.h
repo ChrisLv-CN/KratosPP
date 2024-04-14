@@ -16,6 +16,13 @@ public:
 
 	TECHNO_SCRIPT(HealthText);
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		_healthTextData = {};
+	}
+
 	virtual void Awake() override;
 
 	virtual void DrawHealthBar(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding) override;
@@ -41,11 +48,10 @@ public:
 #pragma endregion
 
 private:
-	// 血条数字
-	HealthTextData _healthTextData{}; // 个体设置
-	HealthTextData GetHealthTextData();
-
 	void PrintHealthText(int barLength, Point2D* pPos, RectangleStruct* pBound, bool isBuilding);
 	void OffsetPosAlign(Point2D& pos, int textWidth, int barWidth, PrintTextAlign align, bool isBuilding, bool useSHP);
 
+	// 血条数字
+	HealthTextData _healthTextData{}; // 个体设置
+	HealthTextData GetHealthTextData();
 };

@@ -8,6 +8,11 @@ class NoMoneyNoTalkState : public StateScript<NoMoneyNoTalkData>
 public:
 	STATE_SCRIPT(NoMoneyNoTalk);
 
+	virtual void Clean() override
+	{
+		StateScript<NoMoneyNoTalkData>::Clean();
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

@@ -23,6 +23,14 @@ public:
 	 */
 	void ResetArcingVelocity(float speedMultiple = 1.0f);
 
+	virtual void Clean() override
+	{
+		BulletScript::Clean();
+
+		CanBounce = false;
+		_initFlag = false;
+	}
+
 	virtual void Awake() override;
 
 	virtual void OnUpdate() override;

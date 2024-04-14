@@ -16,6 +16,17 @@ public:
 
 	TECHNO_SCRIPT(JumpjetFacing);
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		_jjFacingData = nullptr;
+
+		_JJNeedTurn = false;
+		_JJTurnTo.SetValue(0);
+		_JJFacing = -1;
+	}
+
 	virtual void Awake() override;
 
 	virtual void ExtChanged() override;
@@ -45,6 +56,8 @@ public:
 #pragma endregion
 
 private:
+	void SetupJJFacing();
+
 	// JJFacing
 	JumpjetFacingData* _jjFacingData = nullptr;
 	JumpjetFacingData* GetJJFacingData();
@@ -52,6 +65,4 @@ private:
 	bool _JJNeedTurn = false;
 	DirStruct _JJTurnTo{};
 	int _JJFacing = -1;
-
-	void SetupJJFacing();
 };

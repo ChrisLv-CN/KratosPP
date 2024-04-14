@@ -27,6 +27,13 @@ class ExtraFireEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(ExtraFire);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_rof.clear();
+	}
+
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
 #pragma region Save/Load

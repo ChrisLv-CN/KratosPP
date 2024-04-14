@@ -18,23 +18,30 @@ public:
 
 	STATE_SCRIPT(Teleport);
 
-	TeleportState& operator=(const TeleportState& other)
-	{
-		if (this != &other)
-		{
-			StateScript<TeleportData>::operator=(other);
-			_count = other._count;
-			_delay = other._delay;
-			_delayTimer = other._delayTimer;
-		}
-		return *this;
-	}
-
 	bool Teleport(CoordStruct* pLocation, WarheadTypeClass* pWH);
 
 	bool IsFreezing();
 
 	bool IsReadyToMoveWarp();
+
+	virtual void Clean() override
+	{
+		StateScript<TeleportData>::Clean();
+
+		_count = 0;
+		_delay = 0;
+		_delayTimer = {};
+
+		// 状态机一直处于激活状态，额外开关控制是否可以进行传送
+		_canWarp = false;
+		_step = TeleportStep::READY;
+
+		_warpTo; // 弹头传进来的坐标
+		_teleportTimer = {}; // 传送冰冻时间
+
+		pDest = nullptr;
+		pFocus = nullptr;
+	}
 
 	virtual void Deactivate() override
 	{
@@ -46,6 +53,18 @@ public:
 	virtual void OnEnd() override;
 
 	virtual void OnUpdate() override;
+
+	TeleportState& operator=(const TeleportState& other)
+	{
+		if (this != &other)
+		{
+			StateScript<TeleportData>::operator=(other);
+			_count = other._count;
+			_delay = other._delay;
+			_delayTimer = other._delayTimer;
+		}
+		return *this;
+	}
 
 #pragma region save/load
 	template <typename T>
@@ -77,6 +96,8 @@ public:
 	}
 #pragma endregion
 private:
+	CoordStruct GetAndMarkDestination(CoordStruct location);
+
 	void Reload();
 
 	bool IsReady();
@@ -88,8 +109,6 @@ private:
 	int _count = 0;
 	int _delay = 0;
 	CDTimerClass _delayTimer{};
-
-	CoordStruct GetAndMarkDestination(CoordStruct location);
 
 	// 状态机一直处于激活状态，额外开关控制是否可以进行传送
 	bool _canWarp = false;

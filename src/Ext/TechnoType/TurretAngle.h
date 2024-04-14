@@ -20,6 +20,22 @@ public:
 
 	bool DefaultAngleIsChange(DirStruct bodyDir);
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		LockTurretDir.SetValue(0);
+		ChangeDefaultDir = false;
+		LockTurret = false;
+
+		_data = {}; // 个体设置
+
+		_status = nullptr;
+
+		_isMoving = false;
+		_isPut = false;
+	}
+
 	virtual void Awake() override;
 
 	virtual void ExtChanged() override;
@@ -75,12 +91,12 @@ private:
 
 	/**
 	 *@brief 如果启用侧舷接敌，则计算侧舷的可用角度，否则直接把头怼过去
-	 * 
-	 * @param targetDir 
-	 * @param bodyDirIndex 
-	 * @param bodyTargetDelta 
-	 * @return true 
-	 * @return false 
+	 *
+	 * @param targetDir
+	 * @param bodyDirIndex
+	 * @param bodyTargetDelta
+	 * @return true
+	 * @return false
 	 */
 	bool TryTurnBodyToAngle(DirStruct targetDir, int bodyDirIndex, int bodyTargetDelta);
 

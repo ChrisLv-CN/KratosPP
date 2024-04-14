@@ -12,7 +12,39 @@
 #include <Utilities/Stream.h>
 #include <Utilities/Debug.h>
 
-#define ComponentName(CLASS_NAME) #CLASS_NAME
+#define DECLARE_COMPONENT(CLASS_NAME, ...) \
+	CLASS_NAME() : __VA_ARGS__() \
+	{ \
+		this->Name = ScriptName; \
+	} \
+	\
+	inline static std::string ScriptName = #CLASS_NAME; \
+	static Component* Create() \
+	{ \
+		Component* c = nullptr; \
+		if (!Pool.empty()) \
+		{ \
+			auto it = Pool.begin(); \
+			c = *it; \
+			Pool.erase(it); \
+		} \
+		if (!c) \
+		{ \
+			c = static_cast<Component*>(new CLASS_NAME()); \
+		} \
+		return c; \
+	} \
+	\
+	inline static int g_temp_##CLASS_NAME = \
+	ComponentFactory::GetInstance().Register(#CLASS_NAME, CLASS_NAME::Create); \
+	\
+	inline static std::vector<CLASS_NAME*> Pool{}; \
+	\
+	virtual void FreeComponent() override \
+	{ \
+		Clean(); \
+		Pool.push_back(this); \
+	} \
 
 class IExtData
 {
@@ -33,19 +65,24 @@ public:
 	virtual void ExtChanged() {};
 
 	/// <summary>
+	/// Clean is called when component instance back to object-pool or initialization.
+	/// </summary>
+	virtual void Clean() = 0;
+
+	/// <summary>
 	/// Awake is called when an enabled instance is being created.
 	/// TechnoExt::ExtData() call
 	/// </summary>
 	virtual void Awake() {};
 
-	virtual void OnUpdate() {};
-	virtual void OnUpdateEnd() {};
-	virtual void OnWarpUpdate() {};
-
 	/// <summary>
 	/// Destroy is called when enabled instance is delete.
 	/// </summary>
 	virtual void Destroy() {};
+
+	virtual void OnUpdate() {};
+	virtual void OnUpdateEnd() {};
+	virtual void OnWarpUpdate() {};
 
 	/// <summary>
 	/// OwnerIsRelease is called when TBase pointer is delete.
@@ -91,10 +128,33 @@ public:
 
 	void SetExtData(IExtData* extData);
 
+	virtual void Clean() override
+	{
+		// Ext由ScriptFactory传入
+		_extData = nullptr;
+
+		_awaked = false; // 已经完成初始化
+		_disable = false; // 已经失效，等待移除
+		_active = true; // 可以执行循环
+
+		_break = false; // 中断上层循环
+
+		// 添加的Component名单，在存档时生成
+		_childrenNames.clear();
+
+		_parent = nullptr;
+		_children.clear();
+	}
+
 	virtual void OnUpdate() override;
 
 	void EnsureAwaked();
 	void EnsureDestroy();
+
+	/// <summary>
+	/// 重置组件，返回对象池
+	/// </summary>
+	virtual void FreeComponent() = 0;
 
 	bool AlreadyAwake();
 
@@ -394,7 +454,6 @@ public:
 	int Register(const std::string& name, ComponentCreator creator)
 	{
 		_creatorMap.insert(make_pair(name, creator));
-		Debug::Log("Registration Component \"%s\".\n", name.c_str());
 		return 0;
 	}
 

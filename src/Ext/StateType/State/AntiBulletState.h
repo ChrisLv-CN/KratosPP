@@ -15,6 +15,13 @@ public:
 
 	bool CanSearchBullet();
 
+	virtual void Clean() override
+	{
+		StateScript<AntiBulletData>::Clean();
+
+		_delayTimer = {};
+	}
+
 	AntiBulletState& operator=(const AntiBulletState& other)
 	{
 		if (this != &other)

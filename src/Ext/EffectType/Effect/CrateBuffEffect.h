@@ -24,6 +24,13 @@ class CrateBuffEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(CrateBuff);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_updateFlag = false;
+	}
+
 	virtual void End(CoordStruct location) override;
 
 	virtual void OnPause() override;

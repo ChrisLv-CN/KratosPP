@@ -12,17 +12,9 @@ using namespace Delegate;
 class GameObject : public Component
 {
 public:
-	bool ExtChanged = false;
+	DECLARE_COMPONENT(GameObject, Component);
 
-	GameObject() : Component()
-	{
-		this->Name = ComponentName(GameObject);
-#ifdef DEBUG
-		char t_this[1024];
-		sprintf_s(t_this, "%p", this);
-		this->thisId = { t_this };
-#endif // DEBUG
-	}
+	bool ExtChanged = false;
 
 #ifdef DEBUG_COMPONENT
 	virtual ~GameObject() override
@@ -30,6 +22,11 @@ public:
 		Debug::Log("GameObject [%s]%s is release.\n", this->thisName.c_str(), this->thisId.c_str());
 	}
 #endif // DEBUG
+
+	virtual void Clean() override
+	{
+		Component::Clean();
+	};
 
 	GameObject* GetAwaked()
 	{
@@ -48,5 +45,4 @@ public:
 			}
 		}
 	}
-
 };

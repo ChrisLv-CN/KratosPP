@@ -8,6 +8,11 @@ class DisableWeaponState : public StateScript<DisableWeaponData>
 public:
 	STATE_SCRIPT(DisableWeapon);
 
+	virtual void Clean() override
+	{
+		StateScript<DisableWeaponData>::Clean();
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

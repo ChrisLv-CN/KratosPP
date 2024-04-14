@@ -43,6 +43,23 @@ public:
 		}
 	}
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		pPayload = nullptr;
+		// JJCarryall
+		_jjCarryallData = nullptr;
+
+		_pTarget = nullptr; // 待抓取的目标
+		_pTargetCell = nullptr; // 目标所处的格子，用于判断是否脱离任务
+		_toPayload = false; // 放吊舱
+
+		_remainingSpace = -1; // 剩余乘客空间
+
+		_status = CarryStatus::STOP;
+	}
+
 	virtual void Awake() override;
 
 	virtual void Destroy() override;

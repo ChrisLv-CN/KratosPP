@@ -27,6 +27,15 @@ public:
 
 	void UpdateLocationOffset(CoordStruct offset);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		pIdleAnim = nullptr;
+		animFlags = BlitterFlags::None;
+		ownerIsCloak = false;
+	}
+
 	virtual void OnStart() override;
 	virtual void End(CoordStruct location) override;
 
@@ -62,12 +71,11 @@ public:
 	}
 #pragma endregion
 private:
-	AnimClass* pIdleAnim = nullptr;
-	BlitterFlags animFlags = BlitterFlags::None;
-	bool ownerIsCloak = false;
-
 	void CreateIdleAnim(bool force = false, CoordStruct location = CoordStruct::Empty);
 
 	void KillIdleAnim();
 
+	AnimClass* pIdleAnim = nullptr;
+	BlitterFlags animFlags = BlitterFlags::None;
+	bool ownerIsCloak = false;
 };

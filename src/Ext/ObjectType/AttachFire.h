@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <queue>
 #include <type_traits>
 
 #include <GeneralStructures.h>
@@ -253,6 +252,15 @@ class AttachFire : public ObjectScript
 {
 public:
 	OBJECT_SCRIPT(AttachFire);
+
+	virtual void Clean() override
+	{
+		ObjectScript::Clean();
+
+		SpawnerBurstFLH.clear();
+		_delayFires.clear();
+		_simulateBurst.clear();
+	}
 
 	virtual void Awake() override
 	{

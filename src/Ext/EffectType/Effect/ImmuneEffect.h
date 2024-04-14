@@ -25,6 +25,11 @@ class ImmuneEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Immune);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+	}
+
 	virtual void OnUpdate() override;
 
 	virtual void OnReceiveDamage(args_ReceiveDamage* args) override;

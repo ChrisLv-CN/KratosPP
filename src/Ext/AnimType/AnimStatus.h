@@ -66,6 +66,36 @@ public:
 		}
 	}
 
+	virtual void Clean() override
+	{
+		AnimScript::Clean();
+
+		pCreater = nullptr;
+		pAttachOwner = nullptr; // 动画附着的对象
+		Offset = CoordStruct::Empty; // 附着的偏移位置
+
+		_offsetData = {};
+
+		_initDamageDelayFlag = false;
+		_damageDelayTimer = {};
+
+		_createrIsDeadth = false;
+
+		_initInvisibleFlag = false;
+		_playSuperFlag = false;
+
+		_initSpawnFlag = false;
+		_spawnInitDelayTimer = {};
+		_spawnDelayTimer = {};
+		_spawnCount = 0;
+
+		_animDamageData = nullptr;
+		_expireAnimData = nullptr;
+		_paintballData = nullptr;
+		_playSuperData = nullptr;
+		_spawnAnimsData = nullptr;
+	}
+
 	virtual void Awake() override
 	{
 		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AnimStatus::OnTechnoDelete);

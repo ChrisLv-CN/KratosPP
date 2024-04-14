@@ -34,6 +34,15 @@ public:
 	 */
 	void OrderDamageText(std::wstring text, CoordStruct location, DamageTextEntity*& data);
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		SkipDamageText = false;
+		_damageCache.clear();
+		_repairCache.clear();
+	}
+
 	virtual void Awake() override;
 
 	virtual void OnUpdate() override;

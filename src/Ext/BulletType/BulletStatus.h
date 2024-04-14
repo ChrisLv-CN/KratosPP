@@ -54,6 +54,61 @@ public:
 	void BlackHoleCapture(ObjectClass* pBlackHole, BlackHoleData data);
 	void BlackHoleCancel();
 
+	virtual void Clean() override
+	{
+		BulletScript::Clean();
+
+		pSource = nullptr;
+		pSourceHouse = nullptr;
+
+		// 生命值和伤害值
+		life = {};
+		damage = {};
+
+		// 染色
+		MyPaintData = {};
+
+		// 碰触地面会炸
+		SubjectToGround = false;
+		// 正在被黑洞吸引
+		CaptureByBlackHole = false;
+
+		SpeedChanged = false; // 改变抛射体的速度
+		LocationLocked = false; // 锁定抛射体的位置
+
+		_initFlag = false;
+
+		_recordStatus = {};
+
+		_pFakeTarget = nullptr;
+
+		// 黑洞
+		_pBlackHole = nullptr;
+		_blackHoleData = {};
+		_blackHoleDamageDelay = {};
+
+		// 碰撞引信配置
+		_proximityData = nullptr;
+		// 碰撞引信
+		_proximity = {};
+		_activeProximity = false;
+		// 近炸引信
+		_proximityRange = -1;
+
+		// 发射射手
+		_selfLaunch = false;
+		_limboFlag = false;
+		_shooterIsSelected = false;
+		_movingSelfInitFlag = false;
+
+		// 状态机
+		_BlackHole = nullptr;
+		_ECM = nullptr;
+		_GiftBox = nullptr;
+		_DestroySelf = nullptr;
+		_Paintball = nullptr;
+	}
+
 	virtual void Awake() override;
 
 	virtual void Destroy() override;

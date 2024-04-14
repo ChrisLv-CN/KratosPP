@@ -14,6 +14,17 @@ public:
 
 	void DestroyNow(bool peaceful);
 
+	virtual void Clean() override
+	{
+		StateScript<DestroySelfData>::Clean();
+
+		GoDie = false;
+
+		_safety = false; // 为子机设置的保险
+		_delay = 0;
+		_delayTimer = {};
+	}
+
 	virtual void OnStart() override;
 
 	virtual void OnUpdate() override;

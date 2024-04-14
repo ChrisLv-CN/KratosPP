@@ -17,6 +17,14 @@ public:
 
 	void SetupTrails();
 
+	virtual void Clean() override
+	{
+		BulletScript::Clean();
+
+		_setupFlag = false;
+		_trails.clear();
+	}
+
 	virtual void OnUpdate() override;
 
 	virtual void OnUpdateEnd() override;

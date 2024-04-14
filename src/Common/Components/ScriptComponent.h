@@ -26,6 +26,11 @@ class ScriptComponent : public Component
 public:
 	ScriptComponent() : Component() {}
 
+	virtual void Clean() override
+	{
+		Component::Clean();
+	}
+
 	virtual GameObject* GetGameObject() = 0;
 	__declspec(property(get = GetGameObject)) GameObject* _gameObject;
 };
@@ -159,6 +164,12 @@ public:
 		return false;
 	}
 
+	virtual void Clean() override
+	{
+		ScriptComponent::Clean();
+
+		_absType = AbstractType::None;
+	}
 protected:
 	AbstractType _absType = AbstractType::None;
 };
@@ -224,6 +235,14 @@ public:
 		return IsAircraft() && GetThisLocoType() == LocoType::Rocket;
 	}
 
+	virtual void Clean() override
+	{
+		ScriptComponent::Clean();
+
+		_absType = AbstractType::None;
+		_locoType = LocoType::None;
+	}
+
 protected:
 	// 单位类型
 	AbstractType _absType = AbstractType::None;
@@ -265,6 +284,14 @@ public:
 		return GetBulletType() == BulletType::BOMB;
 	}
 
+	virtual void Clean() override
+	{
+		ScriptComponent::Clean();
+
+		_bulletType = BulletType::UNKNOWN;
+		_trajectoryData = nullptr;
+	}
+
 protected:
 	// 抛射体类型
 	BulletType _bulletType = BulletType::UNKNOWN;
@@ -285,49 +312,40 @@ class AnimScript : public ScriptComponent, public IAnimScript
 {
 public:
 	SCRIPT_COMPONENT(AnimScript, AnimClass, AnimExt, pAnim);
+
+	virtual void Clean() override { ScriptComponent::Clean(); }
 };
 
 class SuperWeaponScript : public ScriptComponent, public ISuperScript
 {
 public:
 	SCRIPT_COMPONENT(SuperWeaponScript, SuperClass, SuperWeaponExt, pSuper);
+
+	virtual void Clean() override { ScriptComponent::Clean(); }
 };
 
 class EBoltScript : public ScriptComponent
 {
 public:
 	SCRIPT_COMPONENT(EBoltScript, EBolt, EBoltExt, pBolt);
+
+	virtual void Clean() override { ScriptComponent::Clean(); }
 };
 
-#define DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, ...) \
-	CLASS_NAME() : __VA_ARGS__() \
-	{ \
-		this->Name = ScriptName; \
-	} \
-	\
-	inline static std::string ScriptName = #CLASS_NAME; \
-	static Component* Create() \
-	{ \
-		return static_cast<Component*>(new CLASS_NAME()); \
-	} \
-	\
-	inline static int g_temp_##CLASS_NAME = \
-	ComponentFactory::GetInstance().Register(#CLASS_NAME, CLASS_NAME::Create); \
-
 #define OBJECT_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, ObjectScript) \
+	DECLARE_COMPONENT(CLASS_NAME, ObjectScript) \
 
 #define TECHNO_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, TechnoScript) \
+	DECLARE_COMPONENT(CLASS_NAME, TechnoScript) \
 
 #define BULLET_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, BulletScript) \
+	DECLARE_COMPONENT(CLASS_NAME, BulletScript) \
 
 #define ANIM_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, AnimScript) \
+	DECLARE_COMPONENT(CLASS_NAME, AnimScript) \
 
 #define SUPER_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, SuperWeaponScript) \
+	DECLARE_COMPONENT(CLASS_NAME, SuperWeaponScript) \
 
 #define EBOLT_SCRIPT(CLASS_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(CLASS_NAME, EBoltScript) \
+	DECLARE_COMPONENT(CLASS_NAME, EBoltScript) \

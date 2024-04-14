@@ -68,7 +68,8 @@ void Component::EnsureDestroy()
 
 	// 释放资源
 	// GameDelete(this);
-	delete this;
+	// delete this;
+	FreeComponent(); // 返回缓冲池
 }
 
 bool Component::AlreadyAwake()

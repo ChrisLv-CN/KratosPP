@@ -16,6 +16,14 @@ public:
 
 	TECHNO_SCRIPT(TechnoTrail);
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		_setupFlag = false;
+		_trails.clear();
+	}
+
 	virtual void Awake() override;
 
 	virtual void ExtChanged() override;

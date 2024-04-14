@@ -8,6 +8,11 @@ class FreezeState : public StateScript<FreezeData>
 public:
 	STATE_SCRIPT(Freeze);
 
+	virtual void Clean() override
+	{
+		StateScript<FreezeData>::Clean();
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

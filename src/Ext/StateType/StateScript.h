@@ -25,7 +25,7 @@ public:
 };
 
 #define STATE_SCRIPT(STATE_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(STATE_NAME ## State, StateScript<STATE_NAME ## Data>) \
+	DECLARE_COMPONENT(STATE_NAME ## State, StateScript<STATE_NAME ## Data>) \
 
 #define STATE_VAR_DEFINE(STATE_NAME) \
 	STATE_NAME ## State * _ ## STATE_NAME = nullptr; \
@@ -53,6 +53,26 @@ template <typename TData>
 class StateScript : public ObjectScript, public IStateScript
 {
 public:
+
+	virtual void Clean() override
+	{
+		ObjectScript::Clean();
+
+		Token = { "" };
+		Data = {};
+		pAESource = nullptr;
+		ReceiverOwn = true;
+		pAEHouse = nullptr;
+		AEFromWarhead = false;
+		AEWarheadLocation = CoordStruct::Empty;
+
+		_duration = -1; // 寿命
+		_immortal = true; // 永生
+		_lifeTimer = {};
+		_reset = false; // Start被调用过的标记
+		_frame = 0; // 当前帧数
+	}
+
 	virtual void Start(EffectData* data, int duration = -1, std::string token = "", AttachEffectScript* pAE = nullptr) override final
 	{
 		if (TData* pData = dynamic_cast<TData*>(data))

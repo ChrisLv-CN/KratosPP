@@ -18,6 +18,18 @@ public:
 
 	void Setup();
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		IsHoming = false;
+		HomingTargetLocation = CoordStruct::Empty;
+
+		_homingData = nullptr;
+
+		_initHomingFlag = false;
+	}
+
 	virtual void Awake() override;
 
 	virtual void OnUpdate() override;

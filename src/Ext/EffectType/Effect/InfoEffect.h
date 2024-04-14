@@ -25,6 +25,11 @@ class InfoEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Info);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+	}
+
 	virtual void OnGScreenRenderEnd(CoordStruct location) override;
 
 #pragma region Save/Load

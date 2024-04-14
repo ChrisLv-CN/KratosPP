@@ -27,6 +27,23 @@ public:
 		}
 	}
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		LockTurretDir.SetValue(0);
+		ChangeDefaultDir = false;
+		LockTurret = false;
+
+		_data = {}; // 个体设置
+
+		_bullets = -1;
+		_decoys.clear();
+		_delayTimer = {};
+		_reloadTimer = {};
+		_fire = false;
+	}
+
 	virtual void Awake() override;
 
 	virtual void Destroy() override;
@@ -46,6 +63,10 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->LockTurretDir)
+			.Process(this->ChangeDefaultDir)
+			.Process(this->LockTurret)
+
 			.Process(this->_bullets)
 			.Process(this->_decoys)
 			.Process(this->_delayTimer)

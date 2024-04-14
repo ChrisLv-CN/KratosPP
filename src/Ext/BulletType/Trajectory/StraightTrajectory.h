@@ -34,6 +34,14 @@ public:
 
 	void ResetStraightMissileVelocity();
 
+	virtual void Clean() override
+	{
+		BulletScript::Clean();
+
+		_straightBullet = {};
+		_resetTargetFlag = false;
+	}
+
 	virtual void Awake() override;
 
 	virtual void OnPut(CoordStruct* pCoord, DirType dirType) override;

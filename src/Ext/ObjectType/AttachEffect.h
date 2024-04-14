@@ -174,16 +174,46 @@ public:
 
 	void OnGScreenRender(EventSystem* sender, Event e, void* args);
 
-	virtual void Awake() override
-	{
-		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
-	}
-
 	virtual void ExtChanged() override
 	{
 		_typeData = nullptr;
 		_groupData = nullptr;
 		_attachOnceFlag = false;
+	}
+
+	virtual void Clean() override
+	{
+		ObjectScript::Clean();
+
+
+		PowerOff = false; // 停电状态
+
+		PassengerIds.clear(); // 乘客持有的AEMode ID
+		DisableDelayTimers.clear();
+		AEStacks.clear();
+
+		_ownerIsDead = false;
+
+		_attachOnceFlag = false;
+
+		_attachStateEffectFlag = false;
+
+		_location = CoordStruct::Empty; // 当前位置
+		_lastLocation = CoordStruct::Empty; // 上一次位置
+		_locationMarks.clear(); // 位置记录
+		_locationMarkDistance = 16; // 多少格记录一个位置
+		_totalMileage = 0; // 总里程
+		_locationSpace = 512; // 替身火车的车厢间距
+
+		// section上的AE设置
+		_typeData = nullptr;
+
+		_groupData = nullptr;
+	}
+
+	virtual void Awake() override
+	{
+		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
 	}
 
 	virtual void Destroy() override
@@ -321,8 +351,8 @@ private:
 	 */
 	bool _attachStateEffectFlag = false;
 
-	CoordStruct _location{}; // 当前位置
-	CoordStruct _lastLocation{}; // 上一次位置
+	CoordStruct _location = CoordStruct::Empty; // 当前位置
+	CoordStruct _lastLocation = CoordStruct::Empty; // 上一次位置
 	std::vector<LocationMark> _locationMarks{}; // 位置记录
 	int _locationMarkDistance = 16; // 多少格记录一个位置
 	double _totalMileage = 0; // 总里程

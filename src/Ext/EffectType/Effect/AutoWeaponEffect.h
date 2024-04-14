@@ -32,6 +32,13 @@ public:
 
 	static void SetupFakeTargetToBullet(int index, int burst, BulletClass*& pBullet, AbstractClass*& pTarget);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_rof.clear();
+	}
+
 	virtual void End(CoordStruct location) override;
 
 	virtual void OnUpdate() override;

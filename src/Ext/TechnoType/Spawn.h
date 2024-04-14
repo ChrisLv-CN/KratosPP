@@ -20,6 +20,13 @@ public:
 
 	bool TryGetSpawnType(int i, std::string& newId);
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		_spawnData = nullptr;
+	}
+
 	virtual void Awake() override;
 
 #pragma region save/load

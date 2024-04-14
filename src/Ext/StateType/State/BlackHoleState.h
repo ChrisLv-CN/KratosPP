@@ -13,6 +13,17 @@ public:
 
 	bool IsOutOfRange(CoordStruct targetPos);
 
+	virtual void Clean() override
+	{
+		StateScript<BlackHoleData>::Clean();
+
+		_count = 0;
+		_delay = 0;
+		_delayTimer = {};
+
+		_isElite = false;
+	}
+
 	virtual void OnStart() override;
 
 	virtual void OnUpdate() override;
@@ -29,6 +40,7 @@ public:
 		}
 		return *this;
 	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

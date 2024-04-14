@@ -13,6 +13,13 @@ class DestroyAnimState : public StateScript<DestroyAnimData>
 public:
 	STATE_SCRIPT(DestroyAnim);
 
+	virtual void Clean() override
+	{
+		StateScript<DestroyAnimData>::Clean();
+
+		pKillerHouse = nullptr;
+	}
+
 	HouseClass* pKillerHouse = nullptr;
 
 	DestroyAnimState& operator=(const DestroyAnimState& other)

@@ -25,6 +25,24 @@ class RevengeEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Revenge);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		pRevenger = nullptr; // 复仇者
+		pRevengerHouse = nullptr; // 复仇者的阵营
+		// 检查报复对象
+		pRevengeTarget = nullptr; // 报复对象
+
+		_ignoreDefenses = false; // 本次伤害是否真伤
+
+		_skip = false;
+		_bingo = false;
+
+		_count = 0;
+		_markFrame = 0;
+	}
+
 	virtual void OnReceiveDamage(args_ReceiveDamage* args) override;
 
 	virtual void OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, TechnoClass* pAttacker, HouseClass* pAttackingHouse) override;

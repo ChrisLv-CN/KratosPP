@@ -11,6 +11,21 @@ class DamageReactionState : public StateScript<DamageReactionData>
 public:
 	STATE_SCRIPT(DamageReaction);
 
+	virtual void Clean() override
+	{
+		StateScript<DamageReactionData>::Clean();
+
+		ForceDone = false;
+		_count = 0;
+		_delay = 0;
+		_delayTimer = {};
+
+		_animDelay = 0;
+		_animDelayTimer = {};
+
+		_isElite = false;
+	}
+
 	virtual void OnStart() override;
 
 	virtual void OnUpdate() override;
@@ -34,6 +49,7 @@ public:
 		}
 		return *this;
 	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

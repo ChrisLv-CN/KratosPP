@@ -8,6 +8,14 @@ class ScatterState : public StateScript<ScatterData>
 public:
 	STATE_SCRIPT(Scatter);
 
+	virtual void Clean() override
+	{
+		StateScript<ScatterData>::Clean();
+
+		_forceMoving = false;
+		_panic = false;
+	}
+
 	virtual void OnUpdate() override;
 
 	ScatterState& operator=(const ScatterState& other)

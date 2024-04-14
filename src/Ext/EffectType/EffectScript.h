@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <queue>
 #include <type_traits>
 
 #include <GeneralStructures.h>
@@ -19,7 +18,7 @@
 
 
 #define EFFECT_SCRIPT_BASE(EFFECT_NAME, BASE_NAME) \
-	DECLARE_DYNAMIC_SCRIPT(EFFECT_NAME ## Effect, BASE_NAME) \
+	DECLARE_COMPONENT(EFFECT_NAME ## Effect, BASE_NAME) \
 	\
 	virtual EFFECT_NAME ## Data* GetData() override \
 	{ \
@@ -33,6 +32,17 @@
 class EffectScript : public ObjectScript, public IAEScript
 {
 public:
+
+	virtual void Clean() override
+	{
+		ObjectScript::Clean();
+
+		AEData = {};
+
+		_ae = nullptr;
+		_started = false;
+		_pause = false;
+	}
 
 	virtual void Start() override;
 	virtual void Pause() override;

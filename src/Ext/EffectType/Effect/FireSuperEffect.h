@@ -25,6 +25,14 @@ class FireSuperEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(FireSuper);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_count = 0;
+		_delayTimer = {};
+	}
+
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
 #pragma region Save/Load

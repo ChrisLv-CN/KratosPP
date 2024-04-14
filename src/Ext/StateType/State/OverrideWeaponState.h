@@ -10,6 +10,13 @@ public:
 
 	bool TryGetOverrideWeapon(bool isElite, bool isDeadWeapon, WeaponTypeClass*& pOverrideWeapon);
 
+	virtual void Clean() override
+	{
+		StateScript<OverrideWeaponData>::Clean();
+
+		_weaponIndex = -1;
+	}
+
 	virtual void OnFire(AbstractClass* pTarget, int weaponIndex) override;
 
 	OverrideWeaponState& operator=(const OverrideWeaponState& other)

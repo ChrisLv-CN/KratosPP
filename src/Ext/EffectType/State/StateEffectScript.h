@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <queue>
 #include <type_traits>
 
 #include <GeneralStructures.h>
@@ -96,6 +95,13 @@ public:
 	virtual void Recover() override final
 	{
 		Start();
+	}
+
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_state = nullptr;
 	}
 
 	virtual IStateScript* GetState(TechnoStatus* status) = 0;

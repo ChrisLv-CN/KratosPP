@@ -27,10 +27,18 @@ public:
 
 	void Trigger();
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_count = 0;
+	}
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
 		return stream
+			.Process(this->_count)
 			.Success();
 	};
 

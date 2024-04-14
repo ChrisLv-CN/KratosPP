@@ -25,6 +25,13 @@ class StackEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Stack);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_count = 0;
+	}
+
 	virtual void OnUpdate() override;
 	virtual void OnWarpUpdate() override;
 

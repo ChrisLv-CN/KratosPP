@@ -25,6 +25,11 @@ class MarkEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Mark);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+	}
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {

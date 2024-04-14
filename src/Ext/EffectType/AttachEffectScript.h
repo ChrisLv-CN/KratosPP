@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <queue>
 #include <type_traits>
 
 #include <GeneralDefinitions.h>
@@ -64,24 +63,6 @@ class AttachEffectScript : public ObjectScript, public IAEScript
 public:
 	OBJECT_SCRIPT(AttachEffectScript);
 
-	std::string Token = GetUUID();
-	AttachEffectData AEData{};
-
-	AttachEffect* _aeManager = nullptr;
-	AttachEffect* GetAEManager();
-	__declspec(property(get = GetAEManager)) AttachEffect* AEManager;
-
-	TechnoClass* pSource = nullptr; // AE来源单位
-	HouseClass* pSourceHouse = nullptr; // AE来源所属
-
-	bool FromWarhead = false;
-	CoordStruct WarheadLocation{};
-
-	int AEMode = -1;
-	bool FromPassenger = false;
-
-	bool NonInheritable = false; // 不允许继承
-
 	virtual void ResetDuration() override;
 	int GetDuration();
 	bool TryGetInitDelayTimeLeft(int& timeLeft);
@@ -111,6 +92,41 @@ public:
 	 * @return false
 	 */
 	virtual bool IsAlive() override;
+
+	virtual void Clean() override
+	{
+		ObjectScript::Clean();
+
+		Token = GetUUID();
+		AEData = {};
+
+		_aeManager = nullptr;
+
+		pSource = nullptr; // AE来源单位
+		pSourceHouse = nullptr; // AE来源所属
+
+		FromWarhead = false;
+		WarheadLocation = CoordStruct::Empty;
+
+		AEMode = -1;
+		FromPassenger = false;
+
+		NonInheritable = false; // 不允许继承
+
+		_duration = -1; // 寿命
+		_immortal = true; // 永生
+		_lifeTimer = {};
+
+		_initDelay = -1; // 启动初始延迟
+		_delayToEnable = false; // 延迟开启
+		_initialDelayTimer = {}; // 初始延迟计时器
+
+		_inBuilding = false; // 是否在建造中
+		_started = false; // 已开启
+		_hold = false; // 跳过效果器死亡检查，用于暂停效果器，AE不会当成死亡结束
+
+		_diffSource = false; // pSource是外人，需要监听死亡
+	}
 
 	/**
 	 *@brief 根据AEData初始化AE配置，如果延迟生效则令Component失活等待延迟激活，同时调用InitEffects初始化子Effects
@@ -142,6 +158,24 @@ public:
 
 	virtual void OnGScreenRender(CoordStruct location) override;
 	virtual void OnGScreenRenderEnd(CoordStruct location) override;
+
+	std::string Token = GetUUID();
+	AttachEffectData AEData{};
+
+	AttachEffect* _aeManager = nullptr;
+	AttachEffect* GetAEManager();
+	__declspec(property(get = GetAEManager)) AttachEffect* AEManager;
+
+	TechnoClass* pSource = nullptr; // AE来源单位
+	HouseClass* pSourceHouse = nullptr; // AE来源所属
+
+	bool FromWarhead = false;
+	CoordStruct WarheadLocation = CoordStruct::Empty;
+
+	int AEMode = -1;
+	bool FromPassenger = false;
+
+	bool NonInheritable = false; // 不允许继承
 
 #pragma region Save/Load
 	template <typename T>

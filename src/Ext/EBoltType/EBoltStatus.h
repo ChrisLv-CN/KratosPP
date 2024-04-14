@@ -19,6 +19,29 @@ public:
 
 	void OnDraw();
 
+	void Clean() override
+	{
+		EBoltScript::Clean();
+
+		ArcCount = 8;
+
+		Color1 = Colors::Empty;
+		Color2 = Colors::Empty;
+		Color3 = Colors::Empty;
+
+		Disable1 = false;
+		Disable2 = false;
+		Disable3 = false;
+
+		DisableParticle = false;
+
+		_owner = nullptr;
+		_flh = CoordStruct::Empty;
+		_isOnTurret = true;
+
+		_targetFLH = CoordStruct::Empty;
+	}
+
 	void Destroy() override;
 
 	int ArcCount = 8;
@@ -35,7 +58,7 @@ public:
 
 #pragma region Save/Load
 	template <typename T>
-	bool Serialize(T &stream)
+	bool Serialize(T& stream)
 	{
 		return stream
 			.Process(this->ArcCount)

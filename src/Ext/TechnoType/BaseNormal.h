@@ -18,6 +18,13 @@ public:
 
 	void Setup();
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		_baseNormalData = nullptr;
+	}
+
 	virtual void Awake() override;
 
 	virtual void Destroy() override;

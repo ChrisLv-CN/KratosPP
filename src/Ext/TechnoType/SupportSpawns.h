@@ -16,6 +16,19 @@ public:
 
 	TECHNO_SCRIPT(SupportSpawns);
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		_data = nullptr;
+
+		_flhData = nullptr;
+
+		_alwaysFire = false;
+		_rof.clear();
+		_flipY = -1;
+	}
+
 	virtual void Awake() override;
 
 	virtual void ExtChanged() override;

@@ -133,6 +133,128 @@ public:
 	bool PumpAction(CoordStruct targetPos, bool isLobber, Sequence flySequence); // 爆炸冲击
 	void HumanCannon(CoordStruct sourcePos, CoordStruct targetPos, int height, bool isLobber, Sequence flySequence); // 人间大炮
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		// 踩箱子获得的buff
+		CrateBuff = {};
+
+		// 替身的配置
+		MyStandData = {};
+		pMyMaster = nullptr;
+		MyMasterIsSpawned = false;
+		MyMasterIsAnim = false;
+		StandIsMoving = false;
+
+		// 染色配置
+		MyPaintData = {};
+
+		drivingState = DrivingState::Moving;
+
+		DisableVoxelCache = false;
+
+		DisableSelectVoice = false;
+
+		// 攻击攻击信标
+		AttackBeaconRecruited = false;
+
+		CaptureByBlackHole = false;
+		Jumping = false;
+
+		// 冻结
+		Freezing = false;
+		// 冻结JJ时记录下他的面向
+		JJMark = false;
+		JJFacing.SetValue(0);
+
+		// 气球强制降落
+		BalloonFall = false;
+		// Jumpjet强制降落，接管移动
+		CarryallLanding = false;
+
+		// 虚单位
+		VirtualUnit = false;
+		Disappear = false;
+
+		FLHIndex = 0;
+
+		// 阿伟死了，DestroySelfState干的
+		_isDead = false;
+
+		_lastMission = Mission::Guard;
+
+		_location = CoordStruct::Empty;
+		_isMoving = false;
+
+		//
+		_isVoxel = false;
+		// 选择状态
+		_disableSelectable = false;
+		// 冻结状态
+		_cantMoveFlag = false;
+
+		// 我最后打的目标
+		_lastTarget = nullptr;
+
+		// 乖巧乘客
+		_passengersData = nullptr;
+
+		// 部署变形
+		_transformData = nullptr;
+
+		// 我有一只激光笔
+		_targetLasers.clear();
+
+		// 被空袭管理器
+		_airstrikes.clear();
+
+		// 染色状态
+		_deactivateDimEMP = 0.8f;
+		_deactivateDimPowered = 0.5f;
+		_berserkColor2 = 0;
+		_buildingWasBerzerk = false;
+		_buildingWasEMP = false;
+		_buildingWasColor = false;
+
+		// 变形
+		pSourceType = nullptr;
+		pTargetType = nullptr;
+		_changeToType = { "" };
+		_hasBeenChanged = false; // 处于变形状态
+		_transformLocked = false; // 处于变形状态时锁定不允许再变形
+
+		// EMP动画
+		pExtraSparkleAnim = nullptr;
+
+		// FLH
+		_fireFLHData = nullptr;
+
+		// 黑洞
+		_pBlackHole = nullptr;
+		_blackHoleData = {};
+		_blackHoleDamageDelay = {};
+		_lostControl = false;
+
+		// 状态机
+		_AntiBullet = nullptr;
+		_BlackHole = nullptr;
+		_DamageReaction = nullptr;
+		_Deselect = nullptr;
+		_DestroyAnim = nullptr;
+		_DestroySelf = nullptr;
+		_DisableWeapon = nullptr;
+		_Freeze = nullptr;
+		_GiftBox = nullptr;
+		_NoMoneyNoTalk = nullptr;
+		_OverrideWeapon = nullptr;
+		_Paintball = nullptr;
+		_Pump = nullptr;
+		_Scatter = nullptr;
+		_Teleport = nullptr;
+		_Transform = nullptr;
+	}
+
 	virtual void Awake() override;
 
 	virtual void Destroy() override;

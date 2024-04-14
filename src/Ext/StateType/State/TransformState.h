@@ -13,6 +13,11 @@ class TransformState : public StateScript<TransformData>
 public:
 	STATE_SCRIPT(Transform);
 
+	virtual void Clean() override
+	{
+		StateScript<TransformData>::Clean();
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

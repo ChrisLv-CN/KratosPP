@@ -24,6 +24,25 @@ public:
 	void UpdateHeadToCoord(CoordStruct headTo, bool lockAngle = false);
 	void UnLock();
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		PitchAngle = 0.0;
+
+		_status = nullptr;
+
+		_initFlag = false;
+
+		_data = nullptr;
+
+		_targetAngle = 0.0; // 需要调整到的目标角度
+		_smooth = true; // 平滑的改变角度，防止大幅度的变化
+		_lockAngle = false; // 角度由外部传入，不计算
+
+		_location = CoordStruct::Empty;
+	}
+
 	virtual void Awake() override;
 
 	virtual void ExtChanged() override;
@@ -75,8 +94,8 @@ private:
 
 	bool _initFlag = false;
 
-	AircraftAttitudeData* GetAircraftAttitudeData();
 	AircraftAttitudeData* _data = nullptr;
+	AircraftAttitudeData* GetAircraftAttitudeData();
 
 	float _targetAngle = 0.0; // 需要调整到的目标角度
 	bool _smooth = true; // 平滑的改变角度，防止大幅度的变化

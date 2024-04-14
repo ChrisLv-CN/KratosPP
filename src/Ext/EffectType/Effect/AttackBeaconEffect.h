@@ -30,6 +30,17 @@ class AttackBeaconEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(AttackBeacon);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_count = 0;
+
+		_isElite = false;
+		_delay = 0;
+		_delayTimer = {};
+	}
+
 	virtual void OnUpdate() override;
 
 #pragma region Save/Load

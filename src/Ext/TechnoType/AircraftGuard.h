@@ -32,6 +32,25 @@ public:
 	 */
 	void StartAreaGuard();
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		State = AircraftGuardStatus::STOP;
+
+		Clockwise = false; // 顺时针巡航
+
+		_status = nullptr;
+
+		_data = nullptr;
+
+		_destCenter = CoordStruct::Empty; // 航点
+		_destList.clear(); // 巡航的下一个实际坐标点
+		_destIndex = 0; // 巡航点序号
+
+		_onStopCommand = false;
+	}
+
 	virtual void Awake() override;
 
 	virtual void ExtChanged() override;
@@ -91,8 +110,8 @@ private:
 		return _status;
 	}
 
-	AircraftGuardData* GetAircraftGuardData();
 	AircraftGuardData* _data = nullptr;
+	AircraftGuardData* GetAircraftGuardData();
 
 	CoordStruct _destCenter = CoordStruct::Empty; // 航点
 	std::vector<CoordStruct> _destList{}; // 巡航的下一个实际坐标点

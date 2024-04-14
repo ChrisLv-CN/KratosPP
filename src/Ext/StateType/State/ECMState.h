@@ -15,6 +15,19 @@ class ECMState : public StateScript<ECMData>
 public:
 	STATE_SCRIPT(ECM);
 
+	virtual void Clean() override
+	{
+		StateScript<ECMData>::Clean();
+
+		_count = 0;
+		_delay = 0;
+		_delayTimer = {};
+
+		_lockTimer = {};
+
+		_status = nullptr;
+	}
+
 	virtual void OnStart() override;
 
 	virtual void OnUpdate() override;

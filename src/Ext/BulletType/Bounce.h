@@ -14,6 +14,17 @@ public:
 
 	void SetBounceData(BounceData bounceData);
 
+	virtual void Clean() override
+	{
+		BulletScript::Clean();
+
+		_bounceData = {};
+		_isBounceSplit = false; // 是弹跳抛射体分裂的子抛射体
+		_bounceIndex = 0; // 第几号子抛射体
+		_bounceTargetPos = CoordStruct::Empty;
+		_bounceSpeedMultiple = 1.0f;
+	}
+
 	virtual void OnPut(CoordStruct* pCoord, DirType dirType) override;
 
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;

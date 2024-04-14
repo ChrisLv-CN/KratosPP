@@ -13,6 +13,22 @@ public:
 
 	bool Jump(CoordStruct targetPos, bool isLobber, Sequence flySequence, bool isHumanCannon = false);
 
+	virtual void Clean() override
+	{
+		StateScript<PumpData>::Clean();
+
+		_isHumanCannon = false; // 人间大炮
+		_flyTimer = {}; // 飞行时间
+
+		_gravity = 0;
+		_velocity = BulletVelocity::Empty; // 飞行向量
+
+		_flySequence = Sequence::Ready; // 步兵飞行时的序列
+
+		// 状态机一直处于激活状态，额外开关控制是否可以进行跳跃
+		_canJump = false;
+	}
+
 	virtual void Deactivate() override
 	{
 		// 永久激活，不可关闭

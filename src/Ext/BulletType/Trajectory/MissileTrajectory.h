@@ -16,6 +16,20 @@ class MissileTrajectory : public BulletScript
 public:
 	BULLET_SCRIPT(MissileTrajectory);
 
+	virtual void Clean() override
+	{
+		BulletScript::Clean();
+
+		IsDecoy = false; // 热诱弹
+		LaunchPos = CoordStruct::Empty;
+		LifeTimer = {};
+
+		_status = nullptr;
+
+		_targetHasDecoyFlag = false;
+		_missileShakeVelocityFlag = false;
+	}
+
 	virtual void Awake() override;
 
 	virtual void Destroy() override;

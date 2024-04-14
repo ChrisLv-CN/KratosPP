@@ -46,6 +46,23 @@ public:
 		return boxState;
 	}
 
+	virtual void Clean() override
+	{
+		StateScript<GiftBoxData>::Clean();
+
+		IsOpen = false;
+
+		// 记录盒子的状态
+		IsSelected = false;
+		BodyDir.SetValue(0);
+		TurretDir.SetValue(0);
+		Group = -1;
+
+		_isElite = false;
+		_delay = 0;
+		_delayTimer = {};
+	}
+
 	virtual void OnStart() override;
 
 	virtual void OnUpdate() override;

@@ -10,6 +10,11 @@ class DeselectState : public StateScript<DeselectData>
 public:
 	STATE_SCRIPT(Deselect);
 
+	virtual void Clean() override
+	{
+		StateScript<DeselectData>::Clean();
+	}
+
 #pragma region save/load
 	template <typename T>
 	bool Serialize(T& stream)

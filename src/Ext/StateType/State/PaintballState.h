@@ -17,6 +17,15 @@ public:
 
 	bool NeedPaint(bool& changeColor, bool& changeBright);
 
+	virtual void Clean() override
+	{
+		StateScript<PaintballData>::Clean();
+
+		_rgbMode = false;
+		_rgbIdx = 0;
+		_rgbTimer = {};
+	}
+
 	virtual void OnInitState(bool replace) override;
 
 	virtual void OnUpdate() override;
@@ -58,5 +67,5 @@ public:
 private:
 	bool _rgbMode = false;
 	int _rgbIdx = 0;
-	CDTimerClass _rgbTimer;
+	CDTimerClass _rgbTimer{};
 };

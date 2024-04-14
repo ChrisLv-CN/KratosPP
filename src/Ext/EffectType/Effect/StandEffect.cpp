@@ -24,7 +24,7 @@ void StandEffect::CreateAndPutStand()
 	if (pStand)
 	{
 		// 初始化替身的状态设置
-		TechnoStatus* status = SetupStandStatus();
+		SetupStandStatus();
 		pStand->UpdatePlacement(PlacementType::Remove); // Mark(MarkType::Up)
 		bool canGuard = AE->pSourceHouse->IsControlledByHuman();
 		if (pStand->WhatAmI() == AbstractType::Building)

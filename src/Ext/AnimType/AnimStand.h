@@ -28,6 +28,16 @@ public:
 		}
 	}
 
+	virtual void Clean() override
+	{
+		AnimScript::Clean();
+
+		pStand = nullptr;
+
+		_initFlag = false;
+		_data = nullptr;
+	}
+
 	virtual void Awake() override
 	{
 		if (!GetStandData()->Enable)

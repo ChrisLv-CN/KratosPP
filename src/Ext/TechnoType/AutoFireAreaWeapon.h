@@ -18,6 +18,18 @@ public:
 
 	void Setup();
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		SkipROF = false;
+
+		_autoAreaData = nullptr;
+
+		_areaInitDelayTimer = {};
+		_areaDelayTimer = {};
+	}
+
 	virtual void Awake() override;
 
 	virtual void ExtChanged() override;
@@ -33,6 +45,7 @@ public:
 	bool Serialize(T& stream)
 	{
 		return stream
+			.Process(this->SkipROF)
 			.Process(this->_areaInitDelayTimer)
 			.Process(this->_areaDelayTimer)
 			.Success();

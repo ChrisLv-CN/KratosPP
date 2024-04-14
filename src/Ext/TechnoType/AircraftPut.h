@@ -16,6 +16,15 @@ public:
 
 	TECHNO_SCRIPT(AircraftPut);
 
+	virtual void Clean() override
+	{
+		TechnoScript::Clean();
+
+		_data = nullptr;
+
+		_aircraftPutOffset = false;
+	}
+
 	virtual void Awake() override;
 
 	virtual void OnPut(CoordStruct* pCoord, DirType dirType) override;

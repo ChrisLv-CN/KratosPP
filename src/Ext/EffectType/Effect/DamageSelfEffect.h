@@ -27,6 +27,19 @@ class DamageSelfEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(DamageSelf);
 
+	virtual void Clean() override
+	{
+		EffectScript::Clean();
+
+		_damage = 0; // 计算完fireMult后的伤害值
+		_bulletDamage = { 1 };
+
+		_pWH = nullptr;
+
+		_count = 0;
+		_delayTimer = {};
+	}
+
 	virtual void OnStart() override;
 
 	virtual void OnUpdate() override;

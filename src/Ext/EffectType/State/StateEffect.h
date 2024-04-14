@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <queue>
 #include <type_traits>
 
 #include <GeneralStructures.h>
@@ -42,6 +41,7 @@ public: \
 		} \
 		return state; \
 	} \
+	virtual void Clean() override { StateEffect<STATE_NAME ## Data>::Clean(); } \
 }; \
 
 // TODO Add State effects
