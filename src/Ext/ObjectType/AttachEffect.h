@@ -166,6 +166,12 @@ public:
 	void DetachByToken(std::string token);
 
 	/**
+	 * @brief 发生了变形，移除不保留的AE
+	 *
+	 */
+	void DetachWhenTransform();
+
+	/**
 	 * @brief 检查生命值并关闭死亡的AE
 	 *
 	 * @param silence 沉默模式，只移除，不触发冷却计时和Next附加
@@ -179,6 +185,8 @@ public:
 		_typeData = nullptr;
 		_groupData = nullptr;
 		_attachOnceFlag = false;
+		// 移除不保留的AE
+		DetachWhenTransform();
 	}
 
 	virtual void Clean() override

@@ -1,5 +1,7 @@
 ﻿#include "../TechnoStatus.h"
 
+#include <Ext/Helper/Physics.h>
+
 void TechnoStatus::OnUpdate_Transform()
 {
 	if (!_transformLocked)
@@ -13,8 +15,7 @@ void TechnoStatus::OnUpdate_Transform()
 				TechnoTypeClass* pTargetType = nullptr;
 				if (IsNotNone(_changeToType) && (pTargetType = TechnoTypeClass::Find(_changeToType.c_str())) != nullptr)
 				{
-					_hasBeenChanged = true;
-					ChangeTechnoTypeTo(pTargetType);
+					_hasBeenChanged = ChangeTechnoTypeTo(pTargetType);
 				}
 				else
 				{
@@ -34,6 +35,32 @@ void TechnoStatus::OnUpdate_Transform()
 			pTargetType = pTechno->GetTechnoType();
 			// 通过GameObject发出通知
 			_gameObject->ExtChanged = true;
+			// 如果在天上，掉地上
+			if (pTechno->IsInAir())
+			{
+				if (!pTargetType->BalloonHover)
+				{
+					FallingDown(pTechno, 0, false);
+				}
+			}
+			else
+			{
+				if (pTargetType->BalloonHover)
+				{
+					if (CellClass* pCell = MapClass::Instance->TryGetCellAt(pTechno->GetCoords()))
+					{
+						pTechno->SetDestination(pCell, true);
+						if (pTechno->Target)
+						{
+							pTechno->QueueMission(Mission::Attack, true);
+						}
+						else
+						{
+							pTechno->QueueMission(Mission::Move, true);
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -50,18 +77,120 @@ void TechnoStatus::OnReceiveDamageDestroy_Transform()
 	}
 }
 
-void TechnoStatus::ChangeTechnoTypeTo(TechnoTypeClass* pNewType)
+bool TechnoStatus::ChangeTechnoTypeTo(TechnoTypeClass* pNewType)
 {
-	switch (GetAbsType())
+	AbstractType absType = GetAbsType();
+	TechnoTypeClass** pType = nullptr;
+	switch (absType)
 	{
 	case AbstractType::Infantry:
- 		dynamic_cast<InfantryClass*>(pTechno)->Type = dynamic_cast<InfantryTypeClass*>(pNewType);
+		pType = reinterpret_cast<TechnoTypeClass**>(&(static_cast<InfantryClass*>(pTechno)->Type));
 		break;
 	case AbstractType::Unit:
-		dynamic_cast<UnitClass*>(pTechno)->Type = dynamic_cast<UnitTypeClass*>(pNewType);
+		pType = reinterpret_cast<TechnoTypeClass**>(&(static_cast<UnitClass*>(pTechno)->Type));
 		break;
 	case AbstractType::Aircraft:
-		dynamic_cast<AircraftClass*>(pTechno)->Type = dynamic_cast<AircraftTypeClass*>(pNewType);
+		pType = reinterpret_cast<TechnoTypeClass**>(&(static_cast<AircraftClass*>(pTechno)->Type));
 		break;
+	default:
+		Debug::Log("Warning: %s is not FootClass, conversion not allowed\n", pNewType->get_ID());
+		return false;
 	}
+	FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
+
+	// Detach CLEG targeting
+	auto tempUsing = pFoot->TemporalImUsing;
+	if (tempUsing && tempUsing->Target)
+		tempUsing->Detach();
+
+	HouseClass* const pHouse = pFoot->Owner;
+
+	// Remove tracking of old techno
+	if (!pFoot->InLimbo)
+	{
+		pHouse->RegisterLoss(pFoot, false);
+	}
+	pHouse->RemoveTracking(pFoot);
+
+	int oldHealth = pFoot->Health;
+
+	// Generic type-conversion
+	TechnoTypeClass* prevType = *pType;
+	*pType = pNewType;
+
+	// Readjust health according to percentage
+	pFoot->SetHealthPercentage((double)(oldHealth) / (double)prevType->Strength);
+	pFoot->EstimatedHealth = pFoot->Health;
+
+	// Add tracking of new techno
+	pHouse->AddTracking(pFoot);
+	if (!pFoot->InLimbo)
+	{
+		pHouse->RegisterGain(pFoot, false);
+	}
+	pHouse->RecheckTechTree = true;
+
+	// Adjust ammo
+	int ammoLeft = pFoot->Ammo;
+	ammoLeft = Math::min(ammoLeft, pNewType->Ammo);
+	pFoot->Ammo = ammoLeft;
+	if (ammoLeft < 0 || ammoLeft >= pNewType->Ammo)
+	{
+		pFoot->ReloadTimer.Stop();
+	}
+	else
+	{
+		int reloadLeft = pFoot->ReloadTimer.GetTimeLeft();
+		int reloadPrev = 0;
+		int reloadNew = 0;
+		if (ammoLeft == 0)
+		{
+			reloadPrev = prevType->EmptyReload;
+			reloadNew = pNewType->EmptyReload;
+		}
+		else if (pFoot->Ammo)
+		{
+			reloadPrev = prevType->Reload;
+			reloadNew = pNewType->Reload;
+		}
+		int pass = reloadPrev - reloadLeft;
+		if (pass <= 0 || pass >= reloadNew)
+		{
+			pFoot->ReloadTimer.Stop();
+		}
+		else
+		{
+			int reload = reloadNew - pass;
+			pFoot->ReloadTimer.Start(reload);
+		}
+	}
+
+	// Adjust ROT
+	if (absType == AbstractType::Aircraft)
+	{
+		pFoot->SecondaryFacing.SetROT(pNewType->ROT);
+	}
+	else
+	{
+		pFoot->PrimaryFacing.SetROT(pNewType->ROT);
+	}
+
+	// Locomotor change, referenced from Ares 0.A's abduction code, not sure if correct, untested
+	CLSID nowLocoID;
+	ILocomotion* iloco = pFoot->Locomotor.get();
+	const auto& toLoco = pNewType->Locomotor;
+	if ((SUCCEEDED(static_cast<LocomotionClass*>(iloco)->GetClassID(&nowLocoID)) && nowLocoID != toLoco))
+	{
+		// because we are throwing away the locomotor in a split second, piggybacking
+		// has to be stopped. otherwise the object might remain in a weird state.
+		while (LocomotionClass::End_Piggyback(pFoot->Locomotor));
+		// throw away the current locomotor and instantiate
+		// a new one of the default type for this unit.
+		if (auto newLoco = LocomotionClass::CreateInstance(toLoco))
+		{
+			newLoco->Link_To_Object(pFoot);
+			pFoot->Locomotor = std::move(newLoco);
+		}
+	}
+	return true;
 }

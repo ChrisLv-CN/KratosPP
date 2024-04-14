@@ -786,6 +786,18 @@ void AttachEffect::DetachByToken(std::string token)
 	}
 }
 
+void AttachEffect::DetachWhenTransform()
+{
+	ForeachChild([](Component* c) {
+		auto ae = dynamic_cast<AttachEffectScript*>(c);
+		// 通过标记关闭掉AE
+		if (ae->AEData.DiscardOnTransform && !ae->AEData.Transform.Enable)
+		{
+			ae->TimeToDie();
+		}
+		});
+}
+
 void AttachEffect::CheckDurationAndDisable(bool silence)
 {
 	CoordStruct location = _location;

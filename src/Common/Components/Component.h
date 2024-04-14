@@ -18,7 +18,12 @@
 		this->Name = ScriptName; \
 	} \
 	\
-	inline static std::string ScriptName = #CLASS_NAME; \
+	virtual void FreeComponent() override \
+	{ \
+		Clean(); \
+		Pool.push_back(this); \
+	} \
+	\
 	static Component* Create() \
 	{ \
 		Component* c = nullptr; \
@@ -35,16 +40,11 @@
 		return c; \
 	} \
 	\
-	inline static int g_temp_##CLASS_NAME = \
-	ComponentFactory::GetInstance().Register(#CLASS_NAME, CLASS_NAME::Create); \
+	inline static std::string ScriptName = #CLASS_NAME; \
+	\
+	inline static int g_temp_##CLASS_NAME = ComponentFactory::GetInstance().Register(#CLASS_NAME, CLASS_NAME::Create); \
 	\
 	inline static std::vector<CLASS_NAME*> Pool{}; \
-	\
-	virtual void FreeComponent() override \
-	{ \
-		Clean(); \
-		Pool.push_back(this); \
-	} \
 
 class IExtData
 {

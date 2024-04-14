@@ -516,7 +516,7 @@ private:
 	bool WeaponNoAA(int weaponIdx);
 
 	// 变形
-	void ChangeTechnoTypeTo(TechnoTypeClass* pNewType);
+	bool ChangeTechnoTypeTo(TechnoTypeClass* pNewType);
 
 	// 激光笔
 	void LostTargetLaser();
