@@ -191,7 +191,7 @@ void AttachFire::SimulateBurstFireOnce(SimulateBurst& burst)
 	// 发射武器
 	WeaponTypeClass* pWeapon = burst.pWeapon;
 	CoordStruct tempFLH = burst.FLH;
-	tempFLH *= burst.FlipY;
+	tempFLH.Y *= burst.FlipY;
 	BulletClass* pBullet = FireBulletTo(dynamic_cast<ObjectClass*>(pObject), burst.pAttacker, burst.pTarget, burst.pAttackingHouse, pWeapon, sourcePos, targetPos, bulletVelocity, tempFLH, !burst.IsOnBody);
 	// 记录下子机发射器的开火坐标
 	if (pWeapon->Spawner)

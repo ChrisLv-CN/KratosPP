@@ -21,6 +21,7 @@ public:
 		bool IsSupported = false;
 
 		// Phobos
+		int BoltArcCount = 8;
 		ColorStruct BoltColor1 = Colors::Empty;
 		ColorStruct BoltColor2 = Colors::Empty;
 		ColorStruct BoltColor3 = Colors::Empty;
@@ -48,6 +49,8 @@ public:
 			LaserThickness = reader->Get("LaserThickness", LaserThickness);
 			LaserFade = reader->Get("LaserFade", LaserFade);
 			IsSupported = reader->Get("IsSupported", IsSupported);
+
+			BoltArcCount = reader->Get("Bolt.Arcs", BoltArcCount);
 
 			BoltColor1 = reader->Get("Bolt.Color1", BoltColor1);
 			BoltColor2 = reader->Get("Bolt.Color2", BoltColor2);
@@ -79,6 +82,7 @@ public:
 				.Process(this->LaserFade)
 				.Process(this->IsSupported)
 
+				.Process(this->BoltArcCount)
 				.Process(this->BoltColor1)
 				.Process(this->BoltColor2)
 				.Process(this->BoltColor3)

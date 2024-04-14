@@ -101,6 +101,8 @@ public:
 		// 电弧尾巴
 		BoltType.IsAlternateColor = reader->Get("Electric.IsAlternateColor", BoltType.IsAlternateColor);
 
+		BoltType.ArcCount = reader->Get("Bolt.Arcs", BoltType.ArcCount);
+
 		BoltType.Color1 = reader->Get("Bolt.Color1", BoltType.Color1);
 		BoltType.Color2 = reader->Get("Bolt.Color2", BoltType.Color2);
 		BoltType.Color3 = reader->Get("Bolt.Color3", BoltType.Color3);

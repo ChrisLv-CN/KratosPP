@@ -13,6 +13,16 @@ class EBoltStatus : public EBoltScript
 public:
 	EBOLT_SCRIPT(EBoltStatus);
 
+	void AttachTo(TechnoClass* pTechno, CoordStruct flh, bool isOnTurret, AbstractClass* pTarget);
+
+	void OnTechnoDelete(EventSystem* sender, Event e, void* args);
+
+	void OnDraw();
+
+	void Destroy() override;
+
+	int ArcCount = 8;
+
 	ColorStruct Color1 = Colors::Empty;
 	ColorStruct Color2 = Colors::Empty;
 	ColorStruct Color3 = Colors::Empty;
@@ -28,6 +38,8 @@ public:
 	bool Serialize(T &stream)
 	{
 		return stream
+			.Process(this->ArcCount)
+
 			.Process(this->Color1)
 			.Process(this->Color2)
 			.Process(this->Color3)
@@ -36,12 +48,21 @@ public:
 			.Process(this->Disable3)
 
 			.Process(this->DisableParticle)
+
+			.Process(_owner)
+			.Process(_flh)
+			.Process(_isOnTurret)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		Component::Load(stream, registerForChange);
-		return this->Serialize(stream);
+		bool res = this->Serialize(stream);
+		if (_owner)
+		{
+			EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &EBoltStatus::OnTechnoDelete);
+		}
+		return res;
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
@@ -51,4 +72,9 @@ public:
 #pragma endregion
 
 private:
+	TechnoClass* _owner = nullptr;
+	CoordStruct _flh = CoordStruct::Empty;
+	bool _isOnTurret = true;
+
+	CoordStruct _targetFLH = CoordStruct::Empty;
 };

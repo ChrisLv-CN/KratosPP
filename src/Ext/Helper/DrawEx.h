@@ -101,6 +101,7 @@ public:
 
 	bool IsAlternateColor = false;
 	// custom color and line
+	int ArcCount = 8;
 	ColorStruct Color1 = Colors::Empty;
 	ColorStruct Color2 = Colors::Empty;
 	ColorStruct Color3 = Colors::Empty;
@@ -113,7 +114,7 @@ public:
 void DrawBolt(CoordStruct sourcePos, CoordStruct targetPos, BoltType type);
 void DrawBolt(CoordStruct sourcePos, CoordStruct targetPos, bool alternate = false);
 
-void DrawBolt(TechnoClass* pShooter, AbstractClass* pTarget, WeaponTypeClass* pWeapon, CoordStruct sourcePos);
+void DrawBolt(TechnoClass* pShooter, AbstractClass* pTarget, WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct flh, bool isOnTurret);
 #pragma endregion
 
 #pragma region ParticleSystem

@@ -21,7 +21,6 @@
 DEFINE_HOOK(0x4C1E42, EBolt_CTOR, 0x5)
 {
 	GET(EBolt*, pItem, EAX);
-
 	EBoltExt::ExtMap.TryAllocate(pItem);
 
 	return 0;
@@ -49,16 +48,60 @@ DEFINE_HOOK(0x6FD494, TechnoClass_FireEBolt_SetWeaponData, 0x7)
 	{
 		if (EBoltStatus* status = GetStatus<EBoltExt, EBoltStatus>(pThis))
 		{
+			status->ArcCount = weaponData->BoltArcCount;
+
 			status->Color1 = weaponData->BoltColor1;
 			status->Color2 = weaponData->BoltColor2;
 			status->Color3 = weaponData->BoltColor3;
+
 			status->Disable1 = weaponData->BoltDisable1;
 			status->Disable2 = weaponData->BoltDisable2;
 			status->Disable3 = weaponData->BoltDisable3;
+
 			status->DisableParticle = weaponData->BoltDisableParticle;
 		}
 	}
 	return 0;
+}
+
+DEFINE_HOOK(0x4C28B6, EBolt_Draw_Update, 0x6)
+{
+	GET(EBolt*, pThis, EAX);
+
+	if (EBoltStatus* status = GetStatus<EBoltExt, EBoltStatus>(pThis))
+	{
+		status->OnDraw();
+	}
+	return 0;
+}
+
+namespace EBoltDraw
+{
+	EBolt* pBolt = nullptr;
+	int arcCount = 8;
+}
+
+DEFINE_HOOK(0x4C20BC, EBolt_Draw_Arcs, 0xB)
+{
+	enum { DoLoop = 0x4C20C7, Break = 0x4C2400 };
+
+	GET_STACK(EBolt*, pThis, 0x40);
+	int arcCount = 8;
+	if (EBoltDraw::pBolt == pThis)
+	{
+		arcCount = EBoltDraw::arcCount;
+	}
+	else
+	{
+		if (EBoltStatus* status = GetStatus<EBoltExt, EBoltStatus>(pThis))
+		{
+			arcCount = status->ArcCount;
+		}
+		EBoltDraw::pBolt = pThis;
+		EBoltDraw::arcCount = arcCount;
+	}
+	GET_STACK(int, plotIndex, 0x408 - 0x3E0);
+	return plotIndex < arcCount ? DoLoop : Break;
 }
 
 DEFINE_HOOK(0x4C24BE, EBolt_Draw_Color1, 0x5)

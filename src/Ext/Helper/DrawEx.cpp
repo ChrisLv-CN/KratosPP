@@ -190,6 +190,8 @@ void DrawBolt(CoordStruct sourcePos, CoordStruct targetPos, BoltType type)
 		if (EBoltStatus* status = GetStatus<EBoltExt, EBoltStatus>(pBolt))
 		{
 			// 调整绘制
+			status->ArcCount = type.ArcCount;
+
 			status->Color1 = type.Color1;
 			status->Color2 = type.Color2;
 			status->Color3 = type.Color3;
@@ -210,9 +212,18 @@ void DrawBolt(CoordStruct sourcePos, CoordStruct targetPos, bool alternate)
 	DrawBolt(sourcePos, targetPos, type);
 }
 
-void DrawBolt(TechnoClass* pShooter, AbstractClass* pTarget, WeaponTypeClass* pWeapon, CoordStruct sourcePos)
+void DrawBolt(TechnoClass* pShooter, AbstractClass* pTarget, WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct flh, bool isOnTurret)
 {
-	pShooter->Electric_Zap(pTarget, pWeapon, sourcePos);
+	if (EBolt* bolt = pShooter->Electric_Zap(pTarget, pWeapon, sourcePos))
+	{
+		if (!flh.IsEmpty())
+		{
+			if (EBoltStatus* status = GetStatus<EBoltExt, EBoltStatus>(bolt))
+			{
+				status->AttachTo(pShooter, flh, isOnTurret, pTarget);
+			}
+		}
+	}
 }
 #pragma endregion
 

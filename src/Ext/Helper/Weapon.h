@@ -96,7 +96,7 @@ BulletClass* FireBullet(TechnoClass* pAttacker, AbstractClass* pTarget, HouseCla
 	CoordStruct sourcePos = CoordStruct::Empty, CoordStruct targetPos = CoordStruct::Empty, BulletVelocity velocity = BulletVelocity::Empty);
 
 void DrawBulletEffect(WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos,
-	TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse);
+	TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse, CoordStruct flh, bool isOnTurret);
 
 void AttachedParticleSystem(WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos,
 	TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse);

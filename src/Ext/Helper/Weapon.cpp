@@ -249,7 +249,7 @@ void FireWeaponTo(TechnoClass* pShooter, TechnoClass* pAttacker, AbstractClass* 
 			bulletVelocity = GetBulletVelocity(sourcePos, targetPos);
 		}
 		CoordStruct tempFLH = flh;
-		tempFLH *= flipY;
+		tempFLH.Y *= flipY;
 		BulletClass* pBullet = FireBulletTo(pShooter, pAttacker, pTarget, pAttacingHouse, pWeapon, sourcePos, targetPos, bulletVelocity, tempFLH, isOnTurret);
 		// callback
 		if (callback && pBullet)
@@ -284,7 +284,7 @@ BulletClass* FireBulletTo(ObjectClass* pShooter, TechnoClass* pAttacker, Abstrac
 	// Fire Weapon
 	BulletClass* pBullet = FireBullet(pAttacker, pTarget, pAttacingHouse, pWeapon, fireMulti, sourcePos, targetPos, velocity);
 	// Draw bullet effect
-	DrawBulletEffect(pWeapon, sourcePos, targetPos, pAttacker, pTarget, pAttacingHouse);
+	DrawBulletEffect(pWeapon, sourcePos, targetPos, pAttacker, pTarget, pAttacingHouse, flh, isOnTurret);
 	// Draw particle system
 	AttachedParticleSystem(pWeapon, sourcePos, targetPos, pAttacker, pTarget, pAttacingHouse);
 	// Play report sound
@@ -358,7 +358,7 @@ BulletClass* FireBullet(TechnoClass* pAttacker, AbstractClass* pTarget, HouseCla
 }
 
 void DrawBulletEffect(WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStruct targetPos,
-	TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse)
+	TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttacingHouse, CoordStruct flh, bool isOnTurret)
 {
 	// IsLaser
 	if (pWeapon->IsLaser)
@@ -409,7 +409,7 @@ void DrawBulletEffect(WeaponTypeClass* pWeapon, CoordStruct sourcePos, CoordStru
 	{
 		if (pAttacker && pTarget)
 		{
-			DrawBolt(pAttacker, pTarget, pWeapon, sourcePos);
+			DrawBolt(pAttacker, pTarget, pWeapon, sourcePos, flh, isOnTurret);
 		}
 		else
 		{
