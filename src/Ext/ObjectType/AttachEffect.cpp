@@ -1205,50 +1205,47 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 	else
 	{
 		// BeginRender
-		if (!_ownerIsDead)
-		{
-			// 替身的定位偏移
-			std::map<std::string, CoordStruct> standMarks{};
-			std::map<int, CoordStruct> standGroupMarks{};
-			std::map<int, CoordStruct> standGroupFirstMarks{};
-			// 动画的定位偏移
-			std::map<std::string, CoordStruct> animMarks{};
-			std::map<int, CoordStruct> animGroupMarks{};
-			std::map<int, CoordStruct> animGroupFirstMarks{};
+		// 替身的定位偏移
+		std::map<std::string, CoordStruct> standMarks{};
+		std::map<int, CoordStruct> standGroupMarks{};
+		std::map<int, CoordStruct> standGroupFirstMarks{};
+		// 动画的定位偏移
+		std::map<std::string, CoordStruct> animMarks{};
+		std::map<int, CoordStruct> animGroupMarks{};
+		std::map<int, CoordStruct> animGroupFirstMarks{};
 
-			// 火车的位置索引
-			int markIndex = 0;
-			ForeachChild([&](Component* c) {
-				if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+		// 火车的位置索引
+		int markIndex = 0;
+		ForeachChild([&](Component* c) {
+			if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+			{
+				if (ae->IsAlive())
 				{
-					if (ae->IsAlive())
+					AttachEffectData aeData = ae->AEData;
+					// 调整替身的位置
+					if (aeData.Stand.Enable)
 					{
-						AttachEffectData aeData = ae->AEData;
-						// 调整替身的位置
-						if (aeData.Stand.Enable)
+						// 调整火车替身的位置
+						if (!aeData.Stand.IsTrain || !UpdateTrainStandLocation(ae, markIndex))
 						{
-							// 调整火车替身的位置
-							if (!aeData.Stand.IsTrain || !UpdateTrainStandLocation(ae, markIndex))
-							{
-								// 堆叠偏移
-								OffsetData offsetData = aeData.Stand.Offset;
-								CoordStruct standOffset = this->StackOffset(aeData, offsetData, standMarks, standGroupMarks, standGroupFirstMarks);
-								LocationMark locationMark = GetRelativeLocation(pObject, offsetData, standOffset);
-								ae->UpdateStandLocation(locationMark);
-							}
+							// 堆叠偏移
+							OffsetData offsetData = aeData.Stand.Offset;
+							CoordStruct standOffset = this->StackOffset(aeData, offsetData, standMarks, standGroupMarks, standGroupFirstMarks);
+							LocationMark locationMark = GetRelativeLocation(pObject, offsetData, standOffset);
+							ae->UpdateStandLocation(locationMark);
 						}
-						// 调整动画的位置
-						if (aeData.Animation.Enable && aeData.Animation.IdleAnim.Enable)
-						{
-							OffsetData offsetData = aeData.Animation.IdleAnim.Offset;
-							CoordStruct animOffset = this->StackOffset(aeData, offsetData, animMarks, animGroupMarks, animGroupFirstMarks);
-							ae->UpdateAnimOffset(animOffset);
-						}
-						ae->OnGScreenRender(location);
 					}
+					// 调整动画的位置
+					if (aeData.Animation.Enable && aeData.Animation.IdleAnim.Enable)
+					{
+						OffsetData offsetData = aeData.Animation.IdleAnim.Offset;
+						CoordStruct animOffset = this->StackOffset(aeData, offsetData, animMarks, animGroupMarks, animGroupFirstMarks);
+						ae->UpdateAnimOffset(animOffset);
+					}
+					ae->OnGScreenRender(location);
 				}
-				});
-		}
+			}
+			});
 	}
 }
 
