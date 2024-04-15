@@ -34,7 +34,7 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell, 
 			if (!virtualUnit && pBuilding->Type->Foundation != Foundation::_0x0)
 			{
 				pBuilding->QueueMission(Mission::Construction, false);
-				pCell->AddContent(pBuilding, false);
+				// pCell->AddContent(pBuilding, false); // 遇到ToTitle会导致崩溃
 				dontMove = true;
 			}
 			else

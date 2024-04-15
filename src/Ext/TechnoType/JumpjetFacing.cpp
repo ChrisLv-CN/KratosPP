@@ -30,6 +30,7 @@ void JumpjetFacing::Awake()
 
 void JumpjetFacing::ExtChanged()
 {
+	_locoType = LocoType::None;
 	SetupJJFacing();
 }
 
@@ -40,16 +41,24 @@ void JumpjetFacing::OnUpdate()
 		if (_JJNeedTurn)
 		{
 			FootClass* pFoot = dynamic_cast<FootClass*>(pTechno);
-			JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get());
-			CoordStruct sourcePos = pTechno->GetCoords();
-			CoordStruct targetPos = jjLoco->DestinationCoords;
-			if (targetPos.IsEmpty() || CellClass::Coord2Cell(sourcePos) == CellClass::Coord2Cell(targetPos))
+			// JJ变形为其他类型的单位后，不一定具有JJLoco
+			if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
 			{
-				DirStruct dir = jjLoco->LocomotionFacing.Current();
-				// Turning
-				_JJNeedTurn = false;
-				pFoot->StopMoving();
-				jjLoco->LocomotionFacing.SetDesired(_JJTurnTo);
+				CoordStruct sourcePos = pTechno->GetCoords();
+				CoordStruct targetPos = jjLoco->DestinationCoords;
+				if (targetPos.IsEmpty() || CellClass::Coord2Cell(sourcePos) == CellClass::Coord2Cell(targetPos))
+				{
+					DirStruct dir = jjLoco->LocomotionFacing.Current();
+					// Turning
+					_JJNeedTurn = false;
+					pFoot->StopMoving();
+					jjLoco->LocomotionFacing.SetDesired(_JJTurnTo);
+				}
+				else
+				{
+					// Cancel
+					_JJNeedTurn = false;
+				}
 			}
 			else
 			{
