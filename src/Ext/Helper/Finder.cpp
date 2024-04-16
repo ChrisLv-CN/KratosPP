@@ -192,36 +192,39 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruc
 	std::vector<TechnoClass*> pTechnoList;
 	for (TechnoClass* pTechno : pTechnoSet)
 	{
-		CoordStruct targetPos = pTechno->GetCoords();
-		double dist = Finder::DistanceFrom(targetPos, location, fullAirspace);
+		if (CanAffectHouse(pHouse, pTechno->Owner, owner, allied, enemies, civilian))
+		{
+			CoordStruct targetPos = pTechno->GetCoords();
+			double dist = Finder::DistanceFrom(targetPos, location, fullAirspace);
 
-		bool checkDistance = true;
-		AbstractType absType = pTechno->WhatAmI();
-		switch (absType)
-		{
-		case AbstractType::Building:
-		{
-			BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno);
-			if (pBuilding->Type->InvisibleInGame) {
-				continue;
-			}
-			if (!ignoreBuildingOuter)
+			bool checkDistance = true;
+			AbstractType absType = pTechno->WhatAmI();
+			switch (absType)
 			{
-				checkDistance = false;
-			}
-			break;
-		}
-		case AbstractType::Aircraft:
-			if (pTechno->IsInAir())
+			case AbstractType::Building:
 			{
-				dist *= 0.5;
+				BuildingClass* pBuilding = dynamic_cast<BuildingClass*>(pTechno);
+				if (pBuilding->Type->InvisibleInGame) {
+					continue;
+				}
+				if (!ignoreBuildingOuter)
+				{
+					checkDistance = false;
+				}
+				break;
 			}
-			break;
-		}
+			case AbstractType::Aircraft:
+				if (pTechno->IsInAir())
+				{
+					dist *= 0.5;
+				}
+				break;
+			}
 
-		if (!checkDistance || dist <= spread * Unsorted::LeptonsPerCell)
-		{
-			pTechnoList.push_back(pTechno);
+			if (!checkDistance || dist <= spread * Unsorted::LeptonsPerCell)
+			{
+				pTechnoList.push_back(pTechno);
+			}
 		}
 	}
 	return pTechnoList;

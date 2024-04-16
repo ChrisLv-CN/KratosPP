@@ -50,7 +50,7 @@ void TechnoStatus::OnUpdate_BlackHole()
 		CoordStruct location = pTechno->GetCoords();
 		BlackHoleState* blackHoleState = nullptr;
 		AttachEffect* aem = AEManager();
-		if (!_pBlackHole
+		if (IsDeadOrInvisible(_pBlackHole)
 			|| !TryGetBlackHoleState(_pBlackHole, blackHoleState)
 			|| !blackHoleState->IsAlive()
 			|| blackHoleState->IsOutOfRange(location)
