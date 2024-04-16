@@ -94,6 +94,7 @@
     <ClCompile Include="src\Ext\StateType\State\AntiBulletState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\BlackHoleState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DamageReactionState.cpp" />
+    <ClCompile Include="src\Ext\StateType\State\DeselectState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroyAnimState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroySelfState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DisableWeaponState.cpp" />
