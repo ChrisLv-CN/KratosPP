@@ -8,7 +8,7 @@ class SpawnData : public INIConfig
 {
 public:
 	bool MultiSpawns = false;
-	std::vector<std::string> Spwans{};
+	std::vector<std::string> Spawns{};
 
 	int SpawnDelay = -1;
 
@@ -18,8 +18,8 @@ public:
 
 	virtual void Read(INIBufferReader* reader) override
 	{
-		Spwans = reader->GetList("Spawns", Spwans);
-		MultiSpawns = !Spwans.empty();
+		Spawns = reader->GetList("Spawns", Spawns);
+		MultiSpawns = !Spawns.empty();
 
 		SpawnDelay = reader->Get("SpawnDelay", SpawnDelay);
 

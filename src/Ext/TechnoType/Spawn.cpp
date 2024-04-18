@@ -17,10 +17,10 @@ bool Spawn::TryGetSpawnType(int i, std::string& newId)
 {
 	if (GetSpawnData()->MultiSpawns)
 	{
-		int size = GetSpawnData()->Spwans.size();
+		int size = GetSpawnData()->Spawns.size();
 		if (i < size)
 		{
-			newId = GetSpawnData()->Spwans[i];
+			newId = GetSpawnData()->Spawns[i];
 		}
 		return IsNotNone(newId);
 	}
@@ -28,7 +28,7 @@ bool Spawn::TryGetSpawnType(int i, std::string& newId)
 	return false;
 }
 
-void Spawn::Awake()
+void Spawn::OnUpdate()
 {
 	if (!pTechno->SpawnManager)
 	{

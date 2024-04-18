@@ -27,7 +27,7 @@ public:
 		_spawnData = nullptr;
 	}
 
-	virtual void Awake() override;
+	virtual void OnUpdate() override;
 
 #pragma region save/load
 	template <typename T>

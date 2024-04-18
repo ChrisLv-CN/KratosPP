@@ -46,6 +46,9 @@ static Point2D CoordsToScreen(CoordStruct coords)
 
 static bool CastToBullet(AbstractClass* pTarget, BulletClass*& pBullet)
 {
+	pBullet = dynamic_cast<BulletClass*>(pTarget);
+	return pBullet != nullptr;
+	/*
 	if (pTarget)
 	{
 		switch (pTarget->WhatAmI())
@@ -58,6 +61,7 @@ static bool CastToBullet(AbstractClass* pTarget, BulletClass*& pBullet)
 		}
 	}
 	return false;
+	*/
 }
 
 static bool CastToBullet(ObjectClass* pObject, BulletClass*& pBullet)
@@ -67,6 +71,9 @@ static bool CastToBullet(ObjectClass* pObject, BulletClass*& pBullet)
 
 static bool CastToTechno(AbstractClass* pTarget, TechnoClass*& pTechno)
 {
+	pTechno = dynamic_cast<TechnoClass*>(pTarget);
+	return pTechno != nullptr;
+	/*
 	if (pTarget)
 	{
 		switch (pTarget->WhatAmI())
@@ -82,6 +89,7 @@ static bool CastToTechno(AbstractClass* pTarget, TechnoClass*& pTechno)
 		}
 	}
 	return false;
+	*/
 }
 static bool CastToTechno(ObjectClass* pObject, TechnoClass*& pTechno)
 {

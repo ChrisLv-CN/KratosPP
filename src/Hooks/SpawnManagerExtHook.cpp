@@ -19,6 +19,9 @@
 #include <Ext/ObjectType/AttachFire.h>
 #include <Ext/TechnoType/MissileHoming.h>
 #include <Ext/TechnoType/Spawn.h>
+#include <Ext/TechnoType/TechnoStatus.h>
+
+#pragma region MultiSpawnType
 
 static bool TryFindNewIdInSpwanType(std::string typeId, int index, std::string& newId)
 {
@@ -40,31 +43,71 @@ static bool TryFindNewIdInSpwanType(std::string typeId, int index, std::string& 
 	return false;
 }
 
+namespace MultiSpawn
+{
+	SpawnManagerClass* pManager = nullptr;
+	Spawn* pSpawn = nullptr;
+}
+
+DEFINE_HOOK(0x6B6CDF, SpawnManagerClass_CreateSpawnNode, 0x7)
+{
+	GET(SpawnManagerClass*, pManager, ESI);
+	GET(TechnoClass*, pTechno, EDX);
+	GET(TechnoTypeClass*, pAircraftType, EAX);
+	std::string typeId{ pAircraftType->ID };
+	MultiSpawn::pManager = nullptr;
+	MultiSpawn::pSpawn = nullptr;
+	if (typeId.find(",") != std::string::npos)
+	{
+		// 是一条多行类型，如Spawns=HORNET,ASW，记录下来，并修正类型
+		// 此时TechnoStatus已经创建，但未初始化，需要手动挂载Spawn组件
+		MultiSpawn::pSpawn = FindOrAttachScript<TechnoExt, Spawn>(pTechno);
+		if (MultiSpawn::pSpawn)
+		{
+			MultiSpawn::pManager = pManager;
+		}
+		// 修正管理器里记录的正确的Type
+		std::string newId{ "" };
+		TryFindNewIdInSpwanType(typeId, 0, newId);
+		if (IsNotNone(newId))
+		{
+			AircraftTypeClass* pNewType = AircraftTypeClass::Find(newId.c_str());
+			if (pNewType)
+			{
+				R->EAX(reinterpret_cast<unsigned int>(pNewType));
+			}
+		}
+	}
+	return 0;
+}
+
 
 DEFINE_HOOK(0x6B6D4D, SpawnManagerClass_CreateSpawnNode_CreateAircraft, 0x6)
 {
 	GET(SpawnManagerClass*, pManager, ESI);
 	GET_STACK(int, i, 0x20 + 0x4);
 
-	std::string newId{ "" };
-	Spawn* spawnEx = GetScript<TechnoExt, Spawn>(pManager->Owner);
-	// 如果没有设置SpwanData，就从ini名字中找
-	if (!spawnEx || !spawnEx->TryGetSpawnType(i, newId))
+	if (MultiSpawn::pManager == pManager)
 	{
-		GET(TechnoTypeClass*, pType, ECX);
-		std::string typeId{ pType->ID };
-		TryFindNewIdInSpwanType(typeId, i, newId);
-	}
-	if (IsNotNone(newId))
-	{
-		AircraftTypeClass* pNewType = AircraftTypeClass::Find(newId.c_str());
-		if (pNewType)
+		std::string newId{ "" };
+		Spawn* spawnEx = MultiSpawn::pSpawn;
+		// 如果没有设置SpwanData，就从ini名字中找
+		if (!spawnEx || !spawnEx->TryGetSpawnType(i, newId))
 		{
-			pManager->SpawnType = pNewType;
-			R->ECX(reinterpret_cast<unsigned int>(pNewType));
+			GET(TechnoTypeClass*, pType, ECX);
+			std::string typeId{ pType->ID };
+			TryFindNewIdInSpwanType(typeId, i, newId);
+		}
+		if (IsNotNone(newId))
+		{
+			AircraftTypeClass* pNewType = AircraftTypeClass::Find(newId.c_str());
+			if (pNewType)
+			{
+				pManager->SpawnType = pNewType;
+				R->ECX(reinterpret_cast<unsigned int>(pNewType));
+			}
 		}
 	}
-
 	return 0;
 }
 
@@ -94,6 +137,8 @@ DEFINE_HOOK(0x6B78E4, SpawnManagerClass_Update_CreateAircraft, 0x6)
 
 	return 0;
 }
+
+#pragma endregion // MultiSpawnType
 
 DEFINE_HOOK(0x6B7317, SpawnManagerClass_Update_MissileSpawn_SkipMovingCheck, 0x7)
 {
