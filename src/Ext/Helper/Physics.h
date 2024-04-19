@@ -24,208 +24,82 @@ enum class PassError : int
 	UPBRIDEG = 6 // 从下方撞桥
 };
 
-static bool CanHit(BuildingClass* pBuilding, int targetZ, bool blade = false, int zOffset = 0)
+/**
+ *@brief 是否撞击建筑物
+ *
+ * @param pBuilding 待检查的建筑物
+ * @param targetZ 撞击位置的Z轴高度
+ * @param blade 贯穿天地的剑气，必中
+ * @param zOffset 高度偏移值
+ * @return true 撞到了
+ * @return false 没撞到
+ */
+bool CanHit(BuildingClass* pBuilding, int targetZ, bool blade = false, int zOffset = 0);
+
+/**
+ *@brief 前方格子是否可以通行，有无障碍物
+ *
+ * @param sourcePos 当前位置
+ * @param nextPos 下一帧的位置
+ * @param passBuilding 能穿透建筑
+ * @param nextCellPos 目标位置的格子
+ * @param onBridge 目标位置是桥
+ * @return PassError
+ */
+PassError CanMoveTo(CoordStruct sourcePos, CoordStruct nextPos, bool passBuilding, CoordStruct& nextCellPos, bool& onBridge);
+
+/**
+ * @brief 检查脚下是否可以通行
+ *
+ * @param pTechno 检查的单位
+ * @param targetPos 摔的位置
+ * @param pCell 脚下的格子
+ * @param isWater 脚下的格子是否是水面
+ * @return true 可以通行
+ * @return false 不可，应该摔死
+ */
+bool CanPassUnder(TechnoClass* pTechno, CoordStruct& targetPos, CellClass*& pCell, bool& isWater);
+
+enum FallingError : int
 {
-	if (!blade)
-	{
-		int height = pBuilding->Type->Height;
-		int sourceZ = pBuilding->GetCoords().Z;
-		// Logger.Log($"Building Height {height}, {sourceZ + height * Game.LevelHeight + zOffset}");
-		return targetZ <= (sourceZ + height * Unsorted::LevelHeight + zOffset);
-	}
-	return blade;
-}
+	FLY = -1, // 没想到吧，哥会飞
+	UNCHANGED = 0, // 停在地上
+	FALLING = 1, // 掉落在地上
+	SINKING = 2, // 沉入水中
+	BOMB = 3 // 摔死
+};
 
-static PassError CanMoveTo(CoordStruct sourcePos, CoordStruct nextPos, bool passBuilding, CoordStruct& nextCellPos, bool& onBridge)
-{
-	PassError canPass = PassError::PASS;
-	nextCellPos = sourcePos;
-	int deltaZ = sourcePos.Z - nextPos.Z;
-	// 检查地面
-	if (CellClass* pTargetCell = MapClass::Instance->TryGetCellAt(nextPos))
-	{
-		nextCellPos = pTargetCell->GetCoordsWithBridge();
-		onBridge = pTargetCell->ContainsBridge();
-		if (nextCellPos.Z >= nextPos.Z)
-		{
-			// 沉入地面
-			nextPos.Z = nextCellPos.Z;
-			canPass = PassError::UNDERGROUND;
-			// 检查悬崖
-			switch (pTargetCell->GetTileType())
-			{
-			case TileType::Cliff:
-			case TileType::DestroyableCliff:
-				// 悬崖上可以往悬崖下移动
-				if (deltaZ <= 0)
-				{
-					canPass = PassError::HITWALL;
-				}
-				break;
-			}
-		}
-		// 检查桥
-		if (canPass == PassError::UNDERGROUND && onBridge)
-		{
-			int bridgeHeight = nextCellPos.Z;
-			if (sourcePos.Z > bridgeHeight && nextPos.Z <= bridgeHeight)
-			{
-				// 桥上砸桥下
-				canPass = PassError::DOWNBRIDGE;
-			}
-			else if (sourcePos.Z < bridgeHeight && nextPos.Z >= bridgeHeight)
-			{
-				// 桥下穿桥上
-				canPass = PassError::UPBRIDEG;
-			}
-		}
-		// 检查建筑
-		if (!passBuilding)
-		{
-			BuildingClass* pBuilding = pTargetCell->GetBuilding();
-			if (pBuilding)
-			{
-				if (CanHit(pBuilding, nextPos.Z))
-				{
-					canPass = PassError::HITBUILDING;
-				}
-			}
-		}
-	}
-	return canPass;
-}
+/**
+ *@brief 强制摔在地上，如果已经在地上了则尝试散开，如果在空中则摔落在地
+ *
+ * @param pTechno 要摔的单位
+ * @param targetPos 摔的位置
+ * @param fallingDestroyHeight 强制摔死的高度
+ * @param hasParachute 有降落伞
+ * @param isWater 下方是否是水
+ * @param canPass 可以安全进入
+ * @return FallingError
+ */
+FallingError Falling(TechnoClass* pTechno, CoordStruct targetPos, int fallingDestroyHeight, bool hasParachute, bool isWater, bool& canPass);
 
-static bool FallingDown(TechnoClass* pTechno, int fallingDestroyHeight, bool hasParachute)
-{
-	TechnoTypeClass* pType = pTechno->GetTechnoType();
-	// 检查是否在悬崖上摔死
-	bool canPass = true;
-	bool isWater = false;
-	CoordStruct location = pTechno->GetCoords();
-	CoordStruct targetPos = location;
-	CellClass* pCell = MapClass::Instance->TryGetCellAt(location);
-	if (pCell)
-	{
-		CoordStruct cellPos = pCell->GetCoordsWithBridge();
-		pTechno->OnBridge = pCell->ContainsBridge();
+/**
+ *@brief 判断脚下能否着陆，然后往下摔
+ *
+ * @param pTechno 
+ * @param fallingDestroyHeight 
+ * @param hasParachute 
+ * @return true 
+ * @return false 
+ */
+FallingError FallingDown(TechnoClass* pTechno, int fallingDestroyHeight, bool hasParachute);
 
-		if (cellPos.Z >= location.Z)
-		{
-			targetPos.Z = cellPos.Z;
-			pTechno->SetLocation(targetPos);
-		}
-		// 当前格子所在的位置不可通行，炸了它
-		canPass = pCell->IsClearToMove(pType->SpeedType, pType->MovementZone, true, true);
-		if (canPass && pCell->GetBuilding() != nullptr)
-		{
-			canPass = false;
-		}
-		if (!canPass)
-		{
-			isWater = pCell->Tile_Is_Water();
-		}
-
-	}
-	int height = pTechno->GetHeight();
-	bool inAir = height >= Unsorted::LevelHeight * 2;
-	if (inAir && pType->ConsideredAircraft)
-	{
-		// 飞行器在天上，免死
-		pTechno->SetDestination(pCell, true);
-		if (pTechno->Target)
-		{
-			pTechno->QueueMission(Mission::Attack, false);
-		}
-		else
-		{
-			if (pTechno->WhatAmI() == AbstractType::Aircraft)
-			{
-				pTechno->QueueMission(Mission::Enter, false);
-			}
-			else
-			{
-				pTechno->QueueMission(Mission::Guard, false);
-			}
-		}
-	}
-	else
-	{
-		bool drop = false;
-		bool sinking = false;
-		// 检查下方是不是水
-		if (isWater)
-		{
-			LocoType locoType = GetLocoType(pTechno);
-			switch (locoType)
-			{
-			case LocoType::Hover:
-			case LocoType::Ship:
-				// 船和悬浮不下沉
-				canPass = true;
-				break;
-			case LocoType::Jumpjet:
-				if (!pType->BalloonHover)
-				{
-					sinking = true;
-				}
-				break;
-			default:
-				sinking = true;
-				break;
-			}
-		}
-		// 高度大于一定值时强制摔死
-		if (fallingDestroyHeight > 0 && height >= fallingDestroyHeight)
-		{
-			canPass = false;
-		}
-		if (canPass)
-		{
-			if (height > 0)
-			{
-				// 离地
-				pTechno->IsFallingDown = true;
-				drop = true;
-			}
-			else
-			{
-				// 贴地
-				pTechno->Scatter(targetPos, true, true);
-			}
-		}
-		else
-		{
-			// 摔死
-			if (height <= 0 && sinking)
-			{
-				pTechno->IsSinking = true;
-			}
-			else
-			{
-				pTechno->DropAsBomb();
-				drop = true;
-			}
-		}
-		if (drop)
-		{
-			if (hasParachute && inAir)
-			{
-				// ObjectClass.SpawnParachuted(Coords)需要检查单位Unlimbo成功，此处手动添加降落伞动画
-				if (AnimTypeClass* pAnimType = RulesClass::Instance->Parachute)
-				{
-					CoordStruct parachutePos = targetPos;
-					parachutePos.Z += 75;
-					AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, parachutePos);
-					pTechno->Parachute = pAnim;
-					pAnim->SetOwnerObject(pTechno);
-					pAnim->Owner = pTechno->Owner;
-				}
-			}
-			else if (pTechno->WhatAmI() == AbstractType::Infantry)
-			{
-				dynamic_cast<InfantryClass*>(pTechno)->PlayAnim(Sequence::Paradrop);
-			}
-		}
-	}
-	return !canPass;
-}
+/**
+ *@brief 除了会飞的单位之外，其他的单位往下坠落
+ *
+ * @param pTechno 要摔的单位
+ * @param fallingDestroyHeight 强制摔死的高度
+ * @param hasParachute 有降落伞
+ * @return true 安全下落
+ * @return false BOOM!
+ */
+FallingError FallingExceptAircraft(TechnoClass* pTechno, int fallingDestroyHeight, bool hasParachute);

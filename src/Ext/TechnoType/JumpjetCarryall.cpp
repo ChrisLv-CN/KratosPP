@@ -152,7 +152,7 @@ void JumpjetCarryall::DropPayload()
 		{
 			pTarget->PrimaryFacing.SetCurrent(dir);
 			pTarget->SecondaryFacing.SetCurrent(dir);
-			FallingDown(pTarget, 0, true);
+			FallingExceptAircraft(pTarget, 0, true);
 			int sound = pTechno->GetTechnoType()->LeaveTransportSound;
 			if (sound != -1)
 			{

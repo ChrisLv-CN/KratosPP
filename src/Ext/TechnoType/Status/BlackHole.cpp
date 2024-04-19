@@ -35,7 +35,7 @@ void TechnoStatus::BlackHoleCancel()
 		{
 			fallingDestroyHeight = _blackHoleData.FallingDestroyHeight;
 		}
-		FallingDown(pTechno, fallingDestroyHeight, false);
+		FallingExceptAircraft(pTechno, fallingDestroyHeight, false);
 	}
 	CaptureByBlackHole = false;
 	_pBlackHole = nullptr;

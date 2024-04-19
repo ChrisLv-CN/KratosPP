@@ -9,6 +9,8 @@
 
 #include <Utilities/Debug.h>
 
+#include <Ext/Helper/Physics.h>
+
 #include <Extension/TechnoExt.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 
@@ -251,7 +253,7 @@ void ReleaseGifts(std::vector<std::string> gifts, GiftBoxEntity data, BoxStateCa
 						pGift->SetTarget(pTarget);
 						pGift->QueueMission(currentMission, false);
 					}
-					else
+					else if (!pGiftStatus->IsBuilding())
 					{
 						if (!pDest && !pFocus)
 						{
@@ -265,6 +267,11 @@ void ReleaseGifts(std::vector<std::string> gifts, GiftBoxEntity data, BoxStateCa
 									scatterPos = pPutCell->GetCoordsWithBridge();
 								}
 								pGift->Scatter(scatterPos, true, false);
+							}
+							else
+							{
+								// 需要检查是否呆在原地不移动，比如原地变形，需要单独处理掉落/起飞
+								FallingDown(pGift, 0, false);
 							}
 							scatter = true;
 						}
@@ -286,6 +293,11 @@ void ReleaseGifts(std::vector<std::string> gifts, GiftBoxEntity data, BoxStateCa
 								{
 									pGift->SetDestination(pTargetCell, true);
 									pGift->QueueMission(Mission::Move, true);
+								}
+								// 在天上，但不会飞
+								if (pGift->IsInAir() && !pGiftType->ConsideredAircraft)
+								{
+									FallingDown(pGift, 0, false);
 								}
 							}
 						}

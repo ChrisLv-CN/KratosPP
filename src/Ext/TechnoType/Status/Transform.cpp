@@ -1,5 +1,7 @@
 ﻿#include "../TechnoStatus.h"
 
+#include <JumpjetLocomotionClass.h>
+
 #include <Ext/Helper/Physics.h>
 
 void TechnoStatus::OnUpdate_Transform()
@@ -35,31 +37,11 @@ void TechnoStatus::OnUpdate_Transform()
 			pTargetType = pTechno->GetTechnoType();
 			// 通过GameObject发出通知
 			_gameObject->ExtChanged = true;
-			// 如果在天上，掉地上
-			if (pTechno->IsInAir())
+
+			// 在天上，但不会飞
+			if (pTechno->IsInAir() && !pTargetType->ConsideredAircraft)
 			{
-				if (!pTargetType->BalloonHover)
-				{
-					FallingDown(pTechno, 0, false);
-				}
-			}
-			else
-			{
-				if (pTargetType->BalloonHover)
-				{
-					if (CellClass* pCell = MapClass::Instance->TryGetCellAt(pTechno->GetCoords()))
-					{
-						pTechno->SetDestination(pCell, true);
-						if (pTechno->Target)
-						{
-							pTechno->QueueMission(Mission::Attack, true);
-						}
-						else
-						{
-							pTechno->QueueMission(Mission::Move, true);
-						}
-					}
-				}
+				FallingDown(pTechno, 0, false);
 			}
 		}
 	}
@@ -166,8 +148,11 @@ bool TechnoStatus::ChangeTechnoTypeTo(TechnoTypeClass* pNewType)
 	}
 
 	// Adjust ROT
+	DirStruct bodyFacing = pFoot->PrimaryFacing.Current();
 	if (absType == AbstractType::Aircraft)
 	{
+		bodyFacing = pFoot->SecondaryFacing.Current();
+		pFoot->PrimaryFacing.SetCurrent(bodyFacing);
 		pFoot->SecondaryFacing.SetROT(pNewType->ROT);
 	}
 	else
@@ -177,9 +162,21 @@ bool TechnoStatus::ChangeTechnoTypeTo(TechnoTypeClass* pNewType)
 
 	// Locomotor change, referenced from Ares 0.A's abduction code, not sure if correct, untested
 	CLSID nowLocoID;
-	ILocomotion* iloco = pFoot->Locomotor.get();
+	ILocomotion* prevLoco = pFoot->Locomotor.get();
+	if (JumpjetLocomotionClass* prevJJ = dynamic_cast<JumpjetLocomotionClass*>(prevLoco))
+	{
+		bodyFacing = prevJJ->LocomotionFacing.Current();
+		pFoot->PrimaryFacing.SetCurrent(bodyFacing);
+		pFoot->SecondaryFacing.SetCurrent(bodyFacing);
+	}
+	CoordStruct dest = CoordStruct::Empty;
+	prevLoco->Destination(&dest);
+	if (dest.IsEmpty())
+	{
+		dest = pFoot->GetCoords();
+	}
 	const auto& toLoco = pNewType->Locomotor;
-	if ((SUCCEEDED(static_cast<LocomotionClass*>(iloco)->GetClassID(&nowLocoID)) && nowLocoID != toLoco))
+	if ((SUCCEEDED(static_cast<LocomotionClass*>(prevLoco)->GetClassID(&nowLocoID)) && nowLocoID != toLoco))
 	{
 		// because we are throwing away the locomotor in a split second, piggybacking
 		// has to be stopped. otherwise the object might remain in a weird state.
@@ -190,6 +187,11 @@ bool TechnoStatus::ChangeTechnoTypeTo(TechnoTypeClass* pNewType)
 		{
 			newLoco->Link_To_Object(pFoot);
 			pFoot->Locomotor = std::move(newLoco);
+			pFoot->Locomotor->Move_To(dest);
+			if (JumpjetLocomotionClass* newJJ = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
+			{
+				newJJ->LocomotionFacing.SetCurrent(bodyFacing);
+			}
 		}
 	}
 	return true;

@@ -138,7 +138,7 @@ void PumpState::CancelJump()
 	status->Jumping = false;
 	if (!status->CaptureByBlackHole && !IsDeadOrInvisible(pTechno))
 	{
-		FallingDown(pTechno, 0, _isHumanCannon);
+		FallingExceptAircraft(pTechno, 0, _isHumanCannon);
 	}
 	End();
 }

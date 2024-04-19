@@ -112,7 +112,7 @@ bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords)
 				pSource->Select();
 			}
 		}
-		if (!FallingDown(pSource, 0, false))
+		if (FallingExceptAircraft(pSource, 0, false))
 		{
 			if (pSource->Target)
 			{
