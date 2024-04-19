@@ -16,7 +16,7 @@
 #define VERSION_MINOR 1
 
 // Indicates minor changes, like vanilla bugfixes, unhardcodings or hacks
-#define VERSION_REVISION 7
+#define VERSION_REVISION 9
 
 // Indicates Kratos-related bugfixes only
 #define VERSION_PATCH 0
