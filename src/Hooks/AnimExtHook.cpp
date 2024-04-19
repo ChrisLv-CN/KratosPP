@@ -13,6 +13,7 @@
 
 #include <Ext/Helper/Scripts.h>
 
+#include <Ext/AnimType/ExpireAnimData.h>
 #include <Ext/AnimType/AnimStatus.h>
 #include <Ext/Common/CommonStatus.h>
 #include <Ext/TechnoType/TechnoStatus.h>
@@ -320,8 +321,9 @@ DEFINE_HOOK(0x423E7B, AnimClass_Extras_Explosion, 0xA)
 	return 0;
 }
 
-// Take over to create Extras Anim when Meteor hit the water
-DEFINE_HOOK(0x423CEA, AnimClass_Extras_HitWater_Meteor, 0x5)
+// Take over to create Extras Anim when Meteor/Debris hit the water
+// Phobos hook on 0x423CC7 and skip all game code, so it won't work with Phobos
+DEFINE_HOOK(0x423CD5, AnimClass_Extras_HitWater, 0x6)
 {
 	GET(AnimClass*, pThis, ESI);
 
@@ -332,38 +334,47 @@ DEFINE_HOOK(0x423CEA, AnimClass_Extras_HitWater_Meteor, 0x5)
 		{
 			status->Explosion_Damage(true);
 		}
-		// 替换砸在水中的动画
-		if (status->OverrideExpireAnimOnWater())
-		{
-			R->EAX(0);
-			return 0x423CEF;
-		}
 	}
-
-	return 0;
-}
-
-// Take over to create Extras Anim when Debris hit the water
-DEFINE_HOOK(0x423D46, AnimClass_Extras_HitWater_Other, 0x5)
-{
-	GET(AnimClass*, pThis, ESI);
-
-	AnimStatus* status = nullptr;
-	if (TryGetStatus<AnimExt>(pThis, status))
+	// 接管砸在水中的动画
+	ExpireAnimData* data = INI::GetConfig<ExpireAnimData>(INI::Art, pThis->Type->ID)->Data;
+	CoordStruct location = pThis->GetCoords();
+	// 涟漪
+	AnimTypeClass* pWake = RulesClass::Instance->Wake;
+	if (IsNotNone(data->WakeAnimOnWater))
 	{
-		if (CombatDamage::Data()->AllowAnimDamageTakeOverByKratos && CombatDamage::Data()->AllowDamageIfDebrisHitWater)
+		pWake = AnimTypeClass::Find(data->WakeAnimOnWater.c_str());
+		if (!pWake)
 		{
-			status->Explosion_Damage(true);
-		}
-		// 替换砸在水中的动画
-		if (status->OverrideExpireAnimOnWater())
-		{
-			R->EAX(0);
-			return 0x423D98;
+			Debug::Log("Warning: Anim %s try to create a unknow wake anim %s.\n", pThis->Type->ID, data->WakeAnimOnWater.c_str());
 		}
 	}
-
-	return 0;
+	if (pWake)
+	{
+		AnimClass* pNewAnim = GameCreate<AnimClass>(pWake, location);
+		pNewAnim->Owner = pThis->Owner;
+	}
+	// 水花
+	AnimTypeClass* pSplash = nullptr;
+	if (IsNotNone(data->ExpireAnimOnWater))
+	{
+		pSplash = AnimTypeClass::Find(data->ExpireAnimOnWater.c_str());
+		if (!pSplash)
+		{
+			Debug::Log("Warning: Anim %s try to create a unknow splash anim %s.\n", pThis->Type->ID, data->ExpireAnimOnWater.c_str());
+		}
+	}
+	else
+	{
+		// 流星是大水花，碎片是小水花
+		pSplash = pThis->Type->IsMeteor ? *RulesClass::Instance->SplashList.back() : *RulesClass::Instance->SplashList.front();
+	}
+	if (pSplash)
+	{
+		location.Z += 3;
+		AnimClass* pNewAnim = GameCreate<AnimClass>(pSplash, location);
+		pNewAnim->Owner = pThis->Owner;
+	}
+	return 0x423EFD;
 }
 
 #pragma endregion

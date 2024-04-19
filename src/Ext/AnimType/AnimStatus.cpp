@@ -106,7 +106,6 @@ void AnimStatus::Explosion_Damage(bool isBounce, bool bright)
 					// 用弹头
 					if (_damageDelayTimer.Expired())
 					{
-						// Logger.Log($"{Game.CurrentFrame} - 动画 {pAnim} [{pAnimType->ID}] 用弹头播放伤害 TypeDamage = {damage}, AnimDamage = {pAnim->Damage}, Warhead = {pAnimType->Warhead}");
 						MapClass::DamageArea(location, damage, pCreater, pWH, true, pAnim->Owner);
 						_damageDelayTimer.Start(GetAnimDamageData()->Delay);
 						if (bright)
@@ -124,34 +123,6 @@ void AnimStatus::Explosion_Damage(bool isBounce, bool bright)
 			}
 		}
 	}
-}
-
-ExpireAnimData* AnimStatus::GetExpireAnimData()
-{
-	if (!_expireAnimData)
-	{
-		_expireAnimData = INI::GetConfig<ExpireAnimData>(INI::Art, pAnim->Type->ID)->Data;
-	}
-	return _expireAnimData;
-}
-
-
-bool AnimStatus::OverrideExpireAnimOnWater()
-{
-
-	if (IsNotNone(GetExpireAnimData()->ExpireAnimOnWater))
-	{
-		// Logger.Log($"{Game.CurrentFrame} 试图接管 落水动画 {animType}");
-		AnimTypeClass* pNewType = AnimTypeClass::Find(GetExpireAnimData()->ExpireAnimOnWater.c_str());
-		if (pNewType)
-		{
-			// Logger.Log($"{Game.CurrentFrame} 试图创建新的落水动画 {animType}");
-			AnimClass* pNewAnim = GameCreate<AnimClass>(pNewType, pAnim->GetCoords());
-			pNewAnim->Owner = pAnim->Owner;
-		}
-		return true; // skip create anim
-	}
-	return false;
 }
 
 PaintballData* AnimStatus::GetPaintballData()
@@ -422,7 +393,6 @@ void AnimStatus::OnNext(AnimTypeClass* pNext)
 {
 	// 动画next会换类型，刷新设置
 	_animDamageData = nullptr;
-	_expireAnimData = nullptr;
 	_paintballData = nullptr;
 	_playSuperData = nullptr;
 

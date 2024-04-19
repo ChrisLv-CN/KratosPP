@@ -15,7 +15,6 @@
 #include <Ext/EffectType/Effect/OffsetData.h>
 #include <Ext/StateType/State/PaintballData.h>
 #include "AnimDamageData.h"
-#include "ExpireAnimData.h"
 #include "RelationData.h"
 #include "SpawnAnimsData.h"
 
@@ -37,14 +36,6 @@ public:
 	 * @param bright 弹头闪光
 	*/
 	void Explosion_Damage(bool isBounce = false, bool bright = false);
-
-	/**
-	 * @brief 替换流星、碎片击中水中的动画
-	 *
-	 * @return true
-	 * @return false
-	 */
-	bool OverrideExpireAnimOnWater();
 
 	/**
 	 *@brief 染色
@@ -90,7 +81,6 @@ public:
 		_spawnCount = 0;
 
 		_animDamageData = nullptr;
-		_expireAnimData = nullptr;
 		_paintballData = nullptr;
 		_playSuperData = nullptr;
 		_spawnAnimsData = nullptr;
@@ -194,9 +184,6 @@ private:
 
 	AnimDamageData* _animDamageData = nullptr;
 	AnimDamageData* GetAnimDamageData();
-
-	ExpireAnimData* _expireAnimData = nullptr;
-	ExpireAnimData* GetExpireAnimData();
 
 	PaintballData* _paintballData = nullptr;
 	PaintballData* GetPaintballData();
