@@ -52,24 +52,33 @@ public:
 
 	WreckOwner Owner = WreckOwner::INVOKER;
 
+	// 单位标签，我是个残骸
 	bool Wreck = false;
 
-	virtual void Read(INIBufferReader* reader) override
+	virtual void Read(INIBufferReader* reader)
 	{
-		EffectData::Read(reader, TITLE);
+		EffectData::Read(reader);
+		Read(reader, "DestroyAnim.");
+	}
 
-		Anims = reader->GetList(TITLE + "Types", Anims);
-		Random = reader->Get(TITLE + "Random", Random);
-		PlayInAir = reader->Get(TITLE + "PlayInAir", PlayInAir);
+	virtual void Read(INIBufferReader* reader, std::string title) override
+	{
+		EffectData::Read(reader, title);
 
-		WreckType = reader->Get(TITLE + "WreckType", WreckType);
-		WreckMission = reader->Get(TITLE + "WreckMission", WreckMission);
+		Anims = reader->GetList(title + "Types", Anims);
+		ClearIfGetNone(Anims);
+		Random = reader->Get(title + "Random", Random);
+		PlayInAir = reader->Get(title + "PlayInAir", PlayInAir);
 
-		Owner = reader->Get(TITLE + "Owner", Owner);
+		WreckType = reader->Get(title + "WreckType", WreckType);
+		WreckMission = reader->Get(title + "WreckMission", WreckMission);
+
+		Owner = reader->Get(title + "Owner", Owner);
 
 		Enable = !Anims.empty() || IsNotNone(WreckType);
 
-		Wreck = reader->Get(TITLE + "Wreck", Wreck);
+		// 单位标签，我是个残骸
+		Wreck = reader->Get("Wreck", Wreck);
 	}
 
 #pragma region save/load
@@ -101,5 +110,4 @@ public:
 	}
 #pragma endregion
 private:
-	inline static std::string TITLE = "DestroyAnim.";
 };

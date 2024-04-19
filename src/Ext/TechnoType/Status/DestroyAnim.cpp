@@ -30,7 +30,7 @@ bool TechnoStatus::PlayDestroyAnims()
 				pKillerHouse = pTechno->Owner;
 			}
 			// 刷残骸
-			if (IsNotNone(data.WreckType) && pTechno->IsInAir())
+			if (IsNotNone(data.WreckType) && !pTechno->IsInAir())
 			{
 				CoordStruct location = pTechno->GetCoords();
 				HouseClass* pHouse = pTechno->Owner;

@@ -122,6 +122,7 @@ void TechnoStatus::ExtChanged()
 	_locoType = LocoType::None;
 
 	_fireFLHData = nullptr;
+	_destroyAnimData = nullptr;
 	_passengersData = nullptr;
 	_transformData = nullptr;
 

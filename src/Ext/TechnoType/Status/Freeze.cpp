@@ -2,9 +2,18 @@
 
 #include <Ext/Helper/Status.h>
 
+DestroyAnimData* TechnoStatus::GetDestroyAnimData()
+{
+	if (!_destroyAnimData)
+	{
+		_destroyAnimData = INI::GetConfig<DestroyAnimData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+	}
+	return _destroyAnimData;
+}
+
 void TechnoStatus::OnUpdate_Freeze()
 {
-	Freezing = Freeze->IsAlive();
+	Freezing = Freeze->IsAlive() || GetDestroyAnimData()->Wreck; // 我是残骸
 	if (Freezing)
 	{
 		if (!_cantMoveFlag)

@@ -197,6 +197,8 @@ public:
 		// 我最后打的目标
 		_lastTarget = nullptr;
 
+		// 我是残骸
+		_destroyAnimData = nullptr;
 		// 乖巧乘客
 		_passengersData = nullptr;
 
@@ -579,6 +581,10 @@ private:
 
 	// 我最后打的目标
 	AbstractClass* _lastTarget = nullptr;
+
+	// 我是残骸
+	DestroyAnimData* _destroyAnimData = nullptr;
+	DestroyAnimData* GetDestroyAnimData();
 
 	// 乖巧乘客
 	PassengersData* _passengersData = nullptr;
