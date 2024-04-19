@@ -36,6 +36,39 @@ DEFINE_HOOK(0x639DD8, PlanningManager_AllowAircraftsWaypoint, 0x5)
 }
 
 #pragma region DrawShadow
+// Phobos took over the entire shadow rendering process, so skip Phobos's Hook here
+DEFINE_HOOK(0x73C47A, UnitClass_DrawAsVXL_Shadow_SkipPhobos, 0x5)
+{
+	if (AudioVisual::Data()->AllowTakeoverPhobosShadowMaker)
+	{
+		GET(TechnoClass*, pThis, EBP);
+		int height = pThis->GetHeight();
+		R->EAX(height);
+		return 0x73C485;
+	}
+	return 0;
+}
+
+// Phobos took over the entire shadow rendering process, so skip Phobos's Hook here
+DEFINE_HOOK(0x4147F9, AircraftClass_Draw_Shadow_SkipPhobos, 0x6)
+{
+	if (AudioVisual::Data()->AllowTakeoverPhobosShadowMaker)
+	{
+		GET(AircraftClass*, pThis, EBP);
+		ILocomotion* pLoco = pThis->Locomotor.get();
+		R->EAX(pLoco);
+		return 0x4147FF;
+	}
+	return 0;
+}
+
+// Phobos skip the entire shadow process, there are no phobos if this hook action
+DEFINE_HOOK(0x707323, TechnoClass_DrawShadow_SkipAircraftScale, 0x5)
+{
+	// There are no have Phobos b39
+	return 0x707331;
+}
+
 DEFINE_HOOK_AGAIN(0x73C4F8, TechnoClass_DrawShadow, 0x7) // InAir
 DEFINE_HOOK_AGAIN(0x73C58E, TechnoClass_DrawShadow, 0x7) // OnGround
 DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
@@ -100,10 +133,20 @@ DEFINE_HOOK(0x414876, TechnoClass_DrawShadow, 0x7) // Aircraft
 				x = pTechno->AngleRotatedSideways;
 				y = pTechno->AngleRotatedForwards;
 			}
-			float scaleY = (float)Math::cos(abs(x));
-			pMatrix->ScaleY(scaleY);
-			float scaleX = (float)Math::cos(abs(y));
-			pMatrix->ScaleX(scaleX);
+			float scaleY = 1.0;
+			float absX = std::abs(x);
+			if (absX >= 0.005)
+			{
+				scaleY = (float)Math::cos(absX);
+				pMatrix->ScaleY(scaleY);
+			}
+			float scaleX = 1.0;
+			float absY = std::abs(y);
+			if (absY >= 0.005)
+			{
+				scaleX = (float)Math::cos(absY);
+				pMatrix->ScaleX(scaleX);
+			}
 			if (scaleY != 1.0 || scaleX != 1.0)
 			{
 				pType->DestroyVoxelShadowCache();

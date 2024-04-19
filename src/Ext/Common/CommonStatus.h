@@ -98,7 +98,9 @@ public:
 
 	// Kratos
 	bool AllowMakeVoxelDebrisByKratos = true;
-	float VoxelShadowScaleInAir = 2.0f;
+
+	bool AllowTakeoverPhobosShadowMaker = true;
+	float VoxelShadowScaleInAir = 1.0f;
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -106,6 +108,8 @@ public:
 		DeactivateDimPowered = reader->Get("DeactivateDimPowered", DeactivateDimPowered);
 
 		AllowMakeVoxelDebrisByKratos = reader->Get("AllowMakeVoxelDebrisByKratos", AllowMakeVoxelDebrisByKratos);
+
+		AllowTakeoverPhobosShadowMaker = reader->Get("AllowTakeoverPhobosShadowMaker", AllowTakeoverPhobosShadowMaker);
 		VoxelShadowScaleInAir = reader->Get("VoxelShadowScaleInAir", VoxelShadowScaleInAir);
 	}
 
