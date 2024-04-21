@@ -17,8 +17,8 @@ public:
 	bool DefaultToGuard = false; // 自动起飞
 	int GuardRange = 5;
 	bool AutoFire = true;
-	int MaxAmmo = 1;
-	int MinAmmo = 0;
+	int MaxAmmo = 1; // 弹药大于等于这个数，起飞
+	int MinAmmo = 0; // 弹药小于等于这个数，返航
 	int GuardRadius = 5;
 	bool FindRangeAroundSelf = false;
 	int ChaseRange = 30;
@@ -42,7 +42,7 @@ public:
 		GuardRange = reader->Get(title + "GuardRange", GuardRange);
 		AutoFire = reader->Get(title + "AutoFire", AutoFire);
 		MaxAmmo = reader->Get(title + "Ammo", MaxAmmo);
-		MaxAmmo = reader->Get(title + "HoldAmmo", MaxAmmo);
+		MinAmmo = reader->Get(title + "HoldAmmo", MinAmmo);
 		GuardRadius = reader->Get(title + "GuardRadius", GuardRadius);
 		FindRangeAroundSelf = reader->Get(title + "FindRangeAroundSelf", FindRangeAroundSelf);
 		ChaseRange = reader->Get(title + "ChaseRange", ChaseRange);
