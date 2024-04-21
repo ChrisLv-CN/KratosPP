@@ -135,6 +135,7 @@ BoxStateCache GiftBoxStateCache(GiftBoxData data)
 	boxState.ForceMission = data.ForceMission;
 	// boxState.pTarget = pTarget;
 	boxState.InheritTarget = data.InheritTarget;
+	boxState.IsTransfrom = data.IsTransform;
 
 	// boxState.pDest = pFocus;
 	// boxState.pFocus = pFocus;
@@ -268,7 +269,7 @@ void ReleaseGifts(std::vector<std::string> gifts, GiftBoxEntity data, BoxStateCa
 								}
 								pGift->Scatter(scatterPos, true, false);
 							}
-							else
+							else if (boxState.IsTransfrom)
 							{
 								// 需要检查是否呆在原地不移动，比如原地变形，需要单独处理掉落/起飞
 								FallingDown(pGift, 0, false);

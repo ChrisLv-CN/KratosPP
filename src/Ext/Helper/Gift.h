@@ -44,6 +44,7 @@ struct BoxStateCache
 	Mission ForceMission = Mission::None; // 强制任务
 	AbstractClass* pTarget = nullptr; // 目标
 	bool InheritTarget = true; // 继承目标
+	bool IsTransfrom = false; // 是否变形
 
 	AbstractClass* pDest = nullptr; // 载具的移动目的地
 	AbstractClass* pFocus = nullptr; // 步兵的移动目的地
