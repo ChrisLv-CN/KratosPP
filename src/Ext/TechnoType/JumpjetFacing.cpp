@@ -51,7 +51,7 @@ void JumpjetFacing::OnUpdate()
 					DirStruct dir = jjLoco->LocomotionFacing.Current();
 					// Turning
 					_JJNeedTurn = false;
-					pFoot->StopMoving();
+					// pFoot->StopMoving(); // 导致飞碟中断吸取
 					jjLoco->LocomotionFacing.SetDesired(_JJTurnTo);
 				}
 				else
