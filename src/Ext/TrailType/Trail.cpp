@@ -68,6 +68,19 @@ bool Trail::CheckVertical(CoordStruct sourcePos, CoordStruct targetPos)
 	return (type.IgnoreVertical ? (abs(sourcePos.X - targetPos.X) > 32 || abs(sourcePos.Y - targetPos.Y) > 32) : true);
 }
 
+bool Trail::CheckInAir(bool isInAir)
+{
+	switch (DrawLevel)
+	{
+	case TrailDrawing::LAND:
+		return !isInAir;
+	case TrailDrawing::AIR:
+		return isInAir;
+	default:
+		return true;
+	}
+}
+
 bool Trail::IsOnLand(CoordStruct sourcePos)
 {
 	bool canDraw = true;
@@ -97,7 +110,7 @@ bool Trail::IsOnLand(CoordStruct sourcePos)
 	return canDraw;
 }
 
-void Trail::DrawTrail(CoordStruct currentPos, HouseClass* pHouse, TechnoClass* pCreater)
+void Trail::DrawTrail(CoordStruct currentPos, HouseClass* pHouse, TechnoClass* pCreater, bool isBullet)
 {
 	if (!currentPos.IsEmpty())
 	{
@@ -111,7 +124,7 @@ void Trail::DrawTrail(CoordStruct currentPos, HouseClass* pHouse, TechnoClass* p
 			double dist = currentPos.DistanceFrom(behindPos);
 			if (!isnan(dist) && dist > type.Distance || forceDraw)
 			{
-				if ((CanDraw() && CheckVertical(currentPos, behindPos)) || forceDraw)
+				if ((CanDraw() && CheckVertical(currentPos, behindPos) && CheckInAir(isBullet || pCreater->IsInAir())) || forceDraw)
 				{
 					forceDraw = false;
 					if (IsOnLand(currentPos))

@@ -27,9 +27,10 @@ public:
 
 	bool CanDraw();
 	bool CheckVertical(CoordStruct sourcePos, CoordStruct targetPos);
+	bool CheckInAir(bool isInAir);
 	bool IsOnLand(CoordStruct sourcePos);
 
-	void DrawTrail(CoordStruct currentPos, HouseClass* pHouse, TechnoClass* pCreater);
+	void DrawTrail(CoordStruct currentPos, HouseClass* pHouse, TechnoClass* pCreater, bool isBullet = false);
 	void RealDrawTrail(CoordStruct currentPos, CoordStruct behindPos, HouseClass* pHouse, TechnoClass* pCreater);
 
 	void DrawAnimTrail(CoordStruct currentPos, CoordStruct behindPos, HouseClass* pHouse, TechnoClass* pCreater);

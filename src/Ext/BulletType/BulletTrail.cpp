@@ -40,7 +40,7 @@ void BulletTrail::OnUpdateEnd()
 			for(Trail& trail : _trails)
 			{
 				CoordStruct sourcePos = GetFLHAbsoluteCoords(location, trail.FLH, bulletFacing);
-				trail.DrawTrail(sourcePos, pHouse, pSource);
+				trail.DrawTrail(sourcePos, pHouse, pSource, true);
 			}
 		}
 	}
