@@ -182,7 +182,7 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 	// reset state
 	pStand->UpdatePlacement(PlacementType::Remove);
 
-	if (Data->SameHouse)
+	if (Data->SameHouse && (AEData.ReceiverOwn || Data->IsVirtualTurret))
 	{
 		pStand->SetOwningHouse(pTechno->Owner);
 	}
