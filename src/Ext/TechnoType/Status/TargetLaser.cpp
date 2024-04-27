@@ -168,7 +168,7 @@ void TechnoStatus::OnUpdate_TargetLaser()
 			if (!laser.pTarget
 				|| laser.Timeup()
 				|| OutOfTargetLaserRange(laser)
-				|| (_lastTarget == laser.pTarget && !pTechno->Target)
+				|| (_lastTarget == laser.pTarget && (!pTechno->Target || pTechno->Target != _lastTarget))
 				|| (CastToTechno(laser.pTarget, pTargetTechno) && IsDeadOrInvisibleOrCloaked(pTargetTechno))
 				)
 			{
