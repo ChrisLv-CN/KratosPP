@@ -34,6 +34,7 @@ DEFINE_HOOK(0x5184F7, Infantry_ReceiveDamage_DeathAnim, 0x8)
 		{
 			if (pInf->Type->NotHuman)
 			{
+				pInf->UnInit();
 				return 0x5185E5;
 			}
 			return 0x5185F1;
