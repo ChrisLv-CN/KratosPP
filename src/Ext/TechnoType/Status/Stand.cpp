@@ -71,7 +71,7 @@ void TechnoStatus::OnReceiveDamage_Stand(args_ReceiveDamage* args)
 {
 	// 无视防御的真实伤害不做任何分摊
 	WarheadTypeExt::TypeData* whData = nullptr;
-	if (!args->IgnoreDefenses && !MyMasterIsAnim && TryGetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(args->WH, whData) && whData->IgnoreStandShareDamage)
+	if (!args->IgnoreDefenses && !MyMasterIsAnim && TryGetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(args->WH, whData) && !whData->IgnoreStandShareDamage)
 	{
 		if (pMyMaster)
 		{
@@ -101,7 +101,7 @@ void TechnoStatus::OnReceiveDamage_Stand(args_ReceiveDamage* args)
 				if (auto ae = dynamic_cast<AttachEffectScript*>(c))
 				{
 					if (ae->AEData.Stand.Enable
-						&& ae->AEData.Stand.Immune
+						&& !ae->AEData.Stand.Immune
 						&& (damage >= 0 || ae->AEData.Stand.AllowShareRepair)
 						&& ae->AEData.Stand.DamageFromMaster > 0)
 					{
