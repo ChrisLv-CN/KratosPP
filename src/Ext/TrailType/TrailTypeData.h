@@ -113,7 +113,7 @@ public:
 		BoltType.DisableParticle = reader->Get("Bolt.DisableParticle", BoltType.DisableParticle);
 
 		// 辐射尾巴
-		BeamType.Color = reader->Get("Bean.Color", BeamType.Color);
+		BeamType.Color = reader->Get("Beam.Color", BeamType.Color);
 		BeamType.Period = reader->Get("Beam.Period", BeamType.Period);
 		BeamType.Amplitude = reader->Get("Beam.Amplitude", BeamType.Amplitude);
 
