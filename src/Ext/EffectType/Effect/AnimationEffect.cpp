@@ -105,13 +105,14 @@ void AnimationEffect::End(CoordStruct location)
 		AnimTypeClass* pAnimType = AnimTypeClass::Find(Data->DoneAnim.Type.c_str());
 		if (pAnimType)
 		{
-			if (pObject)
+			bool isDead = AE->OwnerIsDead();
+			if (!isDead)
 			{
 				OffsetData offsetData = Data->DoneAnim.Offset;
 				location = GetRelativeLocation(pObject, offsetData).Location;
 			}
 			AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, location);
-			if (!AE->OwnerIsDead())
+			if (!isDead)
 			{
 				if (pBullet)
 				{
