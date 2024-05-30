@@ -28,6 +28,18 @@ void split(std::string& s, std::string& delim, std::vector<std::string>* result)
 	}
 }
 
+std::string subreplace(std::string resource, std::string sub, std::string replace)
+{
+	std::string dst_str = resource;
+	std::string::size_type;
+	size_t pos = 0;
+    while((pos = dst_str.find(sub)) != std::string::npos)
+    {
+        dst_str.replace(pos, sub.length(), replace);
+    }
+    return dst_str;
+}
+
 int Wchar2Char(const wchar_t* wcharStr, char* charStr)
 {
 	int len = WideCharToMultiByte(CP_ACP, 0, wcharStr, wcslen(wcharStr), NULL, 0, NULL, NULL);
@@ -104,6 +116,23 @@ std::string GetUUID()
             //"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",  //小写
             guid.Data1, guid.Data2, guid.Data3,
             guid.Data4[0], guid.Data4[1], guid.Data4[2],
+            guid.Data4[3], guid.Data4[4], guid.Data4[5],
+            guid.Data4[6], guid.Data4[7]);
+        strUUID = buffer;
+    }
+    return strUUID;
+}
+
+std::string GetUUIDShort()
+{
+    std::string strUUID;
+    GUID guid;
+    if (SUCCEEDED(CoCreateGuid(&guid))) {
+        char buffer[64] = { 0 };
+        _snprintf_s(buffer, sizeof(buffer),
+            "%02X%02X%02X%02X%02X%02X",    //大写
+            //"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",  //小写
+            guid.Data4[2],
             guid.Data4[3], guid.Data4[4], guid.Data4[5],
             guid.Data4[6], guid.Data4[7]);
         strUUID = buffer;

@@ -36,7 +36,7 @@ std::string& trim(std::string& s);
 
 void split(std::string& s, std::string& delim, std::vector<std::string>* result);
 
-bool IsNum(std::string& s);
+std::string subreplace(std::string resource, std::string sub, std::string replace);
 
 int Wchar2Char(const wchar_t* wcharStr, char* charStr);
 std::string WString2String(std::wstring wstr);
@@ -49,3 +49,4 @@ bool IsNotNone(std::string val);
 void ClearIfGetNone(std::vector<std::string>& value);
 
 std::string GetUUID();
+std::string GetUUIDShort();

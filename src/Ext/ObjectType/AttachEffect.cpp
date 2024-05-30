@@ -696,7 +696,7 @@ void AttachEffect::AttachGroupAE()
 		{ \
 			AttachEffectData aeData; \
 			aeData.Enable = true; \
-			aeData.Name = section + GetUUID(); \
+			aeData.Name = section + #EFFECT_NAME; \
 			aeData. ## EFFECT_NAME = *_ ## EFFECT_NAME ## Data; \
 			Attach(aeData); \
 		} \
