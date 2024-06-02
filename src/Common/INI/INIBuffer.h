@@ -91,7 +91,7 @@ static std::map<std::string, Mission> MissionTypeStrings
 	{ "move", Mission::Move }, // 2
 	{ "qmove", Mission::QMove }, // 3
 	{ "retreat", Mission::Retreat }, // 4
-	{ "Guard", Mission::Guard }, // 5
+	{ "guard", Mission::Guard }, // 5
 	{ "sticky", Mission::Sticky }, // 6
 	{ "enter", Mission::Enter }, // 7
 	{ "capture", Mission::Capture }, // 8
