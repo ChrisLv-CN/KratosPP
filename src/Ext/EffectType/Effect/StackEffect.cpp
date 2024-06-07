@@ -141,17 +141,17 @@ void StackEffect::Watch()
 						}
 						if (!aeTypes.empty())
 						{
-							aeManager->DetachByName(aeTypes);
+							aeManager->DetachByName(aeTypes, Data->RemoveEffectsSkipNext);
 						}
 					}
 					else
 					{
-						aeManager->DetachByName(Data->RemoveEffects);
+						aeManager->DetachByName(Data->RemoveEffects, Data->RemoveEffectsSkipNext);
 					}
 				}
 				if (!Data->RemoveEffectsWithMarks.empty())
 				{
-					aeManager->DetachByMarks(Data->RemoveEffectsWithMarks);
+					aeManager->DetachByMarks(Data->RemoveEffectsWithMarks, Data->RemoveEffectsSkipNext);
 				}
 			}
 		}
@@ -178,12 +178,12 @@ void StackEffect::Watch()
 			removeLevel = !aeTypes.empty();
 			if (removeLevel)
 			{
-				AE->AEManager->DetachByName(aeTypes);
+				AE->AEManager->DetachByName(aeTypes, Data->RemoveSkipNext);
 			}
 		}
 		if (!removeLevel && Data->RemoveAll)
 		{
-			AE->AEManager->DetachByName(Data->Watch);
+			AE->AEManager->DetachByName(Data->Watch, Data->RemoveSkipNext);
 		}
 		// 检查触发次数
 		if (Data->TriggeredTimes > 0 && ++_count >= Data->TriggeredTimes)

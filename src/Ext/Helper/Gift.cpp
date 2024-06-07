@@ -235,7 +235,7 @@ void ReleaseGifts(std::vector<std::string> gifts, GiftBoxEntity data, BoxStateCa
 				if (giftAEM)
 				{
 					// 移除失效的AE
-					giftAEM->DetachByName(boxState.RemoveEffects);
+					giftAEM->DetachByName(boxState.RemoveEffects, false);
 					// 附加新的AE
 					giftAEM->Attach(boxState.AttachEffects, boxState.AttachChances, false, boxState.pOwner, pHouse);
 				}

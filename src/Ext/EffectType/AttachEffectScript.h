@@ -177,6 +177,8 @@ public:
 
 	bool NonInheritable = false; // 不允许继承
 
+	bool SkipNext = false; // 跳过下一个
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
@@ -190,6 +192,7 @@ public:
 			.Process(this->AEMode)
 			.Process(this->FromPassenger)
 			.Process(this->NonInheritable)
+			.Process(this->SkipNext)
 
 			.Process(this->_duration)
 			.Process(this->_immortal)

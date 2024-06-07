@@ -92,10 +92,12 @@ public:
 	std::vector<std::string> RemoveEffects{};
 	std::vector<int> RemoveEffectsLevel{};
 	std::vector<std::string> RemoveEffectsWithMarks{};
+	bool RemoveEffectsSkipNext = false;
 	bool RemoveToSource = false;
 
 	std::vector<int> RemoveLevel{};
 	bool RemoveAll = true;
+	bool RemoveSkipNext = false;
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -125,10 +127,12 @@ public:
 		RemoveEffectsWithMarks = reader->GetList(title + "RemoveEffectsWithMarks", RemoveEffectsWithMarks);
 		ClearIfGetNone(RemoveEffectsWithMarks);
 		Remove = !RemoveEffects.empty() || !RemoveEffectsWithMarks.empty();
+		RemoveEffectsSkipNext = reader->Get(title + "RemoveEffectsSkipNext", RemoveEffectsSkipNext);
 		RemoveToSource = reader->Get(title + "RemoveToSource", RemoveToSource);
 
 		RemoveLevel = reader->GetList(title + "RemoveLevel", RemoveLevel);
 		RemoveAll = reader->Get(title + "RemoveAll", RemoveAll);
+		RemoveSkipNext = reader->Get(title + "RemoveSkipNext", RemoveSkipNext);
 
 		Enable = !Watch.empty() && (Attach || Remove);
 	}
@@ -152,10 +156,12 @@ public:
 			.Process(this->RemoveEffects)
 			.Process(this->RemoveEffectsLevel)
 			.Process(this->RemoveEffectsWithMarks)
+			.Process(this->RemoveEffectsSkipNext)
 			.Process(this->RemoveToSource)
 
 			.Process(this->RemoveLevel)
 			.Process(this->RemoveAll)
+			.Process(this->RemoveSkipNext)
 			.Success();
 	};
 

@@ -131,7 +131,7 @@ public:
 			{
 				if (AttachEffect* aem = _gameObject->GetComponent<AttachEffect>())
 				{
-					aem->DetachByToken(Token);
+					aem->DetachByToken(Token, false);
 				}
 			}
 			OnEnd();

@@ -716,19 +716,20 @@ void AttachEffect::AttachStateEffect()
 	}
 }
 
-void AttachEffect::DetachByName(std::vector<std::string> aeTypes)
+void AttachEffect::DetachByName(std::vector<std::string> aeTypes, bool skipNext)
 {
-	ForeachChild([&aeTypes](Component* c) {
+	ForeachChild([&aeTypes, &skipNext](Component* c) {
 		auto ae = dynamic_cast<AttachEffectScript*>(c);
 		// 通过名字关闭掉AE
 		if (ae && std::find(aeTypes.begin(), aeTypes.end(), ae->AEData.Name) != aeTypes.end())
 		{
+			ae->SkipNext = skipNext;
 			ae->TimeToDie();
 		}
 		});
 }
 
-void AttachEffect::DetachByName(std::map<std::string, int> aeTypes)
+void AttachEffect::DetachByName(std::map<std::string, int> aeTypes, bool skipNext)
 {
 	std::vector<std::string> names;
 	std::map<std::string, int> levels;
@@ -752,6 +753,7 @@ void AttachEffect::DetachByName(std::map<std::string, int> aeTypes)
 				int l = levels[name];
 				if (l < 0 || counts[name] < l)
 				{
+					ae->SkipNext = skipNext;
 					ae->TimeToDie();
 					counts[name]++;
 				}
@@ -760,27 +762,29 @@ void AttachEffect::DetachByName(std::map<std::string, int> aeTypes)
 	}
 }
 
-void AttachEffect::DetachByMarks(std::vector<std::string> marks)
+void AttachEffect::DetachByMarks(std::vector<std::string> marks, bool skipNext)
 {
-	ForeachChild([&marks](Component* c) {
+	ForeachChild([&marks, &skipNext](Component* c) {
 		auto ae = dynamic_cast<AttachEffectScript*>(c);
 		// 通过标记关闭掉AE
 		if (ae->AEData.Mark.Enable && CheckOnMarks(marks, ae->AEData.Mark.Names))
 		{
+			ae->SkipNext = skipNext;
 			ae->TimeToDie();
 		}
 		});
 }
 
-void AttachEffect::DetachByToken(std::string token)
+void AttachEffect::DetachByToken(std::string token, bool skipNext)
 {
 	if (!token.empty())
 	{
-		ForeachChild([&token](Component* c) {
+		ForeachChild([&token, &skipNext](Component* c) {
 			auto ae = dynamic_cast<AttachEffectScript*>(c);
 			// 通过Token关闭掉AE
 			if (ae && ae->Token == token)
 			{
+				ae->SkipNext = skipNext;
 				ae->TimeToDie();
 			}
 			});
@@ -816,13 +820,16 @@ void AttachEffect::CheckDurationAndDisable(bool silence)
 					// 加入冷却计时器
 					StartDelay(data);
 #ifdef DEBUG_AE
-					Debug::Log("  - [%s]%d 关闭AE [%s]%d ,加入冷却计时 %d, 附加NextAE[%s]\n", pObject->GetType()->ID, pObject, data.Name.c_str(), c, data.Delay, data.Next.c_str());
+					Debug::Log("  - [%s]%d 关闭AE [%s]%d ,加入冷却计时 %d, %s附加NextAE[%s]\n", pObject->GetType()->ID, pObject, data.Name.c_str(), c, data.Delay, ae->skipNext ? "不" : "", data.Next.c_str());
 #endif // DEBUG_AE
-					// 添加NextAE
-					std::string nextAE = data.Next;
-					if (IsNotNone(nextAE) && !IsDeadOrInvisible(pObject))
+					if (!ae->SkipNext)
 					{
-						Attach(nextAE, false, ae->pSource, ae->pSourceHouse);
+						// 添加NextAE
+						std::string nextAE = data.Next;
+						if (IsNotNone(nextAE) && !IsDeadOrInvisible(pObject))
+						{
+							Attach(nextAE, false, ae->pSource, ae->pSourceHouse);
+						}
 					}
 				}
 				ReduceStackCount(data);

@@ -142,28 +142,28 @@ public:
 	 *
 	 * @param aeTypes AE的名称
 	 */
-	void DetachByName(std::vector<std::string> aeTypes);
+	void DetachByName(std::vector<std::string> aeTypes, bool skipNext);
 
 	/**
 	 *@brief 只关闭一定数量的AE
 	 *
 	 * @param aeTypes
 	 */
-	void DetachByName(std::map<std::string, int> aeTypes);
+	void DetachByName(std::map<std::string, int> aeTypes, bool skipNext);
 
 	/**
 	 *@brief 关闭并移除一组AE
 	 *
 	 * @param aeTypes AE的名称
 	 */
-	void DetachByMarks(std::vector<std::string> marks);
+	void DetachByMarks(std::vector<std::string> marks, bool skipNext);
 
 	/**
 	 *@brief 关闭并移除一个AE
 	 *
 	 * @param token 令牌
 	 */
-	void DetachByToken(std::string token);
+	void DetachByToken(std::string token, bool skipNext);
 
 	/**
 	 * @brief 发生了变形，移除不保留的AE
