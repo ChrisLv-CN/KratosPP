@@ -192,7 +192,7 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruc
 	std::vector<TechnoClass*> pTechnoList;
 	for (TechnoClass* pTechno : pTechnoSet)
 	{
-		if (CanAffectHouse(pHouse, pTechno->Owner, owner, allied, enemies, civilian))
+		if (!IsDeadOrInvisible(pTechno) && CanAffectHouse(pHouse, pTechno->Owner, owner, allied, enemies, civilian))
 		{
 			CoordStruct targetPos = pTechno->GetCoords();
 			double dist = Finder::DistanceFrom(targetPos, location, fullAirspace);

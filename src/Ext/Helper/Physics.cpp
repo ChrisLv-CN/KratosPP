@@ -181,7 +181,7 @@ FallingError Falling(TechnoClass* pTechno, CoordStruct targetPos, int fallingDes
 				pAnim->Owner = pTechno->Owner;
 			}
 		}
-		else if (pTechno->WhatAmI() == AbstractType::Infantry)
+		if (pTechno->WhatAmI() == AbstractType::Infantry)
 		{
 			dynamic_cast<InfantryClass*>(pTechno)->PlayAnim(Sequence::Paradrop);
 		}

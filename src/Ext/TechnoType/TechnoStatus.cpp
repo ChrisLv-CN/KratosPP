@@ -295,6 +295,15 @@ void TechnoStatus::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, D
 {
 	if (damageState == DamageState::NowDead)
 	{
+		// 步兵在飞行的途中被击杀会导致异常，原因不明，似乎是死亡后仍然被索敌，在检查所属时因为是野指针，导致崩溃
+		if ((CaptureByBlackHole || Jumping) && pTechno->IsInAir())
+		{
+			pTechno->IsFallingDown = true;
+			if (IsInfantry())
+			{
+				dynamic_cast<InfantryClass*>(pTechno)->PlayAnim(Sequence::Paradrop);
+			}
+		}
 		// 被打死时读取弹头设置
 		OnReceiveDamageEnd_DestroyAnim(pRealDamage, pWH, damageState, pAttacker, pAttackingHouse);
 	}
