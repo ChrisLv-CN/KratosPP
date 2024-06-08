@@ -9,6 +9,7 @@
 
 #include <Utilities/Debug.h>
 
+#include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Physics.h>
 
 #include <Extension/TechnoExt.h>
@@ -23,6 +24,30 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell, 
 		auto occFlags = pCell->OccupationFlags;
 		pTechno->OnBridge = pCell->ContainsBridge();
 		CoordStruct xyz = pCell->GetCoordsWithBridge();
+		if (pTechno->WhatAmI() == AbstractType::Infantry)
+		{
+			// 如果是步兵需要用步兵的位置，寻找最接近原位置的步兵位置，其余一律格子中心
+			int x = xyz.X;
+			int y = xyz.Y;
+			int dX = location.X - x;
+			int dY = location.Y - y;
+			// 哪个更近
+			if (dX > 0 && dY < 0)
+			{
+				// 左边更近
+				xyz = CoordStruct{ x + 64, y - 64};
+			}
+			else if (dX < 0 && dY > 0)
+			{
+				// 右边更近
+				xyz = CoordStruct{ x - 64, y + 64};
+			}
+			else if (dX > 0 && dY > 0)
+			{
+				// 下面更近
+				xyz = CoordStruct{ x + 64, y + 64};
+			}
+		}
 		++Unsorted::IKnowWhatImDoing;
 		pTechno->Unlimbo(xyz, DirType::East);
 		--Unsorted::IKnowWhatImDoing;
@@ -49,7 +74,7 @@ bool TryPutTechno(TechnoClass* pTechno, CoordStruct location, CellClass* pCell, 
 		}
 		if (!dontMove)
 		{
-			// 单位移动到指定位置
+			// 单位移动到指定位置，此处必须放置在格子的中心，否则会导致单位位置产生偏移
 			xyz.Z = location.Z;
 			pTechno->SetLocation(xyz);
 		}
