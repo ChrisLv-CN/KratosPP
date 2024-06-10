@@ -66,6 +66,8 @@ DEFINE_HOOK(0x75DEA0, WarheadTypeClass_LoadFromINI, 0x5)
 	return 0;
 }
 
+// Phobos Hook in 0x469C46, Skip Ares 0x469C4E, must skip Phobos
+// SplashList of Phobos will be killed
 DEFINE_HOOK(0x48A551, WarheadTypeClass_AnimList_SplashList, 0x6)
 {
 	GET(WarheadTypeClass* const, pThis, ESI);

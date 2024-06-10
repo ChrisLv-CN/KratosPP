@@ -181,7 +181,7 @@ DEFINE_HOOK(0x469A75, BulletClass_Detonate_GetHouse, 0x7)
 // Take over to create Warhead Anim
 // Phobos Hook in 0x469C46, Skip Ares 0x469C4E, must skip Phobos
 // SplashList of Phobos will be killed
-DEFINE_HOOK(0x469C48, BulletClass_Detonate_WHAnim_Remap, 0x8)
+DEFINE_HOOK(0x469C46, BulletClass_Detonate_WHAnim_Remap, 0x8)
 {
 	bool createdAnim = false;
 	GET(AnimTypeClass*, pAnimType, EBX);
