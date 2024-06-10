@@ -135,6 +135,10 @@ public:
 		bool AllowZeroDamage = false;
 		std::string PreImpactAnim{ "" };
 
+		// Phobos
+		std::vector<std::string> SplashList{}; // 水花动画列表
+		bool SplashListRandom = false; // 水花动画列表是否随机
+
 		// Kratos
 		bool AffectInAir = true;
 		bool AffectShooter = true;
@@ -183,6 +187,10 @@ public:
 			EffectsRequireVerses = reader->Get("EffectsRequireVerses", EffectsRequireVerses);
 			AllowZeroDamage = reader->Get("AllowZeroDamage", AllowZeroDamage);
 			PreImpactAnim = reader->Get("PreImpactAnim", PreImpactAnim);
+
+			// Phobos
+			SplashList = reader->GetList("SplashList", SplashList);
+			SplashListRandom = reader->Get("SplashList.PickRandom", SplashListRandom);
 
 			// Kratos
 			AffectInAir = reader->Get("AffectInAir", AffectInAir);

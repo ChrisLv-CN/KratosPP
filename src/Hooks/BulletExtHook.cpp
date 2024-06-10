@@ -179,20 +179,28 @@ DEFINE_HOOK(0x469A75, BulletClass_Detonate_GetHouse, 0x7)
 }
 
 // Take over to create Warhead Anim
-DEFINE_HOOK(0x469C4E, BulletClass_Detonate_WHAnim_Remap, 0x5)
+// Phobos Hook in 0x469C46, Skip Ares 0x469C4E, must skip Phobos
+// SplashList of Phobos will be killed
+DEFINE_HOOK(0x469C48, BulletClass_Detonate_WHAnim_Remap, 0x8)
 {
-	GET(BulletClass*, pBullet, ESI);
+	bool createdAnim = false;
 	GET(AnimTypeClass*, pAnimType, EBX);
-	GET_STACK(CoordStruct, pos, 0x64);
 	if (pAnimType)
 	{
-		AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, pos, 0, 1, 0x2600, -15, false);
-		SetAnimOwner(pAnim, pBullet);
-		SetAnimCreater(pAnim, pBullet);
-		return 0x469D06;
+		GET(BulletClass*, pBullet, ESI);
+		GET_STACK(CoordStruct, pos, 0x64);
+		if (pAnimType)
+		{
+			if (AnimClass* pAnim = GameCreate<AnimClass>(pAnimType, pos, 0, 1, 0x2600, -15, false))
+			{
+				createdAnim = true;
+				SetAnimOwner(pAnim, pBullet);
+				SetAnimCreater(pAnim, pBullet);
+			}
+		}
 	}
-
-	return 0;
+	R->EAX(createdAnim);
+	return 0x469C98;
 }
 
 // Take over to create Warhead VxlAnim
