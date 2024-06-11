@@ -275,6 +275,9 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				// 获取根组件
 				Component* giftGO = pGiftStatus->GetParent();
 				Component* boxGO = this->GetParent();
+				// 获取EXT
+				IExtData* giftExt = pGiftStatus->_extData;
+				IExtData* boxExt = this->_extData;
 				// 交换AE管理器
 				AttachEffect* boxAEM = boxGO->GetComponent<AttachEffect>();
 				// 关闭不可继承的AE，以及含有GiftBox的AE
@@ -288,8 +291,7 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 						else if (ae->pSource == pTechno)
 						{
 							// 如果来源是盒子，继承时，来源修改为礼物
-							ae->pSource = pGift;
-							ae->pSourceHouse = boxState.pHouse;
+							ae->InheritedTo(pGift, boxState.pHouse);
 						}
 					}
 					});
@@ -298,15 +300,18 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				// AE管理器脱离
 				boxAEM->DetachFromParent(false);
 				pGiftAEM->DetachFromParent(false);
-				// 交换
+				// 交换EXT
+				boxAEM->SetExtData(giftExt);
+				pGiftAEM->SetExtData(boxExt);
+				// 交换组件
 				giftGO->AddComponent(boxAEM);
 				boxGO->AddComponent(pGiftAEM);
-				// 修改变量
-				pGiftAEM = boxAEM;
 				// 发出类型变更的通知
 				boxAEM->ExtChanged();
 				pGiftAEM->ExtChanged();
 				dynamic_cast<GameObject*>(giftGO)->ExtChanged = true;
+				// 修改变量
+				pGiftAEM = boxAEM;
 			}
 		});
 }

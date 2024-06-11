@@ -72,6 +72,7 @@ public:
 	void ResetEffectsDuration();
 
 	void TimeToDie();
+	void InheritedTo(TechnoClass* pNewOwner, HouseClass* pNewOwnerHouse);
 
 	bool IsSameGroup(AttachEffectData otherType);
 	void GetMarks(std::vector<std::string>& marks);

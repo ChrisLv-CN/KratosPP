@@ -116,6 +116,15 @@ void AttachEffectScript::TimeToDie()
 	_lifeTimer.Stop();
 }
 
+void AttachEffectScript::InheritedTo(TechnoClass* pNewOwner, HouseClass* pNewOwnerHouse)
+{
+#ifdef DEBUG_AE
+	Debug::Log("AE[%s] Inherited to Owner[%s]%d, House %d.\n", AEData.Name.c_str(), pNewOwner->GetType()->ID, pNewOwner, pNewOwnerHouse);
+#endif
+	pSource = pNewOwner;
+	pSourceHouse = pNewOwnerHouse;
+}
+
 void AttachEffectScript::SetupInitTimer()
 {
 	if (_initDelay > 0)
@@ -305,7 +314,7 @@ void AttachEffectScript::Destroy()
 	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &AttachEffectScript::OnTechnoDelete);
 }
 
-void AttachEffectScript::Start(TechnoClass* pSource, HouseClass* pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger)
+void AttachEffectScript::Start(TechnoClass * pSource, HouseClass * pSourceHouse, CoordStruct warheadLocation, int aeMode, bool fromPassenger)
 {
 	Activate();
 	this->pSource = pSource;
@@ -369,7 +378,7 @@ void AttachEffectScript::End(CoordStruct location)
 		});
 }
 
-void AttachEffectScript::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass* pWH, DamageState damageState, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
+void AttachEffectScript::OnReceiveDamageEnd(int* pRealDamage, WarheadTypeClass * pWH, DamageState damageState, TechnoClass * pAttacker, HouseClass * pAttackingHouse)
 {
 	if (!_started)
 	{

@@ -49,6 +49,7 @@ public:
 			_flyTimer = other._flyTimer;
 			_gravity = other._gravity;
 			_velocity = other._velocity;
+			_flySequence = other._flySequence;
 			_canJump = other._canJump;
 		}
 		return *this;
