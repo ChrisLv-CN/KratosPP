@@ -524,11 +524,6 @@ void ForceStopMoving(ILocomotion* pLoco)
 		mLoco->HeadToCoord = CoordStruct::Empty;
 		mLoco->IsMoving = false;
 	}
-	else if (JumpjetLocomotionClass* jLoco = dynamic_cast<JumpjetLocomotionClass*>(pLoco))
-	{
-		jLoco->DestinationCoords = CoordStruct::Empty;
-		jLoco->IsMoving = false;
-	}
 }
 #pragma endregion
 
