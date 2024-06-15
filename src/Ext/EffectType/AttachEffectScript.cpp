@@ -144,8 +144,9 @@ void AttachEffectScript::SetupLifeTimer()
 
 bool AttachEffectScript::IsSameGroup(AttachEffectData otherType)
 {
-	return this->AEData.Group > -1 && otherType.Group > -1
-		&& this->AEData.Group == otherType.Group;
+	const std::string& group = AEData.Group;
+	const std::string& otherGroup = otherType.Group;
+	return IsNotNone(group) && IsNotNone(otherGroup) && group == otherGroup;
 }
 
 void AttachEffectScript::GetMarks(std::vector<std::string>& marks)

@@ -427,7 +427,7 @@ void AttachEffect::Attach(AttachEffectData data,
 			auto temp = dynamic_cast<AttachEffectScript*>(c);
 			if (temp && temp->IsAlive())
 			{
-				if (data.Group < 0)
+				if (!IsNotNone(data.Group))
 				{
 					// 无分组，攻击者标记叠加，或同名重置计时器
 					if (temp->AEData.Name == data.Name)

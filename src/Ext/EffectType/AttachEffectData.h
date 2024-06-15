@@ -132,7 +132,7 @@ public:
 	CumulativeMode Cumulative = CumulativeMode::NO; // 可叠加
 	int MaxStack = -1; // 叠加上限
 	bool ResetDurationOnReapply = false; // 不可叠加时，重复获得时是否重置计时器
-	int Group = -1; // 分组，同一个分组的效果互相影响，削减或增加持续时间
+	std::string Group = { "" }; // 分组，同一个分组的效果互相影响，削减或增加持续时间
 	bool OverrideSameGroup = false; // 是否覆盖同一个分组
 	std::string Next{ "" }; // 结束后播放下一个AE
 
