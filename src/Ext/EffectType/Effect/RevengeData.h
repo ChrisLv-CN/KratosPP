@@ -29,6 +29,7 @@ public:
 	// 伤害分配
 	double DamageSelfPercent = 1; // 自身吃到的伤害比例
 	double DamageEnemyPercent = 0; // 敌人吃到的伤害比例
+	double DamageSourcePercent = 0; // AE来源吃到的伤害比例
 
 	CoordStruct FireFLH = CoordStruct::Empty;
 	bool IsOnTurret = true;
@@ -62,6 +63,7 @@ public:
 
 		DamageSelfPercent = reader->GetPercent(title + "DamageSelfPercent", DamageSelfPercent);
 		DamageEnemyPercent = reader->GetPercent(title + "DamageEnemyPercent", DamageEnemyPercent);
+		DamageSourcePercent = reader->GetPercent(title + "DamageSourcePercent", DamageSourcePercent);
 
 		Enable = Chance > 0 && (!Types.empty() || WeaponIndex > -1 || !AttachEffects.empty() || DamageSelfPercent != 1 || DamageEnemyPercent != 0);
 		if (Enable)
@@ -123,6 +125,7 @@ public:
 
 			.Process(this->DamageSelfPercent)
 			.Process(this->DamageEnemyPercent)
+			.Process(this->DamageSourcePercent)
 
 			.Process(this->FireFLH)
 			.Process(this->IsOnTurret)

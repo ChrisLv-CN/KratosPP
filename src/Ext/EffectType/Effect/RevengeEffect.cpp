@@ -95,6 +95,16 @@ void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH,
 			{
 				*pRealDamage = (int)(damage * Data->DamageSelfPercent);
 			}
+			// 反伤给AE来源
+			if (Data->DamageSourcePercent != 0)
+			{
+				// 传递给来源
+				if (!IsDeadOrInvisible(AE->pSource) && !IsImmune(AE->pSource, true))
+				{
+					int refDamage = (int)(damage * Data->DamageSourcePercent);
+					AE->pSource->TakeDamage(refDamage, AE->pSource->GetTechnoType()->Crewed);
+				}
+			}
 			// 反伤
 			if (Data->DamageEnemyPercent != 0)
 			{
