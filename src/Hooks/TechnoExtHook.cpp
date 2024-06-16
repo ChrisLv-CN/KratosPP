@@ -1036,8 +1036,8 @@ DEFINE_HOOK(0x54D600, JumpjetLocomotionClass_MovingUpdate_DontTurnInCell, 0x6)
 		{
 			if (pTechno->CurrentMission == Mission::Move)
 			{
-				// 强制清空Mission
-				pTechno->ForceMission(Mission::None);
+				// 强制转换Mission
+				pTechno->QueueMission(Mission::Guard, false);
 			}
 			// 垂直起降
 			GET_STACK(CoordStruct, fixPos, 0x44);
