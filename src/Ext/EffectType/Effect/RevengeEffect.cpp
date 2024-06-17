@@ -57,10 +57,6 @@ bool RevengeEffect::CanRevenge(TechnoClass*& pRevenger, HouseClass*& pRevengerHo
 void RevengeEffect::OnReceiveDamage(args_ReceiveDamage* args)
 {
 	_ignoreDefenses = args->IgnoreDefenses;
-}
-
-void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
-{
 	// 检查持续帧内触发
 	if (Data->ActiveOnce)
 	{
@@ -82,38 +78,46 @@ void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH,
 	pRevengerHouse = pTechno->Owner; // 复仇者的阵营
 	// 检查报复对象
 	pRevengeTarget = nullptr; // 报复对象
-	_skip = !CanRevenge(pRevenger, pRevengerHouse, pRevengeTarget, pWH, pAttacker, pAttackingHouse);
-	if (!_skip)
+	_skip = !CanRevenge(pRevenger, pRevengerHouse, pRevengeTarget, args->WH, args->Attacker, args->SourceHouse);
+	if (_skip)
+	{
+		_bingo = false;
+	}
+	else
 	{
 		_bingo = Bingo(Data->Chance);
-		// 准备报复
-		if (_bingo && !_ignoreDefenses)
+	}
+}
+
+void RevengeEffect::OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, TechnoClass* pAttacker, HouseClass* pAttackingHouse)
+{
+	// 准备报复
+	if (!_skip && _bingo && !_ignoreDefenses)
+	{
+		int damage = *pRealDamage;
+		// 减伤
+		if (Data->DamageSelfPercent != 1)
 		{
-			int damage = *pRealDamage;
-			// 减伤
-			if (Data->DamageSelfPercent != 1)
+			*pRealDamage = (int)(damage * Data->DamageSelfPercent);
+		}
+		// 反伤给AE来源
+		if (Data->DamageSourcePercent != 0)
+		{
+			// 传递给来源
+			if (!IsDeadOrInvisible(AE->pSource) && !IsImmune(AE->pSource, true))
 			{
-				*pRealDamage = (int)(damage * Data->DamageSelfPercent);
+				int refDamage = (int)(damage * Data->DamageSourcePercent);
+				AE->pSource->TakeDamage(refDamage, AE->pSource->GetTechnoType()->Crewed);
 			}
-			// 反伤给AE来源
-			if (Data->DamageSourcePercent != 0)
+		}
+		// 反伤
+		if (Data->DamageEnemyPercent != 0)
+		{
+			// 反射给攻击者
+			if (!IsDeadOrInvisible(pRevengeTarget) && !IsImmune(pRevengeTarget, true))
 			{
-				// 传递给来源
-				if (!IsDeadOrInvisible(AE->pSource) && !IsImmune(AE->pSource, true))
-				{
-					int refDamage = (int)(damage * Data->DamageSourcePercent);
-					AE->pSource->TakeDamage(refDamage, AE->pSource->GetTechnoType()->Crewed);
-				}
-			}
-			// 反伤
-			if (Data->DamageEnemyPercent != 0)
-			{
-				// 反射给攻击者
-				if (!IsDeadOrInvisible(pRevengeTarget) && !IsImmune(pRevengeTarget, true))
-				{
-					int refDamage = (int)(damage * Data->DamageEnemyPercent);
-					pRevengeTarget->TakeDamage(refDamage, pRevengeTarget->GetTechnoType()->Crewed);
-				}
+				int refDamage = (int)(damage * Data->DamageEnemyPercent);
+				pRevengeTarget->TakeDamage(refDamage, pRevengeTarget->GetTechnoType()->Crewed);
 			}
 		}
 	}
