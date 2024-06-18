@@ -1001,7 +1001,7 @@ DEFINE_HOOK(0x54AED0, JumpjetLocomotionClass_Freeze, 0x5)
 	TechnoStatus* status = nullptr;
 	if (pTechno && TryGetStatus<TechnoExt>(pTechno, status))
 	{
-		bool lockDir = status->Freezing || status->Teleport->IsFreezing();
+		bool lockDir = !IsDeadOrInvisible(pTechno) && (status->Freezing || status->Teleport->IsFreezing());
 		if (lockDir)
 		{
 			// 被冻结时，保持朝向不变
