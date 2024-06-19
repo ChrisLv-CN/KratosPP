@@ -194,7 +194,7 @@ CrateBuffData AttachEffect::CountAttachStatusMultiplier()
 	// 统计AE加成
 	ForeachChild([&multiplier](Component* c) {
 		auto temp = dynamic_cast<AttachEffectScript*>(c);
-		if (temp && temp->IsAlive() && temp->AEData.CrateBuff.Enable)
+		if (temp && temp->IsAlive() && !temp->IsPaused() && temp->AEData.CrateBuff.Enable)
 		{
 			multiplier.FirepowerMultiplier *= temp->AEData.CrateBuff.FirepowerMultiplier;
 			multiplier.ArmorMultiplier *= temp->AEData.CrateBuff.ArmorMultiplier;
@@ -215,7 +215,7 @@ ImmuneData AttachEffect::GetImmuneData()
 	// 统计AE加成
 	ForeachChild([&data](Component* c) {
 		auto temp = dynamic_cast<AttachEffectScript*>(c);
-		if (temp && temp->IsAlive() && temp->AEData.Immune.Enable)
+		if (temp && temp->IsAlive() && !temp->IsPaused() && temp->AEData.Immune.Enable)
 		{
 			data.Psionics |= temp->AEData.Immune.Psionics;
 			data.PsionicWeapons |= temp->AEData.Immune.PsionicWeapons;

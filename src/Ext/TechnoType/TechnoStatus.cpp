@@ -158,6 +158,7 @@ void TechnoStatus::OnUpdate()
 	OnUpdate_DestroySelf();
 	if (!_isDead && !IsDead(pTechno))
 	{
+		RecalculateStatus(); // 更新Buff属性
 		switch (pTechno->CurrentMission)
 		{
 		case Mission::Move:

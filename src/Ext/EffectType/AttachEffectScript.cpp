@@ -212,7 +212,7 @@ bool AttachEffectScript::IsAlive()
 {
 #ifdef DEBUG
 	int timeLeft = GetDuration();
-	Tag = std::to_string(timeLeft) + "#" + AEData.Name;
+	Tag = std::to_string(timeLeft) + "#" + AEData.Name + (_paused ? "#Paused" : "");
 #endif
 	if (!_started)
 	{
@@ -297,6 +297,11 @@ bool AttachEffectScript::IsAlive()
 		}
 	}
 	return IsActive();
+}
+
+bool AttachEffectScript::IsPaused()
+{
+	return _paused;
 }
 
 void AttachEffectScript::Awake()
@@ -472,21 +477,21 @@ void AttachEffectScript::EnableEffects()
 	Debug::Log("  - [%s]%d 上的 AE[%s]%d 激活持有的%d个效果器\n", pObject->GetType()->ID, pObject, AEData.Name.c_str(), this, _children.size());
 #endif // DEBUG_AE
 	SetupLifeTimer();
-	bool pause = false;
+	_paused = false;
 	if (pTechno)
 	{
 		// 需要满足血量触发
 		if (AEData.CheckHealthPrecent)
 		{
 			_hold = true;
-			pause = !CheckHealthPercent();
+			_paused = !CheckHealthPercent();
 		}
 	}
 	else
 	{
 		_hold = false;
 	}
-	if (!pause)
+	if (!_paused)
 	{
 		// Effect is disable stats, so there cannot use ForeachChild function
 		for (Component* c : _children)
@@ -505,6 +510,7 @@ void AttachEffectScript::EnableEffects()
 
 void AttachEffectScript::PauseEffects()
 {
+	_paused = true;
 	// 暂停Effects
 	for (Component* c : _children)
 	{
@@ -521,6 +527,7 @@ void AttachEffectScript::PauseEffects()
 
 void AttachEffectScript::RecordEffects()
 {
+	_paused = false;
 	// 恢复Effects
 	for (Component* c : _children)
 	{

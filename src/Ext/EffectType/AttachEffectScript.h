@@ -94,6 +94,8 @@ public:
 	 */
 	virtual bool IsAlive() override;
 
+	bool IsPaused();
+
 	virtual void Clean() override
 	{
 		ObjectScript::Clean();
@@ -124,6 +126,7 @@ public:
 
 		_inBuilding = false; // 是否在建造中
 		_started = false; // 已开启
+		_paused = false; // 暂停
 		_hold = false; // 跳过效果器死亡检查，用于暂停效果器，AE不会当成死亡结束
 
 		_diffSource = false; // pSource是外人，需要监听死亡
@@ -203,6 +206,7 @@ public:
 			.Process(this->_initialDelayTimer)
 			.Process(this->_inBuilding)
 			.Process(this->_started)
+			.Process(this->_paused)
 			.Process(this->_hold)
 
 			.Process(this->_diffSource)
@@ -289,6 +293,7 @@ private:
 
 	bool _inBuilding = false; // 是否在建造中
 	bool _started = false; // 已开启
+	bool _paused = false; // 暂停
 	bool _hold = false; // 跳过效果器死亡检查，用于暂停效果器，AE不会当成死亡结束
 
 	bool _diffSource = false; // pSource是外人，需要监听死亡
