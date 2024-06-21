@@ -10,7 +10,8 @@ void TechnoStatus::OnReceiveDamageEnd_Vampire(int* pRealDamage, WarheadTypeClass
 	AttachEffect* aem = nullptr;
 	bool inAir = pTechno->IsInAir();
 	HouseClass* pHouse = pTechno->Owner;
-	if (!IsDead(pAttacker) && TryGetAEManager<TechnoExt>(pAttacker, aem))
+	// 自己伤害自己不能吸血
+	if (pAttacker != pTechno && !IsDead(pAttacker) && TryGetAEManager<TechnoExt>(pAttacker, aem))
 	{
 		aem->ForeachChild([&](Component* c) {
 			if (auto ae = dynamic_cast<AttachEffectScript*>(c))
