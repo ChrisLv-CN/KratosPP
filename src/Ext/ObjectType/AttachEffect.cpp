@@ -820,7 +820,7 @@ void AttachEffect::CheckDurationAndDisable(bool silence)
 					// 加入冷却计时器
 					StartDelay(data);
 #ifdef DEBUG_AE
-					Debug::Log("  - [%s]%d 关闭AE [%s]%d ,加入冷却计时 %d, %s附加NextAE[%s]\n", pObject->GetType()->ID, pObject, data.Name.c_str(), c, data.Delay, ae->skipNext ? "不" : "", data.Next.c_str());
+					Debug::Log("  - [%s]%d 关闭AE [%s]%d ,加入冷却计时 %d, %s附加NextAE[%s]\n", pObject->GetType()->ID, pObject, data.Name.c_str(), c, data.Delay, ae->SkipNext ? "不" : "", data.Next.c_str());
 #endif // DEBUG_AE
 					if (!ae->SkipNext)
 					{
