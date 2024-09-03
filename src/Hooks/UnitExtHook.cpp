@@ -416,7 +416,8 @@ DEFINE_HOOK(0x73C725, UnitClass_DrawSHP_HasTurret, 0x6)
 	if (pTechno->IsDisguised() && !pTechno->IsClearlyVisibleTo(HouseClass::CurrentPlayer))
 	{
 		ObjectTypeClass* pTargetType = pTechno->GetDisguise(true);
-		if (pTargetType && !dynamic_cast<TechnoTypeClass*>(pTargetType)->Turret)
+		auto const pTargetTechnoType = dynamic_cast<TechnoTypeClass*>(pTargetType);
+		if (pTargetType && pTargetTechnoType && !pTargetTechnoType->Turret)
 		{
 			// no turret
 			return 0x73CE0D;
