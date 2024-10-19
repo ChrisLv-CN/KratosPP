@@ -27,6 +27,21 @@ std::string WarheadTypeExt::GetArmorValue(std::string key, std::vector<std::pair
 			{
 				return value;
 			}
+			// 如果是不包括百分比的小数或整数，将其转化为百分比形式
+			try
+			{
+				// 尝试将字符串转为浮点数
+				float numericValue = std::stof(value);
+				
+				// 如果能成功转换，表示是一个有效的小数或整数，转化为百分比形式
+				std::ostringstream percentStream;
+				percentStream << (numericValue * 100) << "%"; // 转化为百分比形式
+				return percentStream.str(); // 返回转换后的百分比字符串
+			}
+			catch (const std::invalid_argument&)
+			{
+				// 如果转换失败，表示不是数字，继续进行后面的处理
+			}
 			// 迭代查找
 			if (value != key)
 			{
