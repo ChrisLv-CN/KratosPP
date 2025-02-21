@@ -291,12 +291,12 @@ void AutoWeaponEffect::OnUpdate()
 							pAttacker = pAttacker->SpawnOwner;
 						}
 						// 发射武器
-						pAttachFire->FireCustomWeapon(pAttacker, pTarget, pAttackingHouse,
+						weaponLaunch = pAttachFire->FireCustomWeapon(pAttacker, pTarget, pAttackingHouse,
 							pWeapon, *weaponData,
 							data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
 							callback);
-						weaponLaunch = true;
-						ResetROF(pWeapon, weaponData, rofMultip);
+						if (weaponLaunch)
+							ResetROF(pWeapon, weaponData, rofMultip);
 					}
 				}
 			}
@@ -350,12 +350,12 @@ void AutoWeaponEffect::OnUpdate()
 							if (pTempTarget)
 							{
 								// 发射武器
-								pAttachFire->FireCustomWeapon(pAttacker, pTempTarget, pAttackingHouse,
+								weaponLaunch = pAttachFire->FireCustomWeapon(pAttacker, pTempTarget, pAttackingHouse,
 									pWeapon, *weaponData,
 									data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
 									callback);
-								weaponLaunch = true;
-								ResetROF(pWeapon, weaponData, rofMultip);
+								if (weaponLaunch)
+									ResetROF(pWeapon, weaponData, rofMultip);
 							}
 						}
 					}
